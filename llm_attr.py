@@ -45,6 +45,7 @@ from transformers import LongformerTokenizer, LongformerForMaskedLM
 import networkx as nx
 import matplotlib as mpl
 from matplotlib.patches import FancyArrowPatch
+from wordfreq import zipf_frequency
 
 matplotlib.rcParams['text.usetex'] = False
 matplotlib.rcParams['mathtext.default'] = 'regular'
@@ -822,6 +823,65 @@ class LLMAttributionResult():
 
         return attr, row_attr, rec_attr
     
+class LLMBasicAttribution(LLMAttribution):
+    def __init__(self, model, tokenizer, language: str = "en") -> None:
+        super().__init__(model, tokenizer)
+        self.zipf_language = language
+
+    def calculate_basic_attribution(self, prompt: str, target: Optional[str] = None) -> LLMAttributionResult:
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        prompt_length = len(self.user_prompt_tokens)
+        generation_length = len(self.generation_tokens)
+        total_length = prompt_length + generation_length
+
+        score_array = torch.zeros((generation_length, total_length), dtype=torch.float32)
+
+        if generation_length == 0:
+            all_tokens = self.user_prompt_tokens + self.generation_tokens
+            return LLMAttributionResult(
+                self.tokenizer,
+                score_array,
+                self.user_prompt_tokens,
+                self.generation_tokens,
+                all_tokens=all_tokens,
+            )
+
+        if generation_length > 0 and prompt_length > 0:
+            normalized_prompt_tokens = [token.strip() for token in self.user_prompt_tokens]
+
+            for gen_idx, gen_token in enumerate(self.generation_tokens):
+                normalized_gen_token = gen_token.strip()
+
+                if not normalized_gen_token:
+                    continue
+
+                weight = float(zipf_frequency(normalized_gen_token, self.zipf_language))
+                if weight <= 0.0:
+                    continue
+
+                for prompt_idx, prompt_token in enumerate(normalized_prompt_tokens):
+                    if prompt_token == normalized_gen_token:
+                        score_array[gen_idx, prompt_idx] = weight
+
+            row_sums = score_array.sum(dim=1, keepdim=True)
+            nonzero_rows = row_sums.squeeze(1) > 0
+            if torch.any(nonzero_rows):
+                score_array[nonzero_rows] = score_array[nonzero_rows] / row_sums[nonzero_rows]
+
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
+
+        return LLMAttributionResult(
+            self.tokenizer,
+            score_array,
+            self.user_prompt_tokens,
+            self.generation_tokens,
+            all_tokens=all_tokens,
+        )
+
 class LLMGradientAttribtion(LLMAttribution):
     def __init__(self, model, tokenizer):
         super().__init__(model, tokenizer)

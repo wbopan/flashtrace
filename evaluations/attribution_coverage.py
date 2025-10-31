@@ -57,6 +57,11 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
             attr.attribution_matrix = attr.attribution_matrix * attr_b.attribution_matrix
 
         attributions = attr.get_all_sentence_attrs(indices_to_explain)       
+        
+    elif "basic" in testing_dict["attr_func"]:
+        llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
+        attr = llm_attributor.calculate_basic_attribution(prompt, target = target)
+        attributions = attr.get_all_sentence_attrs(indices_to_explain)
 
     return attributions
 
@@ -77,10 +82,12 @@ def attribution_coverage(testing_dict, llm_evaluator, prompt, attr_mask_indices,
 
     scores = []
     for i in range(len(attr_list)):
-        if testing_dict["coverage"] == "prompt":
+        if testing_dict["coverage"] in ("prompt", "input"):
             full_attr = attr_list[i][:, :len(prompt_sentences)]
         elif testing_dict ["coverage"] == "all":   
             full_attr = attr_list[i]
+        else:
+            raise ValueError(f"Unsupported coverage option '{testing_dict['coverage']}'. Expected 'prompt' or 'all'.")
 
         partial_attr = attr_list[i][:, attr_mask_indices]
         scores.append(llm_evaluator.evaluate_attr_coverage(full_attr, partial_attr))
@@ -135,7 +142,7 @@ def evaluate_attribution(testing_dict) -> None:
     scores_var = scores.std(0) # [num_attrs, 3 scores]
 
     # make the test folder if it doesn't exist
-    folder = "../test_results/attribution_coverage_2_" + testing_dict["coverage"] + "/" + testing_dict["dataset_name"] + "/" + testing_dict["model_name"] + "/" 
+    folder = "./test_results/attribution_coverage_2_" + testing_dict["coverage"] + "/" + testing_dict["dataset_name"] + "/" + testing_dict["model_name"] + "/" 
     if not os.path.exists(folder):
         os.makedirs(folder)
 
@@ -179,7 +186,7 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
     return model, tokenizer
 
 def main(args) -> None:
-    login(token = "")
+    # login(token = "")
 
     device = 'cuda:' + str(args.cuda_num) if torch.cuda.is_available() else 'cpu'
 
@@ -207,10 +214,10 @@ def main(args) -> None:
 
     # set up dataset
     if args.dataset == "math":
-        with open("../data/math_mine.json", "r") as f:
+        with open("./data/math_mine.json", "r") as f:
             dataset = json.load(f)
     elif args.dataset == "facts":
-        with open("../data/10000_facts_9_choose_3.json", "r") as f:
+        with open("./data/10000_facts_9_choose_3.json", "r") as f:
             dataset = json.load(f)    
     else:
         print("You have not specified an acceptable dataset. Exiting.")
@@ -256,7 +263,7 @@ if __name__ == "__main__":
             type = str, default = "squad",
             help = 'The dataset to evaluate on: squad or hotpotqa')
     parser.add_argument('--coverage',
-            type = str, default = "input",
+            type = str, default = "prompt",
             help = 'The attributions over which to measure coverage. prompt: only prompt. all: prompt and gen.')
     
     args, unparsed = parser.parse_known_args()

@@ -1,0 +1,7 @@
+Method,Double Bound,Lower Bound,Mean Bound
+Seq Attr Scores Mean,0.5,0.5,0.0
+Row Attr Scores Mean,0.8,0.8,0.0
+Recursive Attr Scores Mean,0.8,0.8,0.0
+Seq Attr Scores Var,0.31622776601683794,0.31622776601683794,0.0
+Row Attr Scores Var,0.4,0.4,0.0
+Recursive Attr Scores Var,0.4,0.4,0.0

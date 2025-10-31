@@ -56,6 +56,11 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
             attr.attribution_matrix = attr.attribution_matrix * attr_b.attribution_matrix
 
         attributions = attr.get_all_sentence_attrs(indices_to_explain)       
+        
+    elif "basic" in testing_dict["attr_func"]:
+        llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
+        attr = llm_attributor.calculate_basic_attribution(prompt, target = target)
+        attributions = attr.get_all_sentence_attrs(indices_to_explain)
 
     return attributions
 
@@ -146,7 +151,7 @@ def evaluate_attribution(testing_dict) -> None:
     scores_var = scores.std(0) # [num_attrs, 3 scores]
 
     # make the test folder if it doesn't exist
-    folder = "../test_results/faithfulness/" + testing_dict["dataset_name"] + "/" + testing_dict["model_name"] + "/" 
+    folder = "./test_results/faithfulness/" + testing_dict["dataset_name"] + "/" + testing_dict["model_name"] + "/" 
     if not os.path.exists(folder):
         os.makedirs(folder)
 

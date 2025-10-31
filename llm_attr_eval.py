@@ -243,7 +243,11 @@ class LLMAttributionEvaluator():
         expectation_low = expectation - expectation / 2
         expectation_high = expectation + expectation / 2
 
-        ratios = portion / whole.sum()
+        total_attr = whole.sum()
+        if total_attr.item() == 0:
+            return 0.0, 0.0, 0.0
+
+        ratios = portion / total_attr
 
         coverage_rate_a = torch.where((ratios > expectation_low) & (ratios < expectation_high))[0].shape[0] / portion.shape[0]
         coverage_rate_b = torch.where((ratios > expectation_low))[0].shape[0] / portion.shape[0]
