@@ -1,11 +1,11 @@
-import torch
-import spacy
-from spacy.language import Language
-from spacy.tokens import Doc
 import matplotlib
 import matplotlib.cm as mpl_cm
 from matplotlib import pyplot as plt
 import numpy as np
+import torch
+import spacy
+from spacy.language import Language
+from spacy.tokens import Doc
 
 if not hasattr(mpl_cm, "register_cmap"):
     from matplotlib import colors as _mpl_colors
@@ -36,16 +36,28 @@ if not hasattr(mpl_cm, "register_cmap"):
     mpl_cm.unregister_cmap = _unregister_cmap
 
 import seaborn as sns
+import torch.nn as nn
 import torch.nn.functional as F
 import re
 from tqdm import tqdm
-from typing import Dict, Any, Optional, Literal
+from typing import Dict, Any, List, Optional, Literal, Tuple, Sequence
 import textwrap
 from transformers import LongformerTokenizer, LongformerForMaskedLM
 import networkx as nx
 import matplotlib as mpl
 from matplotlib.patches import FancyArrowPatch
 from wordfreq import zipf_frequency
+
+from ifr_core import (
+    IFRParameters,
+    ModelMetadata,
+    attach_hooks,
+    build_weight_pack,
+    compute_ifr_for_all_positions,
+    compute_ifr_sentence_aggregate,
+    compute_multi_hop_ifr,
+    extract_model_metadata,
+)
 
 matplotlib.rcParams['text.usetex'] = False
 matplotlib.rcParams['mathtext.default'] = 'regular'
@@ -312,6 +324,7 @@ class LLMAttributionResult():
         prompt_tokens: list[str],
         generation_tokens: list[str],
         all_tokens: Optional[list[str]] = None,
+        metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
 
         self.tokenizer = tokenizer
@@ -330,6 +343,7 @@ class LLMAttributionResult():
 
         self.sentence_attr = None
         self.CAGE_sentence_attr = None
+        self.metadata = metadata
 
     # normalize rows of a matrix to sum to 1
     def normalize_sum_to_one(self, attriubtion_matrix) -> torch.Tensor:
@@ -881,6 +895,331 @@ class LLMBasicAttribution(LLMAttribution):
             self.generation_tokens,
             all_tokens=all_tokens,
         )
+
+
+class LLMIFRAttribution(LLMAttribution):
+    """Information Flow Routes attribution integrated with the LLMAttribution API."""
+
+    def __init__(
+        self,
+        model,
+        tokenizer,
+        generate_kwargs: Optional[Dict[str, Any]] = None,
+        *,
+        chunk_tokens: int = 128,
+        sink_chunk_tokens: int = 32,
+        renorm_threshold_default: float = 0.0,
+        show_progress: bool = True,
+    ) -> None:
+        super().__init__(model, tokenizer, generate_kwargs)
+        self.chunk_tokens = int(chunk_tokens)
+        self.sink_chunk_tokens = int(sink_chunk_tokens)
+        self.renorm_threshold_default = float(renorm_threshold_default)
+        self.show_progress = bool(show_progress)
+
+    @property
+    def _model_dtype(self) -> torch.dtype:
+        return next(self.model.parameters()).dtype
+
+    def _ensure_generation(self, prompt: str, target: Optional[str]) -> Tuple[torch.Tensor, torch.Tensor, int, int]:
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        prompt_len = int(self.prompt_ids.shape[1])
+        gen_len = int(self.generation_ids.shape[1])
+        input_ids_all = torch.cat([self.prompt_ids, self.generation_ids], dim=1).to(self.device)
+        attention_mask = torch.ones_like(input_ids_all)
+        return input_ids_all, attention_mask, prompt_len, gen_len
+
+    def _capture_model_state(
+        self,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+    ) -> Tuple[Dict[str, List[Optional[torch.Tensor]]], Sequence[torch.Tensor], ModelMetadata, List[Dict[str, torch.Tensor | nn.Module]]]:
+        metadata = extract_model_metadata(self.model)
+        cache, hooks = attach_hooks(metadata.layers, self._model_dtype)
+
+        try:
+            outputs = self.model(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                use_cache=False,
+                output_attentions=True,
+                output_hidden_states=False,
+                return_dict=True,
+            )
+        finally:
+            for handle in hooks:
+                try:
+                    handle.remove()
+                except Exception:
+                    pass
+
+        attentions = outputs.attentions
+        weight_pack = build_weight_pack(metadata, self._model_dtype)
+        return cache, attentions, metadata, weight_pack
+
+    def _build_ifr_params(self, metadata: ModelMetadata, sequence_length: int) -> IFRParameters:
+        return IFRParameters(
+            n_layers=metadata.n_layers,
+            n_heads_q=metadata.n_heads_q,
+            n_kv_heads=metadata.n_kv_heads,
+            head_dim=metadata.head_dim,
+            group_size=metadata.group_size,
+            d_model=metadata.d_model,
+            sequence_length=sequence_length,
+            model_dtype=self._model_dtype,
+            chunk_tokens=self.chunk_tokens,
+            sink_chunk_tokens=self.sink_chunk_tokens,
+        )
+
+    def _finalize_result(self, score_array: torch.Tensor, metadata: Optional[Dict[str, Any]] = None) -> LLMAttributionResult:
+        if score_array.ndim == 1:
+            score_array = score_array.unsqueeze(0)
+        score_array = score_array.detach().cpu()
+
+        score_array = self.extract_user_prompt_attributions(self.prompt_tokens, score_array)
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
+
+        return LLMAttributionResult(
+            self.tokenizer,
+            score_array,
+            self.user_prompt_tokens,
+            self.generation_tokens,
+            all_tokens=all_tokens,
+            metadata=metadata,
+        )
+
+    def _project_vector(self, vector: torch.Tensor) -> torch.Tensor:
+        matrix = vector.detach().cpu().view(1, -1)
+        projected = self.extract_user_prompt_attributions(self.prompt_tokens, matrix)
+        return projected[0]
+
+    @torch.no_grad()
+    def calculate_ifr_for_all_positions(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        renorm_threshold: Optional[float] = None,
+    ) -> LLMAttributionResult:
+        input_ids_all, attn_mask, prompt_len, gen_len = self._ensure_generation(prompt, target)
+        total_len = int(input_ids_all.shape[1])
+        if gen_len == 0:
+            empty = torch.zeros((0, total_len), dtype=torch.float32)
+            metadata = {
+                "ifr": {
+                    "type": "all_positions",
+                    "sink_indices": [],
+                    "renorm_threshold": renorm_threshold,
+                    "note": "No generation tokens; returning empty attribution matrix.",
+                }
+            }
+            return self._finalize_result(empty, metadata=metadata)
+
+        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        params = self._build_ifr_params(metadata, total_len)
+        renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
+
+        sink_range = (prompt_len, prompt_len + gen_len - 1)
+        all_positions = compute_ifr_for_all_positions(
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            renorm_threshold=renorm,
+            sink_range=sink_range,
+            return_layerwise=False,
+        )
+
+        meta = {
+            "ifr": {
+                "type": "all_positions",
+                "sink_indices": all_positions.sink_indices,
+                "renorm_threshold": renorm,
+            }
+        }
+        return self._finalize_result(all_positions.token_importance_matrix, metadata=meta)
+
+    @torch.no_grad()
+    def calculate_ifr_span(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        span: Optional[Tuple[int, int]] = None,
+        renorm_threshold: Optional[float] = None,
+    ) -> LLMAttributionResult:
+        input_ids_all, attn_mask, prompt_len, gen_len = self._ensure_generation(prompt, target)
+        total_len = int(input_ids_all.shape[1])
+
+        if gen_len == 0:
+            empty = torch.zeros((0, total_len), dtype=torch.float32)
+            metadata = {
+                "ifr": {
+                    "type": "sentence_aggregate",
+                    "sink_span_generation": None,
+                    "renorm_threshold": renorm_threshold,
+                    "note": "No generation tokens; returning empty attribution matrix.",
+                }
+            }
+            return self._finalize_result(empty, metadata=metadata)
+
+        span_start, span_end = span if span is not None else (0, gen_len - 1)
+        if span_start < 0 or span_end < span_start or span_end >= gen_len:
+            raise ValueError(
+                f"Invalid span ({span_start}, {span_end}) for generation length {gen_len}."
+            )
+
+        sink_start_abs = prompt_len + span_start
+        sink_end_abs = prompt_len + span_end
+
+        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        params = self._build_ifr_params(metadata, total_len)
+        renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
+
+        aggregate = compute_ifr_sentence_aggregate(
+            sink_start=sink_start_abs,
+            sink_end=sink_end_abs,
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            renorm_threshold=renorm,
+        )
+
+        score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
+        for offset in range(span_start, span_end + 1):
+            score_array[offset] = aggregate.token_importance_total
+
+        meta = {
+            "ifr": {
+                "type": "sentence_aggregate",
+                "sink_span_generation": (span_start, span_end),
+                "sink_span_absolute": (sink_start_abs, sink_end_abs),
+                "renorm_threshold": renorm,
+                "aggregate": aggregate,
+            }
+        }
+        return self._finalize_result(score_array, metadata=meta)
+
+    @torch.no_grad()
+    def calculate_ifr_multi_hop(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        sink_span: Optional[Tuple[int, int]] = None,
+        thinking_span: Optional[Tuple[int, int]] = None,
+        n_hops: int = 1,
+        renorm_threshold: Optional[float] = None,
+        observation_mask: Optional[torch.Tensor | Sequence[float]] = None,
+    ) -> LLMAttributionResult:
+        input_ids_all, attn_mask, prompt_len, gen_len = self._ensure_generation(prompt, target)
+        total_len = int(input_ids_all.shape[1])
+
+        if gen_len == 0:
+            empty = torch.zeros((0, total_len), dtype=torch.float32)
+            metadata = {
+                "ifr": {
+                    "type": "multi_hop",
+                    "sink_span_generation": sink_span,
+                    "thinking_span_generation": thinking_span,
+                    "renorm_threshold": renorm_threshold,
+                    "note": "No generation tokens; returning empty attribution matrix.",
+                }
+            }
+            return self._finalize_result(empty, metadata=metadata)
+
+        if sink_span is None:
+            sink_span = (0, gen_len - 1)
+        span_start, span_end = sink_span
+        if span_start < 0 or span_end < span_start or span_end >= gen_len:
+            raise ValueError(
+                f"Invalid sink_span ({span_start}, {span_end}) for generation length {gen_len}."
+            )
+        if thinking_span is None:
+            thinking_span = sink_span
+        think_start, think_end = thinking_span
+        if think_start < 0 or think_end < think_start or think_end >= gen_len:
+            raise ValueError(
+                f"Invalid thinking_span ({think_start}, {think_end}) for generation length {gen_len}."
+            )
+
+        sink_start_abs = prompt_len + span_start
+        sink_end_abs = prompt_len + span_end
+        think_start_abs = prompt_len + think_start
+        think_end_abs = prompt_len + think_end
+
+        obs_mask_tensor: Optional[torch.Tensor] = None
+        if observation_mask is not None:
+            obs_mask_tensor = torch.as_tensor(observation_mask, dtype=torch.float32)
+            if obs_mask_tensor.ndim != 1:
+                raise ValueError("observation_mask must be a 1D tensor or sequence.")
+            if obs_mask_tensor.numel() == gen_len:
+                mask_full = torch.zeros(total_len, dtype=torch.float32)
+                mask_full[prompt_len : prompt_len + gen_len] = obs_mask_tensor
+                obs_mask_tensor = mask_full
+            elif obs_mask_tensor.numel() != total_len:
+                raise ValueError(
+                    f"observation_mask must have length {gen_len} (generation) or {total_len} (full sequence)."
+                )
+
+        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        params = self._build_ifr_params(metadata, total_len)
+        renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
+
+        multi_hop = compute_multi_hop_ifr(
+            sink_start=sink_start_abs,
+            sink_end=sink_end_abs,
+            thinking_span=(think_start_abs, think_end_abs),
+            n_hops=int(n_hops),
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            renorm_threshold=renorm,
+            observation_mask=obs_mask_tensor,
+        )
+
+        base_vector = multi_hop.raw_attributions[0].token_importance_total
+        score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
+        for offset in range(span_start, span_end + 1):
+            score_array[offset] = base_vector
+
+        projected_per_hop = [
+            self._project_vector(result.token_importance_total) for result in multi_hop.raw_attributions
+        ]
+        obs = multi_hop.observation
+        observation_projected = {
+            "mask": self.extract_user_prompt_attributions(
+                self.prompt_tokens, obs["mask"].view(1, -1)
+            )[0],
+            "base": self._project_vector(obs["base"]),
+            "sum": self._project_vector(obs["sum"]),
+            "avg": self._project_vector(obs["avg"]),
+            "per_hop": [self._project_vector(vec) for vec in obs["per_hop"]],
+        }
+
+        meta: Dict[str, Any] = {
+            "ifr": {
+                "type": "multi_hop",
+                "sink_span_generation": (span_start, span_end),
+                "sink_span_absolute": (sink_start_abs, sink_end_abs),
+                "thinking_span_generation": (think_start, think_end),
+                "thinking_span_absolute": (think_start_abs, think_end_abs),
+                "renorm_threshold": renorm,
+                "n_hops": int(n_hops),
+                "thinking_ratios": multi_hop.thinking_ratios,
+                "per_hop_projected": projected_per_hop,
+                "observation_projected": observation_projected,
+                "raw": multi_hop,
+            }
+        }
+
+        return self._finalize_result(score_array, metadata=meta)
 
 class LLMGradientAttribtion(LLMAttribution):
     def __init__(self, model, tokenizer):
