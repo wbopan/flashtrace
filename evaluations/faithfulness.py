@@ -5,13 +5,19 @@ from transformers import utils
 import math
 from tqdm import tqdm
 import random
-from datasets import load_dataset
 import argparse
 import os
 import csv
+from itertools import islice
 from typing import Tuple
-import json
 from huggingface_hub import login
+
+from attribution_datasets import (
+    AttributionDataset,
+    FactsAttributionDataset,
+    MathAttributionDataset,
+    MoreHopQAAttributionDataset,
+)
 
 utils.logging.set_verbosity_error()  # Suppress standard warnings
 
@@ -57,6 +63,40 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
 
         attributions = attr.get_all_sentence_attrs(indices_to_explain)       
         
+    elif "ifr" in testing_dict["attr_func"].lower():
+        llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
+        attr_func = testing_dict["attr_func"].lower()
+        renorm_threshold = testing_dict.get("renorm_threshold")
+
+        if attr_func == "ifr_all_positions":
+            attr = llm_attributor.calculate_ifr_for_all_positions(prompt, target=target, renorm_threshold=renorm_threshold)
+        elif attr_func == "ifr_span":
+            span = testing_dict.get("sink_span")
+            attr = llm_attributor.calculate_ifr_span(
+                prompt,
+                target=target,
+                span=tuple(span) if span is not None else None,
+                renorm_threshold=renorm_threshold,
+            )
+        elif attr_func == "ifr_multi_hop":
+            sink_span = testing_dict.get("sink_span")
+            thinking_span = testing_dict.get("thinking_span")
+            if sink_span is None or thinking_span is None:
+                raise ValueError("sink_span and thinking_span must be provided for IFR multi-hop attribution.")
+            attr = llm_attributor.calculate_ifr_multi_hop(
+                prompt,
+                target=target,
+                sink_span=tuple(sink_span),
+                thinking_span=tuple(thinking_span),
+                n_hops=testing_dict.get("n_hops", 1),
+                renorm_threshold=renorm_threshold,
+                observation_mask=testing_dict.get("observation_mask"),
+            )
+        else:
+            raise ValueError(f"Unsupported IFR attribution function '{testing_dict['attr_func']}'.")
+
+        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+
     elif "basic" in testing_dict["attr_func"]:
         llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
         attr = llm_attributor.calculate_basic_attribution(prompt, target = target)
@@ -106,45 +146,22 @@ def evaluate_attribution(testing_dict) -> None:
 
     description = "Faithfulness " + testing_dict["model_name"] + " " + testing_dict["dataset_name"] + " " + testing_dict["attr_func"]
 
-    if testing_dict["dataset_name"] == "math":
-        for i, example in enumerate(tqdm(testing_dict["dataset"][0 : testing_dict["num_examples"]], desc = description)): 
-            dataset_item = example["question"]
-            sentences = llm_attr_eval.create_sentences(dataset_item, tokenizer)
-            context_sentences = sentences[:-1]
-            question = sentences[-1][1:]
+    dataset: AttributionDataset = testing_dict["dataset"]
+    num_examples = testing_dict["num_examples"]
+    total = min(len(dataset), num_examples) if hasattr(dataset, "__len__") else num_examples
+    example_iterator = islice(dataset, num_examples)
 
-            # add dummy sentences to prompt
-            context_sentences_w_dummy = llm_evaluator.add_dummy_facts_to_prompt(context_sentences)
-            question_sentences_w_dummy = llm_evaluator.add_dummy_facts_to_prompt([question])
-            prompt = "".join(context_sentences_w_dummy) + "\n" + "".join(question_sentences_w_dummy)
-            # attribution should only be on odd indices
-            attr_mask = torch.zeros((1, len(context_sentences_w_dummy) + len(question_sentences_w_dummy)))
-            attr_mask[:, ::2] = 1
-
-            scores.append(faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain = [-2])) # [num_attrs, 3 scores]
-            
-    elif testing_dict["dataset_name"] == "facts":
-        for i, example in enumerate(tqdm(testing_dict["dataset"][0 : testing_dict["num_examples"]], desc = description)): 
-            prompt = example["prompt"]
-            target = example["target"]
-            indices_to_explain = example["indices_to_explain"]
-
-            scores.append(faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain = indices_to_explain, target = target)) # [num_attrs, 3 scores]
-
-    elif testing_dict["dataset_name"] == "morehopqa":
-        for i, example in enumerate(tqdm(testing_dict["dataset"][0 : testing_dict["num_examples"]], desc = description)): 
-            context = ""
-            question = example["question"]
-            answer = example["answer"]
-            context_len = len(example["context"])
-            for i, item in enumerate(example["context"]):
-                context += "".join(item[1])
-                if i != context_len - 1:
-                    context += " "
-
-            prompt = context + "\n" + question
-
-            scores.append(faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain = [-2])) # [num_attrs, 3 scores]
+    for example in tqdm(example_iterator, desc=description, total=total):
+        indices_to_explain = example.indices_to_explain if example.indices_to_explain is not None else [-2]
+        scores.append(
+            faithfulness_test(
+                testing_dict,
+                llm_evaluator,
+                example.prompt,
+                indices_to_explain=indices_to_explain,
+                target=example.target,
+            )
+        )
 
     scores = np.array(scores) # [num_examples, num_attrs, 3 scores]
     scores_mean = scores.mean(0) # [num_attrs, 3 scores]
@@ -221,19 +238,16 @@ def main(args) -> None:
 
     model, tokenizer = load_model(model_name, device)
 
-    # set up dataset
-    if args.dataset == "math":
-        with open("./data/math_mine.json", "r") as f:
-            dataset = json.load(f)
-    elif args.dataset == "facts":
-        with open("./data/10000_facts_9_choose_3.json", "r") as f:
-            dataset = json.load(f)    
-    elif args.dataset == "morehopqa":
-        with open("./data/with_human_verification.json", "r") as f:
-            dataset = json.load(f)    
-    else:
+    dataset_registry = {
+        "math": lambda: MathAttributionDataset("./data/math_mine.json", tokenizer),
+        "facts": lambda: FactsAttributionDataset("./data/10000_facts_9_choose_3.json"),
+        "morehopqa": lambda: MoreHopQAAttributionDataset("./data/with_human_verification.json"),
+    }
+    dataset_loader = dataset_registry.get(args.dataset)
+    if dataset_loader is None:
         print("You have not specified an acceptable dataset. Exiting.")
         exit()
+    dataset = dataset_loader()
 
     testing_dict = {
         "model" : model,
@@ -271,8 +285,8 @@ if __name__ == "__main__":
                         type=int, default = 0,
                         help='The number of the GPU you want to use.')
     parser.add_argument('--dataset',
-            type = str, default = "squad",
-            help = 'The dataset to evaluate on: squad or hotpotqa')
+            type = str, default = "math",
+            help = 'The dataset to evaluate on: math, facts, or morehopqa')
     
     args, unparsed = parser.parse_known_args()
     
