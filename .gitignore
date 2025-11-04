@@ -9,5 +9,5 @@ wheels/
 # Virtual environments
 .venv
 
-# Local datasets
-data/ruler_multihop/
+# Local data
+data/

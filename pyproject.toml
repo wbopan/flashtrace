@@ -11,6 +11,8 @@ dependencies = [
     "evaluate>=0.4.6",
     "hf-xet>=1.2.0",
     "huggingface-hub==0.31.2",
+    "ipykernel>=7.1.0",
+    "ipywidgets>=8.1.8",
     "matplotlib>=3.10.7",
     "networkx==3.3",
     "numpy==2.3.3",
