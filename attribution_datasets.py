@@ -5,7 +5,20 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Sequence
 
-from llm_attr_eval import create_sentences
+# Prefer evaluator's sentence splitter; fallback when unavailable (e.g., missing spaCy during quick checks)
+try:  # pragma: no cover - environment-dependent
+    from llm_attr_eval import create_sentences  # type: ignore
+except Exception:  # pragma: no cover - fallback for minimal environment
+    import re
+
+    def create_sentences(text, tokenizer=None) -> list[str]:
+        # Very naive fallback: split by newline first, then by simple punctuation boundaries.
+        parts = []
+        for block in text.split("\n"):
+            # keep delimiters by splitting on (?<=[.!?])
+            xs = re.split(r"(?<=[.!?])\s+", block.strip()) if block.strip() else []
+            parts.extend([x for x in xs if x])
+        return parts or ([text] if text else [])
 
 
 @dataclass
@@ -141,6 +154,125 @@ class MoreHopQAAttributionDataset(AttributionDataset):
                         "answer": entry.get("answer"),
                         "id": entry.get("_id"),
                         "original_context": entry.get("context"),
+                    },
+                )
+            )
+
+
+# added
+class RulerAttributionDataset(AttributionDataset):
+    """Dataset wrapper for raw RULER JSONL files with needle spans.
+
+    Expects a JSONL file produced by repos/RULER (with added `needle_spans`).
+    Each line must contain at least: `input`, `answer_prefix`, `outputs`, and
+    optionally `needle_spans` with character spans relative to `input`.
+
+    Mapping logic:
+    - prompt = input + answer_prefix
+    - target = answer_prefix (+ optional space) + ", ".join(outputs)
+    - sentence indices computed over " " + prompt (leading space to match evaluator)
+    - each span is shifted by +1 to account for that leading space
+    - attr_mask_indices = union of all sentences covered by any span
+    - indices_to_explain = [0] when target is present
+    """
+
+    name = "ruler"
+
+    def __init__(self, path: str | Path) -> None:
+        super().__init__()
+        data_path = Path(path)
+        if not data_path.exists():
+            raise FileNotFoundError(f"RULER file not found: {data_path}")
+
+        # Prefer evaluator's spaCy pipeline; fallback to a naive splitter if unavailable
+        try:
+            import llm_attr_eval  # noqa: WPS433
+
+            def _sentence_bounds(text: str) -> List[tuple[int, int]]:
+                doc = llm_attr_eval.nlp(text)
+                return [(s.start_char, s.end_char) for s in doc.sents]
+
+        except Exception:
+
+            def _sentence_bounds(text: str) -> List[tuple[int, int]]:
+                # Naive fallback: split on newlines, produce contiguous ranges
+                bounds: List[tuple[int, int]] = []
+                start = 0
+                parts = text.split("\n")
+                for idx, part in enumerate(parts):
+                    end = start + len(part)
+                    if end > start:
+                        bounds.append((start, end))
+                    # account for newline char except after last part
+                    start = end + 1
+                if not bounds:
+                    bounds = [(0, len(text))]
+                return bounds
+
+        def _map_spans(bounds: Sequence[tuple[int, int]], spans: Sequence[tuple[int, int]]) -> List[int]:
+            indices: set[int] = set()
+            for start, end in spans:
+                matched = False
+                for i, (bs, be) in enumerate(bounds):
+                    if start >= bs and end <= be:
+                        indices.add(i)
+                        matched = True
+                        break
+                if not matched:
+                    # fallback: include all sentences with any overlap
+                    for i, (bs, be) in enumerate(bounds):
+                        if not (end <= bs or start >= be):
+                            indices.add(i)
+            return sorted(indices)
+
+        def _read_jsonl(fp: Path) -> Iterator[Dict[str, Any]]:
+            with fp.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        yield json.loads(line)
+
+        for entry in _read_jsonl(data_path):
+            input_text: str = entry.get("input", "")
+            answer_prefix: str = entry.get("answer_prefix", "")
+            outputs = entry.get("outputs", []) or []
+
+            # Build prompt/target
+            prompt = input_text + answer_prefix
+            if outputs:
+                sep = " " if answer_prefix and not answer_prefix.endswith((" ", "\n", "\t")) else ""
+                target = answer_prefix + sep + ", ".join(outputs)
+            else:
+                target = answer_prefix
+
+            # Sentence bounds over leading-space prompt to match evaluator
+            prompt_for_seg = " " + prompt
+            bounds = _sentence_bounds(prompt_for_seg)
+
+            # Collect spans and shift by +1 for the leading space
+            spans_raw = []
+            for item in entry.get("needle_spans", []) or []:
+                span = item.get("span")
+                if isinstance(span, list) and len(span) == 2:
+                    spans_raw.append((int(span[0]) + 1, int(span[1]) + 1))
+
+            attr_indices = _map_spans(bounds, spans_raw) if spans_raw else None
+
+            self.examples.append(
+                AttributionExample(
+                    prompt=prompt,
+                    target=target or None,
+                    indices_to_explain=[0] if target else None,
+                    attr_mask_indices=attr_indices,
+                    metadata={
+                        "dataset": "ruler",
+                        "length": entry.get("length"),
+                        "length_w_model_temp": entry.get("length_w_model_temp"),
+                        "outputs": outputs,
+                        "answer_prefix": answer_prefix,
+                        "token_position_answer": entry.get("token_position_answer"),
+                        "needle_spans": entry.get("needle_spans"),
+                        "prompt_sentence_count": len(bounds),
                     },
                 )
             )

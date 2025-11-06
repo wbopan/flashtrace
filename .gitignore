@@ -11,3 +11,9 @@ wheels/
 
 # Local data
 data/
+
+# dev
+AGENTS.md
+readme_dev.md
+contribute/ruler/
+repos/
