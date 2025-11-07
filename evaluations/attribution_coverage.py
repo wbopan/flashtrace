@@ -1,3 +1,8 @@
+import os
+import sys
+# Ensure project root is importable regardless of CWD
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer
 import torch
 import numpy as np
@@ -6,7 +11,6 @@ import math
 from tqdm import tqdm
 import random
 import argparse
-import os
 import csv
 from itertools import islice
 from typing import Tuple
@@ -19,8 +23,6 @@ from attribution_datasets import (
 )
 
 utils.logging.set_verbosity_error()  # Suppress standard warnings
-
-os.sys.path.append(os.path.dirname(os.path.abspath('.')))
 
 import llm_attr
 import llm_attr_eval
@@ -79,15 +81,11 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
                 renorm_threshold=renorm_threshold,
             )
         elif attr_func == "ifr_multi_hop":
-            sink_span = testing_dict.get("sink_span")
-            thinking_span = testing_dict.get("thinking_span")
-            if sink_span is None or thinking_span is None:
-                raise ValueError("sink_span and thinking_span must be provided for IFR multi-hop attribution.")
             attr = llm_attributor.calculate_ifr_multi_hop(
                 prompt,
                 target=target,
-                sink_span=tuple(sink_span),
-                thinking_span=tuple(thinking_span),
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
                 n_hops=testing_dict.get("n_hops", 1),
                 renorm_threshold=renorm_threshold,
                 observation_mask=testing_dict.get("observation_mask"),
@@ -205,12 +203,23 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)  # if multi-GPU
 
+    # Support single-device string like 'cuda:0' or multi-device 'auto'
+    device_map = device
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        device_map=device, # dispatch efficiently the model on the available ressources
+        device_map=device_map,  # 'cuda:N' or 'auto' for multi-GPU sharding
         attn_implementation="eager",
-        torch_dtype=torch.float16
+        torch_dtype=torch.float16,
     )
+    # Ensure downstream code relying on `model.device` works in both modes.
+    try:
+        if device_map == "auto":
+            # Anchor tensors and helper models on the primary GPU 0 for inputs/auxiliary modules.
+            setattr(model, "device", torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu"))
+        else:
+            setattr(model, "device", torch.device(device_map))
+    except Exception:
+        pass
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name, token=True)
 
@@ -222,7 +231,15 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
 def main(args) -> None:
     # login(token = "")
 
-    device = 'cuda:' + str(args.cuda_num) if torch.cuda.is_available() else 'cpu'
+    # Device selection:
+    # - If --cuda provided (e.g., "0,1,2,3"), restrict visible devices and shard with device_map='auto'.
+    # - Else fall back to single GPU index from --cuda_num.
+    if torch.cuda.is_available() and args.cuda:
+        # Limit visible GPUs to user selection for predictable sharding order
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda
+        device = "auto"
+    else:
+        device = 'cuda:' + str(args.cuda_num) if torch.cuda.is_available() else 'cpu'
 
     # set up model
     if args.model == "llama-1B":
@@ -243,8 +260,10 @@ def main(args) -> None:
     elif args.model == "qwen-8B":
         model_name = "Qwen/Qwen3-8B" 
         max_input_len = 3000
+    else:
+        max_input_len = 3000
 
-    model, tokenizer = load_model(model_name, device)
+    model, tokenizer = load_model(model_name if args.model_path is None else args.model_path, device)
 
     dataset_registry = {
         "math": lambda: MathAttributionDataset("./data/math_mine.json", tokenizer),
@@ -283,6 +302,9 @@ if __name__ == "__main__":
                         type = str,
                         default = "llama",
                         help='Model to use: llama or qwen')
+    parser.add_argument('--model_path',
+                        type=str, default=None,
+                        help='Optional local model path to load (overrides model repo id only).')
     parser.add_argument('--attr_func',
                         type = str,
                         default = "IG",
@@ -291,7 +313,10 @@ if __name__ == "__main__":
                         ")
     parser.add_argument('--cuda_num',
                         type=int, default = 0,
-                        help='The number of the GPU you want to use.')
+                        help='Single GPU index to use (e.g., 0).')
+    parser.add_argument('--cuda',
+                        type=str, default=None,
+                        help='Optional comma-separated GPU ids for multi-GPU sharding (e.g., "0,1,2,3").')
     parser.add_argument('--dataset',
             type = str, default = "math",
             help = 'The dataset to evaluate on: math or facts')

@@ -1,3 +1,8 @@
+import os
+import sys
+# Ensure project root is importable regardless of CWD
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from transformers import AutoModelForCausalLM, BitsAndBytesConfig, AutoTokenizer
 import torch
 import numpy as np
@@ -6,7 +11,6 @@ import math
 from tqdm import tqdm
 import random
 import argparse
-import os
 import csv
 from itertools import islice
 from typing import Tuple
@@ -20,8 +24,6 @@ from attribution_datasets import (
 )
 
 utils.logging.set_verbosity_error()  # Suppress standard warnings
-
-os.sys.path.append(os.path.dirname(os.path.abspath('.')))
 
 import llm_attr
 import llm_attr_eval
@@ -79,15 +81,11 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
                 renorm_threshold=renorm_threshold,
             )
         elif attr_func == "ifr_multi_hop":
-            sink_span = testing_dict.get("sink_span")
-            thinking_span = testing_dict.get("thinking_span")
-            if sink_span is None or thinking_span is None:
-                raise ValueError("sink_span and thinking_span must be provided for IFR multi-hop attribution.")
             attr = llm_attributor.calculate_ifr_multi_hop(
                 prompt,
                 target=target,
-                sink_span=tuple(sink_span),
-                thinking_span=tuple(thinking_span),
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
                 n_hops=testing_dict.get("n_hops", 1),
                 renorm_threshold=renorm_threshold,
                 observation_mask=testing_dict.get("observation_mask"),
