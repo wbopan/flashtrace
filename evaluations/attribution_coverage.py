@@ -203,23 +203,36 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)  # if multi-GPU
 
-    # Support single-device string like 'cuda:0' or multi-device 'auto'
-    device_map = device
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        device_map=device_map,  # 'cuda:N' or 'auto' for multi-GPU sharding
-        attn_implementation="eager",
-        torch_dtype=torch.float16,
-    )
-    # Ensure downstream code relying on `model.device` works in both modes.
-    try:
-        if device_map == "auto":
-            # Anchor tensors and helper models on the primary GPU 0 for inputs/auxiliary modules.
-            setattr(model, "device", torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu"))
-        else:
-            setattr(model, "device", torch.device(device_map))
-    except Exception:
-        pass
+    # Respect three modes:
+    # - device == 'auto'               -> multi-GPU sharding across all visible devices
+    # - device startswith('cuda:IDX')   -> place entire model on a single GPU IDX (relative to visible devices)
+    # - device == 'cpu'                -> CPU
+    if device == "auto":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            device_map="auto",
+            attn_implementation="eager",
+            torch_dtype=torch.float16,
+        )
+    elif isinstance(device, str) and device.startswith("cuda:"):
+        try:
+            gpu_idx = int(device.split(":")[1])
+        except Exception:
+            gpu_idx = 0
+        # Map whole model to a single GPU index using an explicit device_map
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            device_map={"": gpu_idx},  # put entire model on one GPU
+            attn_implementation="eager",
+            torch_dtype=torch.float16,
+        )
+    else:
+        # CPU fallback
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            attn_implementation="eager",
+            torch_dtype=torch.float16,
+        )
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name, token=True)
 
@@ -231,15 +244,25 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
 def main(args) -> None:
     # login(token = "")
 
-    # Device selection:
-    # - If --cuda provided (e.g., "0,1,2,3"), restrict visible devices and shard with device_map='auto'.
-    # - Else fall back to single GPU index from --cuda_num.
-    if torch.cuda.is_available() and args.cuda:
-        # Limit visible GPUs to user selection for predictable sharding order
+    # Device selection policy:
+    # - If --cuda is a comma-separated list (e.g. "0,1"), set visibility to that list and shard with device_map='auto'.
+    # - If --cuda is a single index (e.g. "0"), do NOT override CUDA_VISIBLE_DEVICES; place model on cuda:{index}.
+    # - Else (no --cuda), use --cuda_num as single-device index relative to current visibility.
+    device: str
+    if args.cuda is not None and isinstance(args.cuda, str) and "," in args.cuda:
+        # Multi-GPU sharding across the provided visible set
         os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda
         device = "auto"
+    elif args.cuda is not None and isinstance(args.cuda, str) and args.cuda.strip() != "":
+        # Single-GPU by relative index; do not modify CUDA_VISIBLE_DEVICES here
+        try:
+            idx = int(args.cuda)
+        except Exception:
+            idx = 0
+        device = f"cuda:{idx}" if torch.cuda.is_available() else "cpu"
     else:
-        device = 'cuda:' + str(args.cuda_num) if torch.cuda.is_available() else 'cpu'
+        # Fallback to cuda_num
+        device = f"cuda:{args.cuda_num}" if torch.cuda.is_available() else "cpu"
 
     # set up model
     if args.model == "llama-1B":
@@ -260,8 +283,18 @@ def main(args) -> None:
     elif args.model == "qwen-8B":
         model_name = "Qwen/Qwen3-8B" 
         max_input_len = 3000
+    elif args.model == "qwen-32B":
+        model_name = "Qwen/Qwen3-32B"
+        max_input_len = 1500
+    elif args.model == "gemma-12B":
+        model_name = "gemma/gemma-3-12b-it"
+        max_input_len = 1500
+    elif args.model == "gemma-27B":
+        model_name = "gemma/gemma-3-27b-it"
+        max_input_len = 2000
     else:
-        max_input_len = 3000
+        model_name = args.model_path if args.model_path is not None else args.model
+        max_input_len = 2000
 
     model, tokenizer = load_model(model_name if args.model_path is None else args.model_path, device)
 
@@ -316,7 +349,7 @@ if __name__ == "__main__":
                         help='Single GPU index to use (e.g., 0).')
     parser.add_argument('--cuda',
                         type=str, default=None,
-                        help='Optional comma-separated GPU ids for multi-GPU sharding (e.g., "0,1,2,3").')
+                        help='GPU selection: use comma-separated ids for multi-GPU sharding (e.g. "0,1"); use a single index for one GPU relative to current CUDA_VISIBLE_DEVICES (e.g. "0").')
     parser.add_argument('--dataset',
             type = str, default = "math",
             help = 'The dataset to evaluate on: math or facts')
