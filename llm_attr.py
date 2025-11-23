@@ -1164,7 +1164,7 @@ class LLMGradientAttribtion(LLMAttribution):
         model_dtype = next(self.model.parameters()).dtype
 
         # we calculate the gradients of predicting self.generation_ids[step] 
-        # by updating the input to be propmpt + self.generation_ids[:step]
+        # by updating the input to be prompt + self.generation_ids[:step]
         # for step in tqdm(range(generation_length)):
         for step in range(generation_length):
             # take inputs off of the graph to avoid gradient accumulation across steps
