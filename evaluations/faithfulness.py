@@ -27,6 +27,7 @@ utils.logging.set_verbosity_error()  # Suppress standard warnings
 
 import llm_attr
 import llm_attr_eval
+from shared_utils import create_sentences
 
 
 def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], target = None) -> list[torch.Tensor]:
@@ -108,7 +109,7 @@ def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, t
     scores = []
 
     # break prompt into sentences
-    prompt_sentences = llm_attr_eval.create_sentences(" " + prompt, tokenizer)
+    prompt_sentences = create_sentences(" " + prompt, tokenizer)
 
     # batch size is set based on the max_input_len in main(). Currently set to fully fill a 196GB GPU.
     if target is None:

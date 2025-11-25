@@ -3,9 +3,6 @@ import matplotlib.cm as mpl_cm
 from matplotlib import pyplot as plt
 import numpy as np
 import torch
-import spacy
-from spacy.language import Language
-from spacy.tokens import Doc
 
 if not hasattr(mpl_cm, "register_cmap"):
     from matplotlib import colors as _mpl_colors
@@ -38,9 +35,8 @@ if not hasattr(mpl_cm, "register_cmap"):
 import seaborn as sns
 import torch.nn as nn
 import torch.nn.functional as F
-import re
 from tqdm import tqdm
-from typing import Dict, Any, List, Optional, Literal, Tuple, Sequence
+from typing import Dict, Any, List, Optional, Tuple, Sequence
 import textwrap
 from transformers import LongformerTokenizer, LongformerForMaskedLM
 import networkx as nx
@@ -59,112 +55,15 @@ from ifr_core import (
     extract_model_metadata,
 )
 
+from shared_utils import (
+    DEFAULT_GENERATE_KWARGS,
+    DEFAULT_PROMPT_TEMPLATE,
+    create_sentences,
+    create_sentence_masks,
+)
+
 matplotlib.rcParams['text.usetex'] = False
 matplotlib.rcParams['mathtext.default'] = 'regular'
-
-DEFAULT_GENERATE_KWARGS = {"max_new_tokens": 512, "do_sample": False}
-DEFAULT_PROMPT_TEMPLATE = "Context:{context}\n\n\nQuery: {query}"
-
-# sentence detector
-try:
-    nlp = spacy.load("en_core_web_sm")
-    _newline_pipe_position = {"before": "parser"}
-except OSError:
-    nlp = spacy.blank("en")
-    if "sentencizer" not in nlp.pipe_names:
-        nlp.add_pipe("sentencizer")
-    _newline_pipe_position = {"after": "sentencizer"} if "sentencizer" in nlp.pipe_names else {"last": True}
-
-# Custom component to split on capitalized words after newline
-@Language.component("newline_cap_split")
-def newline_cap_split(doc: Doc) -> Doc:
-    for i, token in enumerate(doc):
-        if token.is_title and i > 0:
-            prev_token = doc[i - 1]
-            # Check if there's a newline in the previous token or if next token starts with '='
-            if "\n" in prev_token.text or (prev_token.is_space and "\n" in prev_token.text):
-                token.is_sent_start = True
-    return doc
-
-# Add to pipeline *before* parser
-nlp.add_pipe("newline_cap_split", **_newline_pipe_position)
-
-# Split text into sentences and return the sentences
-def create_sentences(text, tokenizer, return_indices = False, show = False) -> list[str]:
-    sentences = []
-    separators = []
-    indices = []
-
-    # Process the text with spacy
-    doc = nlp(text)
-
-    # Extract sentences
-    sentences = []
-    for sent in doc.sents:
-        sentences.append(sent.text)
-
-    # extract separators
-    cur_start = 0
-    for sentence in sentences:
-        indices.append(cur_start)
-        cur_end = text.find(sentence, cur_start)
-        separator = text[cur_start:cur_end]
-        separators.append(separator)
-        cur_start = cur_end + len(sentence)
-        # print(repr(separator), repr(sentence))
-
-    # combine the separators with the sentences properly
-    for i in range(len(sentences)):
-        if separators[i] == "\n":
-            sentences[i] = sentences[i] + separators[i]
-        else:
-            sentences[i] = separators[i] + sentences[i]  
-
-    # if the text had an eos token (generated text) it will be missed
-    # and attached on the last sentence, so we manually handle it
-    eos = tokenizer.eos_token
-    if eos in sentences[-1]:
-        sentences[-1] = sentences[-1].replace(eos, "")
-        indices.append(len("".join(sentences)))
-        sentences.append(eos)
-
-    indices.append(len(text))
-
-    if return_indices:
-        return sentences, indices
-    else:
-        return sentences
-
-# given words as tokens, and the sentences formed by these tokens,
-# create a binary mask of shape [sentences, tokens] where each 
-# row has a 1 where a token is in the represented sentence
-def create_sentence_masks(tokens, sentences, show = False) -> torch.Tensor:
-    # Initialize mask
-    mask = torch.zeros((len(sentences), len(tokens)))
-
-    sentence_idx = 0
-    sent_pointer = 0  # Pointer in the current sentence
-
-    for token_idx, token in enumerate(tokens):
-        current_sentence = sentences[sentence_idx]
-
-        # Assign token to current sentence
-        mask[sentence_idx, token_idx] = 1
-        
-        if '\n' in token:
-            sent_pointer += len(token) + 1
-        else:
-            sent_pointer += len(token)
-
-        # If end of current sentence, move to next
-        if sent_pointer >= len(current_sentence):
-            sentence_idx += 1
-            sent_pointer = 0
-
-        if sentence_idx >= len(sentences):
-            break
-
-    return mask
 
 class LLMAttribution():
     def __init__(
