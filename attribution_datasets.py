@@ -5,20 +5,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, Iterable, Iterator, List, Optional, Sequence
 
-# Prefer evaluator's sentence splitter; fallback when unavailable (e.g., missing spaCy during quick checks)
-try:  # pragma: no cover - environment-dependent
-    from llm_attr_eval import create_sentences  # type: ignore
-except Exception:  # pragma: no cover - fallback for minimal environment
-    import re
-
-    def create_sentences(text, tokenizer=None) -> list[str]:
-        # Very naive fallback: split by newline first, then by simple punctuation boundaries.
-        parts = []
-        for block in text.split("\n"):
-            # keep delimiters by splitting on (?<=[.!?])
-            xs = re.split(r"(?<=[.!?])\s+", block.strip()) if block.strip() else []
-            parts.extend([x for x in xs if x])
-        return parts or ([text] if text else [])
+# Import sentence splitter from shared utils; fallback when unavailable
+try:
+    from shared_utils import create_sentences, create_sentences_fallback, nlp
+except Exception:
+    from shared_utils import create_sentences_fallback as create_sentences
+    nlp = None
 
 
 @dataclass
@@ -184,16 +176,12 @@ class RulerAttributionDataset(AttributionDataset):
         if not data_path.exists():
             raise FileNotFoundError(f"RULER file not found: {data_path}")
 
-        # Prefer evaluator's spaCy pipeline; fallback to a naive splitter if unavailable
-        try:
-            import llm_attr_eval  # noqa: WPS433
-
+        # Use shared nlp pipeline; fallback to a naive splitter if unavailable
+        if nlp is not None:
             def _sentence_bounds(text: str) -> List[tuple[int, int]]:
-                doc = llm_attr_eval.nlp(text)
+                doc = nlp(text)
                 return [(s.start_char, s.end_char) for s in doc.sents]
-
-        except Exception:
-
+        else:
             def _sentence_bounds(text: str) -> List[tuple[int, int]]:
                 # Naive fallback: split on newlines, produce contiguous ranges
                 bounds: List[tuple[int, int]] = []
@@ -203,7 +191,6 @@ class RulerAttributionDataset(AttributionDataset):
                     end = start + len(part)
                     if end > start:
                         bounds.append((start, end))
-                    # account for newline char except after last part
                     start = end + 1
                 if not bounds:
                     bounds = [(0, len(text))]

@@ -1,78 +1,17 @@
 import torch
 import numpy as np
-import re
 from typing import Dict, Any, Optional, Tuple, List
 from evaluate import load
-import spacy
-from spacy.language import Language
-from spacy.tokens import Doc
 from sentence_transformers import SentenceTransformer, util
-import string
 import math
 
-DEFAULT_GENERATE_KWARGS = {"max_new_tokens": 512, "do_sample": False}
-DEFAULT_PROMPT_TEMPLATE = "Context:{context}\n\n\nQuery: {query}"
+from shared_utils import (
+    DEFAULT_GENERATE_KWARGS,
+    DEFAULT_PROMPT_TEMPLATE,
+    create_sentences,
+    nlp,
+)
 
-# sentence detector
-try:
-    nlp = spacy.load("en_core_web_sm")
-    _newline_pipe_position = {"before": "parser"}
-except OSError:
-    nlp = spacy.blank("en")
-    if "sentencizer" not in nlp.pipe_names:
-        nlp.add_pipe("sentencizer")
-    _newline_pipe_position = {"after": "sentencizer"} if "sentencizer" in nlp.pipe_names else {"last": True}
-
-# Custom component to split on capitalized words after newline
-@Language.component("newline_cap_split")
-def newline_cap_split(doc) -> Doc:
-    for i, token in enumerate(doc):
-        if token.is_title and i > 0:
-            prev_token = doc[i - 1]
-            # Check if there's a newline in the previous token or if next token starts with '='
-            if "\n" in prev_token.text or (prev_token.is_space and "\n" in prev_token.text):
-                token.is_sent_start = True
-    return doc
-
-# Add to pipeline *before* parser
-nlp.add_pipe("newline_cap_split", **_newline_pipe_position)
-
-# Split text into sentences and return the sentences
-def create_sentences(text, tokenizer) -> list[str]:
-    sentences = []
-    separators = []
-
-    # Process the text with spacy
-    doc = nlp(text)
-
-    # Extract sentences
-    sentences = []
-    for sent in doc.sents:
-        sentences.append(sent.text)
-
-    # extract separators
-    cur_start = 0
-    for sentence in sentences:
-        cur_end = text.find(sentence, cur_start)
-        separator = text[cur_start:cur_end]
-        separators.append(separator)
-        cur_start = cur_end + len(sentence)
-
-    # combine the separators with the sentences properly
-    for i in range(len(sentences)):
-        if separators[i] == "\n":
-            sentences[i] = sentences[i] + separators[i]
-        else:
-            sentences[i] = separators[i] + sentences[i]  
-
-    # if the text had an eos token (generated text) it will be missed
-    # and attached on the last sentence, so we manually handle it
-    eos = tokenizer.eos_token
-    if eos in sentences[-1]:
-        sentences[-1] = sentences[-1].replace(eos, "")
-        sentences.append(eos)
-
-    return sentences
 
 class LLMAttributionEvaluator():
     def __init__(
