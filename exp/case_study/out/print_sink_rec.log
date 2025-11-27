@@ -1,0 +1,952 @@
+=== FILE: exp/exp1/out/coverage_math_qwen-8B_IG.jsonl ===
+--- sample 0 (attr_func=IG) ---
+prompt:
+Janet’s ducks lay 16 eggs per day. Unrelated Sentence. She eats three for breakfast every morning and bakes muffins for her friends every day with four. Unrelated Sentence. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. Unrelated Sentence.
+How much in dollars does she make every day at the farmers' market? Unrelated Sentence.
+===
+generation:
+To determine how much Janet makes at the farmers' market every day, let's break down the information step by step:
+
+1. **Total eggs laid per day**: 16 eggs  
+2. **Eggs eaten for breakfast**: 3 eggs  
+3. **Eggs used for muffins**: 4 eggs  
+4. **Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+===
+top sentences (score desc):
+  1) 0.4060 | idx=0 |  Janet’s ducks lay 16 eggs per day.
+  2) 0.1651 | idx=4 |  She sells the remainder at the farmers' market daily for $2 per fresh duck egg.
+  3) 0.1568 | idx=2 |  She eats three for breakfast every morning and bakes muffins for her friends every day with four.
+  4) 0.1132 | idx=7 | How much in dollars does she make every day at the farmers' market?
+  5) 0.0539 | idx=1 |  Unrelated Sentence.
+===
+sink sentences (generation rows selected):
+  row=4 | idx=13 | Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+coverage: [0.5, 0.75, 0.25]
+
+--- sample 1 (attr_func=IG) ---
+prompt:
+Josh decides to try flipping a house. Unrelated Sentence. He buys a house for $80,000 and then puts in $50,000 in repairs. Unrelated Sentence. This increased the value of the house by 150%. Unrelated Sentence.
+How much profit did he make? Unrelated Sentence.
+===
+generation:
+To calculate Josh's profit, let's break down the information step by step:
+
+1. **Original cost of the house**: $80,000  
+2. **Cost of repairs**: $50,000  
+3. **Total cost (initial investment)**:  
+   $$
+   80,000 + 50,000 = 130,000
+   $$
+
+4. **The value of the house increased by 150%**.  
+   - This means the value increased by 150% of the original value.  
+   - The original value of the house was $80,000.  
+   - So, the increase in value is:  
+     $$
+     150\% \times 80,000 = 1.5 \times 80,000 = 120,000
+     $$
+
+5. **New value of the house**:  
+   $$
+   80,000 + 120,000 = 200,000
+   $$
+
+6. **Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+===
+top sentences (score desc):
+  1) 0.4458 | idx=2 |  He buys a house for $80,000 and then puts in $50,000 in repairs.
+  2) 0.1391 | idx=0 |  Josh decides to try flipping a house.
+  3) 0.1330 | idx=4 |  This increased the value of the house by 150%.
+  4) 0.0924 | idx=7 | How much profit did he make?
+  5) 0.0766 | idx=1 |  Unrelated Sentence.
+===
+sink sentences (generation rows selected):
+  row=9 | idx=18 | Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+coverage: [0.5, 0.75, 0.25]
+
+--- sample 2 (attr_func=IG) ---
+prompt:
+Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy. Unrelated Sentence. She gives the chickens their feed in three separate meals. Unrelated Sentence. In the morning, she gives her flock of chickens 15 cups of feed. Unrelated Sentence. In the afternoon, she gives her chickens another 25 cups of feed. Unrelated Sentence.
+How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens? Unrelated Sentence.
+===
+generation:
+To determine how many cups of feed Wendi needs to give her chickens in the final meal of the day, let's break down the information:
+
+1. **Each chicken gets 3 cups of feed per day.**  
+   - Wendi has **20 chickens**.
+   - So, total feed per day = $ 20 \text{ chickens} \times 3 \text{ cups/chicken} = 60 \text{ cups} $.
+
+2. **She gives feed in three separate meals:**
+   - **Morning:** 15 cups  
+   - **Afternoon:** 25 cups  
+   - **Final meal (evening):** ? cups
+
+3. **Total feed given in the first two meals:**  
+   $ 15 + 25 = 40 $ cups
+
+4. **Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+===
+top sentences (score desc):
+  1) 0.2521 | idx=0 |  Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy.
+  2) 0.2444 | idx=9 | How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+  3) 0.1786 | idx=4 |  In the morning, she gives her flock of chickens 15 cups of feed.
+  4) 0.0854 | idx=6 |  In the afternoon, she gives her chickens another 25 cups of feed.
+  5) 0.0740 | idx=2 |  She gives the chickens their feed in three separate meals.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=19 | Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+coverage: [0.4, 0.4, 0.2]
+
+--- sample 3 (attr_func=IG) ---
+prompt:
+Kylar went to the store to buy glasses for his new apartment. Unrelated Sentence. One glass costs $5, but every second glass costs only 60% of the price. Unrelated Sentence. Kylar wants to buy 16 glasses. Unrelated Sentence.
+How much does he need to pay for them? Unrelated Sentence.
+===
+generation:
+To calculate how much Kylar needs to pay for 16 glasses, let's break it down based on the pricing structure:
+
+- The first glass costs **$5**.
+- Every **second glass** costs **60% of the price**, which is **$5 × 0.60 = $3**.
+
+So, the pattern is:  
+**$5, $3, $5, $3, ...** and so on.
+
+Since Kylar is buying **16 glasses**, we can group them into pairs:
+
+- There are **8 pairs** of glasses (since 16 ÷÷ 2 = 8).
+- Each pair costs **$5 + $3 = $8**.
+- So, the total cost is **8 × $8 = $64**.
+
+### Final Answer: **$64**
+===
+top sentences (score desc):
+  1) 0.3633 | idx=2 |  One glass costs $5, but every second glass costs only 60% of the price.
+  2) 0.2350 | idx=0 |  Kylar went to the store to buy glasses for his new apartment.
+  3) 0.0977 | idx=7 | How much does he need to pay for them?
+  4) 0.0821 | idx=1 |  Unrelated Sentence.
+  5) 0.0796 | idx=8 |  Unrelated Sentence.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=17 | 
+
+### Final Answer: **$64**
+coverage: [0.25, 0.5, 0.5]
+
+--- sample 4 (attr_func=IG) ---
+prompt:
+Carla is downloading a 200 GB file. Unrelated Sentence. Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes. Unrelated Sentence. Then Carla has to restart the download from the beginning. Unrelated Sentence.
+How long does it take to download the file? Unrelated Sentence.
+===
+generation:
+To calculate how long it takes Carla to download the 200 GB file, let's break the process into steps:
+
+1. **Total file size:** 200 GB  
+2. **Download speed:** 2 GB per minute  
+3. **Download progress before restart:** 40% of 200 GB = 0.4 × 200 = **80 GB**  
+4. **Time to download 80 GB:**  
+   $$
+   \frac{80 \text{ GB}}{2 \text{ GB/minute}} = 40 \text{ minutes}
+   $$
+
+5. **Windows restart takes:** 20 minutes  
+6. **After restart, Carla has to download the entire file again from the beginning:**  
+   $$
+   \frac{200 \text{ GB}}{2 \text{ GB/minute}} = 100 \text{ minutes}
+   $$
+
+7. **Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+===
+top sentences (score desc):
+  1) 0.4290 | idx=2 |  Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes.
+  2) 0.3292 | idx=0 |  Carla is downloading a 200 GB file.
+  3) 0.0807 | idx=7 | How long does it take to download the file?
+  4) 0.0458 | idx=8 |  Unrelated Sentence.
+  5) 0.0352 | idx=4 |  Then Carla has to restart the download from the beginning.
+===
+sink sentences (generation rows selected):
+  row=7 | idx=16 | Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+coverage: [0.25, 0.5, 0.5]
+
+
+=== FILE: exp/exp1/out/coverage_math_qwen-8B_ifr_multi_hop.jsonl ===
+--- sample 0 (attr_func=ifr_multi_hop) ---
+prompt:
+Janet’s ducks lay 16 eggs per day. Unrelated Sentence. She eats three for breakfast every morning and bakes muffins for her friends every day with four. Unrelated Sentence. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. Unrelated Sentence.
+How much in dollars does she make every day at the farmers' market? Unrelated Sentence.
+===
+generation:
+To determine how much Janet makes at the farmers' market every day, let's break down the information step by step:
+
+1. **Total eggs laid per day**: 16 eggs  
+2. **Eggs eaten for breakfast**: 3 eggs  
+3. **Eggs used for muffins**: 4 eggs  
+4. **Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+===
+top sentences (score desc):
+  1) 0.2396 | idx=7 | How much in dollars does she make every day at the farmers' market?
+  2) 0.2340 | idx=4 |  She sells the remainder at the farmers' market daily for $2 per fresh duck egg.
+  3) 0.1771 | idx=2 |  She eats three for breakfast every morning and bakes muffins for her friends every day with four.
+  4) 0.1632 | idx=8 |  Unrelated Sentence.
+  5) 0.1342 | idx=0 |  Janet’s ducks lay 16 eggs per day.
+===
+sink sentences (generation rows selected):
+  row=4 | idx=13 | Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+coverage: [0.75, 0.75, 0.0]
+
+--- sample 1 (attr_func=ifr_multi_hop) ---
+prompt:
+Josh decides to try flipping a house. Unrelated Sentence. He buys a house for $80,000 and then puts in $50,000 in repairs. Unrelated Sentence. This increased the value of the house by 150%. Unrelated Sentence.
+How much profit did he make? Unrelated Sentence.
+===
+generation:
+To calculate Josh's profit, let's break down the information step by step:
+
+1. **Original cost of the house**: $80,000  
+2. **Cost of repairs**: $50,000  
+3. **Total cost (initial investment)**:  
+   $$
+   80,000 + 50,000 = 130,000
+   $$
+
+4. **The value of the house increased by 150%**.  
+   - This means the value increased by 150% of the original value.  
+   - The original value of the house was $80,000.  
+   - So, the increase in value is:  
+     $$
+     150\% \times 80,000 = 1.5 \times 80,000 = 120,000
+     $$
+
+5. **New value of the house**:  
+   $$
+   80,000 + 120,000 = 200,000
+   $$
+
+6. **Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+===
+top sentences (score desc):
+  1) 0.2827 | idx=2 |  He buys a house for $80,000 and then puts in $50,000 in repairs.
+  2) 0.2444 | idx=4 |  This increased the value of the house by 150%.
+  3) 0.1870 | idx=7 | How much profit did he make?
+  4) 0.1681 | idx=8 |  Unrelated Sentence.
+  5) 0.0507 | idx=0 |  Josh decides to try flipping a house.
+===
+sink sentences (generation rows selected):
+  row=9 | idx=18 | Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+coverage: [0.5, 0.5, 0.25]
+
+--- sample 2 (attr_func=ifr_multi_hop) ---
+prompt:
+Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy. Unrelated Sentence. She gives the chickens their feed in three separate meals. Unrelated Sentence. In the morning, she gives her flock of chickens 15 cups of feed. Unrelated Sentence. In the afternoon, she gives her chickens another 25 cups of feed. Unrelated Sentence.
+How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens? Unrelated Sentence.
+===
+generation:
+To determine how many cups of feed Wendi needs to give her chickens in the final meal of the day, let's break down the information:
+
+1. **Each chicken gets 3 cups of feed per day.**  
+   - Wendi has **20 chickens**.
+   - So, total feed per day = $ 20 \text{ chickens} \times 3 \text{ cups/chicken} = 60 \text{ cups} $.
+
+2. **She gives feed in three separate meals:**
+   - **Morning:** 15 cups  
+   - **Afternoon:** 25 cups  
+   - **Final meal (evening):** ? cups
+
+3. **Total feed given in the first two meals:**  
+   $ 15 + 25 = 40 $ cups
+
+4. **Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+===
+top sentences (score desc):
+  1) 0.3618 | idx=9 | How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+  2) 0.1554 | idx=10 |  Unrelated Sentence.
+  3) 0.1319 | idx=0 |  Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy.
+  4) 0.1184 | idx=6 |  In the afternoon, she gives her chickens another 25 cups of feed.
+  5) 0.1164 | idx=4 |  In the morning, she gives her flock of chickens 15 cups of feed.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=19 | Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+coverage: [0.6, 0.6, 0.0]
+
+--- sample 3 (attr_func=ifr_multi_hop) ---
+prompt:
+Kylar went to the store to buy glasses for his new apartment. Unrelated Sentence. One glass costs $5, but every second glass costs only 60% of the price. Unrelated Sentence. Kylar wants to buy 16 glasses. Unrelated Sentence.
+How much does he need to pay for them? Unrelated Sentence.
+===
+generation:
+To calculate how much Kylar needs to pay for 16 glasses, let's break it down based on the pricing structure:
+
+- The first glass costs **$5**.
+- Every **second glass** costs **60% of the price**, which is **$5 × 0.60 = $3**.
+
+So, the pattern is:  
+**$5, $3, $5, $3, ...** and so on.
+
+Since Kylar is buying **16 glasses**, we can group them into pairs:
+
+- There are **8 pairs** of glasses (since 16 ÷÷ 2 = 8).
+- Each pair costs **$5 + $3 = $8**.
+- So, the total cost is **8 × $8 = $64**.
+
+### Final Answer: **$64**
+===
+top sentences (score desc):
+  1) 0.3626 | idx=2 |  One glass costs $5, but every second glass costs only 60% of the price.
+  2) 0.2284 | idx=8 |  Unrelated Sentence.
+  3) 0.1504 | idx=7 | How much does he need to pay for them?
+  4) 0.1200 | idx=4 |  Kylar wants to buy 16 glasses.
+  5) 0.0780 | idx=0 |  Kylar went to the store to buy glasses for his new apartment.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=17 | 
+
+### Final Answer: **$64**
+coverage: [0.25, 0.25, 0.25]
+
+--- sample 4 (attr_func=ifr_multi_hop) ---
+prompt:
+Carla is downloading a 200 GB file. Unrelated Sentence. Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes. Unrelated Sentence. Then Carla has to restart the download from the beginning. Unrelated Sentence.
+How long does it take to download the file? Unrelated Sentence.
+===
+generation:
+To calculate how long it takes Carla to download the 200 GB file, let's break the process into steps:
+
+1. **Total file size:** 200 GB  
+2. **Download speed:** 2 GB per minute  
+3. **Download progress before restart:** 40% of 200 GB = 0.4 × 200 = **80 GB**  
+4. **Time to download 80 GB:**  
+   $$
+   \frac{80 \text{ GB}}{2 \text{ GB/minute}} = 40 \text{ minutes}
+   $$
+
+5. **Windows restart takes:** 20 minutes  
+6. **After restart, Carla has to download the entire file again from the beginning:**  
+   $$
+   \frac{200 \text{ GB}}{2 \text{ GB/minute}} = 100 \text{ minutes}
+   $$
+
+7. **Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+===
+top sentences (score desc):
+  1) 0.3992 | idx=2 |  Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes.
+  2) 0.1730 | idx=7 | How long does it take to download the file?
+  3) 0.1568 | idx=8 |  Unrelated Sentence.
+  4) 0.1263 | idx=4 |  Then Carla has to restart the download from the beginning.
+  5) 0.1013 | idx=0 |  Carla is downloading a 200 GB file.
+===
+sink sentences (generation rows selected):
+  row=7 | idx=16 | Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+coverage: [0.25, 0.5, 0.25]
+
+
+=== FILE: exp/exp1/out/faithfulness_math_qwen-8B_IG.jsonl ===
+--- sample 0 (attr_func=IG) ---
+prompt:
+Janet’s ducks lay 16 eggs per day. Unrelated Sentence. She eats three for breakfast every morning and bakes muffins for her friends every day with four. Unrelated Sentence. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. Unrelated Sentence.
+How much in dollars does she make every day at the farmers' market? Unrelated Sentence.
+===
+generation:
+To determine how much Janet makes at the farmers' market every day, let's break down the information step by step:
+
+1. **Total eggs laid per day**: 16 eggs  
+2. **Eggs eaten for breakfast**: 3 eggs  
+3. **Eggs used for muffins**: 4 eggs  
+4. **Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+===
+top sentences (score desc):
+  1) 0.4060 | idx=0 |  Janet’s ducks lay 16 eggs per day.
+  2) 0.1651 | idx=4 |  She sells the remainder at the farmers' market daily for $2 per fresh duck egg.
+  3) 0.1568 | idx=2 |  She eats three for breakfast every morning and bakes muffins for her friends every day with four.
+  4) 0.1132 | idx=7 | How much in dollars does she make every day at the farmers' market?
+  5) 0.0539 | idx=1 |  Unrelated Sentence.
+===
+sink sentences (generation rows selected):
+  row=4 | idx=13 | Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+faithfulness: {'RISE': 0.17645000280983547, 'MAS': 0.2317481535709569, 'RISE_AP': 0.2317481879144907}
+
+--- sample 1 (attr_func=IG) ---
+prompt:
+Josh decides to try flipping a house. Unrelated Sentence. He buys a house for $80,000 and then puts in $50,000 in repairs. Unrelated Sentence. This increased the value of the house by 150%. Unrelated Sentence.
+How much profit did he make? Unrelated Sentence.
+===
+generation:
+To calculate Josh's profit, let's break down the information step by step:
+
+1. **Original cost of the house**: $80,000  
+2. **Cost of repairs**: $50,000  
+3. **Total cost (initial investment)**:  
+   $$
+   80,000 + 50,000 = 130,000
+   $$
+
+4. **The value of the house increased by 150%**.  
+   - This means the value increased by 150% of the original value.  
+   - The original value of the house was $80,000.  
+   - So, the increase in value is:  
+     $$
+     150\% \times 80,000 = 1.5 \times 80,000 = 120,000
+     $$
+
+5. **New value of the house**:  
+   $$
+   80,000 + 120,000 = 200,000
+   $$
+
+6. **Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+===
+top sentences (score desc):
+  1) 0.4458 | idx=2 |  He buys a house for $80,000 and then puts in $50,000 in repairs.
+  2) 0.1391 | idx=0 |  Josh decides to try flipping a house.
+  3) 0.1330 | idx=4 |  This increased the value of the house by 150%.
+  4) 0.0924 | idx=7 | How much profit did he make?
+  5) 0.0766 | idx=1 |  Unrelated Sentence.
+===
+sink sentences (generation rows selected):
+  row=9 | idx=18 | Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+faithfulness: {'RISE': 0.16908337648886584, 'MAS': 0.217606172040311, 'RISE_AP': 0.21760626694841065}
+
+--- sample 2 (attr_func=IG) ---
+prompt:
+Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy. Unrelated Sentence. She gives the chickens their feed in three separate meals. Unrelated Sentence. In the morning, she gives her flock of chickens 15 cups of feed. Unrelated Sentence. In the afternoon, she gives her chickens another 25 cups of feed. Unrelated Sentence.
+How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens? Unrelated Sentence.
+===
+generation:
+To determine how many cups of feed Wendi needs to give her chickens in the final meal of the day, let's break down the information:
+
+1. **Each chicken gets 3 cups of feed per day.**  
+   - Wendi has **20 chickens**.
+   - So, total feed per day = $ 20 \text{ chickens} \times 3 \text{ cups/chicken} = 60 \text{ cups} $.
+
+2. **She gives feed in three separate meals:**
+   - **Morning:** 15 cups  
+   - **Afternoon:** 25 cups  
+   - **Final meal (evening):** ? cups
+
+3. **Total feed given in the first two meals:**  
+   $ 15 + 25 = 40 $ cups
+
+4. **Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+===
+top sentences (score desc):
+  1) 0.2521 | idx=0 |  Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy.
+  2) 0.2444 | idx=9 | How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+  3) 0.1786 | idx=4 |  In the morning, she gives her flock of chickens 15 cups of feed.
+  4) 0.0854 | idx=6 |  In the afternoon, she gives her chickens another 25 cups of feed.
+  5) 0.0740 | idx=2 |  She gives the chickens their feed in three separate meals.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=19 | Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+faithfulness: {'RISE': 0.13248581634797227, 'MAS': 0.26764110254745505, 'RISE_AP': 0.26764112164520154}
+
+--- sample 3 (attr_func=IG) ---
+prompt:
+Kylar went to the store to buy glasses for his new apartment. Unrelated Sentence. One glass costs $5, but every second glass costs only 60% of the price. Unrelated Sentence. Kylar wants to buy 16 glasses. Unrelated Sentence.
+How much does he need to pay for them? Unrelated Sentence.
+===
+generation:
+To calculate how much Kylar needs to pay for 16 glasses, let's break it down based on the pricing structure:
+
+- The first glass costs **$5**.
+- Every **second glass** costs **60% of the price**, which is **$5 × 0.60 = $3**.
+
+So, the pattern is:  
+**$5, $3, $5, $3, ...** and so on.
+
+Since Kylar is buying **16 glasses**, we can group them into pairs:
+
+- There are **8 pairs** of glasses (since 16 ÷÷ 2 = 8).
+- Each pair costs **$5 + $3 = $8**.
+- So, the total cost is **8 × $8 = $64**.
+
+### Final Answer: **$64**
+===
+top sentences (score desc):
+  1) 0.3633 | idx=2 |  One glass costs $5, but every second glass costs only 60% of the price.
+  2) 0.2350 | idx=0 |  Kylar went to the store to buy glasses for his new apartment.
+  3) 0.0977 | idx=7 | How much does he need to pay for them?
+  4) 0.0821 | idx=1 |  Unrelated Sentence.
+  5) 0.0796 | idx=8 |  Unrelated Sentence.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=17 | 
+
+### Final Answer: **$64**
+faithfulness: {'RISE': 0.18076027033884623, 'MAS': 0.23742434944208682, 'RISE_AP': 0.23742441762166303}
+
+--- sample 4 (attr_func=IG) ---
+prompt:
+Carla is downloading a 200 GB file. Unrelated Sentence. Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes. Unrelated Sentence. Then Carla has to restart the download from the beginning. Unrelated Sentence.
+How long does it take to download the file? Unrelated Sentence.
+===
+generation:
+To calculate how long it takes Carla to download the 200 GB file, let's break the process into steps:
+
+1. **Total file size:** 200 GB  
+2. **Download speed:** 2 GB per minute  
+3. **Download progress before restart:** 40% of 200 GB = 0.4 × 200 = **80 GB**  
+4. **Time to download 80 GB:**  
+   $$
+   \frac{80 \text{ GB}}{2 \text{ GB/minute}} = 40 \text{ minutes}
+   $$
+
+5. **Windows restart takes:** 20 minutes  
+6. **After restart, Carla has to download the entire file again from the beginning:**  
+   $$
+   \frac{200 \text{ GB}}{2 \text{ GB/minute}} = 100 \text{ minutes}
+   $$
+
+7. **Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+===
+top sentences (score desc):
+  1) 0.4290 | idx=2 |  Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes.
+  2) 0.3292 | idx=0 |  Carla is downloading a 200 GB file.
+  3) 0.0807 | idx=7 | How long does it take to download the file?
+  4) 0.0458 | idx=8 |  Unrelated Sentence.
+  5) 0.0352 | idx=4 |  Then Carla has to restart the download from the beginning.
+===
+sink sentences (generation rows selected):
+  row=7 | idx=16 | Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+faithfulness: {'RISE': 0.15096233321525565, 'MAS': 0.22068434075237642, 'RISE_AP': 0.22068435163929034}
+
+
+=== FILE: exp/exp1/out/faithfulness_math_qwen-8B_ifr_multi_hop.jsonl ===
+--- sample 0 (attr_func=ifr_multi_hop) ---
+prompt:
+Janet’s ducks lay 16 eggs per day. Unrelated Sentence. She eats three for breakfast every morning and bakes muffins for her friends every day with four. Unrelated Sentence. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. Unrelated Sentence.
+How much in dollars does she make every day at the farmers' market? Unrelated Sentence.
+===
+generation:
+To determine how much Janet makes at the farmers' market every day, let's break down the information step by step:
+
+1. **Total eggs laid per day**: 16 eggs  
+2. **Eggs eaten for breakfast**: 3 eggs  
+3. **Eggs used for muffins**: 4 eggs  
+4. **Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+===
+top sentences (score desc):
+  1) 0.2396 | idx=7 | How much in dollars does she make every day at the farmers' market?
+  2) 0.2340 | idx=4 |  She sells the remainder at the farmers' market daily for $2 per fresh duck egg.
+  3) 0.1771 | idx=2 |  She eats three for breakfast every morning and bakes muffins for her friends every day with four.
+  4) 0.1632 | idx=8 |  Unrelated Sentence.
+  5) 0.1342 | idx=0 |  Janet’s ducks lay 16 eggs per day.
+===
+sink sentences (generation rows selected):
+  row=4 | idx=13 | Price per egg at the market**: $2 per egg  
+
+### Step 1: Calculate the number of eggs sold at the market
+$$
+\text{Eggs sold} = \text{Total eggs} - \text{Eggs eaten} - \text{Eggs used for muffins}
+$$
+$$
+\text{Eggs sold} = 16 - 3 - 4 = 9 \text{ eggs}
+$$
+
+### Step 2: Calculate the daily earnings
+$$
+\text{Daily earnings} = \text{Eggs sold} \times \text{Price per egg}
+$$
+$$
+\text{Daily earnings} = 9 \times 2 = 18 \text{ dollars}
+$$
+
+### Final Answer:
+$$
+\boxed{18}
+$$
+faithfulness: {'RISE': 0.18791413142877575, 'MAS': 0.28130254327036097, 'RISE_AP': 0.28130259414013753}
+
+--- sample 1 (attr_func=ifr_multi_hop) ---
+prompt:
+Josh decides to try flipping a house. Unrelated Sentence. He buys a house for $80,000 and then puts in $50,000 in repairs. Unrelated Sentence. This increased the value of the house by 150%. Unrelated Sentence.
+How much profit did he make? Unrelated Sentence.
+===
+generation:
+To calculate Josh's profit, let's break down the information step by step:
+
+1. **Original cost of the house**: $80,000  
+2. **Cost of repairs**: $50,000  
+3. **Total cost (initial investment)**:  
+   $$
+   80,000 + 50,000 = 130,000
+   $$
+
+4. **The value of the house increased by 150%**.  
+   - This means the value increased by 150% of the original value.  
+   - The original value of the house was $80,000.  
+   - So, the increase in value is:  
+     $$
+     150\% \times 80,000 = 1.5 \times 80,000 = 120,000
+     $$
+
+5. **New value of the house**:  
+   $$
+   80,000 + 120,000 = 200,000
+   $$
+
+6. **Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+===
+top sentences (score desc):
+  1) 0.2827 | idx=2 |  He buys a house for $80,000 and then puts in $50,000 in repairs.
+  2) 0.2444 | idx=4 |  This increased the value of the house by 150%.
+  3) 0.1870 | idx=7 | How much profit did he make?
+  4) 0.1681 | idx=8 |  Unrelated Sentence.
+  5) 0.0507 | idx=0 |  Josh decides to try flipping a house.
+===
+sink sentences (generation rows selected):
+  row=9 | idx=18 | Profit = New value - Total cost**  
+   $$
+   200,000 - 130,000 = 70,000
+   $$
+
+### ✅✅ Final Answer: Josh made a profit of **$70,000**.
+faithfulness: {'RISE': 0.15216640773347143, 'MAS': 0.24825948739693526, 'RISE_AP': 0.2482594915976127}
+
+--- sample 2 (attr_func=ifr_multi_hop) ---
+prompt:
+Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy. Unrelated Sentence. She gives the chickens their feed in three separate meals. Unrelated Sentence. In the morning, she gives her flock of chickens 15 cups of feed. Unrelated Sentence. In the afternoon, she gives her chickens another 25 cups of feed. Unrelated Sentence.
+How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens? Unrelated Sentence.
+===
+generation:
+To determine how many cups of feed Wendi needs to give her chickens in the final meal of the day, let's break down the information:
+
+1. **Each chicken gets 3 cups of feed per day.**  
+   - Wendi has **20 chickens**.
+   - So, total feed per day = $ 20 \text{ chickens} \times 3 \text{ cups/chicken} = 60 \text{ cups} $.
+
+2. **She gives feed in three separate meals:**
+   - **Morning:** 15 cups  
+   - **Afternoon:** 25 cups  
+   - **Final meal (evening):** ? cups
+
+3. **Total feed given in the first two meals:**  
+   $ 15 + 25 = 40 $ cups
+
+4. **Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+===
+top sentences (score desc):
+  1) 0.3618 | idx=9 | How many cups of feed does she need to give her chickens in the final meal of the day if the size of Wendi's flock is 20 chickens?
+  2) 0.1554 | idx=10 |  Unrelated Sentence.
+  3) 0.1319 | idx=0 |  Every day, Wendi feeds each of her chickens three cups of mixed chicken feed, containing seeds, mealworms and vegetables to help keep them healthy.
+  4) 0.1184 | idx=6 |  In the afternoon, she gives her chickens another 25 cups of feed.
+  5) 0.1164 | idx=4 |  In the morning, she gives her flock of chickens 15 cups of feed.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=19 | Remaining feed for the final meal:**  
+   $ 60 - 40 = 20 $ cups
+
+### ✅✅ Final Answer: **20 cups** of feed.
+faithfulness: {'RISE': 0.12767197081128578, 'MAS': 0.22169342160060698, 'RISE_AP': 0.22169348466294733}
+
+--- sample 3 (attr_func=ifr_multi_hop) ---
+prompt:
+Kylar went to the store to buy glasses for his new apartment. Unrelated Sentence. One glass costs $5, but every second glass costs only 60% of the price. Unrelated Sentence. Kylar wants to buy 16 glasses. Unrelated Sentence.
+How much does he need to pay for them? Unrelated Sentence.
+===
+generation:
+To calculate how much Kylar needs to pay for 16 glasses, let's break it down based on the pricing structure:
+
+- The first glass costs **$5**.
+- Every **second glass** costs **60% of the price**, which is **$5 × 0.60 = $3**.
+
+So, the pattern is:  
+**$5, $3, $5, $3, ...** and so on.
+
+Since Kylar is buying **16 glasses**, we can group them into pairs:
+
+- There are **8 pairs** of glasses (since 16 ÷÷ 2 = 8).
+- Each pair costs **$5 + $3 = $8**.
+- So, the total cost is **8 × $8 = $64**.
+
+### Final Answer: **$64**
+===
+top sentences (score desc):
+  1) 0.3626 | idx=2 |  One glass costs $5, but every second glass costs only 60% of the price.
+  2) 0.2284 | idx=8 |  Unrelated Sentence.
+  3) 0.1504 | idx=7 | How much does he need to pay for them?
+  4) 0.1200 | idx=4 |  Kylar wants to buy 16 glasses.
+  5) 0.0780 | idx=0 |  Kylar went to the store to buy glasses for his new apartment.
+===
+sink sentences (generation rows selected):
+  row=8 | idx=17 | 
+
+### Final Answer: **$64**
+faithfulness: {'RISE': 0.13342790579660002, 'MAS': 0.23143253934171998, 'RISE_AP': 0.23143254220485687}
+
+--- sample 4 (attr_func=ifr_multi_hop) ---
+prompt:
+Carla is downloading a 200 GB file. Unrelated Sentence. Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes. Unrelated Sentence. Then Carla has to restart the download from the beginning. Unrelated Sentence.
+How long does it take to download the file? Unrelated Sentence.
+===
+generation:
+To calculate how long it takes Carla to download the 200 GB file, let's break the process into steps:
+
+1. **Total file size:** 200 GB  
+2. **Download speed:** 2 GB per minute  
+3. **Download progress before restart:** 40% of 200 GB = 0.4 × 200 = **80 GB**  
+4. **Time to download 80 GB:**  
+   $$
+   \frac{80 \text{ GB}}{2 \text{ GB/minute}} = 40 \text{ minutes}
+   $$
+
+5. **Windows restart takes:** 20 minutes  
+6. **After restart, Carla has to download the entire file again from the beginning:**  
+   $$
+   \frac{200 \text{ GB}}{2 \text{ GB/minute}} = 100 \text{ minutes}
+   $$
+
+7. **Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+===
+top sentences (score desc):
+  1) 0.3992 | idx=2 |  Normally she can download 2 GB/minute, but 40% of the way through the download, Windows forces a restart to install updates, which takes 20 minutes.
+  2) 0.1730 | idx=7 | How long does it take to download the file?
+  3) 0.1568 | idx=8 |  Unrelated Sentence.
+  4) 0.1263 | idx=4 |  Then Carla has to restart the download from the beginning.
+  5) 0.1013 | idx=0 |  Carla is downloading a 200 GB file.
+===
+sink sentences (generation rows selected):
+  row=7 | idx=16 | Total time:**  
+   $$
+   40 \text{ minutes (initial download)} + 20 \text{ minutes (restart)} + 100 \text{ minutes (full download again)} = 160 \text{ minutes}
+   $$
+
+### ✅✅ Final Answer: **160 minutes**
+faithfulness: {'RISE': 0.1425394576297871, 'MAS': 0.22709678118007043, 'RISE_AP': 0.22709682940815887}
+
+

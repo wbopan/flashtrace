@@ -77,6 +77,4 @@
 # python3 faithfulness.py --model qwen-4B   --cuda_num 0 --num_examples 500 --attr_func perturbation_all --dataset morehopqa
 # python3 faithfulness.py --model qwen-8B   --cuda_num 0 --num_examples 500 --attr_func perturbation_all --dataset morehopqa
 
-
-python3 faithfulness.py --model llama-3B  --cuda_num 0 --num_examples 500 --attr_func perturbation_all --dataset math
-python3 faithfulness.py --model llama-8B  --cuda_num 0 --num_examples 500 --attr_func perturbation_all --dataset math
+CUDA_VISIBLE_DEVICES=4,6 python3 evaluations/faithfulness.py --model qwen-8B --model_path /opt/share/models/Qwen/Qwen3-8B/ --cuda '0,1' --num_examples 50 --attr_func IG --dataset math

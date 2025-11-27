@@ -204,12 +204,34 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)  # if multi-GPU
 
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        device_map=device, # dispatch efficiently the model on the available ressources
-        attn_implementation="eager",
-        torch_dtype=torch.float16
-    )
+    # Respect three modes:
+    # - device == 'auto'               -> multi-GPU sharding across all visible devices
+    # - device startswith('cuda:IDX')   -> place entire model on a single GPU IDX (relative to visible devices)
+    # - device == 'cpu'                -> CPU
+    if device == "auto":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            device_map="auto",
+            attn_implementation="eager",
+            torch_dtype=torch.float16,
+        )
+    elif isinstance(device, str) and device.startswith("cuda:"):
+        try:
+            gpu_idx = int(device.split(":")[1])
+        except Exception:
+            gpu_idx = 0
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            device_map={"": gpu_idx},
+            attn_implementation="eager",
+            torch_dtype=torch.float16,
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            attn_implementation="eager",
+            torch_dtype=torch.float16,
+        )
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -221,7 +243,21 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
 def main(args) -> None:
     # login(token = "")
     
-    device = 'cuda:' + str(args.cuda_num) if torch.cuda.is_available() else 'cpu'
+    # Device selection policy (mirrors attribution_coverage):
+    # - If --cuda is a comma-separated list (e.g. "0,1"), set visibility to that list and shard with device_map='auto'.
+    # - If --cuda is a single index (e.g. "0"), do NOT override CUDA_VISIBLE_DEVICES; place model on cuda:{index}.
+    # - Else (no --cuda), use --cuda_num as single-device index relative to current visibility.
+    if args.cuda is not None and isinstance(args.cuda, str) and "," in args.cuda:
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda
+        device = "auto"
+    elif args.cuda is not None and isinstance(args.cuda, str) and args.cuda.strip() != "":
+        try:
+            idx = int(args.cuda)
+        except Exception:
+            idx = 0
+        device = f"cuda:{idx}" if torch.cuda.is_available() else "cpu"
+    else:
+        device = f"cuda:{args.cuda_num}" if torch.cuda.is_available() else "cpu"
 
     # set up model
     if args.model == "llama-1B":
@@ -242,8 +278,20 @@ def main(args) -> None:
     elif args.model == "qwen-8B":
         model_name = "Qwen/Qwen3-8B" 
         max_input_len = 3000
+    elif args.model == "qwen-32B":
+        model_name = "Qwen/Qwen3-32B"
+        max_input_len = 1500
+    elif args.model == "gemma-12B":
+        model_name = "gemma/gemma-3-12b-it"
+        max_input_len = 1500
+    elif args.model == "gemma-27B":
+        model_name = "gemma/gemma-3-27b-it"
+        max_input_len = 2000
+    else:
+        model_name = args.model_path if args.model_path is not None else args.model
+        max_input_len = 2000
 
-    model, tokenizer = load_model(model_name, device)
+    model, tokenizer = load_model(model_name if args.model_path is None else args.model_path, device)
 
     dataset_registry = {
         "math": lambda: MathAttributionDataset("./data/math_mine.json", tokenizer),
@@ -282,6 +330,9 @@ if __name__ == "__main__":
                         type = str,
                         default = "llama",
                         help='Model to use: llama or qwen')
+    parser.add_argument('--model_path',
+                        type=str, default=None,
+                        help='Optional local model path to load (overrides model repo id only).')
     parser.add_argument('--attr_func',
                         type = str,
                         default = "IG",
@@ -291,6 +342,9 @@ if __name__ == "__main__":
     parser.add_argument('--cuda_num',
                         type=int, default = 0,
                         help='The number of the GPU you want to use.')
+    parser.add_argument('--cuda',
+                        type=str, default=None,
+                        help='GPU selection: use comma-separated ids for multi-GPU sharding (e.g. "0,1"); use a single index for one GPU relative to current CUDA_VISIBLE_DEVICES (e.g. "0").')
     parser.add_argument('--dataset',
             type = str, default = "math",
             help = 'The dataset to evaluate on: math, facts, or morehopqa')
