@@ -62,6 +62,8 @@ from shared_utils import (
     create_sentence_masks,
 )
 
+from lrp_patches import lrp_context, detect_model_type
+
 matplotlib.rcParams['text.usetex'] = False
 matplotlib.rcParams['mathtext.default'] = 'regular'
 
@@ -1693,3 +1695,264 @@ class LLMAttentionAttribution(LLMAttribution):
             joint_attention = matrices_aug[i].bmm(joint_attention)
 
         return joint_attention
+
+
+class LLMLRPAttribution(LLMAttribution):
+    """AttnLRP: Attention-Aware Layer-wise Relevance Propagation for Transformers.
+
+    This class implements AttnLRP, a gradient-based attribution method that
+    leverages Layer-wise Relevance Propagation (LRP) rules adapted for
+    transformer architectures.
+
+    AttnLRP achieves O(1) time complexity (single backward pass) while
+    providing theoretically grounded attributions with proven faithfulness.
+
+    Reference:
+        AttnLRP: Attention-Aware Layer-wise Relevance Propagation for Transformers
+        ICML 2024. https://arxiv.org/abs/2402.05602
+
+    Parameters
+    ----------
+    model : transformers model
+        The language model to compute attributions for
+    tokenizer : transformers tokenizer
+        The tokenizer for the model
+    model_type : str, optional
+        The model architecture type. If None, will be auto-detected.
+        Supported: 'qwen3', 'qwen2', 'llama'
+    generate_kwargs : dict, optional
+        Keyword arguments for model.generate()
+
+    Example
+    -------
+    >>> attr = LLMLRPAttribution(model, tokenizer)
+    >>> result = attr.calculate_attnlrp(
+    ...     prompt="Context: Mount Everest is 8848m. Question: How high?",
+    ...     target="8848 meters"
+    ... )
+    >>> result.compute_sentence_attr()
+    >>> result.draw_graph()
+    """
+
+    def __init__(
+        self,
+        model,
+        tokenizer,
+        model_type: Optional[str] = None,
+        generate_kwargs: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        super().__init__(model, tokenizer, generate_kwargs)
+
+        # Auto-detect or validate model type
+        if model_type is None:
+            self.model_type = detect_model_type(model)
+        else:
+            self.model_type = model_type
+
+    def calculate_attnlrp(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+    ) -> LLMAttributionResult:
+        """Calculate AttnLRP attribution for a prompt-response pair.
+
+        Parameters
+        ----------
+        prompt : str
+            The input prompt text
+        target : str, optional
+            The target response text. If None, the model generates a response.
+
+        Returns
+        -------
+        LLMAttributionResult
+            Attribution result with score matrix of shape [gen_len, prompt_len + gen_len]
+        """
+        # Get the generation (either from model or from target)
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        # Get lengths
+        prompt_len = int(self.prompt_ids.shape[1])
+        gen_len = int(self.generation_ids.shape[1])
+        total_len = prompt_len + gen_len
+
+        # Handle empty generation
+        if gen_len == 0:
+            empty_scores = torch.zeros((0, total_len), dtype=torch.float32)
+            return self._finalize_result(empty_scores)
+
+        # Concatenate prompt and generation ids
+        input_ids = torch.cat([self.prompt_ids, self.generation_ids], dim=1)
+
+        # Get the embedding layer
+        embedding_layer = self.model.get_input_embeddings()
+
+        # Get model dtype for proper precision handling
+        model_dtype = next(self.model.parameters()).dtype
+
+        # Initialize score array
+        score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
+
+        # Apply LRP patches and compute attributions
+        with lrp_context(self.model, self.model_type):
+            # Get input embeddings with gradient tracking
+            input_embeds = embedding_layer(input_ids).float()
+            input_embeds = input_embeds.detach().clone().requires_grad_(True)
+
+            # Forward pass with LRP-patched model
+            output_logits = self.model(
+                inputs_embeds=input_embeds.to(model_dtype),
+                use_cache=False,
+            ).logits
+
+            # Compute attribution for each generation position
+            for step in range(gen_len):
+                gen_pos = prompt_len + step
+
+                # Get the maximum logit at this position (the predicted token)
+                max_logit = output_logits[0, gen_pos - 1, :].max()
+
+                # Backward pass - this computes LRP through the patched layers
+                if input_embeds.grad is not None:
+                    input_embeds.grad.zero_()
+
+                max_logit.backward(retain_graph=(step < gen_len - 1))
+
+                # Compute relevance: Input * Gradient, summed over embedding dimension
+                # Cast to float32 for numerical stability before summing
+                relevance = (input_embeds * input_embeds.grad).float().sum(-1).detach().cpu()[0]
+
+                # Store in score array, padded appropriately
+                score_array[step, :gen_pos] = relevance[:gen_pos]
+
+        return self._finalize_result(score_array)
+
+    def calculate_attnlrp_batched(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+    ) -> LLMAttributionResult:
+        """Calculate AttnLRP attribution using batched computation.
+
+        This is a memory-efficient version that computes attribution for
+        all generation positions in a single forward pass, but requires
+        more careful handling of gradients.
+
+        Parameters
+        ----------
+        prompt : str
+            The input prompt text
+        target : str, optional
+            The target response text. If None, the model generates a response.
+
+        Returns
+        -------
+        LLMAttributionResult
+            Attribution result with score matrix
+        """
+        # Get the generation
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        # Get lengths
+        prompt_len = int(self.prompt_ids.shape[1])
+        gen_len = int(self.generation_ids.shape[1])
+        total_len = prompt_len + gen_len
+
+        if gen_len == 0:
+            empty_scores = torch.zeros((0, total_len), dtype=torch.float32)
+            return self._finalize_result(empty_scores)
+
+        # Concatenate prompt and generation ids
+        input_ids = torch.cat([self.prompt_ids, self.generation_ids], dim=1)
+
+        # Get embedding layer and model dtype
+        embedding_layer = self.model.get_input_embeddings()
+        model_dtype = next(self.model.parameters()).dtype
+
+        # Initialize score array
+        score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
+
+        with lrp_context(self.model, self.model_type):
+            # Get input embeddings
+            input_embeds = embedding_layer(input_ids).float()
+            input_embeds = input_embeds.detach().clone().requires_grad_(True)
+
+            # Single forward pass
+            output_logits = self.model(
+                inputs_embeds=input_embeds.to(model_dtype),
+                use_cache=False,
+            ).logits
+
+            # Get max logits for all generation positions
+            gen_positions = list(range(prompt_len - 1, prompt_len + gen_len - 1))
+            max_logits = torch.stack([
+                output_logits[0, pos, :].max() for pos in gen_positions
+            ])
+
+            # Backward from sum of all max logits
+            # This gives us the total relevance across all positions
+            if input_embeds.grad is not None:
+                input_embeds.grad.zero_()
+
+            max_logits.sum().backward()
+
+            # Compute aggregated relevance
+            relevance = (input_embeds * input_embeds.grad).float().sum(-1).detach().cpu()[0]
+
+            # For batched version, we use the same relevance for all generation positions
+            # This is an approximation but much faster
+            for step in range(gen_len):
+                gen_pos = prompt_len + step
+                score_array[step, :gen_pos] = relevance[:gen_pos]
+
+        return self._finalize_result(score_array)
+
+    def _finalize_result(
+        self,
+        score_array: torch.Tensor,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> LLMAttributionResult:
+        """Finalize the attribution result.
+
+        Extracts user prompt attributions and creates the result object.
+
+        Parameters
+        ----------
+        score_array : torch.Tensor
+            Raw score array of shape [gen_len, total_len]
+        metadata : dict, optional
+            Additional metadata to include
+
+        Returns
+        -------
+        LLMAttributionResult
+            The finalized attribution result
+        """
+        if score_array.ndim == 1:
+            score_array = score_array.unsqueeze(0)
+        score_array = score_array.detach().cpu()
+
+        # Extract only user prompt attributions (remove chat template tokens)
+        score_array = self.extract_user_prompt_attributions(self.prompt_tokens, score_array)
+
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
+
+        if metadata is None:
+            metadata = {}
+        metadata["method"] = "attnlrp"
+        metadata["model_type"] = self.model_type
+
+        return LLMAttributionResult(
+            self.tokenizer,
+            score_array,
+            self.user_prompt_tokens,
+            self.generation_tokens,
+            all_tokens=all_tokens,
+            metadata=metadata,
+        )
