@@ -233,7 +233,7 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
             torch_dtype=torch.float16,
         )
     model.eval()
-    tokenizer = AutoTokenizer.from_pretrained(model_name, token=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     # Needed for LLaMA tokenizer
     tokenizer.pad_token = tokenizer.eos_token
@@ -274,10 +274,10 @@ def main(args) -> None:
         model_name = "meta-llama/Llama-3.1-8B-Instruct" 
         max_input_len = 3500
     elif args.model == "qwen-1.7B":
-        model_name = "Qwen/Qwen3-1.7B" 
+        model_name = "Qwen/Qwen3-1.7B"
         max_input_len = 5500
     elif args.model == "qwen-4B":
-        model_name = "Qwen/Qwen3-4B" 
+        model_name = "Qwen/Qwen3-4B-Instruct-2507" 
         max_input_len = 3500
     elif args.model == "qwen-8B":
         model_name = "Qwen/Qwen3-8B" 
