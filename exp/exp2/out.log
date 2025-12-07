@@ -1,0 +1,14 @@
+[1/500] judge=kept
+[2/500] judge=kept
+[3/500] judge=kept
+[4/500] judge=kept
+[5/500] judge=kept
+[6/500] judge=kept
+[7/500] skipped=format
+[8/500] judge=kept
+[9/500] skipped=format
+[10/500] judge=kept
+[11/500] skipped=format
+[12/500] judge=kept
+[13/500] judge=kept
+Kept 10 / target 10 (attempted 13 / 500) -> exp/exp2/data/data/ruler_multihop/4096/vt_h10_c1/validation.jsonl.jsonl
