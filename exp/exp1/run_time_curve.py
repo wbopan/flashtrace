@@ -23,24 +23,39 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
+
+
+def _early_set_cuda_visible_devices() -> None:
+    """Parse --cuda early to set CUDA_VISIBLE_DEVICES before torch import."""
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--cuda", type=str, default=None)
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    if args.cuda and "," in args.cuda:
+        os.environ["CUDA_VISIBLE_DEVICES"] = args.cuda
+
+
+_early_set_cuda_visible_devices()
+
 import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 import llm_attr
-from evaluations.attribution_coverage import load_model
 
-DEFAULT_LENGTHS = [10, 2000, 10000]
+DEFAULT_TOTAL_LENGTHS = [1024, 4096, 8192]
+DEFAULT_OUTPUT_LENGTHS = [32, 256, 512]
 DEFAULT_ATTRS = [
     "IG",
-    "attention_I_G",
     "perturbation_all",
+    "attention_I_G",
     "perturbation_REAGENT",
-    "perturbation_CLP",
     "ifr_all_positions",
+    "perturbation_CLP",
     "ifr_multi_hop",
+    "attnlrp",
 ]
 DEFAULT_RULER_FILE = REPO_ROOT / "data" / "ruler_multihop" / "8192" / "vt_h10_c1" / "validation.jsonl"
 
@@ -58,10 +73,22 @@ def parse_args() -> argparse.Namespace:
         help="Comma-separated attribution methods.",
     )
     parser.add_argument(
+        "--total_lengths",
+        type=str,
+        default=",".join(str(x) for x in DEFAULT_TOTAL_LENGTHS),
+        help="Comma-separated target total token lengths (prompt + output).",
+    )
+    parser.add_argument(
+        "--output_lengths",
+        type=str,
+        default=",".join(str(x) for x in DEFAULT_OUTPUT_LENGTHS),
+        help="Comma-separated target output token lengths (sink/output segment).",
+    )
+    parser.add_argument(
         "--lengths",
         type=str,
-        default=",".join(str(x) for x in DEFAULT_LENGTHS),
-        help="Comma-separated target prompt token lengths (only prompt, not including target).",
+        default=None,
+        help="Deprecated alias for --total_lengths (prompt+output).",
     )
     parser.add_argument("--repeats", type=int, default=3, help="Number of runs per cell.")
     parser.add_argument("--output_dir", type=str, default="exp/exp1/out", help="Output directory.")
@@ -84,10 +111,16 @@ def parse_args() -> argparse.Namespace:
         help="IFR sink_chunk_tokens override when context is long.",
     )
     parser.add_argument(
+        "--catch_oom",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="If true, treat CUDA OOM as status=oom and continue; if false, let OOM raise.",
+    )
+    parser.add_argument(
         "--target_text",
         type=str,
         default=" The answer is 42.",
-        help="Fixed target generation to avoid variability.",
+        help="Base text to tile when constructing outputs of a given length.",
     )
     return parser.parse_args()
 
@@ -125,9 +158,7 @@ def build_prompt_to_length(tokenizer, base_text: str, target_tokens: int) -> Tup
     If base_text is shorter, we repeat it; if longer, we truncate.
     """
     if target_tokens <= 0:
-        short = base_text.split("\n")[0]
-        ids = tokenizer(short, add_special_tokens=False).input_ids[:1]
-        return tokenizer.decode(ids, clean_up_tokenization_spaces=False), len(ids)
+        return "", 0
 
     base_ids = tokenizer(base_text, add_special_tokens=False).input_ids
     if not base_ids:
@@ -141,6 +172,25 @@ def build_prompt_to_length(tokenizer, base_text: str, target_tokens: int) -> Tup
     return prompt, len(tiled)
 
 
+def build_output_to_length(tokenizer, base_text: str, target_tokens: int) -> Tuple[str, int]:
+    """
+    Build a target/output string of ~target_tokens using a base snippet.
+    """
+    if target_tokens <= 0:
+        return "", 0
+
+    base_ids = tokenizer(base_text, add_special_tokens=False).input_ids
+    if not base_ids:
+        base_ids = [tokenizer.eos_token_id]
+
+    tiled: List[int] = []
+    while len(tiled) < target_tokens:
+        tiled.extend(base_ids)
+    tiled = tiled[:target_tokens]
+    text = tokenizer.decode(tiled, clean_up_tokenization_spaces=False)
+    return text, len(tiled)
+
+
 def exceeds_model_ctx(tokenizer, prompt: str, target: str, max_ctx: Optional[int]) -> bool:
     if max_ctx is None:
         return False
@@ -148,36 +198,149 @@ def exceeds_model_ctx(tokenizer, prompt: str, target: str, max_ctx: Optional[int
     return total > max_ctx
 
 
-def maybe_reset_cuda(device_str: str) -> None:
-    if torch.cuda.is_available() and device_str != "cpu":
+def load_model_balanced(model_name: str, device: str):
+    """Load model with an explicit balanced device_map when multi-GPU is requested."""
+    if device == "auto":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            device_map="balanced",
+            torch_dtype=torch.float16,
+            attn_implementation="eager",
+        )
+    elif isinstance(device, str) and device.startswith("cuda:"):
         try:
-            torch.cuda.empty_cache()
-            torch.cuda.reset_peak_memory_stats()
+            gpu_idx = int(device.split(":")[1])
+        except Exception:
+            gpu_idx = 0
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            device_map={"": gpu_idx},
+            torch_dtype=torch.float16,
+            attn_implementation="eager",
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch.float16,
+            attn_implementation="eager",
+        )
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer.pad_token = tokenizer.eos_token
+    model.eval()
+    return model, tokenizer
+
+
+def collect_device_indices(device_str: str, model: Any) -> List[int]:
+    """
+    Infer the CUDA device indices that should be tracked for memory stats.
+    Prefers the model's device map; otherwise falls back to all visible devices
+    or the single requested device.
+    """
+    if not torch.cuda.is_available():
+        return []
+
+    devices: set[int] = set()
+    device_map = getattr(model, "hf_device_map", None)
+    if isinstance(device_map, dict):
+        for dev in device_map.values():
+            if dev is None:
+                continue
+            idx: Optional[int] = None
+            if isinstance(dev, torch.device):
+                idx = dev.index if dev.index is not None else (0 if dev.type == "cuda" else None)
+            elif isinstance(dev, str):
+                try:
+                    d = torch.device(dev)
+                    idx = d.index if d.index is not None else (0 if d.type == "cuda" else None)
+                except Exception:
+                    idx = None
+            elif isinstance(dev, int):
+                idx = dev
+            if idx is not None:
+                devices.add(idx)
+
+    if not devices:
+        if device_str == "auto":
+            devices.update(range(torch.cuda.device_count()))
+        elif isinstance(device_str, str) and device_str.startswith("cuda:"):
+            try:
+                devices.add(int(device_str.split(":")[1]))
+            except Exception:
+                pass
+        else:
+            devices.update(range(torch.cuda.device_count()))
+
+    return sorted(devices)
+
+
+def maybe_reset_cuda(device_indices: List[int]) -> None:
+    if not torch.cuda.is_available() or not device_indices:
+        return
+    for idx in device_indices:
+        try:
+            torch.cuda.reset_peak_memory_stats(device=idx)
         except Exception:
             pass
+    try:
+        torch.cuda.empty_cache()
+    except Exception:
+        pass
 
 
-def measure(method_fn, device_str: str) -> Tuple[str, Optional[float], Optional[float]]:
+def measure(
+    method_fn,
+    device_indices: List[int],
+    *,
+    catch_oom: bool,
+) -> Tuple[str, Optional[float], Optional[float], Optional[float], Dict[int, Dict[str, float]]]:
     status = "ok"
     wall: Optional[float] = None
-    mem: Optional[float] = None
+    mem_alloc: Optional[float] = None
+    mem_reserved: Optional[float] = None
+    mem_by_device: Dict[int, Dict[str, float]] = {}
     try:
-        if torch.cuda.is_available() and device_str != "cpu":
-            torch.cuda.synchronize()
+        if torch.cuda.is_available() and device_indices:
+            for idx in device_indices:
+                torch.cuda.synchronize(device=idx)
         t0 = time.time()
         method_fn()
-        if torch.cuda.is_available() and device_str != "cpu":
-            torch.cuda.synchronize()
-            mem = torch.cuda.max_memory_allocated() / 1e9
+        if torch.cuda.is_available() and device_indices:
+            for idx in device_indices:
+                torch.cuda.synchronize(device=idx)
         wall = time.time() - t0
     except RuntimeError as e:
         if "out of memory" in str(e).lower():
             status = "oom"
+            if not catch_oom:
+                raise
         else:
             status = f"runtime_error: {e}"
+            if not catch_oom:
+                raise
     except Exception as e:
         status = f"error: {e}"
-    return status, wall, mem
+        if not catch_oom:
+            raise
+    finally:
+        if torch.cuda.is_available() and device_indices:
+            try:
+                total_alloc = 0.0
+                total_reserved = 0.0
+                for idx in device_indices:
+                    alloc_bytes = torch.cuda.max_memory_allocated(device=idx)
+                    reserved_bytes = torch.cuda.max_memory_reserved(device=idx)
+                    total_alloc += alloc_bytes
+                    total_reserved += reserved_bytes
+                    mem_by_device[idx] = {
+                        "allocated_gb": alloc_bytes / 1e9,
+                        "reserved_gb": reserved_bytes / 1e9,
+                    }
+                mem_alloc = total_alloc / 1e9
+                mem_reserved = total_reserved / 1e9
+            except Exception:
+                pass
+    return status, wall, mem_alloc, mem_reserved, mem_by_device
 
 
 def make_attr_runner(
@@ -245,7 +408,7 @@ def make_attr_runner(
 
     if lf == "ifr_all_positions":
         llm_attrtor = llm_attr.LLMIFRAttribution(
-            model, tokenizer, chunk_tokens=chunk_tokens, sink_chunk_tokens=sink_chunk_tokens
+            model, tokenizer, chunk_tokens=chunk_tokens, sink_chunk_tokens=1
         )
 
         def fn():
@@ -263,6 +426,14 @@ def make_attr_runner(
 
         return fn
 
+    if lf == "attnlrp":
+        llm_attrtor = llm_attr.LLMLRPAttribution(model, tokenizer)
+
+        def fn():
+            return llm_attrtor.calculate_attnlrp(prompt, target=target)
+
+        return fn
+
     raise ValueError(f"Unsupported attr_func {attr_func}")
 
 
@@ -272,25 +443,26 @@ def compute_batch_size(tokenizer, prompt: str, target: str, max_input_len: int) 
 
 
 def aggregate_results(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    grouped: Dict[Tuple[str, int], Dict[str, List[float]]] = defaultdict(lambda: {"time": [], "mem": []})
-    statuses: Dict[Tuple[str, int], List[str]] = defaultdict(list)
+    grouped: Dict[Tuple[str, int, int], Dict[str, List[float]]] = defaultdict(lambda: {"time": [], "mem": []})
+    statuses: Dict[Tuple[str, int, int], List[str]] = defaultdict(list)
     for row in rows:
-        key = (row["attr_func"], row["context_tokens"])
+        key = (row["attr_func"], row["target_total_tokens"], row["target_output_tokens"])
         statuses[key].append(row["status"])
         if row.get("time_sec") is not None:
             grouped[key]["time"].append(row["time_sec"])
-        if row.get("mem_gb") is not None:
-            grouped[key]["mem"].append(row["mem_gb"])
+        if row.get("peak_mem_gb") is not None:
+            grouped[key]["mem"].append(row["peak_mem_gb"])
 
     summary = []
     for key, vals in grouped.items():
-        attr_func, ctx = key
+        attr_func, total_tokens, output_tokens = key
         times = vals["time"]
         mems = vals["mem"]
         summary.append(
             {
                 "attr_func": attr_func,
-                "context_tokens": ctx,
+                "target_total_tokens": total_tokens,
+                "target_output_tokens": output_tokens,
                 "time_mean": np.mean(times) if times else None,
                 "time_std": np.std(times) if times else None,
                 "mem_mean": np.mean(mems) if mems else None,
@@ -305,7 +477,10 @@ def main() -> None:
     args = parse_args()
     device = resolve_device(args.cuda, args.cuda_num)
     attr_funcs = [a.strip() for a in args.attr_funcs.split(",") if a.strip()]
-    target_lengths = [int(x) for x in args.lengths.split(",") if x.strip()]
+    target_total_lengths = [
+        int(x) for x in (args.lengths if args.lengths is not None else args.total_lengths).split(",") if x.strip()
+    ]
+    target_output_lengths = [int(x) for x in args.output_lengths.split(",") if x.strip()]
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -313,59 +488,101 @@ def main() -> None:
     np.random.seed(42)
     torch.manual_seed(42)
 
-    model, tokenizer = load_model(args.model if args.model_path is None else args.model_path, device)
+    model_name = args.model if args.model_path is None else args.model_path
+    model, tokenizer = load_model_balanced(model_name, device)
+    device_indices = collect_device_indices(device, model)
     max_ctx = getattr(getattr(model, "config", None), "max_position_embeddings", None)
 
     base_text = load_ruler_base(Path(args.ruler_file), fallback="RULER fallback text. ")
+    target_base = args.target_text
     all_rows: List[Dict[str, Any]] = []
 
-    for ctx_tokens in target_lengths:
-        prompt, actual_prompt_len = build_prompt_to_length(tokenizer, base_text, ctx_tokens)
-        if exceeds_model_ctx(tokenizer, prompt, args.target_text, max_ctx):
+    for total_tokens in target_total_lengths:
+        for output_tokens in target_output_lengths:
+            prompt_target_len = total_tokens - output_tokens
+            if prompt_target_len <= 0:
+                for attr in attr_funcs:
+                    for rep in range(args.repeats):
+                        all_rows.append(
+                            {
+                                "attr_func": attr,
+                                "target_total_tokens": total_tokens,
+                                "target_output_tokens": output_tokens,
+                                "target_prompt_tokens": prompt_target_len,
+                                "actual_prompt_tokens": None,
+                                "actual_output_tokens": None,
+                                "actual_total_tokens": None,
+                                "status": "skipped_negative_prompt",
+                                "time_sec": None,
+                                "peak_mem_gb": None,
+                                "peak_mem_reserved_gb": None,
+                                "repeat": rep,
+                            }
+                        )
+                continue
+
+            prompt, actual_prompt_len = build_prompt_to_length(tokenizer, base_text, prompt_target_len)
+            target, actual_output_len = build_output_to_length(tokenizer, target_base, output_tokens)
+            actual_total_tokens = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
+
+            if exceeds_model_ctx(tokenizer, prompt, target, max_ctx):
+                for attr in attr_funcs:
+                    for rep in range(args.repeats):
+                        all_rows.append(
+                            {
+                                "attr_func": attr,
+                                "target_total_tokens": total_tokens,
+                                "target_output_tokens": output_tokens,
+                                "target_prompt_tokens": prompt_target_len,
+                                "actual_prompt_tokens": actual_prompt_len,
+                                "actual_output_tokens": actual_output_len,
+                                "actual_total_tokens": actual_total_tokens,
+                                "status": "skipped_model_ctx",
+                                "time_sec": None,
+                                "peak_mem_gb": None,
+                                "peak_mem_reserved_gb": None,
+                                "repeat": rep,
+                            }
+                        )
+                continue
+
+            batch_size = compute_batch_size(
+                tokenizer, prompt=prompt, target=target, max_input_len=max_ctx or 200000
+            )
+
             for attr in attr_funcs:
                 for rep in range(args.repeats):
+                    maybe_reset_cuda(device_indices)
+                    runner = make_attr_runner(
+                        attr,
+                        model=model,
+                        tokenizer=tokenizer,
+                        chunk_tokens=args.chunk_tokens,
+                        sink_chunk_tokens=args.sink_chunk_tokens,
+                        batch_size=batch_size,
+                        prompt=prompt,
+                        target=target,
+                    )
+                    status, wall, mem_alloc, mem_reserved, mem_by_device = measure(
+                        runner, device_indices=device_indices, catch_oom=args.catch_oom
+                    )
                     all_rows.append(
                         {
                             "attr_func": attr,
-                            "context_tokens": ctx_tokens,
+                            "target_total_tokens": total_tokens,
+                            "target_output_tokens": output_tokens,
+                            "target_prompt_tokens": prompt_target_len,
                             "actual_prompt_tokens": actual_prompt_len,
-                            "status": "skipped_model_ctx",
-                            "time_sec": None,
-                            "mem_gb": None,
+                            "actual_output_tokens": actual_output_len,
+                            "actual_total_tokens": actual_total_tokens,
+                            "status": status,
+                            "time_sec": wall,
+                            "peak_mem_gb": mem_reserved if mem_reserved is not None else mem_alloc,
+                            "peak_mem_reserved_gb": mem_reserved,
+                            "peak_mem_by_device_gb": mem_by_device if mem_by_device else None,
                             "repeat": rep,
                         }
                     )
-            continue
-
-        batch_size = compute_batch_size(
-            tokenizer, prompt=prompt, target=args.target_text, max_input_len=max_ctx or 200000
-        )
-
-        for attr in attr_funcs:
-            for rep in range(args.repeats):
-                maybe_reset_cuda(device)
-                runner = make_attr_runner(
-                    attr,
-                    model=model,
-                    tokenizer=tokenizer,
-                    chunk_tokens=args.chunk_tokens,
-                    sink_chunk_tokens=args.sink_chunk_tokens,
-                    batch_size=batch_size,
-                    prompt=prompt,
-                    target=args.target_text,
-                )
-                status, wall, mem = measure(runner, device_str=device)
-                all_rows.append(
-                    {
-                        "attr_func": attr,
-                        "context_tokens": ctx_tokens,
-                        "actual_prompt_tokens": actual_prompt_len,
-                        "status": status,
-                        "time_sec": wall,
-                        "mem_gb": mem,
-                        "repeat": rep,
-                    }
-                )
 
     summary = aggregate_results(all_rows)
 
@@ -376,12 +593,15 @@ def main() -> None:
 
     summary_path = out_dir / "time_curve_summary.csv"
     with summary_path.open("w") as f:
-        f.write("attr_func,context_tokens,time_mean,time_std,mem_mean,mem_std,statuses\n")
+        f.write(
+            "attr_func,target_total_tokens,target_output_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses\n"
+        )
         for row in summary:
             f.write(
-                "{},{},{},{},{},{},{}\n".format(
+                "{},{},{},{},{},{},{},{}\n".format(
                     row["attr_func"],
-                    row["context_tokens"],
+                    row["target_total_tokens"],
+                    row["target_output_tokens"],
                     "" if row["time_mean"] is None else f"{row['time_mean']:.4f}",
                     "" if row["time_std"] is None else f"{row['time_std']:.4f}",
                     "" if row["mem_mean"] is None else f"{row['mem_mean']:.4f}",
