@@ -100,6 +100,19 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
         attr = llm_attributor.calculate_basic_attribution(prompt, target = target)
         attributions = attr.get_all_sentence_attrs(indices_to_explain)
 
+    elif testing_dict["attr_func"] == "attnlrp":
+        llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
+        attr = llm_attributor.calculate_attnlrp(prompt, target=target)
+        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+
+    elif testing_dict["attr_func"] == "attnlrp_aggregated":
+        llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
+        attr = llm_attributor.calculate_attnlrp_aggregated(prompt, target=target)
+        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+
+    else:
+        raise ValueError(f"Unsupported attribution function '{testing_dict['attr_func']}'.")
+
     return attributions
 
 

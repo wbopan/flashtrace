@@ -22,7 +22,7 @@ uv run python evaluations/faithfulness.py --model llama-3B --cuda_num 0 --num_ex
 uv run python evaluations/attribution_coverage.py --model llama-3B --cuda 0 --num_examples 10 --attr_func IG --dataset math
 
 # Available models: llama-1B, llama-3B, llama-8B, qwen-1.7B, qwen-4B, qwen-8B
-# Available attr_func: IG, attention_I_G, perturbation_all, perturbation_CLP, perturbation_REAGENT, ifr_all_positions, basic, attnlrp
+# Available attr_func: IG, attention_I_G, perturbation_all, perturbation_CLP, perturbation_REAGENT, ifr_all_positions, basic, attnlrp, attnlrp_aggregated
 # Available datasets: math, facts, morehopqa
 ```
 
