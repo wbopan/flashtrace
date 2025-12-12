@@ -110,6 +110,17 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
         attr = llm_attributor.calculate_attnlrp_aggregated(prompt, target=target)
         attributions = attr.get_all_sentence_attrs(indices_to_explain)
 
+    elif testing_dict["attr_func"] == "attnlrp_aggregated_multi_hop":
+        llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
+        attr = llm_attributor.calculate_attnlrp_aggregated_multi_hop(
+            prompt,
+            target=target,
+            sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+            thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
+            n_hops=testing_dict.get("n_hops", 1),
+        )
+        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+
     else:
         raise ValueError(f"Unsupported attribution function '{testing_dict['attr_func']}'.")
 
