@@ -44,6 +44,9 @@ import matplotlib as mpl
 from matplotlib.patches import FancyArrowPatch
 from wordfreq import zipf_frequency
 
+from dataclasses import dataclass
+from typing import Literal
+
 from ifr_core import (
     IFRParameters,
     ModelMetadata,
@@ -54,6 +57,69 @@ from ifr_core import (
     compute_multi_hop_ifr,
     extract_model_metadata,
 )
+
+
+@dataclass
+class AttnLRPSpanAggregate:
+    """Span-wise aggregated AttnLRP result (single vector), analogous to IFRAggregate.
+
+    This dataclass stores the result of span-wise AttnLRP aggregation computed
+    in O(N) time using a single forward + backward pass.
+
+    Attributes
+    ----------
+    token_importance_total : torch.Tensor
+        1D float32 CPU tensor of length (user_prompt_len + gen_len) after
+        chat-template stripping, aligned with `all_tokens`.
+    all_tokens : List[str]
+        All tokens (user prompt + generation)
+    user_prompt_tokens : List[str]
+        User prompt tokens only
+    generation_tokens : List[str]
+        Generation tokens only
+    sink_range : Tuple[int, int]
+        [sink_start, sink_end] in generation-token indices
+    sink_weights : Optional[torch.Tensor]
+        Weights used for aggregation (if any)
+    metadata : Dict[str, Any]
+        Additional metadata about the computation
+    """
+    token_importance_total: torch.Tensor
+    all_tokens: List[str]
+    user_prompt_tokens: List[str]
+    generation_tokens: List[str]
+    sink_range: Tuple[int, int]
+    sink_weights: Optional[torch.Tensor]
+    metadata: Dict[str, Any]
+
+
+@dataclass
+class MultiHopAttnLRPResult:
+    """Multi-hop AttnLRP attribution result, analogous to MultiHopIFRResult.
+
+    This dataclass stores the result of multi-hop AttnLRP computation where
+    attribution is recursively propagated from output → thinking → input.
+
+    Attributes
+    ----------
+    raw_attributions : List[AttnLRPSpanAggregate]
+        List of per-hop attribution results. Index 0 is the base (output→all),
+        subsequent indices are hop 1, 2, etc. (thinking→all with weights).
+    thinking_ratios : List[float]
+        Fraction of attribution mass on the thinking span at each hop.
+        Useful for understanding how much attribution "stays" in reasoning.
+    observation : Dict[str, torch.Tensor]
+        Dictionary containing:
+        - "mask": observation mask (1 for observable tokens, 0 for thinking/sink)
+        - "base": base attribution masked to observable tokens
+        - "per_hop": list of per-hop attributions masked to observable tokens
+        - "sum": cumulative sum of all per-hop observations
+        - "avg": average of per-hop observations
+    """
+    raw_attributions: List[AttnLRPSpanAggregate]
+    thinking_ratios: List[float]
+    observation: Dict[str, torch.Tensor]
+
 
 from shared_utils import (
     DEFAULT_GENERATE_KWARGS,
@@ -1947,6 +2013,587 @@ class LLMLRPAttribution(LLMAttribution):
             metadata = {}
         metadata["method"] = "attnlrp"
         metadata["model_type"] = self.model_type
+
+        return LLMAttributionResult(
+            self.tokenizer,
+            score_array,
+            self.user_prompt_tokens,
+            self.generation_tokens,
+            all_tokens=all_tokens,
+            metadata=metadata,
+        )
+
+    def calculate_attnlrp_span_aggregate(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        sink_start: int = 0,
+        sink_end: Optional[int] = None,
+        sink_weights: Optional[torch.Tensor] = None,
+        normalize_weights: bool = True,
+        score_mode: Literal["max", "generated"] = "max",
+    ) -> AttnLRPSpanAggregate:
+        """Compute span-wise (multi-token) aggregated AttnLRP in ONE forward + ONE backward.
+
+        This returns a single attribution vector over the whole context (prompt + generation),
+        equal to the weighted sum/avg of per-token AttnLRP attributions over the sink span.
+
+        The key insight is that backward propagation is linear with respect to the objective,
+        and the LRP patches (divide_gradient, stop_gradient, identity_rule_implicit) are all
+        linear transformations on the incoming gradient. Therefore:
+
+            R_F = x ⊙ ∂F/∂x = x ⊙ Σ_g w_g ∂f_g/∂x = Σ_g w_g (x ⊙ ∂f_g/∂x) = Σ_g w_g R_{f_g}
+
+        This means computing attribution for the aggregated objective F = Σ w_g f_g in one
+        backward pass is mathematically equivalent to computing per-token attributions and
+        summing them with weights.
+
+        Complexity: O(N) instead of O(M×N) for the naive per-token approach.
+
+        Parameters
+        ----------
+        prompt : str
+            The input prompt text
+        target : str, optional
+            The target response text. If None, the model generates a response.
+        sink_start : int
+            Start of sink span in generation token indices (inclusive). Default: 0
+        sink_end : int, optional
+            End of sink span in generation token indices (inclusive).
+            Default: None (uses gen_len - 1, i.e., full generation)
+        sink_weights : torch.Tensor, optional
+            Optional tensor of shape [span_len], weighting each sink position.
+            Default: None (uniform weights)
+        normalize_weights : bool
+            If True, weights are normalized to sum to 1 (weighted average).
+            If False, computes weighted sum. Default: True
+        score_mode : Literal["max", "generated"]
+            "max": use max logit at each sink position (matches existing calculate_attnlrp)
+            "generated": use the logit of the actually generated token id at each position
+
+        Returns
+        -------
+        AttnLRPSpanAggregate
+            Aggregated attribution result with token_importance_total vector
+        """
+        # 1) Get generation (either from model or from target)
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        prompt_len = int(self.prompt_ids.shape[1])
+        gen_len = int(self.generation_ids.shape[1])
+        total_len = prompt_len + gen_len
+
+        # Handle empty generation
+        if gen_len == 0:
+            empty = torch.zeros((0,), dtype=torch.float32)
+            return AttnLRPSpanAggregate(
+                token_importance_total=empty,
+                all_tokens=[],
+                user_prompt_tokens=[],
+                generation_tokens=[],
+                sink_range=(0, -1),
+                sink_weights=None,
+                metadata={"method": "attnlrp_span_aggregate", "note": "empty_generation"},
+            )
+
+        if prompt_len <= 0:
+            raise ValueError("prompt_len must be > 0 for causal LM attribution.")
+
+        # Set default sink_end to full generation
+        if sink_end is None:
+            sink_end = gen_len - 1
+
+        sink_start = int(sink_start)
+        sink_end = int(sink_end)
+
+        if not (0 <= sink_start <= sink_end < gen_len):
+            raise ValueError(f"Invalid sink span [{sink_start}, {sink_end}] for gen_len={gen_len}.")
+
+        span_len = sink_end - sink_start + 1
+
+        # 2) Build input ids and embeddings
+        input_ids = torch.cat([self.prompt_ids, self.generation_ids], dim=1)
+        embedding_layer = self.model.get_input_embeddings()
+        model_dtype = next(self.model.parameters()).dtype
+
+        # 3) Forward with LRP patches, then single backward from aggregated scalar objective
+        with lrp_context(self.model, self.model_type):
+            input_embeds = embedding_layer(input_ids).float()
+            input_embeds = input_embeds.detach().clone().requires_grad_(True)
+
+            output_logits = self.model(
+                inputs_embeds=input_embeds.to(model_dtype),
+                use_cache=False,
+            ).logits  # [1, total_len, vocab]
+
+            device = output_logits.device
+            logits_dtype = output_logits.dtype
+
+            # Positions in logits corresponding to generation indices g:
+            # g=0 -> pos = prompt_len - 1  (logits at position i predict token i+1)
+            # g=k -> pos = prompt_len + k - 1
+            pos_start = prompt_len + sink_start - 1
+            pos_end = prompt_len + sink_end - 1
+            positions = torch.arange(pos_start, pos_end + 1, device=device)
+
+            # Build weights tensor
+            if sink_weights is None:
+                w = torch.ones((span_len,), device=device, dtype=logits_dtype)
+                if normalize_weights:
+                    w = w / float(span_len)
+            else:
+                w = sink_weights.to(device=device, dtype=logits_dtype)
+                if w.numel() != span_len:
+                    raise ValueError("sink_weights length must equal (sink_end - sink_start + 1).")
+                if normalize_weights:
+                    w = w / (w.sum() + 1e-12)
+
+            # Per-position scalar targets f_g
+            if score_mode == "max":
+                # Vectorized max over vocab for each selected position
+                per_pos = output_logits[0, positions, :].max(dim=-1).values  # [span_len]
+            elif score_mode == "generated":
+                # Logit of actually generated token id at each position
+                token_ids = self.generation_ids[0, sink_start:sink_end + 1].to(device=device)  # [span_len]
+                per_pos = output_logits[0, positions, :].gather(-1, token_ids.unsqueeze(-1)).squeeze(-1)
+            else:
+                raise ValueError(f"Unsupported score_mode={score_mode}")
+
+            # Aggregated scalar objective: F = Σ w_g * f_g
+            objective = (w * per_pos).sum()
+
+            if input_embeds.grad is not None:
+                input_embeds.grad.zero_()
+
+            objective.backward()
+
+            # 4) Gradient*Input relevance over embedding dim -> per-token relevance
+            relevance_full = (input_embeds * input_embeds.grad).float().sum(-1).detach().cpu()[0]  # [total_len]
+
+        # 5) Strip chat template tokens (extract only user prompt + full generation tokens)
+        score_array = relevance_full.unsqueeze(0)  # [1, total_len]
+        score_array = self.extract_user_prompt_attributions(self.prompt_tokens, score_array)
+        token_importance_total = score_array[0].to(torch.float32).cpu()
+
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
+
+        metadata = {
+            "method": "attnlrp_span_aggregate",
+            "base_method": "attnlrp",
+            "model_type": self.model_type,
+            "sink_range_gen": (sink_start, sink_end),
+            "normalize_weights": normalize_weights,
+            "score_mode": score_mode,
+        }
+
+        return AttnLRPSpanAggregate(
+            token_importance_total=token_importance_total,
+            all_tokens=all_tokens,
+            user_prompt_tokens=self.user_prompt_tokens,
+            generation_tokens=self.generation_tokens,
+            sink_range=(sink_start, sink_end),
+            sink_weights=(sink_weights.detach().cpu() if sink_weights is not None else None),
+            metadata=metadata,
+        )
+
+    def calculate_attnlrp_aggregated(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+    ) -> LLMAttributionResult:
+        """Calculate aggregated AttnLRP attribution using span aggregation.
+
+        This method provides an O(N) alternative to the naive O(M×N) per-token
+        AttnLRP computation. It computes attribution over the full generation span
+        in a single forward + backward pass.
+
+        The resulting attribution matrix uses the same aggregated attribution
+        vector for all generation rows (since we're computing the combined
+        importance of all generation tokens at once).
+
+        Parameters
+        ----------
+        prompt : str
+            The input prompt text
+        target : str, optional
+            The target response text. If None, the model generates a response.
+
+        Returns
+        -------
+        LLMAttributionResult
+            Attribution result compatible with the standard evaluation pipeline
+        """
+        # Get the generation
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        prompt_len = int(self.prompt_ids.shape[1])
+        gen_len = int(self.generation_ids.shape[1])
+        total_len = prompt_len + gen_len
+
+        # Handle empty generation
+        if gen_len == 0:
+            empty_scores = torch.zeros((0, total_len), dtype=torch.float32)
+            return self._finalize_result(empty_scores, metadata={
+                "method": "attnlrp_aggregated",
+                "note": "empty_generation"
+            })
+
+        # Compute span aggregate over full generation
+        aggregate = self.calculate_attnlrp_span_aggregate(
+            prompt,
+            target=target,
+            sink_start=0,
+            sink_end=gen_len - 1,
+            normalize_weights=True,
+            score_mode="max",
+        )
+
+        # Build score array: replicate the aggregated vector for each generation row
+        # We need to reconstruct the full-length vector before extraction
+        relevance_vector = aggregate.token_importance_total
+
+        # The aggregate already has chat tokens stripped; we need to match the format
+        # expected by _finalize_result which also strips, so we create a padded version
+        user_prompt_len = len(self.user_prompt_tokens)
+        gen_token_len = len(self.generation_tokens)
+        expected_len = user_prompt_len + gen_token_len
+
+        # Build score matrix
+        score_array = torch.full((gen_len, expected_len), torch.nan, dtype=torch.float32)
+
+        # For each generation position, set the attribution up to that position
+        for step in range(gen_len):
+            gen_pos = user_prompt_len + step
+            score_array[step, :gen_pos] = relevance_vector[:gen_pos]
+
+        metadata = {
+            "method": "attnlrp_aggregated",
+            "model_type": self.model_type,
+            "aggregate": aggregate,
+        }
+
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
+
+        return LLMAttributionResult(
+            self.tokenizer,
+            score_array,
+            self.user_prompt_tokens,
+            self.generation_tokens,
+            all_tokens=all_tokens,
+            metadata=metadata,
+        )
+
+    def calculate_attnlrp_multi_hop(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        sink_span: Optional[Tuple[int, int]] = None,
+        thinking_span: Optional[Tuple[int, int]] = None,
+        n_hops: int = 1,
+        normalize_weights: bool = True,
+        score_mode: Literal["max", "generated"] = "max",
+        observation_mask: Optional[torch.Tensor | List[float]] = None,
+    ) -> MultiHopAttnLRPResult:
+        """Compute multi-hop AttnLRP attribution recursively through thinking span.
+
+        This method implements recursive attribution propagation analogous to
+        compute_multi_hop_ifr:
+
+        1. Base hop (hop 0): Compute attribution from sink_span (output) to all tokens
+        2. For each subsequent hop:
+           - Use attribution scores on thinking_span as weights
+           - Compute weighted attribution from thinking_span to all tokens
+           - Track "observation" (attribution to input tokens, excluding thinking/sink)
+           - Update weights for next hop
+
+        The key insight is that attribution mass flowing through the thinking span
+        can be "unrolled" by recursively attributing from that span back to earlier
+        tokens, weighted by how much each thinking token contributed.
+
+        Parameters
+        ----------
+        prompt : str
+            The input prompt text
+        target : str, optional
+            The target response text. If None, the model generates a response.
+        sink_span : Tuple[int, int], optional
+            (start, end) indices in generation tokens for the output span.
+            Default: full generation (0, gen_len-1)
+        thinking_span : Tuple[int, int], optional
+            (start, end) indices in generation tokens for the reasoning span.
+            Default: same as sink_span
+        n_hops : int
+            Number of recursive hops. Default: 1
+        normalize_weights : bool
+            Whether to normalize weights at each hop. Default: True
+        score_mode : Literal["max", "generated"]
+            Scoring mode for AttnLRP. Default: "max"
+        observation_mask : torch.Tensor or List[float], optional
+            Custom mask for observable tokens. Shape: (gen_len,) or (total_len,).
+            1 = observable (input), 0 = not observable (thinking/output).
+            Default: auto-generated based on spans.
+
+        Returns
+        -------
+        MultiHopAttnLRPResult
+            Contains raw_attributions, thinking_ratios, and observation dict.
+        """
+        # Get the generation
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        prompt_len = int(self.prompt_ids.shape[1])
+        gen_len = int(self.generation_ids.shape[1])
+        total_len = prompt_len + gen_len
+
+        # Handle empty generation
+        if gen_len == 0:
+            empty_aggregate = AttnLRPSpanAggregate(
+                token_importance_total=torch.zeros((0,), dtype=torch.float32),
+                all_tokens=[],
+                user_prompt_tokens=[],
+                generation_tokens=[],
+                sink_range=(0, -1),
+                sink_weights=None,
+                metadata={"method": "attnlrp_multi_hop", "note": "empty_generation"},
+            )
+            return MultiHopAttnLRPResult(
+                raw_attributions=[empty_aggregate],
+                thinking_ratios=[0.0],
+                observation={"mask": torch.tensor([]), "base": torch.tensor([]),
+                            "per_hop": [], "sum": torch.tensor([]), "avg": torch.tensor([])},
+            )
+
+        # Validate and set default spans
+        if sink_span is None:
+            sink_span = (0, gen_len - 1)
+        sink_start, sink_end = sink_span
+        if sink_start < 0 or sink_end < sink_start or sink_end >= gen_len:
+            raise ValueError(f"Invalid sink_span ({sink_start}, {sink_end}) for gen_len={gen_len}.")
+
+        if thinking_span is None:
+            thinking_span = sink_span
+        think_start, think_end = thinking_span
+        if think_start < 0 or think_end < think_start or think_end >= gen_len:
+            raise ValueError(f"Invalid thinking_span ({think_start}, {think_end}) for gen_len={gen_len}.")
+
+        hop_count = max(0, int(n_hops))
+
+        # Compute base attribution from sink_span
+        base_attr = self.calculate_attnlrp_span_aggregate(
+            prompt,
+            target=target,
+            sink_start=sink_start,
+            sink_end=sink_end,
+            sink_weights=None,
+            normalize_weights=normalize_weights,
+            score_mode=score_mode,
+        )
+
+        raw_attributions: List[AttnLRPSpanAggregate] = [base_attr]
+
+        # Get the stripped token importance vector (user_prompt + generation tokens)
+        token_total = base_attr.token_importance_total.clone()
+        T = token_total.shape[0]  # This is user_prompt_len + gen_len after stripping
+        user_prompt_len = len(self.user_prompt_tokens)
+
+        # Build observation mask (in stripped token space)
+        # think_start/think_end are in generation-token indices
+        # In stripped space: thinking is at user_prompt_len + think_start : user_prompt_len + think_end + 1
+        # sink is at user_prompt_len + sink_start : user_prompt_len + sink_end + 1
+        if observation_mask is None:
+            obs_mask = torch.ones((T,), dtype=torch.float32)
+            # Mask out thinking span
+            think_start_stripped = user_prompt_len + think_start
+            think_end_stripped = user_prompt_len + think_end
+            obs_mask[think_start_stripped:min(think_end_stripped + 1, T)] = 0.0
+            # Mask out sink span
+            sink_start_stripped = user_prompt_len + sink_start
+            sink_end_stripped = user_prompt_len + sink_end
+            obs_mask[sink_start_stripped:min(sink_end_stripped + 1, T)] = 0.0
+            # Mask out anything after thinking span (future tokens)
+            if think_end_stripped + 1 < T:
+                obs_mask[think_end_stripped + 1:] = 0.0
+        else:
+            obs_mask_input = torch.as_tensor(observation_mask, dtype=torch.float32)
+            if obs_mask_input.numel() == gen_len:
+                # Expand to full stripped length
+                obs_mask = torch.ones((T,), dtype=torch.float32)
+                obs_mask[user_prompt_len:user_prompt_len + gen_len] = obs_mask_input
+                # Keep input tokens as 1 by default
+            elif obs_mask_input.numel() == T:
+                obs_mask = obs_mask_input.clone()
+            else:
+                raise ValueError(f"observation_mask must have length {gen_len} or {T}.")
+
+        # Compute base observation
+        base_obs = token_total.clone() * obs_mask
+        obs_accum = base_obs.clone()
+        per_hop_obs: List[torch.Tensor] = []
+
+        # Extract thinking slice weights for next hop
+        think_start_stripped = user_prompt_len + think_start
+        think_end_stripped = user_prompt_len + think_end
+        thinking_slice = token_total[think_start_stripped:think_end_stripped + 1]
+        w_thinking = thinking_slice.detach().clone()
+
+        # Compute initial thinking ratio
+        total_mass = float(token_total.abs().sum().item())
+        thinking_mass = float(w_thinking.abs().sum().item())
+        current_ratio = thinking_mass / (total_mass + 1e-12) if total_mass > 0 else 0.0
+        ratios: List[float] = [current_ratio]
+
+        # Multi-hop iterations
+        for hop in range(1, hop_count + 1):
+            # Compute attribution from thinking span with weights from previous hop
+            hop_attr = self.calculate_attnlrp_span_aggregate(
+                prompt,
+                target=target,
+                sink_start=think_start,
+                sink_end=think_end,
+                sink_weights=w_thinking,
+                normalize_weights=normalize_weights,
+                score_mode=score_mode,
+            )
+
+            raw_attributions.append(hop_attr)
+            hop_total = hop_attr.token_importance_total.clone()
+
+            # Compute observation for this hop (masked and weighted by current_ratio)
+            obs_only = hop_total * obs_mask * current_ratio
+            obs_accum += obs_only
+            per_hop_obs.append(obs_only)
+
+            # Update weights for next hop
+            thinking_slice = hop_total[think_start_stripped:think_end_stripped + 1]
+            w_thinking = thinking_slice.detach().clone()
+
+            # Update ratio
+            hop_total_mass = float(hop_total.abs().sum().item())
+            if hop_total_mass <= 0.0:
+                current_ratio = 0.0
+            else:
+                current_ratio *= float(w_thinking.abs().sum().item()) / (hop_total_mass + 1e-12)
+            ratios.append(current_ratio)
+
+        # Compute average observation
+        obs_avg = obs_accum / float(max(1, hop_count)) if hop_count > 0 else obs_accum
+
+        observation = {
+            "mask": obs_mask,
+            "base": base_obs,
+            "per_hop": per_hop_obs,
+            "sum": obs_accum,
+            "avg": obs_avg,
+        }
+
+        return MultiHopAttnLRPResult(
+            raw_attributions=raw_attributions,
+            thinking_ratios=ratios,
+            observation=observation,
+        )
+
+    def calculate_attnlrp_aggregated_multi_hop(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        sink_span: Optional[Tuple[int, int]] = None,
+        thinking_span: Optional[Tuple[int, int]] = None,
+        n_hops: int = 1,
+    ) -> LLMAttributionResult:
+        """Calculate multi-hop aggregated AttnLRP attribution.
+
+        This is a convenience wrapper around calculate_attnlrp_multi_hop that
+        returns an LLMAttributionResult compatible with the evaluation pipeline.
+
+        The returned attribution uses the observation["sum"] vector which
+        accumulates attribution to input tokens across all hops.
+
+        Parameters
+        ----------
+        prompt : str
+            The input prompt text
+        target : str, optional
+            The target response text. If None, the model generates a response.
+        sink_span : Tuple[int, int], optional
+            (start, end) indices in generation tokens for the output span.
+        thinking_span : Tuple[int, int], optional
+            (start, end) indices in generation tokens for the reasoning span.
+        n_hops : int
+            Number of recursive hops. Default: 1
+
+        Returns
+        -------
+        LLMAttributionResult
+            Attribution result compatible with the standard evaluation pipeline
+        """
+        # Get the generation first to set up tokens
+        if target is None:
+            self.response(prompt)
+        else:
+            self.target_response(prompt, target)
+
+        gen_len = int(self.generation_ids.shape[1])
+
+        # Handle empty generation
+        if gen_len == 0:
+            empty_scores = torch.zeros((0, len(self.user_prompt_tokens)), dtype=torch.float32)
+            return LLMAttributionResult(
+                self.tokenizer,
+                empty_scores,
+                self.user_prompt_tokens,
+                self.generation_tokens,
+                all_tokens=self.user_prompt_tokens + self.generation_tokens,
+                metadata={"method": "attnlrp_aggregated_multi_hop", "note": "empty_generation"},
+            )
+
+        # Compute multi-hop attribution
+        multi_hop = self.calculate_attnlrp_multi_hop(
+            prompt,
+            target=target,
+            sink_span=sink_span,
+            thinking_span=thinking_span,
+            n_hops=n_hops,
+        )
+
+        # Use the accumulated observation as the relevance vector
+        # This gives attribution to input tokens, accumulated across hops
+        relevance_vector = multi_hop.observation["sum"]
+
+        user_prompt_len = len(self.user_prompt_tokens)
+        gen_token_len = len(self.generation_tokens)
+        expected_len = user_prompt_len + gen_token_len
+
+        # Build score matrix
+        score_array = torch.full((gen_len, expected_len), torch.nan, dtype=torch.float32)
+
+        # For each generation position, set the attribution
+        for step in range(gen_len):
+            gen_pos = user_prompt_len + step
+            score_array[step, :gen_pos] = relevance_vector[:gen_pos]
+
+        metadata = {
+            "method": "attnlrp_aggregated_multi_hop",
+            "model_type": self.model_type,
+            "n_hops": n_hops,
+            "sink_span": sink_span,
+            "thinking_span": thinking_span,
+            "thinking_ratios": multi_hop.thinking_ratios,
+            "multi_hop_result": multi_hop,
+        }
+
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
 
         return LLMAttributionResult(
             self.tokenizer,
