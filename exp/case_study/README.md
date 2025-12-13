@@ -1,33 +1,76 @@
-# IFR 多跳案例分析（exp/case_study）
+# FT 多跳案例分析 & IFR 标准可视化（exp/case_study）
 
 此目录提供一个轻量的单样本 IFR 可视化流程，不改动核心评测代码。
 
 ## 功能
 - 读取单个样本（默认 `exp/exp2/data/morehopqa.jsonl`，索引 0）。
-- 运行 `LLMIFRAttribution.calculate_ifr_multi_hop`。
-- 输出 token 级完整文本热力图（按 input/thinking/output 分段），并将每一跳的 token 权重聚合到句子。
+- 支持两种模式：
+  - `ft`：当前使用的多跳 FT 归因（内部调用 `LLMIFRAttribution.calculate_ifr_multi_hop`）。
+  - `ifr`：标准 IFR（单 hop），默认对指定 sink span 做**聚合 IFR**（只显示 1 个面板）。
+- 可视化三个阶段：
+  - **裁剪前 token 级**：带 chat template 的完整序列热力图。
+  - **裁剪后 token 级**：去除模板后的用户输入 + 生成热力图，按 input/thinking/output 分段。
+  - **聚合后句子级**：将每跳 token 权重聚合到句子。
 - 输出 JSON（完整数值）和 HTML（逐跳热力图）。
 
 ## 快速开始
 ```bash
 # 根据本地模型修改 model/model_path
+# 多跳 FT（默认）
 python exp/case_study/run_ifr_case.py \
+  --mode ft \
   --dataset exp/exp2/data/morehopqa.jsonl \
   --index 0 \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0 \
   --n_hops 1
+
+# 标准 IFR（单 hop，可指定 sink span）
+python exp/case_study/run_ifr_case.py \
+  --mode ifr \
+  --dataset exp/exp2/data/morehopqa.jsonl \
+  --index 0 \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 0 \
+  --sink_span 0 0
+
+#（可选）IFR 按 sink_span 内每个生成 token 单独计算（会显示多个面板）
+python exp/case_study/run_ifr_case.py \
+  --mode ifr \
+  --ifr_view per_token \
+  --dataset exp/exp2/data/morehopqa.jsonl \
+  --index 0 \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 0 \
+  --sink_span 0 20
 ```
 
-产物位于 `exp/case_study/out/`，文件名形如 `ifr_case_<dataset>_idx<idx>.json/html`。
+产物位于 `exp/case_study/out/`，文件名形如 `ft_case_<dataset>_idx<idx>.json/html` 或 `ifr_case_<dataset>_idx<idx>.json/html`。
+
+## 在浏览器中查看 HTML
+1) 先运行上面的命令生成 `.html`（终端会打印形如 `wrote exp/case_study/out/...html`）。
+
+2) 在仓库根目录启动一个静态文件服务（任选一个端口，例如 8888）：
+```bash
+python -m http.server 8888 --directory exp/case_study/out
+```
+
+3) 用浏览器打开（注意是 `http://`，不是 `https://`）：
+- 本机：`http://127.0.0.1:8888/<你的html文件名>`
+- 远程机器（推荐端口转发）：在本地执行 `ssh -L 8888:127.0.0.1:8888 <user>@<server>`，然后在本地浏览器打开 `http://127.0.0.1:8888/<你的html文件名>`
+
+如果你在 `http.server` 日志里看到大量 `400 Bad request version` 且伴随乱码，通常是有客户端用 HTTPS 去连了 HTTP 端口；请确认浏览器地址栏是 `http://...`。
 
 ## 可选参数
 - `--sink_span a b` / `--thinking_span a b`：覆盖生成侧的 sink/thinking 句子 span（默认使用缓存字段）。
+- `--ifr_view aggregate|per_token`：仅 `--mode ifr` 生效；`aggregate` 为 sink-span 聚合 IFR（默认 1 个面板），`per_token` 为逐 token（多面板）。
 - `--chunk_tokens` / `--sink_chunk_tokens`：IFR 分块参数。
 - `--output_dir`：修改输出目录。
 
 ## 文件说明
-- `run_ifr_case.py`：命令行入口与落盘。
+- `run_ifr_case.py`：命令行入口与落盘（支持 `ft`/`ifr` 模式）。
 - `analysis.py`：聚合与清洗（token→句子、逐跳封装）。
 - `viz.py`：HTML 渲染与热力图。

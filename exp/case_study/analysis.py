@@ -122,3 +122,26 @@ def package_hops(
             }
         )
     return packaged
+
+
+def package_token_hops(
+    hop_vectors: Iterable[Sequence[float]],
+) -> List[Dict[str, Any]]:
+    """Package per-hop token vectors without sentence aggregation."""
+
+    packaged: List[Dict[str, Any]] = []
+    for hop_idx, vec in enumerate(hop_vectors):
+        vec_tensor = torch.as_tensor(vec, dtype=torch.float32)
+        vec_tensor = torch.nan_to_num(vec_tensor, nan=0.0).clamp(min=0.0)
+        token_scores = vec_tensor.tolist()
+        token_max = float(vec_tensor.max().item()) if vec_tensor.numel() > 0 else 0.0
+        total = float(vec_tensor.sum().item())
+        packaged.append(
+            {
+                "hop": hop_idx,
+                "token_scores": token_scores,
+                "token_score_max": token_max,
+                "total_mass": total,
+            }
+        )
+    return packaged

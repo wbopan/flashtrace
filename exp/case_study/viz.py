@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 from html import escape
 
@@ -66,61 +66,76 @@ def _render_top_table(top_items: List[Dict[str, Any]]) -> str:
 def render_case_html(
     case_meta: Dict[str, Any],
     context: Dict[str, Any],
-    hops: Sequence[Dict[str, Any]],
-    tokens: Sequence[str],
-    segments: Dict[str, Any],
+    hops_sent: Sequence[Dict[str, Any]],
+    token_view_trimmed: Dict[str, Any],
+    token_view_raw: Optional[Dict[str, Any]] = None,
 ) -> str:
     prompt_len = len(context["prompt_sentences"])
     gen_len = len(context["generation_sentences"])
 
     # shared scales for consistent coloring
     prompt_max = max(
-        (max(h["sentence_scores_raw"][:prompt_len]) for h in hops if h["sentence_scores_raw"][:prompt_len]), default=0.0
+        (max(h["sentence_scores_raw"][:prompt_len]) for h in hops_sent if h["sentence_scores_raw"][:prompt_len]), default=0.0
     )
     gen_max = max(
-        (max(h["sentence_scores_raw"][prompt_len:]) for h in hops if h["sentence_scores_raw"][prompt_len:]), default=0.0
+        (max(h["sentence_scores_raw"][prompt_len:]) for h in hops_sent if h["sentence_scores_raw"][prompt_len:]), default=0.0
     )
-    token_global_max = max((h.get("token_score_max", 0.0) for h in hops), default=0.0)
 
-    def roles_for_tokens() -> List[str]:
-        roles = ["prompt" for _ in range(len(tokens))]
-        prompt_len_tokens = segments.get("prompt_len", 0)
-        for idx in range(prompt_len_tokens, len(tokens)):
-            roles[idx] = "gen"
-        thinking_span = segments.get("thinking_span")
-        sink_span = segments.get("sink_span")
-        if thinking_span is not None:
-            start = prompt_len_tokens + int(thinking_span[0])
-            end = prompt_len_tokens + int(thinking_span[1])
-            for i in range(start, min(len(tokens), end + 1)):
-                roles[i] = "think"
-        if sink_span is not None:
-            start = prompt_len_tokens + int(sink_span[0])
-            end = prompt_len_tokens + int(sink_span[1])
-            for i in range(start, min(len(tokens), end + 1)):
-                roles[i] = "output"
-        return roles
-
-    token_roles = roles_for_tokens()
+    token_global_max_trim = max((h.get("token_score_max", 0.0) for h in token_view_trimmed.get("hops", [])), default=0.0)
+    token_global_max_raw = 0.0
+    if token_view_raw is not None:
+        token_global_max_raw = max((h.get("token_score_max", 0.0) for h in token_view_raw.get("hops", [])), default=0.0)
 
     hop_sections: List[str] = []
-    for hop in hops:
+    hop_count = len(hops_sent)
+    mode = case_meta.get("mode", "ft")
+    ifr_view = case_meta.get("ifr_view", "aggregate")
+    sink_span = case_meta.get("sink_span")
+
+    def _panel_title(panel_idx: int) -> str:
+        if mode != "ifr":
+            return f"Hop {panel_idx}"
+        if ifr_view == "per_token" and isinstance(sink_span, (list, tuple)) and len(sink_span) == 2:
+            try:
+                base = int(sink_span[0])
+            except Exception:
+                base = 0
+            return f"Sink token {base + panel_idx} (gen idx)"
+        return "IFR (sink-span aggregate)"
+
+    for hop_idx in range(hop_count):
+        hop = hops_sent[hop_idx]
         raw_scores = hop["sentence_scores_raw"]
         prompt_scores = raw_scores[:prompt_len]
         gen_scores = raw_scores[prompt_len:]
-        tok_scores = hop.get("token_scores", [])
+        trim_hops = token_view_trimmed.get("hops", [])
+        tok_scores_trim = trim_hops[hop_idx]["token_scores"] if hop_idx < len(trim_hops) else []
+        trim_roles = token_view_trimmed.get("roles", [])
+
+        tok_raw_html = ""
+        if token_view_raw is not None and hop_idx < len(token_view_raw.get("hops", [])):
+            raw_entry = token_view_raw["hops"][hop_idx]
+            tok_raw_html = f"""
+                <div class="tokens-block">
+                  <div class="tokens-title">{escape(token_view_raw.get("label", "Pre-trim token-level heatmap"))}</div>
+                  <div class="tokens-row">
+                    {_render_tokens(token_view_raw.get("tokens", []), raw_entry.get("token_scores", []), token_global_max_raw, token_view_raw.get("roles", []))}
+                  </div>
+                </div>
+            """
 
         hop_sections.append(
             f"""
             <div class="hop">
               <div class="hop-header">
-                <div class="hop-title">Hop {hop['hop']}</div>
+                <div class="hop-title">{escape(_panel_title(int(hop.get('hop', hop_idx))))}</div>
                 <div class="hop-meta">total mass: {hop['total_mass']:.6f}</div>
               </div>
+              {tok_raw_html}
               <div class="tokens-block">
-                <div class="tokens-title">Token-level heatmap (input + thinking + output)</div>
+                <div class="tokens-title">{escape(token_view_trimmed.get("label", "Post-trim token-level heatmap"))}</div>
                 <div class="tokens-row">
-                  {_render_tokens(tokens, tok_scores, token_global_max, token_roles)}
+                  {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, token_global_max_trim, trim_roles)}
                 </div>
               </div>
               <div class="columns">
@@ -138,16 +153,19 @@ def render_case_html(
     thinking_ratios = case_meta.get("thinking_ratios") or []
     ratios_str = ", ".join(f"{r:.4f}" for r in thinking_ratios) if thinking_ratios else "N/A"
 
+    mode_label = "FT Multi-hop" if mode == "ft" else "IFR Standard"
+
     header = f"""
     <div class="header">
       <div>
-        <div class="title">IFR Multi-hop Case Study</div>
+        <div class="title">{escape(mode_label)} Case Study</div>
         <div class="subtitle">Dataset: {escape(str(case_meta.get('dataset')))} | index: {case_meta.get('index')}</div>
       </div>
       <div class="meta">
         <div>Sink span (gen idx): {escape(str(case_meta.get('sink_span')))}</div>
         <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
-        <div>Hops: {case_meta.get('n_hops')}</div>
+        <div>Panels: {hop_count}</div>
+        <div>{'Recursive hops' if mode == 'ft' else 'IFR view'}: {escape(str(case_meta.get('n_hops') if mode == 'ft' else ifr_view))}</div>
         <div>Thinking ratios: {ratios_str}</div>
       </div>
     </div>
@@ -169,6 +187,8 @@ def render_case_html(
       .tokens-row { font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.8; word-break: break-word; }
       .tok { display: inline; padding: 2px 1px; margin: 0 0px; border-radius: 3px; }
       .tok.prompt { border-bottom: 1px dashed #6b8fb8; }
+      .tok.user { border-bottom: 1px dashed #4f72c7; }
+      .tok.template { border-bottom: 1px dashed #9aa9c0; }
       .tok.think { border-bottom: 1px dashed #8ba86b; }
       .tok.output { border-bottom: 1px dashed #c78a6e; }
       .tok.gen { border-bottom: 1px dashed #999; }
@@ -189,11 +209,12 @@ def render_case_html(
     </style>
     """
 
+    title = f"{mode_label} Case Study"
     html = f"""<!DOCTYPE html>
     <html>
       <head>
         <meta charset="utf-8" />
-        <title>IFR Case Study</title>
+        <title>{escape(title)}</title>
         {style}
       </head>
       <body>

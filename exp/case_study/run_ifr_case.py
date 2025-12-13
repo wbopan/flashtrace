@@ -227,6 +227,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", type=str, default="exp/exp2/data/morehopqa.jsonl", help="Dataset name or JSONL path.")
     parser.add_argument("--data_root", type=str, default="exp/exp2/data", help="Cache root for dataset names.")
     parser.add_argument("--index", type=int, default=0, help="Sample index (supports negative for reverse).")
+    parser.add_argument("--mode", type=str, choices=["ft", "ifr"], default="ft", help="ft = multi-hop FT (current); ifr = standard IFR single-hop visualization.")
+    parser.add_argument(
+        "--ifr_view",
+        type=str,
+        choices=["aggregate", "per_token"],
+        default="aggregate",
+        help="Only for --mode ifr. aggregate = sink-span aggregated IFR (one panel); per_token = IFR per sink token (one panel per token).",
+    )
     parser.add_argument("--model", type=str, default="qwen-8B", help="HF repo id (ignored if --model_path set).")
     parser.add_argument("--model_path", type=str, default=None, help="Local model path to override --model.")
     parser.add_argument("--cuda", type=str, default=None, help="CUDA spec (e.g., '0' or '0,1').")
@@ -240,7 +248,7 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def run_ifr(
+def run_ft_multihop(
     example: ds_utils.CachedExample,
     model: Any,
     tokenizer: Any,
@@ -250,8 +258,8 @@ def run_ifr(
     thinking_span: Optional[Sequence[int]],
     chunk_tokens: int,
     sink_chunk_tokens: int,
-) -> Tuple[Any, Optional[Tuple[int, int]], Optional[Tuple[int, int]]]:
-    """Execute IFR multi-hop attribution for the selected example."""
+) -> Tuple[Any, Optional[Tuple[int, int]], Optional[Tuple[int, int]], Dict[str, Any]]:
+    """Execute FT (current multi-hop IFR) attribution for the selected example."""
 
     attr = llm_attr.LLMIFRAttribution(
         model,
@@ -274,12 +282,89 @@ def run_ifr(
         thinking_span=thinking,
         n_hops=n_hops,
     )
-    return result, sink, thinking
+    debug_info: Dict[str, Any] = {
+        "full_prompt_tokens": list(getattr(attr, "prompt_tokens", []) or []),
+        "generation_tokens": list(getattr(attr, "generation_tokens", []) or []),
+        "user_prompt_indices": list(getattr(attr, "user_prompt_indices", []) or []),
+        "chat_prompt_indices": list(getattr(attr, "chat_prompt_indices", []) or []),
+    }
+
+    raw_vectors = []
+    if result.metadata and "ifr" in result.metadata:
+        raw_ifr = result.metadata["ifr"].get("raw")
+        if raw_ifr is not None and hasattr(raw_ifr, "raw_attributions"):
+            try:
+                raw_vectors = [r.token_importance_total.detach().cpu() for r in raw_ifr.raw_attributions]
+            except Exception:
+                raw_vectors = []
+    debug_info["raw_hop_vectors"] = raw_vectors
+
+    return result, sink, thinking, debug_info
 
 
 def make_output_stem(dataset_name: str, index: int) -> str:
     safe_name = dataset_name.replace("/", "_").replace(" ", "_")
-    return f"ifr_case_{safe_name}_idx{index}"
+    return f"ft_case_{safe_name}_idx{index}"
+
+
+def build_trimmed_roles(tokens: Sequence[str], segments: Dict[str, Any]) -> List[str]:
+    """Assign role labels for trimmed tokens (prompt + generation)."""
+
+    roles = ["prompt" for _ in range(len(tokens))]
+    prompt_len_tokens = segments.get("prompt_len", 0)
+    for idx in range(prompt_len_tokens, len(tokens)):
+        roles[idx] = "gen"
+    thinking_span = segments.get("thinking_span")
+    sink_span = segments.get("sink_span")
+    if thinking_span is not None:
+        start = prompt_len_tokens + int(thinking_span[0])
+        end = prompt_len_tokens + int(thinking_span[1])
+        for i in range(start, min(len(tokens), end + 1)):
+            roles[i] = "think"
+    if sink_span is not None:
+        start = prompt_len_tokens + int(sink_span[0])
+        end = prompt_len_tokens + int(sink_span[1])
+        for i in range(start, min(len(tokens), end + 1)):
+            roles[i] = "output"
+    return roles
+
+
+def build_raw_roles(
+    tokens: Sequence[str],
+    prompt_len_full: int,
+    user_indices: Sequence[int],
+    template_indices: Sequence[int],
+    thinking_span_abs: Optional[Sequence[int]],
+    sink_span_abs: Optional[Sequence[int]],
+) -> List[str]:
+    """Assign role labels for raw tokens (template + user + generation)."""
+
+    roles = ["template" for _ in range(len(tokens))]
+    user_set = set(int(i) for i in user_indices)
+    tmpl_set = set(int(i) for i in template_indices)
+
+    for i in range(min(len(tokens), prompt_len_full)):
+        if i in user_set:
+            roles[i] = "user"
+        elif i in tmpl_set:
+            roles[i] = "template"
+        else:
+            roles[i] = "prompt"
+
+    for i in range(prompt_len_full, len(tokens)):
+        roles[i] = "gen"
+
+    if thinking_span_abs is not None:
+        start, end = int(thinking_span_abs[0]), int(thinking_span_abs[1])
+        for i in range(start, min(len(tokens), end + 1)):
+            roles[i] = "think"
+
+    if sink_span_abs is not None:
+        start, end = int(sink_span_abs[0]), int(sink_span_abs[1])
+        for i in range(start, min(len(tokens), end + 1)):
+            roles[i] = "output"
+
+    return roles
 
 
 def main() -> None:
@@ -290,16 +375,153 @@ def main() -> None:
     model, tokenizer = load_model(model_name, device)
 
     example, ds_name = load_example(args.dataset, args.index, Path(args.data_root))
-    attr_result, sink_span, thinking_span = run_ifr(
-        example,
-        model,
-        tokenizer,
-        n_hops=args.n_hops,
-        sink_span=args.sink_span,
-        thinking_span=args.thinking_span,
-        chunk_tokens=args.chunk_tokens,
-        sink_chunk_tokens=args.sink_chunk_tokens,
-    )
+    if args.mode == "ft":
+        attr_result, sink_span, thinking_span, debug_info = run_ft_multihop(
+            example,
+            model,
+            tokenizer,
+            n_hops=args.n_hops,
+            sink_span=args.sink_span,
+            thinking_span=args.thinking_span,
+            chunk_tokens=args.chunk_tokens,
+            sink_chunk_tokens=args.sink_chunk_tokens,
+        )
+    else:
+        # Standard IFR (single-hop, per-sink attribution), with pre/post trim views.
+        attr = llm_attr.LLMIFRAttribution(
+            model,
+            tokenizer,
+            chunk_tokens=args.chunk_tokens,
+            sink_chunk_tokens=args.sink_chunk_tokens,
+        )
+        sink_span = tuple(args.sink_span) if args.sink_span is not None else tuple(example.sink_span) if example.sink_span else None
+        thinking_span = tuple(args.thinking_span) if args.thinking_span is not None else tuple(example.thinking_span) if example.thinking_span else sink_span
+
+        if sink_span is None:
+            raise ValueError("sink_span is required for IFR mode (use dataset sink_span or pass --sink_span).")
+
+        if args.ifr_view == "aggregate":
+            # Standard sink-span IFR: one attribution vector aggregated over the sink span.
+            span_result = attr.calculate_ifr_span(
+                example.prompt,
+                target=example.target,
+                span=tuple(sink_span),
+            )
+            span_meta = span_result.metadata.get("ifr") if span_result.metadata else None
+            aggregate = span_meta.get("aggregate") if isinstance(span_meta, dict) else None
+            if aggregate is None or not hasattr(aggregate, "token_importance_total"):
+                raise RuntimeError("IFR span aggregate missing from metadata; cannot render pre-trim view.")
+
+            raw_vector = aggregate.token_importance_total.detach().cpu()
+            trimmed_vector = attr._project_vector(raw_vector)
+
+            sink_abs = span_meta.get("sink_span_absolute") if isinstance(span_meta, dict) else None
+            try:
+                prompt_len_full = int(sink_abs[0]) - int(sink_span[0]) if sink_abs is not None else len(getattr(attr, "prompt_tokens", []) or [])
+            except Exception:
+                prompt_len_full = len(getattr(attr, "prompt_tokens", []) or [])
+            think_abs = (
+                (prompt_len_full + thinking_span[0], prompt_len_full + thinking_span[1])
+                if thinking_span is not None
+                else None
+            )
+
+            meta: Dict[str, Any] = {
+                "ifr": {
+                    "type": "span_aggregate",
+                    "ifr_view": "aggregate",
+                    "sink_span_generation": sink_span,
+                    "sink_span_absolute": sink_abs,
+                    "thinking_span_generation": thinking_span,
+                    "thinking_span_absolute": think_abs,
+                    "per_hop_projected": [trimmed_vector],
+                    "raw_vectors": [raw_vector],
+                }
+            }
+
+            attr_result = llm_attr.LLMAttributionResult(
+                attr.tokenizer,
+                trimmed_vector.view(1, -1),
+                attr.user_prompt_tokens,
+                attr.generation_tokens,
+                all_tokens=attr.user_prompt_tokens + attr.generation_tokens,
+                metadata=meta,
+            )
+
+            debug_info = {
+                "full_prompt_tokens": list(getattr(attr, "prompt_tokens", []) or []),
+                "generation_tokens": list(getattr(attr, "generation_tokens", []) or []),
+                "user_prompt_indices": list(getattr(attr, "user_prompt_indices", []) or []),
+                "chat_prompt_indices": list(getattr(attr, "chat_prompt_indices", []) or []),
+                "raw_hop_vectors": [raw_vector],
+            }
+        else:
+            # IFR per sink token (similar to ifr_all_positions), with one panel per sink token.
+            input_ids_all, attn_mask, prompt_len_full, gen_len = attr._ensure_generation(example.prompt, example.target)
+            total_len = int(input_ids_all.shape[1])
+
+            cache, attentions, metadata_full, weight_pack = attr._capture_model_state(input_ids_all, attn_mask)
+            params = attr._build_ifr_params(metadata_full, total_len)
+            renorm = attr.renorm_threshold_default
+
+            sink_range = (prompt_len_full, prompt_len_full + gen_len - 1)
+            all_positions = llm_attr.compute_ifr_for_all_positions(
+                cache=cache,
+                attentions=attentions,
+                weight_pack=weight_pack,
+                params=params,
+                renorm_threshold=renorm,
+                sink_range=sink_range,
+                return_layerwise=False,
+            )
+
+            span_start, span_end = sink_span
+            if span_start < 0 or span_end >= gen_len:
+                raise ValueError(f"Invalid sink_span {sink_span} for generation length {gen_len}")
+            sink_abs_start = prompt_len_full + span_start
+            sink_abs_end = prompt_len_full + span_end
+
+            raw_vectors = []
+            if all_positions.token_importance_matrix.numel() > 0:
+                mat = all_positions.token_importance_matrix.detach().cpu()
+                raw_vectors = [mat[idx] for idx in range(span_start, span_end + 1)]
+
+            trimmed_vectors = []
+            for vec in raw_vectors:
+                projected = attr.extract_user_prompt_attributions(attr.prompt_tokens, vec.view(1, -1))[0]
+                trimmed_vectors.append(projected)
+
+            meta = {
+                "ifr": {
+                    "type": "all_positions_subset",
+                    "ifr_view": "per_token",
+                    "sink_span_generation": sink_span,
+                    "sink_span_absolute": (sink_abs_start, sink_abs_end),
+                    "thinking_span_generation": thinking_span,
+                    "thinking_span_absolute": (prompt_len_full + thinking_span[0], prompt_len_full + thinking_span[1]) if thinking_span else None,
+                    "per_hop_projected": trimmed_vectors,
+                    "raw_vectors": raw_vectors,
+                }
+            }
+
+            attr_result = llm_attr.LLMAttributionResult(
+                attr.tokenizer,
+                torch.stack(trimmed_vectors)
+                if trimmed_vectors
+                else torch.zeros((0, len(attr.user_prompt_tokens) + len(attr.generation_tokens))),
+                attr.user_prompt_tokens,
+                attr.generation_tokens,
+                all_tokens=attr.user_prompt_tokens + attr.generation_tokens,
+                metadata=meta,
+            )
+
+            debug_info = {
+                "full_prompt_tokens": list(getattr(attr, "prompt_tokens", []) or []),
+                "generation_tokens": list(getattr(attr, "generation_tokens", []) or []),
+                "user_prompt_indices": list(getattr(attr, "user_prompt_indices", []) or []),
+                "chat_prompt_indices": list(getattr(attr, "chat_prompt_indices", []) or []),
+                "raw_hop_vectors": raw_vectors,
+            }
 
     if attr_result.metadata is None or "ifr" not in attr_result.metadata:
         raise RuntimeError("IFR metadata missing from attribution result.")
@@ -309,18 +531,43 @@ def main() -> None:
     if not hop_vectors:
         raise RuntimeError("No per-hop vectors found in IFR metadata.")
 
+    raw_vectors = debug_info.get("raw_hop_vectors") or []
+    raw_vectors = [
+        vec.detach().cpu().tolist() if hasattr(vec, "detach") else list(vec) for vec in raw_vectors
+    ]
+
     context = analysis.build_sentence_context(
         tokenizer, attr_result.prompt_tokens, attr_result.generation_tokens
     )
 
     tokens = list(attr_result.prompt_tokens) + list(attr_result.generation_tokens)
+    prompt_tokens_full = debug_info.get("full_prompt_tokens") or []
+    generation_tokens_full = debug_info.get("generation_tokens") or list(attr_result.generation_tokens)
+    raw_tokens = list(prompt_tokens_full) + list(generation_tokens_full)
+
     segments = {
         "prompt_len": len(attr_result.prompt_tokens),
         "thinking_span": thinking_span,
         "sink_span": sink_span,
         "generation_len": len(attr_result.generation_tokens),
     }
+    roles_trimmed = build_trimmed_roles(tokens, segments)
+
+    sink_span_abs = ifr_meta.get("sink_span_absolute")
+    thinking_span_abs = ifr_meta.get("thinking_span_absolute")
+    prompt_len_full = len(prompt_tokens_full)
+    roles_raw = build_raw_roles(
+        raw_tokens,
+        prompt_len_full,
+        debug_info.get("user_prompt_indices") or [],
+        debug_info.get("chat_prompt_indices") or [],
+        thinking_span_abs,
+        sink_span_abs,
+    )
+
     hop_records = analysis.package_hops(hop_vectors, context, topk=5)
+    hop_token_trim = analysis.package_token_hops(hop_vectors)
+    hop_token_raw = analysis.package_token_hops(raw_vectors)
 
     case_meta: Dict[str, Any] = {
         "dataset": ds_name,
@@ -329,6 +576,8 @@ def main() -> None:
         "thinking_span": thinking_span,
         "n_hops": args.n_hops,
         "thinking_ratios": ifr_meta.get("thinking_ratios"),
+        "mode": args.mode,
+        "ifr_view": ifr_meta.get("ifr_view") if isinstance(ifr_meta, dict) else None,
     }
 
     context_dict = {
@@ -347,6 +596,10 @@ def main() -> None:
         "prompt_tokens": attr_result.prompt_tokens,
         "generation_tokens": attr_result.generation_tokens,
         "all_tokens": tokens,
+        "full_prompt_tokens": prompt_tokens_full,
+        "full_all_tokens": raw_tokens,
+        "token_roles": roles_trimmed,
+        "raw_token_roles": roles_raw,
         "segments": segments,
         "prompt_sentences": context.prompt_sentences,
         "generation_sentences": context.generation_sentences,
@@ -358,13 +611,31 @@ def main() -> None:
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = make_output_stem(ds_name, args.index)
+    if args.mode == "ifr":
+        stem = stem.replace("ft_case_", "ifr_case_")
     json_path = out_dir / f"{stem}.json"
     html_path = out_dir / f"{stem}.html"
 
     with json_path.open("w", encoding="utf-8") as f:
         json.dump(record, f, ensure_ascii=False, indent=2)
 
-    html = viz.render_case_html(case_meta, context_dict, hop_records, tokens, segments)
+    html = viz.render_case_html(
+        case_meta,
+        context_dict,
+        hop_records,
+        token_view_trimmed={
+            "label": "Post-trim token-level heatmap (user prompt only)",
+            "tokens": tokens,
+            "roles": roles_trimmed,
+            "hops": hop_token_trim,
+        },
+        token_view_raw={
+            "label": "Pre-trim token-level heatmap (with chat template)",
+            "tokens": raw_tokens,
+            "roles": roles_raw,
+            "hops": hop_token_raw,
+        },
+    )
     html_path.write_text(html, encoding="utf-8")
 
     print(f"[done] wrote {json_path}")
