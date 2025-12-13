@@ -14,6 +14,7 @@
   - **裁剪后 token 级**：去除模板后的用户输入 + 生成热力图，按 input/thinking/output 分段。
   - **聚合后句子级**：将每跳 token 权重聚合到句子。
 - 输出 JSON（完整数值）和 HTML（逐跳热力图）。
+- 额外提供 MAS（faithfulness / sentence perturbation）可视化：对指定归因方法做句子级扰动评估，并渲染扰动影响热力图 + MAS 分数。
 
 ## 快速开始
 ```bash
@@ -78,6 +79,51 @@ python exp/case_study/run_ifr_case.py \
 - `attnlrp_case_<dataset>_idx<idx>.json/html`
 - `ft_attnlrp_case_<dataset>_idx<idx>.json/html`
 
+## MAS（Faithfulness / Sentence Perturbation）可视化
+
+> 说明：这里的 MAS 与项目 `llm_attr_eval.LLMAttributionEvaluator.faithfulness_test()` 保持一致：
+> 1) 先对样本跑指定方法的归因，并取 sentence-level attribution（Seq / Row / Recursive）。
+> 2) 按 prompt 句子的重要性排序，逐步将句子替换为等长 EOS token（句子级扰动，替换操作在 token-level 发生）。
+> 3) 用 `sum log p(generation + EOS | prompt)` 得到分数曲线，计算 RISE / MAS / RISE+AP。
+> 4) 可视化时用“每一步扰动带来的边际 logprob 变化”作为句子分数，渲染为 sentence spans 形式的“扰动影响热力图”。
+>
+> 注意：真实扰动单位是句子；HTML 中以 “sentence spans” 的方式把每个句子当作一个色块拼接成整段文本（不是逐 token 单独扰动）。
+
+```bash
+# FT-IFR（ifr_multi_hop；默认 --method ft）
+python exp/case_study/run_mas_case.py \
+  --dataset exp/exp2/data/morehopqa.jsonl \
+  --index 0 \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 0 \
+  --method ft \
+  --n_hops 1
+```
+
+常用方法选择（与 `run_ifr_case.py` 的模式名对齐）：
+```bash
+# IFR（需要 sink_span；默认会优先使用数据集缓存字段）
+python exp/case_study/run_mas_case.py --method ifr --sink_span 0 20 ...
+
+# FT-IFR（ifr_multi_hop）
+python exp/case_study/run_mas_case.py --method ft --n_hops 1 --sink_span 0 20 --thinking_span 0 20 ...
+
+# AttnLRP（sink-span span-aggregate；默认会优先使用数据集缓存字段）
+python exp/case_study/run_mas_case.py --method attnlrp --sink_span 0 20 ...
+
+# FT-AttnLRP（attnlrp_aggregated_multi_hop）
+python exp/case_study/run_mas_case.py --method ft_attnlrp --n_hops 1 --sink_span 0 20 --thinking_span 0 20 ...
+```
+
+产物位于 `exp/case_study/out/`，文件名前缀为：
+- `mas_case_<method>_<dataset>_idx<idx>.json/html`
+
+HTML 默认包含 3 个 attribution 视角面板（Seq / Row / Recursive），每个面板里有 3 行句子级热力图：
+- **Method attribution（sentence weights）**：该方法的句子级归因权重（用于排序/密度）。
+- **Pure sentence ablation（base − score）**：对 input 的每个句子单独替换一次（不按归因排序、不累计替换）的影响分布。
+- **Attribution-guided MAS marginal（path deltas）**：按归因排序逐步替换的边际影响（这就是评测中实际使用的扰动路径）。
+
 ## 在浏览器中查看 HTML
 1) 先运行上面的命令生成 `.html`（终端会打印形如 `wrote exp/case_study/out/...html`）。
 
@@ -100,8 +146,10 @@ python -m http.server 8888 --directory exp/case_study/out
   - 说明：case study 默认会优先用 bf16 加载模型以避免 fp16 下梯度下溢导致的全 0 归因（不影响其它模式）。
 - `--chunk_tokens` / `--sink_chunk_tokens`：IFR 分块参数。
 - `--output_dir`：修改输出目录。
+- `--score_transform positive|abs|signed`：仅 `run_mas_case.py` 用于控制句子热力图的显示方式（不改变 MAS 分数的计算逻辑）。
 
 ## 文件说明
 - `run_ifr_case.py`：命令行入口与落盘（支持 `ft`/`ifr` 模式）。
+- `run_mas_case.py`：MAS（faithfulness / sentence perturbation）可视化入口与落盘（支持 `ifr`/`ft`/`attnlrp`/`ft_attnlrp`）。
 - `analysis.py`：聚合与清洗（token→句子、逐跳封装）。
 - `viz.py`：HTML 渲染与热力图。

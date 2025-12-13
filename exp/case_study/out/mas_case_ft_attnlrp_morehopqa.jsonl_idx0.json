@@ -1,0 +1,531 @@
+{
+  "meta": {
+    "dataset": "morehopqa.jsonl",
+    "index": 0,
+    "mode": "mas",
+    "attr_method": "ft_attnlrp",
+    "attr_method_label": "FT-AttnLRP (attnlrp_aggregated_multi_hop)",
+    "sink_span": [
+      72,
+      93
+    ],
+    "thinking_span": [
+      0,
+      71
+    ],
+    "n_hops": 3,
+    "score_transform": "positive",
+    "base_score": -102.5
+  },
+  "prompt": "Suite from Henry V is a 1963 orchestral arrangement of William Walton's musical score from the 1944 film \"Henry V\". The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton's own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare's play of the same name. The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play). It stars Laurence Olivier, who also directed. The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent. The score is by William Walton.\nWhat is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?",
+  "target": "The author of the play that was adapted into the film is William Shakespeare. The first name \"William\" has 7 letters, and the last name \"Shakespeare\" has 11 letters. Adding them together, 7 + 11 = 18. Therefore, the combined length of the first and last name is 18 letters.\nThe combined length of the first name and last name of the author of the play is 18 letters.",
+  "generation": "The author of the play that was adapted into the film is William Shakespeare. The first name \"William\" has 7 letters, and the last name \"Shakespeare\" has 11 letters. Adding them together, 7 + 11 = 18. Therefore, the combined length of the first and last name is 18 letters.\nThe combined length of the first name and last name of the author of the play is 18 letters.",
+  "prompt_sentences": [
+    " Suite from Henry V is a 1963 orchestral arrangement of William Walton's musical score from the 1944 film \"Henry V\".",
+    " The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton's own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare's play of the same name.",
+    " The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).",
+    " It stars Laurence Olivier, who also directed.",
+    " The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.",
+    " The score is by William Walton.",
+    "\n",
+    "What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?"
+  ],
+  "pure_sentence_ablation": {
+    "num_sentences": 8,
+    "base_score": -102.5,
+    "replaced_token_counts": [
+      32,
+      65,
+      43,
+      10,
+      18,
+      7,
+      1,
+      35
+    ],
+    "scores_raw": [
+      -113.0,
+      -96.5,
+      -104.0,
+      -106.0,
+      -102.5,
+      -100.5,
+      -98.5,
+      -162.0
+    ],
+    "sentence_deltas_raw": [
+      10.5,
+      -6.0,
+      1.5,
+      3.5,
+      0.0,
+      -2.0,
+      -4.0,
+      59.5
+    ]
+  },
+  "panels": [
+    {
+      "variant": "seq",
+      "variant_label": "Seq attribution",
+      "metrics": {
+        "RISE": 0.0625,
+        "MAS": 0.18866141885951687,
+        "RISE+AP": 0.18866142188198864
+      },
+      "sorted_attr_indices": [
+        7,
+        1,
+        6,
+        2,
+        5,
+        4,
+        3,
+        0
+      ],
+      "attr_weights": [
+        0.0,
+        0.11504174023866653,
+        0.06076847016811371,
+        0.019044868648052216,
+        0.0476263053715229,
+        0.05014115571975708,
+        0.07948943972587585,
+        0.627888023853302
+      ],
+      "pure_sentence_deltas_raw": [
+        10.5,
+        -6.0,
+        1.5,
+        3.5,
+        0.0,
+        -2.0,
+        -4.0,
+        59.5
+      ],
+      "guided_sentence_deltas_raw": [
+        -19.0,
+        26.0,
+        2.0,
+        -3.0,
+        3.0,
+        -16.0,
+        -1.0,
+        59.5
+      ],
+      "mas_trace": {
+        "num_sentences": 8,
+        "sorted_attr_indices": [
+          7,
+          1,
+          6,
+          2,
+          5,
+          4,
+          3,
+          0
+        ],
+        "replaced_token_counts": [
+          35,
+          65,
+          1,
+          43,
+          7,
+          18,
+          10,
+          32
+        ],
+        "scores_raw": [
+          -102.5,
+          -162.0,
+          -188.0,
+          -187.0,
+          -189.0,
+          -173.0,
+          -176.0,
+          -173.0,
+          -154.0
+        ],
+        "density": [
+          1.0,
+          0.372111976146698,
+          0.25707023590803146,
+          0.1775807961821556,
+          0.1168123260140419,
+          0.06667117029428482,
+          0.019044864922761917,
+          -3.725290298461914e-09,
+          -3.725290298461914e-09
+        ],
+        "normalized_model_response": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_penalty": [
+          0.0,
+          0.372111976146698,
+          0.25707023590803146,
+          0.1775807961821556,
+          0.1168123260140419,
+          0.06667117029428482,
+          0.019044864922761917,
+          3.725290298461914e-09,
+          3.725290298461914e-09
+        ],
+        "corrected_scores": [
+          1.0,
+          0.37211197380763283,
+          0.2570702331404024,
+          0.17758079311840533,
+          0.11681232272391141,
+          0.06667116681736397,
+          0.019044861268419255,
+          0.0,
+          0.0
+        ],
+        "sentence_deltas_raw": [
+          -19.0,
+          26.0,
+          2.0,
+          -3.0,
+          3.0,
+          -16.0,
+          -1.0,
+          59.5
+        ],
+        "attr_weights": [
+          0.0,
+          0.11504174023866653,
+          0.06076847016811371,
+          0.019044868648052216,
+          0.0476263053715229,
+          0.05014115571975708,
+          0.07948943972587585,
+          0.627888023853302
+        ],
+        "metrics": {
+          "RISE": 0.0625,
+          "MAS": 0.18866141885951687,
+          "RISE+AP": 0.18866142188198864
+        },
+        "variant": "seq",
+        "variant_label": "Seq attribution"
+      }
+    },
+    {
+      "variant": "row",
+      "variant_label": "Row attribution",
+      "metrics": {
+        "RISE": 0.0625,
+        "MAS": 0.18866138979246172,
+        "RISE+AP": 0.1886614185059443
+      },
+      "sorted_attr_indices": [
+        7,
+        1,
+        6,
+        2,
+        5,
+        4,
+        3,
+        0
+      ],
+      "attr_weights": [
+        0.0,
+        0.11504174023866653,
+        0.060768477618694305,
+        0.019044870510697365,
+        0.0476263128221035,
+        0.05014116317033768,
+        0.07948944717645645,
+        0.627888023853302
+      ],
+      "pure_sentence_deltas_raw": [
+        10.5,
+        -6.0,
+        1.5,
+        3.5,
+        0.0,
+        -2.0,
+        -4.0,
+        59.5
+      ],
+      "guided_sentence_deltas_raw": [
+        -19.0,
+        26.0,
+        2.0,
+        -3.0,
+        3.0,
+        -16.0,
+        -1.0,
+        59.5
+      ],
+      "mas_trace": {
+        "num_sentences": 8,
+        "sorted_attr_indices": [
+          7,
+          1,
+          6,
+          2,
+          5,
+          4,
+          3,
+          0
+        ],
+        "replaced_token_counts": [
+          35,
+          65,
+          1,
+          43,
+          7,
+          18,
+          10,
+          32
+        ],
+        "scores_raw": [
+          -102.5,
+          -162.0,
+          -188.0,
+          -187.0,
+          -189.0,
+          -173.0,
+          -176.0,
+          -173.0,
+          -154.0
+        ],
+        "density": [
+          1.0,
+          0.372111976146698,
+          0.25707023590803146,
+          0.177580788731575,
+          0.1168123111128807,
+          0.06667114794254303,
+          0.01904483512043953,
+          -3.5390257835388184e-08,
+          -3.5390257835388184e-08
+        ],
+        "normalized_model_response": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_penalty": [
+          0.0,
+          0.372111976146698,
+          0.25707023590803146,
+          0.177580788731575,
+          0.1168123111128807,
+          0.06667114794254303,
+          0.01904483512043953,
+          3.5390257835388184e-08,
+          3.5390257835388184e-08
+        ],
+        "corrected_scores": [
+          1.0,
+          0.37211195392557816,
+          0.2570702096155546,
+          0.17758075962594605,
+          0.11681227985663957,
+          0.06667111491179314,
+          0.01904480040418209,
+          0.0,
+          0.0
+        ],
+        "sentence_deltas_raw": [
+          -19.0,
+          26.0,
+          2.0,
+          -3.0,
+          3.0,
+          -16.0,
+          -1.0,
+          59.5
+        ],
+        "attr_weights": [
+          0.0,
+          0.11504174023866653,
+          0.060768477618694305,
+          0.019044870510697365,
+          0.0476263128221035,
+          0.05014116317033768,
+          0.07948944717645645,
+          0.627888023853302
+        ],
+        "metrics": {
+          "RISE": 0.0625,
+          "MAS": 0.18866138979246172,
+          "RISE+AP": 0.1886614185059443
+        },
+        "variant": "row",
+        "variant_label": "Row attribution"
+      }
+    },
+    {
+      "variant": "recursive",
+      "variant_label": "Recursive attribution",
+      "metrics": {
+        "RISE": 0.0625,
+        "MAS": 0.18866138979246172,
+        "RISE+AP": 0.1886614185059443
+      },
+      "sorted_attr_indices": [
+        7,
+        1,
+        6,
+        2,
+        5,
+        4,
+        3,
+        0
+      ],
+      "attr_weights": [
+        0.0,
+        0.11504174023866653,
+        0.060768477618694305,
+        0.019044870510697365,
+        0.0476263128221035,
+        0.05014116317033768,
+        0.07948944717645645,
+        0.627888023853302
+      ],
+      "pure_sentence_deltas_raw": [
+        10.5,
+        -6.0,
+        1.5,
+        3.5,
+        0.0,
+        -2.0,
+        -4.0,
+        59.5
+      ],
+      "guided_sentence_deltas_raw": [
+        -19.0,
+        26.0,
+        2.0,
+        -3.0,
+        3.0,
+        -16.0,
+        -1.0,
+        59.5
+      ],
+      "mas_trace": {
+        "num_sentences": 8,
+        "sorted_attr_indices": [
+          7,
+          1,
+          6,
+          2,
+          5,
+          4,
+          3,
+          0
+        ],
+        "replaced_token_counts": [
+          35,
+          65,
+          1,
+          43,
+          7,
+          18,
+          10,
+          32
+        ],
+        "scores_raw": [
+          -102.5,
+          -162.0,
+          -188.0,
+          -187.0,
+          -189.0,
+          -173.0,
+          -176.0,
+          -173.0,
+          -154.0
+        ],
+        "density": [
+          1.0,
+          0.372111976146698,
+          0.25707023590803146,
+          0.177580788731575,
+          0.1168123111128807,
+          0.06667114794254303,
+          0.01904483512043953,
+          -3.5390257835388184e-08,
+          -3.5390257835388184e-08
+        ],
+        "normalized_model_response": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "alignment_penalty": [
+          0.0,
+          0.372111976146698,
+          0.25707023590803146,
+          0.177580788731575,
+          0.1168123111128807,
+          0.06667114794254303,
+          0.01904483512043953,
+          3.5390257835388184e-08,
+          3.5390257835388184e-08
+        ],
+        "corrected_scores": [
+          1.0,
+          0.37211195392557816,
+          0.2570702096155546,
+          0.17758075962594605,
+          0.11681227985663957,
+          0.06667111491179314,
+          0.01904480040418209,
+          0.0,
+          0.0
+        ],
+        "sentence_deltas_raw": [
+          -19.0,
+          26.0,
+          2.0,
+          -3.0,
+          3.0,
+          -16.0,
+          -1.0,
+          59.5
+        ],
+        "attr_weights": [
+          0.0,
+          0.11504174023866653,
+          0.060768477618694305,
+          0.019044870510697365,
+          0.0476263128221035,
+          0.05014116317033768,
+          0.07948944717645645,
+          0.627888023853302
+        ],
+        "metrics": {
+          "RISE": 0.0625,
+          "MAS": 0.18866138979246172,
+          "RISE+AP": 0.1886614185059443
+        },
+        "variant": "recursive",
+        "variant_label": "Recursive attribution"
+      }
+    }
+  ]
+}

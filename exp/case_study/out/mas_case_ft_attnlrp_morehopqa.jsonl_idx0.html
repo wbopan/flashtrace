@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>MAS Sentence Study (FT-AttnLRP (attnlrp_aggregated_multi_hop))</title>
+        
+    <style>
+      body { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px; background: #fcfcff; color: #1f2933; }
+      .title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 14px; color: #566; margin-top: 4px; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #e5e8ee; }
+      .meta { font-size: 13px; color: #334; line-height: 1.6; }
+
+      .text-block { margin-top: 16px; border: 1px solid #eef1f6; border-radius: 10px; padding: 12px; background: #fff; }
+      .text-title { font-size: 13px; font-weight: 700; color: #263; margin-bottom: 8px; }
+      .text-body { font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+
+      .panel { margin-top: 18px; padding: 16px; border: 1px solid #e5e8ee; border-radius: 10px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+      .panel-header { display: flex; justify-content: space-between; align-items: center; }
+      .panel-title { font-weight: 600; font-size: 16px; }
+      .panel-meta { font-size: 12px; color: #556; }
+      .panel-foot { margin-top: 8px; font-size: 12px; color: #556; }
+
+      .sentmap { margin-top: 12px; border: 1px solid #eef1f6; border-radius: 8px; padding: 10px; background: #f9fbff; }
+      .sentmap-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #263; }
+      .sentmap-text { font-size: 13px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+      .sent-span { display: inline; padding: 2px 2px; margin: 0 0px; border-radius: 4px; }
+      .sent-span:hover { outline: 1px solid #8899aa; }
+    </style>
+    
+      </head>
+      <body>
+        
+    <div class="header">
+      <div>
+        <div class="title">MAS Sentence Study (FT-AttnLRP (attnlrp_aggregated_multi_hop))</div>
+        <div class="subtitle">Dataset: morehopqa.jsonl | index: 0</div>
+      </div>
+      <div class="meta">
+        <div>Attribution method: ft_attnlrp</div>
+        <div>Sink span (gen idx): (72, 93)</div>
+        <div>Thinking span (gen idx): (0, 71)</div>
+        <div>Panels: 3</div>
+        <div>Score transform: positive</div>
+        
+        <div>Base score: -102.500000</div>
+      </div>
+    </div>
+    
+        
+        <div class="text-block">
+          <div class="text-title">Generation (scored)</div>
+          <div class="text-body">The author of the play that was adapted into the film is William Shakespeare. The first name &quot;William&quot; has 7 letters, and the last name &quot;Shakespeare&quot; has 11 letters. Adding them together, 7 + 11 = 18. Therefore, the combined length of the first and last name is 18 letters.
+The combined length of the first name and last name of the author of the play is 18 letters.</div>
+        </div>
+        
+        
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Seq attribution</div>
+                <div class="panel-meta">RISE: 0.0625 | MAS: 0.1887 | RISE+AP: 0.1887</div>
+              </div>
+
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Method attribution (sentence weights)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=0.115042" style="background-color: rgba(255, 120, 120, 0.22825410759188638);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=0.060768" style="background-color: rgba(255, 120, 120, 0.1677476357274021);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=0.019045" style="background-color: rgba(255, 120, 120, 0.12123214259096943);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=0.047626" style="background-color: rgba(255, 120, 120, 0.15309611346847735);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.050141" style="background-color: rgba(255, 120, 120, 0.1558997905205697);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.079489" style="background-color: rgba(255, 120, 120, 0.18861867991453307);">
+</span><span class="sent-span" title="idx=7, score=0.627888" style="background-color: rgba(255, 120, 120, 0.7999999999988852);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Pure sentence ablation (base − score)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=10.500000" style="background-color: rgba(255, 120, 120, 0.2235294117647038);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=1.500000" style="background-color: rgba(255, 120, 120, 0.11764705882352912);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=3.500000" style="background-color: rgba(255, 120, 120, 0.1411764705882346);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);">
+</span><span class="sent-span" title="idx=7, score=59.500000" style="background-color: rgba(255, 120, 120, 0.7999999999999882);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Attribution-guided MAS marginal (path deltas)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=26.000000" style="background-color: rgba(255, 120, 120, 0.40588235294117125);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=2.000000" style="background-color: rgba(255, 120, 120, 0.1235294117647055);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=3.000000" style="background-color: rgba(255, 120, 120, 0.13529411764705823);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);">
+</span><span class="sent-span" title="idx=7, score=59.500000" style="background-color: rgba(255, 120, 120, 0.7999999999999882);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+
+              <div class="panel-foot">Rank order: 7, 1, 6, 2, 5, 4, 3, 0</div>
+            </div>
+            
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Row attribution</div>
+                <div class="panel-meta">RISE: 0.0625 | MAS: 0.1887 | RISE+AP: 0.1887</div>
+              </div>
+
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Method attribution (sentence weights)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=0.115042" style="background-color: rgba(255, 120, 120, 0.22825410759188638);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=0.060768" style="background-color: rgba(255, 120, 120, 0.16774764403367043);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=0.019045" style="background-color: rgba(255, 120, 120, 0.12123214466753651);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=0.047626" style="background-color: rgba(255, 120, 120, 0.1530961217747457);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.050141" style="background-color: rgba(255, 120, 120, 0.15589979882683805);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.079489" style="background-color: rgba(255, 120, 120, 0.1886186882208014);">
+</span><span class="sent-span" title="idx=7, score=0.627888" style="background-color: rgba(255, 120, 120, 0.7999999999988852);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Pure sentence ablation (base − score)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=10.500000" style="background-color: rgba(255, 120, 120, 0.2235294117647038);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=1.500000" style="background-color: rgba(255, 120, 120, 0.11764705882352912);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=3.500000" style="background-color: rgba(255, 120, 120, 0.1411764705882346);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);">
+</span><span class="sent-span" title="idx=7, score=59.500000" style="background-color: rgba(255, 120, 120, 0.7999999999999882);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Attribution-guided MAS marginal (path deltas)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=26.000000" style="background-color: rgba(255, 120, 120, 0.40588235294117125);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=2.000000" style="background-color: rgba(255, 120, 120, 0.1235294117647055);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=3.000000" style="background-color: rgba(255, 120, 120, 0.13529411764705823);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);">
+</span><span class="sent-span" title="idx=7, score=59.500000" style="background-color: rgba(255, 120, 120, 0.7999999999999882);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+
+              <div class="panel-foot">Rank order: 7, 1, 6, 2, 5, 4, 3, 0</div>
+            </div>
+            
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">Recursive attribution</div>
+                <div class="panel-meta">RISE: 0.0625 | MAS: 0.1887 | RISE+AP: 0.1887</div>
+              </div>
+
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Method attribution (sentence weights)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=0.115042" style="background-color: rgba(255, 120, 120, 0.22825410759188638);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=0.060768" style="background-color: rgba(255, 120, 120, 0.16774764403367043);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=0.019045" style="background-color: rgba(255, 120, 120, 0.12123214466753651);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=0.047626" style="background-color: rgba(255, 120, 120, 0.1530961217747457);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.050141" style="background-color: rgba(255, 120, 120, 0.15589979882683805);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.079489" style="background-color: rgba(255, 120, 120, 0.1886186882208014);">
+</span><span class="sent-span" title="idx=7, score=0.627888" style="background-color: rgba(255, 120, 120, 0.7999999999988852);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Pure sentence ablation (base − score)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=10.500000" style="background-color: rgba(255, 120, 120, 0.2235294117647038);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=1.500000" style="background-color: rgba(255, 120, 120, 0.11764705882352912);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=3.500000" style="background-color: rgba(255, 120, 120, 0.1411764705882346);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);">
+</span><span class="sent-span" title="idx=7, score=59.500000" style="background-color: rgba(255, 120, 120, 0.7999999999999882);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+              
+    <div class="sentmap">
+      <div class="sentmap-title">Attribution-guided MAS marginal (path deltas)</div>
+      <div class="sentmap-text"><span class="sent-span" title="idx=0, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> Suite from Henry V is a 1963 orchestral arrangement of William Walton&#x27;s musical score from the 1944 film &quot;Henry V&quot;.</span><span class="sent-span" title="idx=1, score=26.000000" style="background-color: rgba(255, 120, 120, 0.40588235294117125);"> The suite, arranged by Muir Mathieson, is in five movements, although the second and fourth movements had already appeared in string arrangement form in Walton&#x27;s own Two Pieces for Strings from Henry V. Henry V is a 1944 British Technicolor film adaptation of William Shakespeare&#x27;s play of the same name.</span><span class="sent-span" title="idx=2, score=2.000000" style="background-color: rgba(255, 120, 120, 0.1235294117647055);"> The on-screen title is The Chronicle History of King Henry the Fift with His Battell Fought at Agin Court in France (the title of the 1600 quarto edition of the play).</span><span class="sent-span" title="idx=3, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> It stars Laurence Olivier, who also directed.</span><span class="sent-span" title="idx=4, score=3.000000" style="background-color: rgba(255, 120, 120, 0.13529411764705823);"> The play was adapted for the screen by Olivier, Dallas Bower, and Alan Dent.</span><span class="sent-span" title="idx=5, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);"> The score is by William Walton.</span><span class="sent-span" title="idx=6, score=0.000000" style="background-color: rgba(255, 120, 120, 0.1);">
+</span><span class="sent-span" title="idx=7, score=59.500000" style="background-color: rgba(255, 120, 120, 0.7999999999999882);">What is the combined length of the first name and last name of the author of the play that was adapted into a film and featured the orchestral arrangement Suite from Henry V?</span></div>
+    </div>
+    
+
+              <div class="panel-foot">Rank order: 7, 1, 6, 2, 5, 4, 3, 0</div>
+            </div>
+            
+      </body>
+    </html>

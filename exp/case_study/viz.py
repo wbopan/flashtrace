@@ -251,3 +251,154 @@ def render_case_html(
       </body>
     </html>"""
     return html
+
+
+def _color_for_signed_score(score: float, max_abs: float) -> str:
+    if max_abs <= 0:
+        return "background-color: rgba(245,245,245,0.7);"
+    ratio = min(1.0, abs(score) / (max_abs + 1e-12))
+    alpha = 0.10 + 0.70 * ratio
+
+    # Diverging palette: red for positive, blue for negative.
+    if score < 0:
+        r, g, b = 120, 170, 255
+    else:
+        r, g, b = 255, 120, 120
+    return f"background-color: rgba({r}, {g}, {b}, {alpha});"
+
+
+def _render_sentence_spans(title: str, sentences: Sequence[str], scores: Sequence[float]) -> str:
+    max_abs = max((abs(float(x)) for x in scores), default=0.0)
+    spans: List[str] = []
+    for idx, sentence in enumerate(sentences):
+        score = float(scores[idx]) if idx < len(scores) else 0.0
+        style = _color_for_signed_score(score, max_abs)
+        spans.append(
+            f'<span class="sent-span" title="idx={idx}, score={score:.6f}" style="{style}">{escape(sentence)}</span>'
+        )
+    return f"""
+    <div class="sentmap">
+      <div class="sentmap-title">{escape(title)}</div>
+      <div class="sentmap-text">{''.join(spans)}</div>
+    </div>
+    """
+
+
+def render_mas_sentence_html(
+    case_meta: Dict[str, Any],
+    *,
+    prompt_sentences: Sequence[str],
+    panels: Sequence[Dict[str, Any]],
+    generation: Optional[str] = None,
+) -> str:
+    """Render MAS sentence-level diagnostics (attribution / pure ablation / guided marginal)."""
+
+    method_label = case_meta.get("attr_method_label") or case_meta.get("attr_method") or "Unknown method"
+    title = f"MAS Sentence Study ({method_label})"
+
+    score_transform = case_meta.get("score_transform")
+    legend_row = "<div>Colors: red = +, blue = −</div>" if score_transform == "signed" else ""
+
+    base_score = case_meta.get("base_score")
+    base_score_row = f"<div>Base score: {float(base_score):.6f}</div>" if isinstance(base_score, (int, float)) else ""
+
+    gen_block = ""
+    if isinstance(generation, str) and generation:
+        gen_block = f"""
+        <div class="text-block">
+          <div class="text-title">Generation (scored)</div>
+          <div class="text-body">{escape(generation)}</div>
+        </div>
+        """
+
+    header = f"""
+    <div class="header">
+      <div>
+        <div class="title">{escape(title)}</div>
+        <div class="subtitle">Dataset: {escape(str(case_meta.get('dataset')))} | index: {case_meta.get('index')}</div>
+      </div>
+      <div class="meta">
+        <div>Attribution method: {escape(str(case_meta.get('attr_method')))}</div>
+        <div>Sink span (gen idx): {escape(str(case_meta.get('sink_span')))}</div>
+        <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
+        <div>Panels: {len(panels)}</div>
+        <div>Score transform: {escape(str(score_transform))}</div>
+        {legend_row}
+        {base_score_row}
+      </div>
+    </div>
+    """
+
+    panel_sections: List[str] = []
+    for panel in panels:
+        label = panel.get("variant_label") or panel.get("panel_label") or panel.get("variant") or "Panel"
+        metrics = panel.get("metrics") or {}
+        metrics_str = " | ".join(
+            f"{k}: {float(metrics[k]):.4f}" if isinstance(metrics.get(k), (int, float)) else f"{k}: {metrics.get(k)}"
+            for k in ("RISE", "MAS", "RISE+AP")
+            if k in metrics
+        )
+
+        attr_weights = panel.get("attr_weights") or []
+        pure_deltas = panel.get("pure_sentence_deltas_raw") or []
+        guided_deltas = panel.get("guided_sentence_deltas_raw") or panel.get("sentence_deltas_raw") or []
+        rank_order = panel.get("sorted_attr_indices") or []
+        rank_str = ", ".join(str(int(x)) for x in rank_order) if rank_order else "N/A"
+
+        panel_sections.append(
+            f"""
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">{escape(str(label))}</div>
+                <div class="panel-meta">{escape(metrics_str)}</div>
+              </div>
+
+              {_render_sentence_spans("Method attribution (sentence weights)", prompt_sentences, attr_weights)}
+              {_render_sentence_spans("Pure sentence ablation (base − score)", prompt_sentences, pure_deltas)}
+              {_render_sentence_spans("Attribution-guided MAS marginal (path deltas)", prompt_sentences, guided_deltas)}
+
+              <div class="panel-foot">Rank order: {escape(rank_str)}</div>
+            </div>
+            """
+        )
+
+    style = """
+    <style>
+      body { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px; background: #fcfcff; color: #1f2933; }
+      .title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 14px; color: #566; margin-top: 4px; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #e5e8ee; }
+      .meta { font-size: 13px; color: #334; line-height: 1.6; }
+
+      .text-block { margin-top: 16px; border: 1px solid #eef1f6; border-radius: 10px; padding: 12px; background: #fff; }
+      .text-title { font-size: 13px; font-weight: 700; color: #263; margin-bottom: 8px; }
+      .text-body { font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+
+      .panel { margin-top: 18px; padding: 16px; border: 1px solid #e5e8ee; border-radius: 10px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+      .panel-header { display: flex; justify-content: space-between; align-items: center; }
+      .panel-title { font-weight: 600; font-size: 16px; }
+      .panel-meta { font-size: 12px; color: #556; }
+      .panel-foot { margin-top: 8px; font-size: 12px; color: #556; }
+
+      .sentmap { margin-top: 12px; border: 1px solid #eef1f6; border-radius: 8px; padding: 10px; background: #f9fbff; }
+      .sentmap-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #263; }
+      .sentmap-text { font-size: 13px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+      .sent-span { display: inline; padding: 2px 2px; margin: 0 0px; border-radius: 4px; }
+      .sent-span:hover { outline: 1px solid #8899aa; }
+    </style>
+    """
+
+    html = f"""<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>{escape(title)}</title>
+        {style}
+      </head>
+      <body>
+        {header}
+        {gen_block}
+        {''.join(panel_sections)}
+      </body>
+    </html>"""
+    return html
