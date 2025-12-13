@@ -23,6 +23,28 @@ class SentenceContext:
     sentence_mask: torch.Tensor  # [num_all_sentences, num_all_tokens]
 
 
+def _postprocess_scores(vec: torch.Tensor, transform: str) -> torch.Tensor:
+    vec = torch.nan_to_num(vec.to(dtype=torch.float32), nan=0.0)
+    if transform == "positive":
+        return vec.clamp(min=0.0)
+    if transform == "abs":
+        return vec.abs()
+    raise ValueError(f"Unsupported transform={transform!r}; expected 'positive' or 'abs'.")
+
+
+def vector_stats(vec: torch.Tensor) -> Dict[str, float]:
+    if vec.numel() == 0:
+        return {"min": 0.0, "max": 0.0, "abs_max": 0.0, "mean": 0.0, "sum": 0.0}
+    v = vec.detach().to(dtype=torch.float32)
+    return {
+        "min": float(v.min().item()),
+        "max": float(v.max().item()),
+        "abs_max": float(v.abs().max().item()),
+        "mean": float(v.mean().item()),
+        "sum": float(v.sum().item()),
+    }
+
+
 def tensor_to_list(x: Any) -> Any:
     if torch.is_tensor(x):
         return x.detach().cpu().tolist()
@@ -68,12 +90,15 @@ def build_sentence_context(tokenizer: Any, prompt_tokens: Sequence[str], generat
     )
 
 
-def vector_to_sentence_scores(vector: Sequence[float], context: SentenceContext) -> Tuple[List[float], List[float], float]:
+def vector_to_sentence_scores(
+    vector: Sequence[float],
+    context: SentenceContext,
+    *,
+    transform: str = "positive",
+) -> Tuple[List[float], List[float], float]:
     """Aggregate a token-level vector into per-sentence scores."""
 
-    vec = torch.as_tensor(vector, dtype=torch.float32)
-    vec = torch.nan_to_num(vec, nan=0.0)
-    vec = torch.clamp(vec, min=0.0)
+    vec = _postprocess_scores(torch.as_tensor(vector, dtype=torch.float32), transform)
 
     mask = context.sentence_mask.to(dtype=torch.float32)
     scores = torch.matmul(mask, vec)
@@ -96,22 +121,26 @@ def package_hops(
     hop_vectors: Iterable[Sequence[float]],
     context: SentenceContext,
     topk: int = 5,
+    *,
+    transform: str = "positive",
 ) -> List[Dict[str, Any]]:
     """Convert per-hop token vectors into token + sentence-level records."""
 
     packaged: List[Dict[str, Any]] = []
     for hop_idx, vec in enumerate(hop_vectors):
-        vec_tensor = torch.as_tensor(vec, dtype=torch.float32)
-        vec_tensor = torch.nan_to_num(vec_tensor, nan=0.0).clamp(min=0.0)
+        vec_tensor_raw = torch.as_tensor(vec, dtype=torch.float32)
+        vec_tensor = _postprocess_scores(vec_tensor_raw, transform)
         token_scores = vec_tensor.tolist()
         token_max = float(vec_tensor.max().item()) if vec_tensor.numel() > 0 else 0.0
 
-        raw, norm, total = vector_to_sentence_scores(vec, context)
+        raw, norm, total = vector_to_sentence_scores(vec, context, transform=transform)
         packaged.append(
             {
                 "hop": hop_idx,
                 "token_scores": token_scores,
                 "token_score_max": token_max,
+                "token_stats_raw": vector_stats(torch.nan_to_num(vec_tensor_raw, nan=0.0)),
+                "token_stats_post": vector_stats(vec_tensor),
                 "sentence_scores_raw": raw,
                 "sentence_scores_norm": norm,
                 "total_mass": total,
@@ -126,13 +155,15 @@ def package_hops(
 
 def package_token_hops(
     hop_vectors: Iterable[Sequence[float]],
+    *,
+    transform: str = "positive",
 ) -> List[Dict[str, Any]]:
     """Package per-hop token vectors without sentence aggregation."""
 
     packaged: List[Dict[str, Any]] = []
     for hop_idx, vec in enumerate(hop_vectors):
-        vec_tensor = torch.as_tensor(vec, dtype=torch.float32)
-        vec_tensor = torch.nan_to_num(vec_tensor, nan=0.0).clamp(min=0.0)
+        vec_tensor_raw = torch.as_tensor(vec, dtype=torch.float32)
+        vec_tensor = _postprocess_scores(vec_tensor_raw, transform)
         token_scores = vec_tensor.tolist()
         token_max = float(vec_tensor.max().item()) if vec_tensor.numel() > 0 else 0.0
         total = float(vec_tensor.sum().item())
@@ -141,6 +172,8 @@ def package_token_hops(
                 "hop": hop_idx,
                 "token_scores": token_scores,
                 "token_score_max": token_max,
+                "token_stats_raw": vector_stats(torch.nan_to_num(vec_tensor_raw, nan=0.0)),
+                "token_stats_post": vector_stats(vec_tensor),
                 "total_mass": total,
             }
         )

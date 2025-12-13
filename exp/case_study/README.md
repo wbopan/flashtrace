@@ -4,9 +4,11 @@
 
 ## 功能
 - 读取单个样本（默认 `exp/exp2/data/morehopqa.jsonl`，索引 0）。
-- 支持两种模式：
+- 支持多种模式：
   - `ft`：当前使用的多跳 FT 归因（内部调用 `LLMIFRAttribution.calculate_ifr_multi_hop`）。
   - `ifr`：标准 IFR（单 hop），默认对指定 sink span 做**聚合 IFR**（只显示 1 个面板）。
+  - `attnlrp`：AttnLRP 的 sink-span 聚合（只显示 1 个面板，case study 额外记录裁剪前向量）。
+  - `ft_attnlrp`：FT-attnLRP（多跳递归 AttnLRP，case study 额外记录每 hop 的裁剪前向量）。
 - 可视化三个阶段：
   - **裁剪前 token 级**：带 chat template 的完整序列热力图。
   - **裁剪后 token 级**：去除模板后的用户输入 + 生成热力图，按 input/thinking/output 分段。
@@ -46,9 +48,35 @@ python exp/case_study/run_ifr_case.py \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0 \
   --sink_span 0 20
+
+# AttnLRP（sink-span 聚合；默认 score_mode=max）
+python exp/case_study/run_ifr_case.py \
+  --mode attnlrp \
+  --dataset exp/exp2/data/morehopqa.jsonl \
+  --index 0 \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 0 \
+  --sink_span 0 20
+
+# FT-attnLRP（多跳递归 AttnLRP）
+python exp/case_study/run_ifr_case.py \
+  --mode ft_attnlrp \
+  --dataset exp/exp2/data/morehopqa.jsonl \
+  --index 0 \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 0 \
+  --n_hops 1 \
+  --sink_span 0 20 \
+  --thinking_span 0 20
 ```
 
-产物位于 `exp/case_study/out/`，文件名形如 `ft_case_<dataset>_idx<idx>.json/html` 或 `ifr_case_<dataset>_idx<idx>.json/html`。
+产物位于 `exp/case_study/out/`，文件名前缀根据模式变化，例如：
+- `ft_case_<dataset>_idx<idx>.json/html`
+- `ifr_case_<dataset>_idx<idx>.json/html`
+- `attnlrp_case_<dataset>_idx<idx>.json/html`
+- `ft_attnlrp_case_<dataset>_idx<idx>.json/html`
 
 ## 在浏览器中查看 HTML
 1) 先运行上面的命令生成 `.html`（终端会打印形如 `wrote exp/case_study/out/...html`）。
@@ -67,6 +95,9 @@ python -m http.server 8888 --directory exp/case_study/out
 ## 可选参数
 - `--sink_span a b` / `--thinking_span a b`：覆盖生成侧的 sink/thinking 句子 span（默认使用缓存字段）。
 - `--ifr_view aggregate|per_token`：仅 `--mode ifr` 生效；`aggregate` 为 sink-span 聚合 IFR（默认 1 个面板），`per_token` 为逐 token（多面板）。
+- `--lrp_score_mode max|generated`：仅 AttnLRP 模式生效；选择目标函数的打分方式。
+- `--lrp_normalize_weights / --no-lrp_normalize_weights`：仅 AttnLRP 模式生效；是否对 sink 权重归一化。
+  - 说明：case study 默认会优先用 bf16 加载模型以避免 fp16 下梯度下溢导致的全 0 归因（不影响其它模式）。
 - `--chunk_tokens` / `--sink_chunk_tokens`：IFR 分块参数。
 - `--output_dir`：修改输出目录。
 

@@ -93,8 +93,10 @@ def render_case_html(
     sink_span = case_meta.get("sink_span")
 
     def _panel_title(panel_idx: int) -> str:
-        if mode != "ifr":
+        if mode in ("ft", "ft_attnlrp"):
             return f"Hop {panel_idx}"
+        if mode == "attnlrp":
+            return "AttnLRP (sink-span aggregate)"
         if ifr_view == "per_token" and isinstance(sink_span, (list, tuple)) and len(sink_span) == 2:
             try:
                 base = int(sink_span[0])
@@ -153,7 +155,32 @@ def render_case_html(
     thinking_ratios = case_meta.get("thinking_ratios") or []
     ratios_str = ", ".join(f"{r:.4f}" for r in thinking_ratios) if thinking_ratios else "N/A"
 
-    mode_label = "FT Multi-hop" if mode == "ft" else "IFR Standard"
+    if mode == "ft":
+        mode_label = "FT Multi-hop (IFR)"
+    elif mode == "ifr":
+        mode_label = "IFR Standard"
+    elif mode == "attnlrp":
+        mode_label = "AttnLRP"
+    elif mode == "ft_attnlrp":
+        mode_label = "FT Multi-hop (AttnLRP)"
+    else:
+        mode_label = str(mode)
+
+    if mode in ("ft", "ft_attnlrp"):
+        view_key = "Recursive hops"
+        view_val = case_meta.get("n_hops")
+    elif mode == "ifr":
+        view_key = "IFR view"
+        view_val = ifr_view
+    elif mode == "attnlrp":
+        view_key = "AttnLRP view"
+        view_val = "span_aggregate"
+    else:
+        view_key = "View"
+        view_val = "N/A"
+
+    score_transform = case_meta.get("score_transform")
+    transform_row = f"<div>Score transform: {escape(str(score_transform))}</div>" if score_transform else ""
 
     header = f"""
     <div class="header">
@@ -165,7 +192,8 @@ def render_case_html(
         <div>Sink span (gen idx): {escape(str(case_meta.get('sink_span')))}</div>
         <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
         <div>Panels: {hop_count}</div>
-        <div>{'Recursive hops' if mode == 'ft' else 'IFR view'}: {escape(str(case_meta.get('n_hops') if mode == 'ft' else ifr_view))}</div>
+        <div>{escape(str(view_key))}: {escape(str(view_val))}</div>
+        {transform_row}
         <div>Thinking ratios: {ratios_str}</div>
       </div>
     </div>
