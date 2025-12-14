@@ -82,8 +82,10 @@ def load_ruler(path: Path, sample: Optional[int] = None, seed: int = 42) -> List
     return examples
 
 
-def load_morehopqa(sample: Optional[int] = None, seed: int = 42) -> List[CachedExample]:
-    ds = MoreHopQAAttributionDataset("./data/with_human_verification.json")
+def load_morehopqa(
+    path: str | Path = "./data/with_human_verification.json", sample: Optional[int] = None, seed: int = 42
+) -> List[CachedExample]:
+    ds = MoreHopQAAttributionDataset(path)
     ex_iter: Iterable[AttributionExample] = ds
     if sample is not None and sample < len(ds):
         ex_iter = list(ds)
@@ -288,9 +290,31 @@ class DatasetLoader:
         return self.load_raw(name, sample=sample)
 
     def load_raw(self, name: str, sample: Optional[int] = None) -> List[CachedExample]:
+        def _looks_like_json_array(path: Path) -> bool:
+            try:
+                with path.open("r", encoding="utf-8") as f:
+                    while True:
+                        ch = f.read(1)
+                        if not ch:
+                            return False
+                        if ch.isspace():
+                            continue
+                        return ch == "["
+            except OSError:
+                return False
+
         # MoreHopQA
         if name == "morehopqa":
             ex = load_morehopqa()
+            for item in ex:
+                if "answer" in item.metadata:
+                    item.metadata.setdefault("reference_answer", item.metadata["answer"])
+            return self._sample(ex, sample)
+
+        # Allow passing the raw MoreHopQA JSON path directly.
+        p = Path(name)
+        if p.exists() and _looks_like_json_array(p):
+            ex = load_morehopqa(p)
             for item in ex:
                 if "answer" in item.metadata:
                     item.metadata.setdefault("reference_answer", item.metadata["answer"])

@@ -50,7 +50,9 @@ class RateLimitError(RuntimeError):
 
 GEN_SYSTEM_PROMPT = (
     "You are a careful reasoning assistant. "
-    "First, reason freely and naturally without using specific headers or strict formatting. "
+    "Before answering, engage in an extremely detailed and exhaustive chain of thought. **No fewer than 2k tokens.** "
+    "Do not skip any logical steps, even if they seem obvious. "
+    "Process this freely and naturally without using specific headers or strict formatting. "
     "When you reach the conclusion, wrap the entire final sentence containing the answer inside \\box{}. "
     "Ensure the box wraps the **sentence** that naturally delivers the answer. DO NOT rewrite the answer word for the box separately."
 )
@@ -183,15 +185,20 @@ def write_cache(out_path: Path, examples: Iterable[CachedExample]) -> int:
 
 def main():
     parser = argparse.ArgumentParser("Sample and filter dataset examples for exp2.")
-    parser.add_argument("--dataset", type=str, required=True, help="morehopqa | hotpotqa_long | niah_* | vt_*")
+    parser.add_argument(
+        "--dataset",
+        type=str,
+        required=True,
+        help="morehopqa | hotpotqa_long | niah_* | vt_* | <morehopqa_json_path> | <ruler_jsonl_path>",
+    )
     parser.add_argument("--max_examples", type=int, default=100, help="Number of raw examples to sample before filtering.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--api_base", type=str, default="http://localhost:4000/v1", help="Chat API base URL.")
     parser.add_argument("--api_key", type=str, default=None, help="API key; defaults to FLASHTRACE_API_KEY/OPENAI_API_KEY.")
     parser.add_argument("--generator_model", type=str, default="qwen3-235b-a22b-2507")
     parser.add_argument("--judge_model", type=str, default="deepseek-v3-1-terminus")
-    parser.add_argument("--api_timeout", type=int, default=60)
-    parser.add_argument("--api_max_tokens", type=int, default=512)
+    parser.add_argument("--api_timeout", type=int, default=300)
+    parser.add_argument("--api_max_tokens", type=int, default=8192)
     parser.add_argument("--api_temperature", type=float, default=0.0)
     parser.add_argument("--api_cache_ttl", type=int, default=600)
     parser.add_argument("--api_cache_namespace", type=str, default="flashtrace-exp2")
@@ -309,8 +316,10 @@ def main():
         new_meta["reference_answer"] = reference_answer
         new_meta["judge_response"] = judge_resp
 
-        # Always explain the final sentence (answer sentence) in downstream attribution.
-        indices_to_explain = [-1]
+        # Always explain the final *non-EOS* generation sentence.
+        # Note: create_sentences() may split the appended EOS token into its own sentence,
+        # so -1 can point to EOS; we use -2 to target the actual final answer sentence.
+        indices_to_explain = [-2]
 
         new_ex = CachedExample(
             prompt=ex.prompt,

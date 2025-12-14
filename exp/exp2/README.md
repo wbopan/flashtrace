@@ -21,7 +21,7 @@
 - 指标：
   - `coverage`（prompt 侧）：需要 `attr_mask_indices`。
   - `faithfulness_gen`（生成侧）：可运行在任何已加载样本（math 以外）。
-- 方法（`--attr_funcs`）：`IG`、`perturbation_all`、`perturbation_CLP`、`perturbation_REAGENT`、`attention`（内部融合 IG）、`ifr_all_positions`、`ifr_multi_hop`、`attnlrp`、`basic`。AT2 未提供。
+- 方法（`--attr_funcs`）：`IG`、`perturbation_all`、`perturbation_CLP`、`perturbation_REAGENT`、`attention`（内部融合 IG）、`ifr_all_positions`、`ifr_multi_hop`、`attnlrp`、`ft_attnlrp`、`basic`。AT2 未提供。
 
 ---
 
@@ -31,7 +31,7 @@
 - 统一数据加载：`DatasetLoader` 读取 MoreHopQA / HotpotQA / RULER niah / RULER vt；可直接传自定义 RULER JSONL。
 - 生成模型：`qwen3-235b-a22b-2507`（英文 system prompt），要求「先简要思考，再用 `\box{}` 包裹最终答案且末尾不追加内容」；user prompt 为原题，无额外模板。
 - 判定模型：`deepseek-v3-1-terminus`（英文 system prompt），只输出 True/False 判断 `\box{}` 内文与参考答案是否一致。
-- 过滤：仅保留「思考 + 末尾 boxed 答案」且判定为 True 的样本；`target` 用提取的思考片段与 **去掉 box 包裹的最终答案** 重组，附带 token 级 `sink_span`/`thinking_span`、`reference_answer`、`judge_response`（不再存 `candidate_answer`），`indices_to_explain` 统一写为 `[-1]`（最终答案句）。
+- 过滤：仅保留「思考 + 末尾 boxed 答案」且判定为 True 的样本；`target` 用提取的思考片段与 **去掉 box 包裹的最终答案** 重组，附带 token 级 `sink_span`/`thinking_span`、`reference_answer`、`judge_response`（不再存 `candidate_answer`），`indices_to_explain` 统一写为 `[-2]`（最后一个非 EOS 的生成句）。
 - 采样会按原始顺序依次尝试样本，判定失败立即跳过；累计到 `--max_examples` 条成功样本即提前停止（若源数据不足则更少），tqdm 会分别显示尝试与成功计数。
 
 使用说明
@@ -72,26 +72,28 @@ python exp/exp2/sample_and_filter.py \
 CUDA_VISIBLE_DEVICES=2,3,4,5,6,7
 python exp/exp2/run_exp.py \
   --datasets exp/exp2/data/morehopqa.jsonl \
-  --attr_funcs IG,perturbation_all,attention,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,attnlrp \
+  --attr_funcs IG,perturbation_all,attention,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,attnlrp,ft_attnlrp \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0,1,2,3,4,5 \
   --num_examples 100 \
-  --mode coverage
+  --mode coverage \
+  --n_hops 3
 
 # 生成侧 RISE/MAS 忠实度
 CUDA_VISIBLE_DEVICES=2,3,4,5,6,7
 python exp/exp2/run_exp.py \
   --datasets exp/exp2/data/morehopqa.jsonl \
-  --attr_funcs IG,perturbation_all,attention,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,attnlrp \
+  --attr_funcs IG,perturbation_all,attention,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,attnlrp,ft_attnlrp \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0,1,2,3,4,5 \
   --num_examples 100 \
-  --mode faithfulness_gen
+  --mode faithfulness_gen \
+  --n_hops 3
 ```
 常用参数：
 - `--datasets`：逗号分隔数据集名；若已存在 `exp/exp2/data/<name>.jsonl` 则直接使用。
-- `--attr_funcs`：逗号分隔方法（无 AT2）；`ifr_multi_hop` 支持多跳。
+- `--attr_funcs`：逗号分隔方法（无 AT2）；`ifr_multi_hop` 与 `ft_attnlrp` 支持多跳（由 `--n_hops` 控制）。
 - `--data_root`/`--output_root`：缓存与结果目录（默认 `exp/exp2/data` / `exp/exp2/output`）。
 - `--mode`：coverage | faithfulness_gen；`--num_examples` 控制评测条数。 math 会被拒绝。***

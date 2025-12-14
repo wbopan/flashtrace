@@ -134,6 +134,15 @@ def run_attribution(testing_dict, example: ds_utils.CachedExample, target: Optio
     elif attr_func == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         attr = llm_attributor.calculate_attnlrp(example.prompt, target=target)
+    elif attr_func in ("ft_attnlrp", "attnlrp_aggregated_multi_hop"):
+        llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
+        attr = llm_attributor.calculate_attnlrp_aggregated_multi_hop(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict["n_hops"],
+        )
     elif attr_func == "basic":
         llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
         attr = llm_attributor.calculate_basic_attribution(example.prompt, target=target)
@@ -235,7 +244,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--chunk_tokens", type=int, default=128)
     parser.add_argument("--sink_chunk_tokens", type=int, default=32)
-    parser.add_argument("--n_hops", type=int, default=1)
+    parser.add_argument("--n_hops", type=int, default=3)
     parser.add_argument("--data_root", type=str, default="exp/exp2/data", help="Filtered dataset cache directory.")
     parser.add_argument("--output_root", type=str, default="exp/exp2/output", help="Directory to store evaluation outputs.")
     args = parser.parse_args()

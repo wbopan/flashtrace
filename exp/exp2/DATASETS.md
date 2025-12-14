@@ -34,7 +34,7 @@
 - `split_boxed_generation`（`dataset_utils.py`）校验格式：必须是「非空思考文本 + 单个末尾 \\box{}」且箱体之后无其他字符，否则直接跳过。
 - `target` 由「思考片段 + 换行 + 最终答案文本（无 box）」重组。
 - `attach_spans_from_answer` 使用 tokenizer 的 offset mapping 将最终答案在 `target` 中的字符区间映射到 token 级索引，得到 `sink_span`；`thinking_span` 取从开头到 `sink_span` 前一 token 的闭区间。两者均为 token 级 span，满足后续多跳 IFR 的调用约定。
-- `indices_to_explain` 在采样写缓存时统一设置为 `[-1]`，即最后一条生成句子（含最终答案所在句）。
+- `indices_to_explain` 在采样写缓存时统一设置为 `[-2]`，即最后一个非 EOS 的生成句（最终答案所在句）。
 
 ---
 
@@ -63,7 +63,7 @@
   {
     "prompt": "<同上>",
     "target": "<生成的 CoT + 最终答案文本（已去掉 box 包裹）>",
-    "indices_to_explain": [-1],
+    "indices_to_explain": [-2],
     "attr_mask_indices": null,
     "sink_span": [start_tok, end_tok] | null,
     "thinking_span": [start_tok, end_tok] | null,
@@ -128,7 +128,7 @@
   {
     "prompt": "<同上>",
     "target": "<生成的 CoT + 最终答案文本（已去掉 box 包裹）>",
-    "indices_to_explain": [-1],
+    "indices_to_explain": [-2],
     "attr_mask_indices": [<句子索引>...] | null,
     "sink_span": [start_tok, end_tok] | null,
     "thinking_span": [start_tok, end_tok] | null,
@@ -147,7 +147,7 @@
     }
   }
   ```
-  - `attr_mask_indices` 保留原值；`indices_to_explain` 统一为末句 `[-1]`；`sink_span`/`thinking_span` 仅在成功解析 `\\box{}` 时填充；`target` 为「思考 + 最终答案文本」的裁剪版。
+  - `attr_mask_indices` 保留原值；`indices_to_explain` 统一为末句 `[-2]`（最后一个非 EOS 生成句）；`sink_span`/`thinking_span` 仅在成功解析 `\\box{}` 时填充；`target` 为「思考 + 最终答案文本」的裁剪版。
   - 写入：`exp/exp2/data/hotpotqa_long.jsonl`。
 
 - **归因阶段（加载缓存优先）**
@@ -186,7 +186,7 @@
   {
     "prompt": "<同上>",
     "target": "<思考 + 最终答案文本（无 box），无其他尾巴>",
-    "indices_to_explain": [-1],
+    "indices_to_explain": [-2],
     "attr_mask_indices": [<句子索引>...] | null,
     "sink_span": [start_tok, end_tok] | null,
     "thinking_span": [start_tok, end_tok] | null,
@@ -214,8 +214,8 @@
 ---
 
 ## `indices_to_explain` 约定
-- 采样写缓存统一设置为 `[-1]`，即生成文本的最后一条句子（最终答案所在句）。确保归因聚焦最终答案句子。
-- 若后续需要覆盖，可在缓存中手动修改，但默认推荐保持 `[-1]` 与新目标结构一致。
+- 采样写缓存统一设置为 `[-2]`，即生成文本的最后一个非 EOS 句子（最终答案所在句）。确保归因聚焦最终答案句子。
+- 若后续需要覆盖，可在缓存中手动修改，但默认推荐保持 `[-2]` 与新目标结构一致。
 
 ---
 
