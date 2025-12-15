@@ -305,8 +305,10 @@ def score_prompt_with_generation(
     generation: str,
 ) -> float:
     prompt = "".join(segmented_prompt)
-    if prompt and prompt[0] == " ":
-        prompt = prompt[1:]
+    # Ensure the same leading-space convention as attribution/generation paths
+    # (so DEFAULT_PROMPT_TEMPLATE yields "Context: <...>").
+    if prompt and not prompt.startswith(" "):
+        prompt = " " + prompt
 
     formatted = format_prompt(tokenizer, prompt)
     prompt_ids = tokenizer(formatted, return_tensors="pt", add_special_tokens=False).input_ids.to(model.device)

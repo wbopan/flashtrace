@@ -1151,10 +1151,10 @@ class LLMIFRAttribution(LLMAttribution):
             observation_mask=obs_mask_tensor,
         )
 
-        base_vector = multi_hop.raw_attributions[0].token_importance_total
+        eval_vector = multi_hop.observation["sum"]
         score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
         for offset in range(span_start, span_end + 1):
-            score_array[offset] = base_vector
+            score_array[offset] = eval_vector
 
         projected_per_hop = [
             self._project_vector(result.token_importance_total) for result in multi_hop.raw_attributions

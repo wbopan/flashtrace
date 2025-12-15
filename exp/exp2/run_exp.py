@@ -205,7 +205,7 @@ def evaluate_dataset(args, dataset_name: str, examples: List[ds_utils.CachedExam
             target = generation
             response_len = len(tokenizer(full_output).input_ids)
         else:
-            response_len = len(tokenizer(llm_evaluator.format_prompt(ex.prompt) + target).input_ids)
+            response_len = len(tokenizer(llm_evaluator.format_prompt(" " + ex.prompt) + target).input_ids)
 
         # Estimate batch size (align with evaluations/coverage.py & faithfulness.py)
         testing_dict["batch_size"] = max(1, math.floor((testing_dict["max_input_len"] - 100) / max(1, response_len)))

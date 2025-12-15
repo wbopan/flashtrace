@@ -118,8 +118,10 @@ class LLMAttributionEvaluator():
         
         def get_score_of_prompt(segmented_prompt):
             prompt = "".join(segmented_prompt)
-            if prompt[0] == " ":
-                prompt = prompt[1:]
+            # Ensure the same leading-space convention as attribution/generation
+            # paths (so DEFAULT_PROMPT_TEMPLATE yields "Context: <...>").
+            if prompt and not prompt.startswith(" "):
+                prompt = " " + prompt
             formatted_prompt = self.format_prompt(prompt)
             prompt_ids = self.tokenizer(formatted_prompt, return_tensors="pt", add_special_tokens = False).input_ids.to(self.device)
             generation_ids = self.tokenizer(generation + self.tokenizer.eos_token, return_tensors="pt", add_special_tokens = False).input_ids.to(self.device)

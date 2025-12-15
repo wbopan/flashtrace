@@ -141,7 +141,10 @@ def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, t
         batch_size = math.floor((testing_dict["max_input_len"] - 100) / len(tokenizer(full_output).input_ids))
     else:
         generation = target
-        batch_size = math.floor((testing_dict["max_input_len"] - 100) / len(tokenizer(llm_evaluator.format_prompt(prompt) + generation).input_ids))
+        batch_size = math.floor(
+            (testing_dict["max_input_len"] - 100)
+            / len(tokenizer(llm_evaluator.format_prompt(" " + prompt) + generation).input_ids)
+        )
 
     # We run an attribution on the input
     # A list of attribution tensors will be returned and scored individually.

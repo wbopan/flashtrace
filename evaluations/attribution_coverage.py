@@ -137,7 +137,10 @@ def attribution_coverage(testing_dict, llm_evaluator, prompt, attr_mask_indices,
         _, full_output = llm_evaluator.response(prompt)
         batch_size = math.floor((testing_dict["max_input_len"] - 100) / len(tokenizer(full_output).input_ids))
     else:
-        batch_size = math.floor((testing_dict["max_input_len"] - 100) / len(tokenizer(llm_evaluator.format_prompt(prompt) + target).input_ids))
+        batch_size = math.floor(
+            (testing_dict["max_input_len"] - 100)
+            / len(tokenizer(llm_evaluator.format_prompt(" " + prompt) + target).input_ids)
+        )
 
     attr_list = run_attribution(testing_dict, prompt, batch_size, indices_to_explain = indices_to_explain, target = target)
 
