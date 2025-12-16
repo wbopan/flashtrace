@@ -268,6 +268,11 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
     return model, tokenizer
 
 def main(args) -> None:
+    raise RuntimeError(
+        "Sentence-level attribution coverage evaluation has been removed in the token-level refactor. "
+        "Use exp/exp2/run_exp.py --mode faithfulness_gen for token-level MAS/RISE."
+    )
+
     # login(token = "")
 
     # Device selection policy:

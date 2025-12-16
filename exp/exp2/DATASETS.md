@@ -13,8 +13,8 @@
 {
   "prompt": "<上下文+问题>",
   "target": "<答案或生成>",
-  "indices_to_explain": [...],      // 需要抽取归因的句子索引
-  "attr_mask_indices": [...],       // 覆盖率金标句子索引，可能为 null
+  "indices_to_explain": [start_tok, end_tok] | null, // token-level：需要解释的 generation token span（闭区间）
+  "attr_mask_indices": [...],       // legacy：覆盖率金标句子索引（当前 exp2 不再使用），可能为 null
   "sink_span": [start, end] | null, // 生成 token 中的答案片段
  "thinking_span": [start, end] | null, // 生成 token 中的 CoT 片段
   "metadata": { ... }               // 数据集特定元信息
@@ -34,7 +34,7 @@
 - `split_boxed_generation`（`dataset_utils.py`）校验格式：必须是「非空思考文本 + 单个末尾 \\box{}」且箱体之后无其他字符，否则直接跳过。
 - `target` 由「思考片段 + 换行 + 最终答案文本（无 box）」重组。
 - `attach_spans_from_answer` 使用 tokenizer 的 offset mapping 将最终答案在 `target` 中的字符区间映射到 token 级索引，得到 `sink_span`；`thinking_span` 取从开头到 `sink_span` 前一 token 的闭区间。两者均为 token 级 span，满足后续多跳 IFR 的调用约定。
-- `indices_to_explain` 在采样写缓存时统一设置为 `[-2]`，即最后一个非 EOS 的生成句（最终答案所在句）。
+- `indices_to_explain` 在采样写缓存时统一设置为 `sink_span`（boxed 内文在 `target` 中对应的 generation token span）。
 
 ---
 
@@ -44,7 +44,7 @@
   {
     "prompt": "<context 拼接>\\n<question>",
     "target": null,
-    "indices_to_explain": [-2],
+    "indices_to_explain": null,
     "attr_mask_indices": null,
     "sink_span": null,
     "thinking_span": null,
@@ -56,14 +56,14 @@
   }
   ```
   - 加载时机：`DatasetLoader.load_raw("morehopqa")` 在采样阶段、归因阶段（无缓存时）都会产出 `CachedExample`。
-  - 原始归因（无缓存）行为：覆盖率被跳过（无 `attr_mask_indices`）；忠实度阶段会在线生成 `target`。
+  - 说明：exp2 的 token-level row/rec 需要 `target` + 可定位的答案 token span；建议先跑 `sample_and_filter.py` 产出缓存后再做归因评估。
 
 - **采样阶段（生成 & 过滤后写缓存）**
   ```json
   {
     "prompt": "<同上>",
     "target": "<生成的 CoT + 最终答案文本（已去掉 box 包裹）>",
-    "indices_to_explain": [-2],
+    "indices_to_explain": [start_tok, end_tok],
     "attr_mask_indices": null,
     "sink_span": [start_tok, end_tok] | null,
     "thinking_span": [start_tok, end_tok] | null,
@@ -82,7 +82,7 @@
 
 - **归因阶段（加载缓存优先）**
   - 加载：`run_exp.py` 优先 `load_cached`（JSONL → `CachedExample`），否则回退原始结构并在线生成 `target`。
-  - 使用：忠实度（RISE/MAS）直接用缓存的 `target`，`ifr_multi_hop` 在有 `sink_span`/`thinking_span` 时限定答案/CoT，否则视整个生成为 sink；覆盖率因 `attr_mask_indices=null` 会跳过。
+  - 使用：忠实度（token-level RISE/MAS）直接用缓存的 `target`；`ifr_multi_hop` 在有 `sink_span`/`thinking_span` 时限定答案/CoT，否则视整个生成为 sink。
 
 ---
 
@@ -186,7 +186,7 @@
   {
     "prompt": "<同上>",
     "target": "<思考 + 最终答案文本（无 box），无其他尾巴>",
-    "indices_to_explain": [-2],
+    "indices_to_explain": [start_tok, end_tok],
     "attr_mask_indices": [<句子索引>...] | null,
     "sink_span": [start_tok, end_tok] | null,
     "thinking_span": [start_tok, end_tok] | null,
@@ -214,8 +214,8 @@
 ---
 
 ## `indices_to_explain` 约定
-- 采样写缓存统一设置为 `[-2]`，即生成文本的最后一个非 EOS 句子（最终答案所在句）。确保归因聚焦最终答案句子。
-- 若后续需要覆盖，可在缓存中手动修改，但默认推荐保持 `[-2]` 与新目标结构一致。
+- token-level：`indices_to_explain = [start_tok, end_tok]`（闭区间），坐标系为 `tokenizer(target, add_special_tokens=False)` 的 generation token indices。
+- exp2 推荐：`indices_to_explain == sink_span`，即 boxed 内文（最终答案）在 `target` 中对应的 token span。
 
 ---
 

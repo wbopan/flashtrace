@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Experiment 2 runner: coverage + faithfulness (generation perturbation).
+Experiment 2 runner: token-level faithfulness (generation perturbation).
 
 Math is intentionally rejected. AT2 is omitted.
 """
@@ -45,7 +45,6 @@ import llm_attr
 import llm_attr_eval
 from attribution_datasets import AttributionExample
 from exp.exp2 import dataset_utils as ds_utils
-from shared_utils import create_sentences
 
 utils.logging.set_verbosity_error()
 
@@ -76,6 +75,13 @@ def run_attribution(testing_dict, example: ds_utils.CachedExample, target: Optio
     model = testing_dict["model"]
     tokenizer = testing_dict["tokenizer"]
     attr_func = testing_dict["attr_func"]
+
+    indices_to_explain = example.indices_to_explain
+    if not (isinstance(indices_to_explain, list) and len(indices_to_explain) == 2):
+        raise ValueError(
+            "exp2 requires token-span indices_to_explain=[start_tok,end_tok]. "
+            "Please re-sample or run exp/exp2/migrate_indices_to_explain_token_span.py on your cache."
+        )
 
     llm_attributor = None
     if "IG" in attr_func:
@@ -149,39 +155,23 @@ def run_attribution(testing_dict, example: ds_utils.CachedExample, target: Optio
     else:
         raise ValueError(f"Unsupported attr_func {attr_func}")
 
-    return attr.get_all_sentence_attrs(example.indices_to_explain or [-1])
-
-
-def attribution_coverage(testing_dict, example: ds_utils.CachedExample, target: Optional[str], llm_evaluator) -> np.ndarray:
-    prompt_sentences = create_sentences(" " + example.prompt, testing_dict["tokenizer"])
-    attr_list = run_attribution(testing_dict, example, target)
-    scores = []
-    if example.attr_mask_indices is None:
-        return np.zeros((3,))
-
-    for attr in attr_list:
-        full_attr = attr[:, : len(prompt_sentences)]
-        partial_attr = attr[:, example.attr_mask_indices]
-        scores.append(llm_evaluator.evaluate_attr_coverage(full_attr, partial_attr))
-    return np.array(scores)
-
-
-def auc(arr: np.ndarray) -> float:
-    return (arr.sum() - arr[0] / 2 - arr[-1] / 2) / max(1, (arr.shape[0] - 1))
+    seq_attr, row_attr, rec_attr = attr.get_all_token_attrs(indices_to_explain)
+    return [seq_attr, row_attr, rec_attr]
 
 
 def faithfulness_generation(testing_dict, example: ds_utils.CachedExample, target: str, llm_evaluator) -> np.ndarray:
-    tokenizer = testing_dict["tokenizer"]
     prompt = example.prompt
     generation = target
-    prompt_sentences = create_sentences(" " + prompt, tokenizer)
 
     attr_list = run_attribution(testing_dict, example, target)
+    seq_attr = attr_list[0]
+    prompt_len = int(seq_attr.shape[1] - seq_attr.shape[0])  # cols=(P+G), rows=G
+
     results = []
     for attr in attr_list:
         # Only use prompt-side attribution, matching evaluations/faithfulness.py
-        attr_prompt = attr[:, : len(prompt_sentences)]
-        scores = llm_evaluator.faithfulness_test(attr_prompt, prompt_sentences, generation)
+        attr_prompt = attr[:, :prompt_len]
+        scores = llm_evaluator.faithfulness_test(attr_prompt, prompt, generation)
         results.append(scores)
 
     return np.array(results)
@@ -195,9 +185,6 @@ def evaluate_dataset(args, dataset_name: str, examples: List[ds_utils.CachedExam
     total = min(len(examples), args.num_examples)
     iterator = islice(examples, total)
     for ex in iterator:
-        if args.mode == "coverage" and ex.attr_mask_indices is None:
-            continue
-
         # Determine generation/target once
         target = ex.target
         if target is None:
@@ -211,12 +198,7 @@ def evaluate_dataset(args, dataset_name: str, examples: List[ds_utils.CachedExam
         testing_dict["batch_size"] = max(1, math.floor((testing_dict["max_input_len"] - 100) / max(1, response_len)))
 
         sample_start = time.perf_counter()
-        if args.mode == "coverage":
-            scores = attribution_coverage(testing_dict, ex, target, llm_evaluator)
-        elif args.mode == "faithfulness_gen":
-            scores = faithfulness_generation(testing_dict, ex, target, llm_evaluator)
-        else:
-            raise ValueError(f"Unsupported mode {args.mode}")
+        scores = faithfulness_generation(testing_dict, ex, target, llm_evaluator)
         durations.append(time.perf_counter() - sample_start)
         results.append(scores)
 
@@ -239,7 +221,7 @@ def main():
     parser.add_argument("--cuda", type=str, default=None)
     parser.add_argument("--cuda_num", type=int, default=0)
     parser.add_argument("--num_examples", type=int, default=100)
-    parser.add_argument("--mode", type=str, default="coverage", choices=["coverage", "faithfulness_gen"])
+    parser.add_argument("--mode", type=str, default="faithfulness_gen", choices=["faithfulness_gen"])
     parser.add_argument("--sample", type=int, default=None, help="Optional subsample before num_examples.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--chunk_tokens", type=int, default=128)
@@ -275,8 +257,6 @@ def main():
         "gemma-27B": 2000,
     }.get(args.model, 2000)
 
-    loader = ds_utils.DatasetLoader(seed=args.seed, data_root=args.data_root)
-
     for ds_name in datasets:
         if ds_name.startswith("math"):
             raise SystemExit("Math is skipped by design for exp2.")
@@ -291,7 +271,10 @@ def main():
             if p.exists():
                 examples = ds_utils.load_cached(p, sample=args.sample, seed=args.seed)
             else:
-                examples = loader.load_raw(ds_name, sample=args.sample)
+                raise SystemExit(
+                    f"Missing exp2 cache for '{ds_name}'. "
+                    f"Expected {cached_path}; please run exp/exp2/sample_and_filter.py first (or pass an explicit cached JSONL path)."
+                )
 
         for attr_func in attr_funcs:
             if attr_func.lower() == "at2":
@@ -316,28 +299,18 @@ def main():
             mean, std, avg_time = result
 
             # Save
-            out_dir = Path(args.output_root) / ("coverage" if args.mode == "coverage" else "faithfulness") / ds_name / model_tag
+            out_dir = Path(args.output_root) / "faithfulness" / ds_name / model_tag
             out_dir.mkdir(parents=True, exist_ok=True)
             filename = f"{attr_func}_{args.num_examples}_examples.csv"
             with open(out_dir / filename, "w") as f:
-                if args.mode == "coverage":
-                    f.write("Method,Double Bound,Lower Bound,Mean Bound\n")
-                    f.write(",".join(["Seq Attr Scores Mean"] + [str(x) for x in mean[0].tolist()]) + "\n")
-                    f.write(",".join(["Row Attr Scores Mean"] + [str(x) for x in mean[1].tolist()]) + "\n")
-                    f.write(",".join(["Recursive Attr Scores Mean"] + [str(x) for x in mean[2].tolist()]) + "\n")
-                    f.write(",".join(["Seq Attr Scores Var"] + [str(x) for x in std[0].tolist()]) + "\n")
-                    f.write(",".join(["Row Attr Scores Var"] + [str(x) for x in std[1].tolist()]) + "\n")
-                    f.write(",".join(["Recursive Attr Scores Var"] + [str(x) for x in std[2].tolist()]) + "\n")
-                    f.write(f"Avg Sample Time (s),{avg_time}\n")
-                else:
-                    f.write("Method,RISE,MAS,RISE+AP\n")
-                    f.write(",".join(["Seq Attr Scores Mean"] + [str(x) for x in mean[0].tolist()]) + "\n")
-                    f.write(",".join(["Row Attr Scores Mean"] + [str(x) for x in mean[1].tolist()]) + "\n")
-                    f.write(",".join(["Recursive Attr Scores Mean"] + [str(x) for x in mean[2].tolist()]) + "\n")
-                    f.write(",".join(["Seq Attr Scores Var"] + [str(x) for x in std[0].tolist()]) + "\n")
-                    f.write(",".join(["Row Attr Scores Var"] + [str(x) for x in std[1].tolist()]) + "\n")
-                    f.write(",".join(["Recursive Attr Scores Var"] + [str(x) for x in std[2].tolist()]) + "\n")
-                    f.write(f"Avg Sample Time (s),{avg_time}\n")
+                f.write("Method,RISE,MAS,RISE+AP\n")
+                f.write(",".join(["Seq Attr Scores Mean"] + [str(x) for x in mean[0].tolist()]) + "\n")
+                f.write(",".join(["Row Attr Scores Mean"] + [str(x) for x in mean[1].tolist()]) + "\n")
+                f.write(",".join(["Recursive Attr Scores Mean"] + [str(x) for x in mean[2].tolist()]) + "\n")
+                f.write(",".join(["Seq Attr Scores Var"] + [str(x) for x in std[0].tolist()]) + "\n")
+                f.write(",".join(["Row Attr Scores Var"] + [str(x) for x in std[1].tolist()]) + "\n")
+                f.write(",".join(["Recursive Attr Scores Var"] + [str(x) for x in std[2].tolist()]) + "\n")
+                f.write(f"Avg Sample Time (s),{avg_time}\n")
             print(f"[{ds_name}] {attr_func} -> {out_dir/filename} (avg sample time: {avg_time:.2f}s)")
 
 

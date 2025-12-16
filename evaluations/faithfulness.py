@@ -27,7 +27,26 @@ utils.logging.set_verbosity_error()  # Suppress standard warnings
 
 import llm_attr
 import llm_attr_eval
-from shared_utils import create_sentences
+
+
+def _resolve_indices_to_explain_token_span(
+    attr_result: llm_attr.LLMAttributionResult, indices_to_explain: list[int] | None
+) -> list[int]:
+    if (
+        isinstance(indices_to_explain, list)
+        and len(indices_to_explain) == 2
+        and all(isinstance(x, int) and x >= 0 for x in indices_to_explain)
+        and indices_to_explain[0] <= indices_to_explain[1]
+    ):
+        return indices_to_explain
+
+    gen_len = int(attr_result.attribution_matrix.shape[0])
+    if gen_len <= 0:
+        return [0, 0]
+
+    # Default: explain the full generation excluding the appended EOS token.
+    end_tok = max(0, gen_len - 2)
+    return [0, end_tok]
 
 
 def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], target = None) -> list[torch.Tensor]:
@@ -41,7 +60,8 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
         if testing_dict["attr_func"] == "IG":
             attr = llm_attributor.calculate_IG_per_generation(prompt, 20, tokenizer.eos_token_id, batch_size = batch_size, target = target)
 
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
 
     elif "perturbation" in testing_dict["attr_func"]:
         llm_attributor = llm_attr.LLMPerturbationAttribution(model, tokenizer)
@@ -53,7 +73,8 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
         elif testing_dict["attr_func"] == "perturbation_REAGENT":
             attr = llm_attributor.calculate_feature_ablation_sentences_mlm(prompt, target = target)
 
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
         
     elif "attention" in testing_dict["attr_func"]:
         llm_attributor = llm_attr.LLMAttentionAttribution(model, tokenizer)
@@ -64,7 +85,8 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
             attr_b = llm_attributor_ig.calculate_IG_per_generation(prompt, 20, tokenizer.eos_token_id, batch_size = batch_size, target = target)
             attr.attribution_matrix = attr.attribution_matrix * attr_b.attribution_matrix
 
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)       
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))       
         
     elif "ifr" in testing_dict["attr_func"].lower():
         llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
@@ -94,22 +116,26 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
         else:
             raise ValueError(f"Unsupported IFR attribution function '{testing_dict['attr_func']}'.")
 
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
 
     elif "basic" in testing_dict["attr_func"]:
         llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
         attr = llm_attributor.calculate_basic_attribution(prompt, target = target)
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
 
     elif testing_dict["attr_func"] == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         attr = llm_attributor.calculate_attnlrp(prompt, target=target)
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
 
     elif testing_dict["attr_func"] == "attnlrp_aggregated":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         attr = llm_attributor.calculate_attnlrp_aggregated(prompt, target=target)
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
 
     elif testing_dict["attr_func"] == "attnlrp_aggregated_multi_hop":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
@@ -120,7 +146,8 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
             thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
             n_hops=testing_dict.get("n_hops", 1),
         )
-        attributions = attr.get_all_sentence_attrs(indices_to_explain)
+        token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
+        attributions = list(attr.get_all_token_attrs(token_span))
 
     else:
         raise ValueError(f"Unsupported attribution function '{testing_dict['attr_func']}'.")
@@ -131,9 +158,6 @@ def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, t
     tokenizer = testing_dict["tokenizer"]
 
     scores = []
-
-    # break prompt into sentences
-    prompt_sentences = create_sentences(" " + prompt, tokenizer)
 
     # batch size is set based on the max_input_len in main(). Currently set to fully fill a 196GB GPU.
     if target is None:
@@ -150,9 +174,12 @@ def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, t
     # A list of attribution tensors will be returned and scored individually.
     attr_list = run_attribution(testing_dict, prompt, batch_size, indices_to_explain = indices_to_explain, target = target)
 
+    seq_attr = attr_list[0]
+    prompt_len = int(seq_attr.shape[1] - seq_attr.shape[0])  # cols=(P+G), rows=G
+
     for i in range(len(attr_list)):
-        attr = attr_list[i][:, :len(prompt_sentences)]
-        scores.append(llm_evaluator.faithfulness_test(attr, prompt_sentences, generation)) # [3 scores]
+        attr = attr_list[i][:, :prompt_len]
+        scores.append(llm_evaluator.faithfulness_test(attr, prompt, generation)) # [3 scores]
 
     return np.array(scores)
 

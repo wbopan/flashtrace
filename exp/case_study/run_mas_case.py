@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""MAS case study: visualize sentence-perturbation faithfulness for attribution methods.
+"""MAS case study: visualize token-perturbation faithfulness for attribution methods.
 
 This script matches the faithfulness evaluation logic implemented in:
   - evaluations/faithfulness.py
   - llm_attr_eval.LLMAttributionEvaluator.faithfulness_test()
 
 For a single example and a selected attribution method, we:
-  1) Compute sentence-level attributions (Seq / Row / Recursive) over prompt sentences.
-  2) Rank prompt sentences by attribution mass.
-  3) Iteratively perturb the prompt by replacing one sentence at a time with EOS tokens.
+  1) Compute token-level attributions (Seq / Row / Recursive) over prompt tokens.
+  2) Rank prompt tokens by attribution mass.
+  3) Iteratively perturb the prompt by replacing one token at a time with PAD tokens.
   4) Score the model as sum log p(generation + EOS | prompt) under the chat template.
-  5) Compute RISE / MAS / RISE+AP (AUCs) and visualize the perturbation impact as heatmaps.
+  5) Compute RISE / MAS / RISE+AP (AUCs) and visualize the perturbation impact as token heatmaps.
 
 Outputs JSON + HTML to exp/case_study/out/.
 """
@@ -178,7 +178,7 @@ if not hasattr(transformers, "LongformerForMaskedLM"):
 
 from exp.case_study import viz  # noqa: E402
 from exp.exp2 import dataset_utils as ds_utils  # noqa: E402
-from shared_utils import DEFAULT_PROMPT_TEMPLATE, create_sentences  # noqa: E402
+from shared_utils import DEFAULT_PROMPT_TEMPLATE  # noqa: E402
 
 import llm_attr  # noqa: E402
 
@@ -297,71 +297,41 @@ def compute_logprob_response_given_prompt(model: Any, prompt_ids: torch.Tensor, 
 
 
 @torch.inference_mode()
-def score_prompt_with_generation(
-    model: Any,
-    tokenizer: Any,
-    *,
-    segmented_prompt: Sequence[str],
-    generation: str,
-) -> float:
-    prompt = "".join(segmented_prompt)
-    # Ensure the same leading-space convention as attribution/generation paths
-    # (so DEFAULT_PROMPT_TEMPLATE yields "Context: <...>").
-    if prompt and not prompt.startswith(" "):
-        prompt = " " + prompt
-
-    formatted = format_prompt(tokenizer, prompt)
-    prompt_ids = tokenizer(formatted, return_tensors="pt", add_special_tokens=False).input_ids.to(model.device)
-    gen_ids = tokenizer(generation + (tokenizer.eos_token or ""), return_tensors="pt", add_special_tokens=False).input_ids.to(model.device)
-    return float(compute_logprob_response_given_prompt(model, prompt_ids, gen_ids).sum().detach().cpu().item())
+def score_prompt_ids_with_generation(model: Any, *, prompt_ids: torch.Tensor, generation_ids: torch.Tensor) -> float:
+    return float(compute_logprob_response_given_prompt(model, prompt_ids, generation_ids).sum().detach().cpu().item())
 
 
 @torch.inference_mode()
-def pure_sentence_ablation_trace(
-    model: Any,
-    tokenizer: Any,
-    *,
-    prompt_sentences: Sequence[str],
-    generation: str,
-    base_score: Optional[float] = None,
-) -> Dict[str, Any]:
-    """Compute per-sentence *unconditional* ablation deltas: base_score - score(with sentence i replaced).
+def _ensure_pad_token_id(tokenizer: Any) -> int:
+    if tokenizer.pad_token_id is None:
+        if tokenizer.eos_token_id is None:
+            raise RuntimeError("tokenizer has neither pad_token_id nor eos_token_id; cannot define baseline token.")
+        tokenizer.pad_token = tokenizer.eos_token
+    return int(tokenizer.pad_token_id)
 
-    This is not part of llm_attr_eval.faithfulness_test(); it is an extra diagnostic
-    that uses the exact same replacement + scoring primitives for comparability.
-    """
 
-    segmented = list(prompt_sentences).copy()
-    num_sent = len(segmented)
-    base = (
-        float(base_score)
-        if base_score is not None
-        else score_prompt_with_generation(model, tokenizer, segmented_prompt=segmented, generation=generation)
-    )
+def _find_subsequence_start(haystack: torch.Tensor, needle: torch.Tensor) -> Optional[int]:
+    if haystack.ndim != 1 or needle.ndim != 1:
+        raise ValueError("Expected 1D tensors for subsequence matching.")
+    if needle.numel() == 0:
+        return 0
+    hay_len = int(haystack.numel())
+    needle_len = int(needle.numel())
+    if needle_len > hay_len:
+        return None
+    for i in range(hay_len - needle_len + 1):
+        if torch.equal(haystack[i : i + needle_len], needle):
+            return i
+    return None
 
-    scores = np.zeros(num_sent, dtype=np.float64)
-    deltas = np.zeros(num_sent, dtype=np.float64)
-    replaced_counts: List[int] = []
 
-    for idx in range(num_sent):
-        perturbed = segmented.copy()
-        selected_text = perturbed[idx]
-        selected_text_tokens = tokenizer(selected_text, add_special_tokens=False).input_ids
-        n_tok = int(len(selected_text_tokens))
-        replaced_counts.append(n_tok)
-        perturbed[idx] = (tokenizer.eos_token or "") * n_tok
-
-        score = score_prompt_with_generation(model, tokenizer, segmented_prompt=perturbed, generation=generation)
-        scores[idx] = float(score)
-        deltas[idx] = base - scores[idx]
-
-    return {
-        "num_sentences": num_sent,
-        "base_score": float(base),
-        "replaced_token_counts": replaced_counts,
-        "scores_raw": scores.tolist(),
-        "sentence_deltas_raw": deltas.tolist(),
-    }
+def decode_text_into_tokens(tokenizer: Any, text: str) -> List[str]:
+    encoding = tokenizer(text, return_offsets_mapping=True, add_special_tokens=False)
+    offsets = list(encoding["offset_mapping"])
+    tokens: List[str] = []
+    for start, end in offsets:
+        tokens.append(text[start:end])
+    return tokens
 
 
 def auc(arr: np.ndarray) -> float:
@@ -373,38 +343,58 @@ def mas_trace(
     tokenizer: Any,
     *,
     attribution: torch.Tensor,
-    prompt_sentences: Sequence[str],
+    prompt: str,
     generation: str,
 ) -> Dict[str, Any]:
-    """Return a full faithfulness trace (RISE/MAS/RISE+AP) plus per-sentence deltas."""
+    """Return a token-level faithfulness trace (RISE/MAS/RISE+AP) plus per-token deltas."""
 
-    segmented = list(prompt_sentences).copy()
-    num_sent = len(segmented)
+    pad_token_id = _ensure_pad_token_id(tokenizer)
 
-    scores = np.zeros(num_sent + 1, dtype=np.float64)
-    density = np.zeros(num_sent + 1, dtype=np.float64)
+    user_prompt = " " + prompt
+    formatted = format_prompt(tokenizer, user_prompt)
+    formatted_ids = tokenizer(formatted, return_tensors="pt", add_special_tokens=False).input_ids
+    user_ids = tokenizer(user_prompt, return_tensors="pt", add_special_tokens=False).input_ids
+    user_start = _find_subsequence_start(formatted_ids[0], user_ids[0])
+    if user_start is None:
+        raise RuntimeError("Failed to locate user prompt token span inside formatted chat prompt.")
 
-    scores[0] = score_prompt_with_generation(model, tokenizer, segmented_prompt=segmented, generation=generation)
+    prompt_ids = formatted_ids.to(model.device)
+    prompt_ids_perturbed = prompt_ids.clone()
+    gen_ids = tokenizer(
+        generation + (tokenizer.eos_token or ""),
+        return_tensors="pt",
+        add_special_tokens=False,
+    ).input_ids.to(model.device)
+
+    attr_cpu = attribution.detach().cpu()
+    w = attr_cpu.sum(0)
+    sorted_attr_indices = torch.argsort(w, descending=True)
+    attr_sum = float(w.sum().item())
+
+    P = int(w.numel())
+    if int(user_ids.shape[1]) != P:
+        raise ValueError(
+            "Prompt-side attribution length does not match tokenized user prompt length: "
+            f"attr P={P}, user_prompt P={int(user_ids.shape[1])}."
+        )
+
+    scores = np.zeros(P + 1, dtype=np.float64)
+    density = np.zeros(P + 1, dtype=np.float64)
+
+    scores[0] = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids_perturbed, generation_ids=gen_ids)
     density[0] = 1.0
 
-    sorted_attr_indices = torch.sort(attribution[:, :num_sent].sum(0), descending=True)[1]
-    attr_sum = attribution.sum()
-
-    decrements: List[float] = []
-    replaced_counts: List[int] = []
+    if attr_sum <= 0:
+        density = np.linspace(1.0, 0.0, P + 1)
 
     for step, idx_t in enumerate(sorted_attr_indices):
         idx = int(idx_t.item())
-        selected_text = segmented[idx]
-        selected_text_tokens = tokenizer(selected_text, add_special_tokens=False).input_ids
-        n_tok = int(len(selected_text_tokens))
-        replaced_counts.append(n_tok)
-        segmented[idx] = (tokenizer.eos_token or "") * n_tok
+        prompt_ids_perturbed[0, user_start + idx] = pad_token_id
 
-        scores[step + 1] = score_prompt_with_generation(model, tokenizer, segmented_prompt=segmented, generation=generation)
-        dec = float((attribution.sum(0)[idx_t] / attr_sum).detach().cpu().item())
-        decrements.append(dec)
-        density[step + 1] = density[step] - dec
+        scores[step + 1] = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids_perturbed, generation_ids=gen_ids)
+        if attr_sum > 0:
+            dec = float(w[idx].item()) / attr_sum
+            density[step + 1] = density[step] - dec
 
     min_normalized_pred = 1.0
     normalized_model_response = scores.copy()
@@ -425,25 +415,25 @@ def mas_trace(
     mas = auc(corrected_scores)
     rise_ap = auc(normalized_model_response + alignment_penalty)
 
-    per_sentence_delta = np.zeros(num_sent, dtype=np.float64)
+    per_token_delta = np.zeros(P, dtype=np.float64)
     for step, idx_t in enumerate(sorted_attr_indices):
         idx = int(idx_t.item())
-        per_sentence_delta[idx] = scores[step] - scores[step + 1]
+        per_token_delta[idx] = scores[step] - scores[step + 1]
 
-    attr_weights = attribution.sum(0).detach().cpu().numpy()
-    attr_weights = attr_weights[:num_sent]
-    attr_weights = attr_weights / (float(attr_sum.detach().cpu().item()) + 1e-12)
+    if attr_sum > 0:
+        attr_weights = (w.numpy() / (attr_sum + 1e-12)).astype(np.float64)
+    else:
+        attr_weights = np.zeros(P, dtype=np.float64)
 
     return {
-        "num_sentences": num_sent,
+        "num_tokens": P,
         "sorted_attr_indices": [int(i.item()) for i in sorted_attr_indices],
-        "replaced_token_counts": replaced_counts,
         "scores_raw": scores.tolist(),
         "density": density.tolist(),
         "normalized_model_response": normalized_model_response.tolist(),
         "alignment_penalty": alignment_penalty.tolist(),
         "corrected_scores": corrected_scores.tolist(),
-        "sentence_deltas_raw": per_sentence_delta.tolist(),
+        "token_deltas_raw": per_token_delta.tolist(),
         "attr_weights": attr_weights.tolist(),
         "metrics": {"RISE": rise, "MAS": mas, "RISE+AP": rise_ap},
     }
@@ -599,10 +589,12 @@ def main() -> None:
         sink_chunk_tokens=args.sink_chunk_tokens,
     )
 
-    indices_to_explain = example.indices_to_explain or [-1]
-    seq_attr, row_attr, rec_attr = attr_result.get_all_sentence_attrs(indices_to_explain)
+    indices_to_explain = example.indices_to_explain or example.sink_span
+    if not (isinstance(indices_to_explain, list) and len(indices_to_explain) == 2):
+        raise ValueError("MAS case study requires token-span indices_to_explain=[start_tok,end_tok] (e.g. sink_span).")
+    seq_attr, row_attr, rec_attr = attr_result.get_all_token_attrs(indices_to_explain)
 
-    prompt_sentences = create_sentences(" " + example.prompt, tokenizer)
+    prompt_tokens = decode_text_into_tokens(tokenizer, " " + example.prompt)
     generation_text = example.target if example.target is not None else (getattr(attributor, "generation", None) or "")
 
     variant_specs = [
@@ -611,25 +603,26 @@ def main() -> None:
         ("recursive", "Recursive attribution", rec_attr),
     ]
 
-    base_score = score_prompt_with_generation(model, tokenizer, segmented_prompt=prompt_sentences, generation=generation_text)
-    pure_trace = pure_sentence_ablation_trace(
-        model,
-        tokenizer,
-        prompt_sentences=prompt_sentences,
-        generation=generation_text,
-        base_score=base_score,
-    )
+    formatted = format_prompt(tokenizer, " " + example.prompt)
+    prompt_ids = tokenizer(formatted, return_tensors="pt", add_special_tokens=False).input_ids.to(model.device)
+    gen_ids = tokenizer(
+        generation_text + (tokenizer.eos_token or ""),
+        return_tensors="pt",
+        add_special_tokens=False,
+    ).input_ids.to(model.device)
+    base_score = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids, generation_ids=gen_ids)
 
     panels_raw: List[Dict[str, Any]] = []
     panels_display: List[Dict[str, Any]] = []
 
     for variant_key, variant_label, variant_attr in variant_specs:
-        attr_prompt = variant_attr[:, : len(prompt_sentences)]
+        prompt_len = int(seq_attr.shape[1] - seq_attr.shape[0])  # cols=(P+G), rows=G
+        attr_prompt = variant_attr[:, :prompt_len]
         trace = mas_trace(
             model,
             tokenizer,
             attribution=attr_prompt.to(device="cpu"),
-            prompt_sentences=prompt_sentences,
+            prompt=example.prompt,
             generation=generation_text,
         )
         trace["variant"] = variant_key
@@ -641,8 +634,7 @@ def main() -> None:
             "metrics": trace.get("metrics"),
             "sorted_attr_indices": trace.get("sorted_attr_indices"),
             "attr_weights": trace.get("attr_weights"),
-            "pure_sentence_deltas_raw": pure_trace.get("sentence_deltas_raw"),
-            "guided_sentence_deltas_raw": trace.get("sentence_deltas_raw"),
+            "token_deltas_raw": trace.get("token_deltas_raw"),
             "mas_trace": trace,
         }
         panels_raw.append(panel_raw)
@@ -653,8 +645,7 @@ def main() -> None:
             "metrics": trace.get("metrics"),
             "sorted_attr_indices": trace.get("sorted_attr_indices"),
             "attr_weights": transform_values(trace.get("attr_weights", []), "signed"),
-            "pure_sentence_deltas_raw": transform_values(pure_trace.get("sentence_deltas_raw", []), args.score_transform),
-            "guided_sentence_deltas_raw": transform_values(trace.get("sentence_deltas_raw", []), args.score_transform),
+            "token_deltas_raw": transform_values(trace.get("token_deltas_raw", []), args.score_transform),
         }
         panels_display.append(panel_display)
 
@@ -676,8 +667,7 @@ def main() -> None:
         "prompt": example.prompt,
         "target": example.target,
         "generation": generation_text,
-        "prompt_sentences": prompt_sentences,
-        "pure_sentence_ablation": pure_trace,
+        "prompt_tokens": prompt_tokens,
         "panels": panels_raw,
     }
 
@@ -690,9 +680,9 @@ def main() -> None:
     with json_path.open("w", encoding="utf-8") as f:
         json.dump(record, f, ensure_ascii=False, indent=2)
 
-    html = viz.render_mas_sentence_html(
+    html = viz.render_mas_token_html(
         case_meta,
-        prompt_sentences=prompt_sentences,
+        prompt_tokens=prompt_tokens,
         panels=panels_display,
         generation=generation_text,
     )

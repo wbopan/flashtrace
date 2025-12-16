@@ -316,21 +316,30 @@ def main():
         new_meta["reference_answer"] = reference_answer
         new_meta["judge_response"] = judge_resp
 
-        # Always explain the final *non-EOS* generation sentence.
-        # Note: create_sentences() may split the appended EOS token into its own sentence,
-        # so -1 can point to EOS; we use -2 to target the actual final answer sentence.
-        indices_to_explain = [-2]
-
         new_ex = CachedExample(
             prompt=ex.prompt,
             target=target_text,
-            indices_to_explain=indices_to_explain,
+            indices_to_explain=None,
             attr_mask_indices=ex.attr_mask_indices,
-            sink_span=ex.sink_span,
-            thinking_span=ex.thinking_span,
+            sink_span=None,
+            thinking_span=None,
             metadata=new_meta,
         )
         new_ex = attach_spans_from_answer(new_ex, tokenizer, boxed_answer)
+        if not (isinstance(new_ex.sink_span, list) and len(new_ex.sink_span) == 2):
+            print(f"[{idx}/{total}] skipped=span")
+            continue
+
+        # Token-level indices_to_explain: boxed-inner answer token span in target (closed interval).
+        new_ex = CachedExample(
+            prompt=new_ex.prompt,
+            target=new_ex.target,
+            indices_to_explain=new_ex.sink_span,
+            attr_mask_indices=new_ex.attr_mask_indices,
+            sink_span=new_ex.sink_span,
+            thinking_span=new_ex.thinking_span,
+            metadata=new_ex.metadata,
+        )
         kept.append(new_ex)
         kept_bar.update(1)
 

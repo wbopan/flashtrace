@@ -823,8 +823,6 @@ def main() -> None:
     if not hop_vectors_trimmed:
         raise RuntimeError("No hop vectors to visualize.")
 
-    context = analysis.build_sentence_context(tokenizer, prompt_tokens_trimmed, generation_tokens_trimmed)
-
     tokens = list(prompt_tokens_trimmed) + list(generation_tokens_trimmed)
     raw_tokens = build_raw_tokens_from_ids(tokenizer, raw_prompt_ids, raw_generation_ids)
 
@@ -862,7 +860,6 @@ def main() -> None:
         trim_abs = hop_stats_trimmed[i]["abs_max"] if i < len(hop_stats_trimmed) else None
         print(f"[stats] panel {i}: raw_abs_max={raw_abs} trimmed_abs_max={trim_abs}")
 
-    hop_records = analysis.package_hops(hop_vectors_trimmed, context, topk=5, transform=score_transform)
     hop_token_trim = analysis.package_token_hops(hop_vectors_trimmed, transform=score_transform)
     hop_token_raw = analysis.package_token_hops(hop_vectors_raw, transform=score_transform)
 
@@ -880,12 +877,6 @@ def main() -> None:
         "vector_stats_trimmed": hop_stats_trimmed,
     }
 
-    context_dict = {
-        "prompt_sentences": context.prompt_sentences,
-        "generation_sentences": context.generation_sentences,
-        "all_sentences": context.all_sentences,
-    }
-
     generation_text = "".join(generation_tokens_trimmed) if generation_tokens_trimmed else ""
     prompt_text = example.prompt
     record = {
@@ -901,10 +892,6 @@ def main() -> None:
         "token_roles": roles_trimmed,
         "raw_token_roles": roles_raw,
         "segments": segments,
-        "prompt_sentences": context.prompt_sentences,
-        "generation_sentences": context.generation_sentences,
-        "all_sentences": context.all_sentences,
-        "hops": hop_records,
         "token_hops_trimmed": hop_token_trim,
         "token_hops_raw": hop_token_raw,
         "ifr_meta": method_meta.get("ifr"),
@@ -922,8 +909,6 @@ def main() -> None:
 
     html = viz.render_case_html(
         case_meta,
-        context_dict,
-        hop_records,
         token_view_trimmed={
             "label": "Post-trim token-level heatmap (user prompt only)",
             "tokens": tokens,

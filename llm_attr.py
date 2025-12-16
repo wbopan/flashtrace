@@ -303,13 +303,6 @@ class LLMAttributionResult():
             self.all_tokens = self.all_tokens
 
         self.attribution_matrix = attribution_matrix.detach().cpu()
-
-        self.prompt_sentences = None
-        self.generation_sentences = None
-        self.all_sentences = None
-
-        self.sentence_attr = None
-        self.CAGE_sentence_attr = None
         self.metadata = metadata
 
     # normalize rows of a matrix to sum to 1
@@ -339,10 +332,88 @@ class LLMAttributionResult():
         
         return attribution_vector
 
+    ########################################## token attr ##########################################
+
+    def compute_CAGE_token_attr(
+        self,
+        token_to_explain: int,
+        *,
+        clear_values: bool = True,
+        token_attr_matrix_norm: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        """Token-level CAGE-style recursive attribution over a token attribution matrix.
+
+        token_to_explain is a generation-token index in [0, G).
+        """
+        attr_norm = (
+            token_attr_matrix_norm
+            if token_attr_matrix_norm is not None
+            else self.normalize_sum_to_one(self.attribution_matrix)
+        )
+
+        prompt_len = len(self.prompt_tokens)
+        gen_len = len(self.generation_tokens)
+        expected_cols = prompt_len + gen_len
+        if attr_norm.ndim != 2 or attr_norm.shape[0] != gen_len or attr_norm.shape[1] != expected_cols:
+            raise TypeError(
+                "Expected token attribution matrix of shape [G, P+G] where "
+                f"G={gen_len} and P={prompt_len}, got {tuple(attr_norm.shape)}."
+            )
+        if token_to_explain < 0 or token_to_explain >= gen_len:
+            raise IndexError(f"token_to_explain out of range: {token_to_explain} not in [0, {gen_len}).")
+
+        r = attr_norm[token_to_explain, :].clone()
+        for k in range(token_to_explain - 1, -1, -1):
+            alpha = r[prompt_len + k]
+            if alpha != 0:
+                r += attr_norm[k, :] * alpha
+            if clear_values:
+                r[prompt_len + k] = 0
+        return r
+
+    def get_all_token_attrs(self, indices_to_explain: List[int]) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Return token-level (seq, row, rec) attributions.
+
+        indices_to_explain must be a generation-token span [start_tok, end_tok]
+        (closed interval), typically pointing to the \\box{...} inner answer span.
+        """
+        if not isinstance(indices_to_explain, list) or len(indices_to_explain) != 2:
+            raise ValueError(
+                "indices_to_explain must be a token span [start_tok, end_tok] "
+                f"(got {indices_to_explain!r})."
+            )
+        start_tok, end_tok = indices_to_explain
+        if not isinstance(start_tok, int) or not isinstance(end_tok, int):
+            raise TypeError(f"indices_to_explain elements must be ints (got {indices_to_explain!r}).")
+        if start_tok < 0 or end_tok < 0 or start_tok > end_tok:
+            raise ValueError(f"Invalid token span: {indices_to_explain!r}.")
+
+        attr_norm = self.normalize_sum_to_one(self.attribution_matrix)
+        gen_len = int(attr_norm.shape[0])
+        if end_tok >= gen_len:
+            raise IndexError(f"end_tok out of range: {end_tok} >= G={gen_len}.")
+
+        seq_attr = attr_norm
+        row_attr = attr_norm[start_tok : end_tok + 1, :].sum(dim=0, keepdim=True)
+
+        rec_sum = torch.zeros_like(row_attr)
+        for t in range(start_tok, end_tok + 1):
+            rec_sum += self.compute_CAGE_token_attr(
+                t,
+                clear_values=True,
+                token_attr_matrix_norm=attr_norm,
+            ).reshape(1, -1)
+        rec_attr = rec_sum
+
+        return seq_attr, row_attr, rec_attr
+
     ########################################## sentence attr ##########################################
 
     # This converts any token attribution to a sentence attribution
     def compute_sentence_attr(self, norm = True) -> None:
+        raise RuntimeError("Sentence-level aggregation has been removed; use token-level get_all_token_attrs().")
+
+        # Legacy implementation (kept for reference)
         # create the prompt ang generation sentences
         self.prompt_sentences = create_sentences("".join(self.prompt_tokens), self.tokenizer)
         self.generation_sentences = create_sentences("".join(self.generation_tokens), self.tokenizer)
@@ -755,6 +826,9 @@ class LLMAttributionResult():
     # this function is identical to compute_recursive_attr except for var names
     # see that function for details
     def compute_CAGE_sentence_attr(self, sentence_to_explain = -1, clear_values = True) -> None:
+        raise RuntimeError("Sentence-level CAGE has been removed; use token-level compute_CAGE_token_attr().")
+
+        # Legacy implementation (kept for reference)
         if self.sentence_attr is None:
             print(
                 '''The sentence attribution has not been computed.
@@ -787,6 +861,9 @@ class LLMAttributionResult():
     # this function returns a tuple containing a sentence attribution matrix,
     # the sum of all rows of that matrix, the sum of indices_to_explain rows of that matrix, and a CAGE attribution over the indices_to_explain
     def get_all_sentence_attrs(self, indices_to_explain) -> tuple:
+        raise RuntimeError("Sentence-level attribution outputs have been removed; use get_all_token_attrs([start_tok, end_tok]).")
+
+        # Legacy implementation (kept for reference)
         self.compute_sentence_attr(norm = True)
 
         attr = self.sentence_attr
@@ -1796,8 +1873,7 @@ class LLMLRPAttribution(LLMAttribution):
     ...     prompt="Context: Mount Everest is 8848m. Question: How high?",
     ...     target="8848 meters"
     ... )
-    >>> result.compute_sentence_attr()
-    >>> result.draw_graph()
+    >>> seq_attr, row_attr, rec_attr = result.get_all_token_attrs([0, len(result.generation_tokens) - 1])
     """
 
     def __init__(

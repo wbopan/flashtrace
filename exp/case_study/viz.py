@@ -65,21 +65,35 @@ def _render_top_table(top_items: List[Dict[str, Any]]) -> str:
 
 def render_case_html(
     case_meta: Dict[str, Any],
-    context: Dict[str, Any],
-    hops_sent: Sequence[Dict[str, Any]],
     token_view_trimmed: Dict[str, Any],
+    *,
+    context: Optional[Dict[str, Any]] = None,
+    hops_sent: Optional[Sequence[Dict[str, Any]]] = None,
     token_view_raw: Optional[Dict[str, Any]] = None,
 ) -> str:
-    prompt_len = len(context["prompt_sentences"])
-    gen_len = len(context["generation_sentences"])
+    has_sentence_view = bool(context) and bool(hops_sent)
+    prompt_len = len((context or {}).get("prompt_sentences") or []) if has_sentence_view else 0
+    gen_len = len((context or {}).get("generation_sentences") or []) if has_sentence_view else 0
 
-    # shared scales for consistent coloring
-    prompt_max = max(
-        (max(h["sentence_scores_raw"][:prompt_len]) for h in hops_sent if h["sentence_scores_raw"][:prompt_len]), default=0.0
-    )
-    gen_max = max(
-        (max(h["sentence_scores_raw"][prompt_len:]) for h in hops_sent if h["sentence_scores_raw"][prompt_len:]), default=0.0
-    )
+    prompt_max = 0.0
+    gen_max = 0.0
+    if has_sentence_view:
+        prompt_max = max(
+            (
+                max(h["sentence_scores_raw"][:prompt_len])
+                for h in (hops_sent or [])
+                if h.get("sentence_scores_raw") and h["sentence_scores_raw"][:prompt_len]
+            ),
+            default=0.0,
+        )
+        gen_max = max(
+            (
+                max(h["sentence_scores_raw"][prompt_len:])
+                for h in (hops_sent or [])
+                if h.get("sentence_scores_raw") and h["sentence_scores_raw"][prompt_len:]
+            ),
+            default=0.0,
+        )
 
     token_global_max_trim = max((h.get("token_score_max", 0.0) for h in token_view_trimmed.get("hops", [])), default=0.0)
     token_global_max_raw = 0.0
@@ -87,7 +101,8 @@ def render_case_html(
         token_global_max_raw = max((h.get("token_score_max", 0.0) for h in token_view_raw.get("hops", [])), default=0.0)
 
     hop_sections: List[str] = []
-    hop_count = len(hops_sent)
+    trim_hops = token_view_trimmed.get("hops", [])
+    hop_count = len(trim_hops)
     mode = case_meta.get("mode", "ft")
     ifr_view = case_meta.get("ifr_view", "aggregate")
     sink_span = case_meta.get("sink_span")
@@ -105,14 +120,11 @@ def render_case_html(
             return f"Sink token {base + panel_idx} (gen idx)"
         return "IFR (sink-span aggregate)"
 
+    trim_roles = token_view_trimmed.get("roles", [])
     for hop_idx in range(hop_count):
-        hop = hops_sent[hop_idx]
-        raw_scores = hop["sentence_scores_raw"]
-        prompt_scores = raw_scores[:prompt_len]
-        gen_scores = raw_scores[prompt_len:]
-        trim_hops = token_view_trimmed.get("hops", [])
-        tok_scores_trim = trim_hops[hop_idx]["token_scores"] if hop_idx < len(trim_hops) else []
-        trim_roles = token_view_trimmed.get("roles", [])
+        tok_entry_trim = trim_hops[hop_idx] if hop_idx < len(trim_hops) else {}
+        tok_scores_trim = tok_entry_trim.get("token_scores") or []
+        hop_total_mass = float(tok_entry_trim.get("total_mass", 0.0))
 
         tok_raw_html = ""
         if token_view_raw is not None and hop_idx < len(token_view_raw.get("hops", [])):
@@ -121,17 +133,38 @@ def render_case_html(
                 <div class="tokens-block">
                   <div class="tokens-title">{escape(token_view_raw.get("label", "Pre-trim token-level heatmap"))}</div>
                   <div class="tokens-row">
-                    {_render_tokens(token_view_raw.get("tokens", []), raw_entry.get("token_scores", []), token_global_max_raw, token_view_raw.get("roles", []))}
+                  {_render_tokens(token_view_raw.get("tokens", []), raw_entry.get("token_scores", []), token_global_max_raw, token_view_raw.get("roles", []))}
                   </div>
                 </div>
+            """
+
+        sentence_html = ""
+        top_html = ""
+        if has_sentence_view and hop_idx < len(hops_sent or []):
+            hop = (hops_sent or [])[hop_idx]
+            raw_scores = hop.get("sentence_scores_raw") or []
+            prompt_scores = raw_scores[:prompt_len]
+            gen_scores = raw_scores[prompt_len:]
+            hop_total_mass = float(hop.get("total_mass", hop_total_mass))
+            sentence_html = f"""
+              <div class="columns">
+                {_render_sentence_list('Prompt sentences', (context or {}).get('prompt_sentences') or [], prompt_scores, prompt_max)}
+                {_render_sentence_list('Generation sentences', (context or {}).get('generation_sentences') or [], gen_scores, gen_max)}
+              </div>
+            """
+            top_html = f"""
+              <div class="top-wrap">
+                <div class="section-label">Top sentences (all)</div>
+                {_render_top_table(hop.get('top_sentences') or [])}
+              </div>
             """
 
         hop_sections.append(
             f"""
             <div class="hop">
               <div class="hop-header">
-                <div class="hop-title">{escape(_panel_title(int(hop.get('hop', hop_idx))))}</div>
-                <div class="hop-meta">total mass: {hop['total_mass']:.6f}</div>
+                <div class="hop-title">{escape(_panel_title(hop_idx))}</div>
+                <div class="hop-meta">total mass: {hop_total_mass:.6f}</div>
               </div>
               {tok_raw_html}
               <div class="tokens-block">
@@ -140,14 +173,8 @@ def render_case_html(
                   {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, token_global_max_trim, trim_roles)}
                 </div>
               </div>
-              <div class="columns">
-                {_render_sentence_list('Prompt sentences', context['prompt_sentences'], prompt_scores, prompt_max)}
-                {_render_sentence_list('Generation sentences', context['generation_sentences'], gen_scores, gen_max)}
-              </div>
-              <div class="top-wrap">
-                <div class="section-label">Top sentences (all)</div>
-                {_render_top_table(hop['top_sentences'])}
-              </div>
+              {sentence_html}
+              {top_html}
             </div>
             """
         )
@@ -284,6 +311,23 @@ def _render_sentence_spans(title: str, sentences: Sequence[str], scores: Sequenc
     """
 
 
+def _render_token_spans(title: str, tokens: Sequence[str], scores: Sequence[float]) -> str:
+    max_abs = max((abs(float(x)) for x in scores), default=0.0)
+    spans: List[str] = []
+    for idx, tok in enumerate(tokens):
+        score = float(scores[idx]) if idx < len(scores) else 0.0
+        style = _color_for_signed_score(score, max_abs)
+        spans.append(
+            f'<span class="tok-span" title="idx={idx}, score={score:.6f}" style="{style}">{escape(tok)}</span>'
+        )
+    return f"""
+    <div class="tokmap">
+      <div class="tokmap-title">{escape(title)}</div>
+      <div class="tokmap-text">{''.join(spans)}</div>
+    </div>
+    """
+
+
 def render_mas_sentence_html(
     case_meta: Dict[str, Any],
     *,
@@ -385,6 +429,125 @@ def render_mas_sentence_html(
       .sentmap-text { font-size: 13px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
       .sent-span { display: inline; padding: 2px 2px; margin: 0 0px; border-radius: 4px; }
       .sent-span:hover { outline: 1px solid #8899aa; }
+    </style>
+    """
+
+    html = f"""<!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>{escape(title)}</title>
+        {style}
+      </head>
+      <body>
+        {header}
+        {gen_block}
+        {''.join(panel_sections)}
+      </body>
+    </html>"""
+    return html
+
+
+def render_mas_token_html(
+    case_meta: Dict[str, Any],
+    *,
+    prompt_tokens: Sequence[str],
+    panels: Sequence[Dict[str, Any]],
+    generation: Optional[str] = None,
+) -> str:
+    """Render MAS token-level diagnostics (attribution weights + guided marginal deltas)."""
+
+    method_label = case_meta.get("attr_method_label") or case_meta.get("attr_method") or "Unknown method"
+    title = f"MAS Token Study ({method_label})"
+
+    score_transform = case_meta.get("score_transform")
+    legend_row = "<div>Colors: red = +, blue = −</div>" if score_transform == "signed" else ""
+
+    base_score = case_meta.get("base_score")
+    base_score_row = f"<div>Base score: {float(base_score):.6f}</div>" if isinstance(base_score, (int, float)) else ""
+
+    gen_block = ""
+    if isinstance(generation, str) and generation:
+        gen_block = f"""
+        <div class="text-block">
+          <div class="text-title">Generation (scored)</div>
+          <div class="text-body">{escape(generation)}</div>
+        </div>
+        """
+
+    header = f"""
+    <div class="header">
+      <div>
+        <div class="title">{escape(title)}</div>
+        <div class="subtitle">Dataset: {escape(str(case_meta.get('dataset')))} | index: {case_meta.get('index')}</div>
+      </div>
+      <div class="meta">
+        <div>Attribution method: {escape(str(case_meta.get('attr_method')))}</div>
+        <div>Sink span (gen idx): {escape(str(case_meta.get('sink_span')))}</div>
+        <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
+        <div>Prompt tokens: {len(prompt_tokens)}</div>
+        <div>Panels: {len(panels)}</div>
+        <div>Score transform: {escape(str(score_transform))}</div>
+        {legend_row}
+        {base_score_row}
+      </div>
+    </div>
+    """
+
+    panel_sections: List[str] = []
+    for panel in panels:
+        label = panel.get("variant_label") or panel.get("panel_label") or panel.get("variant") or "Panel"
+        metrics = panel.get("metrics") or {}
+        metrics_str = " | ".join(
+            f"{k}: {float(metrics[k]):.4f}" if isinstance(metrics.get(k), (int, float)) else f"{k}: {metrics.get(k)}"
+            for k in ("RISE", "MAS", "RISE+AP")
+            if k in metrics
+        )
+
+        attr_weights = panel.get("attr_weights") or []
+        guided_deltas = panel.get("token_deltas_raw") or []
+        rank_order = panel.get("sorted_attr_indices") or []
+        rank_str = ", ".join(str(int(x)) for x in rank_order) if rank_order else "N/A"
+
+        panel_sections.append(
+            f"""
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">{escape(str(label))}</div>
+                <div class="panel-meta">{escape(metrics_str)}</div>
+              </div>
+
+              {_render_token_spans("Method attribution (token weights)", prompt_tokens, attr_weights)}
+              {_render_token_spans("Attribution-guided MAS marginal (path deltas)", prompt_tokens, guided_deltas)}
+
+              <div class="panel-foot">Rank order: {escape(rank_str)}</div>
+            </div>
+            """
+        )
+
+    style = """
+    <style>
+      body { font-family: "Inter", "Helvetica Neue", Arial, sans-serif; margin: 0; padding: 24px; background: #fcfcff; color: #1f2933; }
+      .title { font-size: 24px; font-weight: 700; }
+      .subtitle { font-size: 14px; color: #566; margin-top: 4px; }
+      .header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #e5e8ee; }
+      .meta { font-size: 13px; color: #334; line-height: 1.6; }
+
+      .text-block { margin-top: 16px; border: 1px solid #eef1f6; border-radius: 10px; padding: 12px; background: #fff; }
+      .text-title { font-size: 13px; font-weight: 700; color: #263; margin-bottom: 8px; }
+      .text-body { font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+
+      .panel { margin-top: 18px; padding: 16px; border: 1px solid #e5e8ee; border-radius: 10px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+      .panel-header { display: flex; justify-content: space-between; align-items: center; }
+      .panel-title { font-weight: 600; font-size: 16px; }
+      .panel-meta { font-size: 12px; color: #556; }
+      .panel-foot { margin-top: 8px; font-size: 12px; color: #556; }
+
+      .tokmap { margin-top: 12px; border: 1px solid #eef1f6; border-radius: 8px; padding: 10px; background: #f9fbff; }
+      .tokmap-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #263; }
+      .tokmap-text { font-size: 13px; line-height: 1.8; white-space: pre-wrap; word-break: break-word; }
+      .tok-span { display: inline; padding: 1px 1px; margin: 0 0px; border-radius: 3px; }
+      .tok-span:hover { outline: 1px solid #8899aa; }
     </style>
     """
 
