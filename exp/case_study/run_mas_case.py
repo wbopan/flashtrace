@@ -27,6 +27,25 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
+
+
+def _early_set_cuda_visible_devices() -> None:
+    """Set CUDA_VISIBLE_DEVICES before importing torch/transformers.
+
+    Note: CUDA device indices are re-mapped inside the process after applying the mask.
+    """
+
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--cuda", type=str, default=None)
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    cuda = args.cuda.strip() if isinstance(args.cuda, str) else ""
+    if cuda and "," in cuda:
+        os.environ["CUDA_VISIBLE_DEVICES"] = cuda
+
+
+if __name__ == "__main__":
+    _early_set_cuda_visible_devices()
+
 import torch
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -561,6 +580,9 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     device = resolve_device(args.cuda, args.cuda_num)
+    if torch.cuda.is_available():
+        visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+        print(f"[info] CUDA_VISIBLE_DEVICES={visible!r} torch.cuda.device_count()={torch.cuda.device_count()} device={device}")
 
     method_key = "ft" if args.method == "ft_ifr" else args.method
     torch_dtype = _pick_lrp_dtype() if method_key in ("attnlrp", "ft_attnlrp") else torch.float16

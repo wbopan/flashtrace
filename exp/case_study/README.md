@@ -66,10 +66,8 @@ python exp/case_study/run_ifr_case.py \
   --index 0 \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
-  --cuda 0 \
-  --n_hops 1 \
-  --sink_span 0 20 \
-  --thinking_span 0 20
+  --cuda 0,2,3,4,5,7 \
+  --n_hops 3
 ```
 
 产物位于 `exp/case_study/out/`，文件名前缀根据模式变化，例如：

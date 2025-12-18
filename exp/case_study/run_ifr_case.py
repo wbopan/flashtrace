@@ -23,6 +23,23 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 os.environ.setdefault("TRANSFORMERS_NO_TORCHVISION", "1")
 os.environ.setdefault("DISABLE_TRANSFORMERS_IMAGE_TRANSFORMS", "1")
 
+def _early_set_cuda_visible_devices() -> None:
+    """Set CUDA_VISIBLE_DEVICES before importing torch/transformers.
+
+    Note: CUDA device indices are re-mapped inside the process after applying the mask.
+    """
+
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--cuda", type=str, default=None)
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    cuda = args.cuda.strip() if isinstance(args.cuda, str) else ""
+    if cuda and "," in cuda:
+        os.environ["CUDA_VISIBLE_DEVICES"] = cuda
+
+
+if __name__ == "__main__":
+    _early_set_cuda_visible_devices()
+
 import torch
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -184,7 +201,7 @@ if "transformers.models.gemma3n.configuration_gemma3n" not in sys.modules:
 
 import llm_attr
 from exp.exp2 import dataset_utils as ds_utils
-from evaluations.attribution_coverage import load_model
+from evaluations.attribution_recovery import load_model
 
 from exp.case_study import analysis, viz
 from lrp_patches import lrp_context
@@ -556,6 +573,9 @@ def build_raw_roles(
 def main() -> None:
     args = parse_args()
     device = resolve_device(args.cuda, args.cuda_num)
+    if torch.cuda.is_available():
+        visible = os.environ.get("CUDA_VISIBLE_DEVICES")
+        print(f"[info] CUDA_VISIBLE_DEVICES={visible!r} torch.cuda.device_count()={torch.cuda.device_count()} device={device}")
 
     model_name = args.model_path if args.model_path is not None else args.model
     if args.mode in ("attnlrp", "ft_attnlrp"):

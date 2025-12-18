@@ -1,3 +1,4 @@
+import math
 import torch
 import numpy as np
 from typing import Dict, Any, Optional, Tuple, List
@@ -206,25 +207,44 @@ class LLMAttributionEvaluator():
 
         return auc(normalized_model_response), auc(corrected_scores), auc(normalized_model_response + alignment_penalty)
 
-    def evaluate_attr_coverage(self, full_attr, partial_attr) -> np.ndarray[float]:
-        # we want all of the attr magnitude placed across each sentence
-        whole = full_attr.sum(0).abs()
-        # for the portion, we want postively attributed sentences
-        portion = partial_attr.sum(0).abs()
+    def evaluate_attr_recovery(
+        self,
+        attribution: torch.Tensor,
+        *,
+        prompt_len: int,
+        gold_prompt_token_indices: List[int],
+        top_fraction: float = 0.1,
+    ) -> float:
+        """Recall of gold prompt tokens among top-attributed prompt tokens.
 
-        expectation = 1 / portion.shape[0]
-        expectation_low = expectation - expectation / 2
-        expectation_high = expectation + expectation / 2
+        Ranking excludes model-generated tokens by restricting to prompt-side tokens [0, prompt_len).
+        """
+        if attribution.ndim != 2:
+            raise ValueError("Expected 2D token-level attribution matrix [G, P+G].")
+        if prompt_len <= 0:
+            return float("nan")
+        if int(attribution.shape[1]) < int(prompt_len):
+            raise ValueError(
+                "prompt_len exceeds attribution width: "
+                f"prompt_len={int(prompt_len)} attribution_cols={int(attribution.shape[1])}."
+            )
 
-        total_attr = whole.sum()
-        if total_attr.item() == 0:
-            return 0.0, 0.0, 0.0
+        gold: set[int] = set()
+        for raw in gold_prompt_token_indices or []:
+            try:
+                idx = int(raw)
+            except Exception:
+                continue
+            if 0 <= idx < int(prompt_len):
+                gold.add(idx)
+        if not gold:
+            return float("nan")
 
-        ratios = portion / total_attr
+        w = torch.nan_to_num(attribution[:, :prompt_len].sum(0).to(dtype=torch.float32), nan=0.0).clamp(min=0.0)
+        k = max(1, int(math.ceil(float(prompt_len) * float(top_fraction))))
+        k = min(k, int(prompt_len))
+        topk = torch.topk(w, k, largest=True).indices.tolist()
+        hit = len(set(topk).intersection(gold))
+        return float(hit) / float(len(gold))
 
-        coverage_rate_a = torch.where((ratios > expectation_low) & (ratios < expectation_high))[0].shape[0] / portion.shape[0]
-        coverage_rate_b = torch.where((ratios > expectation_low))[0].shape[0] / portion.shape[0]
-        coverage_rate_c = torch.where((ratios > expectation))[0].shape[0] / portion.shape[0]
-
-        return coverage_rate_a, coverage_rate_b, coverage_rate_c
     

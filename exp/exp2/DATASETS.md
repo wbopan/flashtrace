@@ -209,7 +209,7 @@
   - 写入：`exp/exp2/data/<dataset>.jsonl`（例如 `niah_mq_q2.jsonl`, `vt_h6_c1.jsonl`）。
 
 - **归因阶段（加载缓存优先）**
-  - 与 `hotpotqa_long` 相同：优先缓存，否则原始；覆盖率用 `attr_mask_indices`，多跳 IFR 在有 `sink_span`/`thinking_span` 时作用于答案/CoT。
+  - 与 `hotpotqa_long` 相同：优先缓存，否则原始；恢复率（`recovery_ruler`）使用 `metadata.needle_spans`（映射到 prompt tokens）；多跳 IFR 在有 `sink_span`/`thinking_span` 时作用于答案/CoT。
 
 ---
 
@@ -227,5 +227,5 @@
 
 ## 归因阶段加载优先级与效果
 - `run_exp.py` 加载顺序：`exp/exp2/data/<name>.jsonl` 缓存 > 显式给定的 JSONL 路径 > 原始解析（MoreHopQA 或 RULER）
-- 覆盖率 (`mode=coverage`) 需要 `attr_mask_indices`，否则跳过
+- 恢复率 (`mode=recovery_ruler`) 仅支持 RULER（要求 `metadata.needle_spans`），否则拒绝
 - 忠实度 (`mode=faithfulness_gen`) 使用生成文本；`ifr_multi_hop` 在有 `sink_span`/`thinking_span` 时才对答案/CoT 做多跳，否则退化为整段生成

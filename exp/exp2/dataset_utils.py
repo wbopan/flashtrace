@@ -263,6 +263,58 @@ def attach_spans_from_boxed(example: CachedExample, tokenizer) -> CachedExample:
     return attach_spans_from_answer(example, tokenizer, boxed_answer)
 
 
+def ruler_gold_prompt_token_indices(example: CachedExample, tokenizer) -> List[int]:
+    """Return token indices (prompt-side) that overlap RULER `needle_spans` in metadata.
+
+    The returned indices are with respect to `tokenizer(" " + example.prompt, add_special_tokens=False)`,
+    matching the attribution pipeline's leading-space convention.
+    """
+    needle_spans = (example.metadata or {}).get("needle_spans") or []
+    if not isinstance(needle_spans, list) or not needle_spans:
+        return []
+
+    prompt_text = " " + (example.prompt or "")
+    enc = tokenizer(prompt_text, add_special_tokens=False, return_offsets_mapping=True)
+    offsets = enc.get("offset_mapping")
+    if offsets is None:
+        raise ValueError("Tokenizer does not provide offset_mapping; cannot map needle_spans to tokens.")
+
+    spans: List[tuple[int, int]] = []
+    for item in needle_spans:
+        if not isinstance(item, dict):
+            continue
+        raw = item.get("span")
+        if not (isinstance(raw, list) and len(raw) == 2):
+            continue
+        try:
+            start = int(raw[0]) + 1  # shift for leading space in prompt_text
+            end = int(raw[1]) + 1
+        except Exception:
+            continue
+        if end > start:
+            spans.append((start, end))
+
+    if not spans:
+        return []
+
+    gold: set[int] = set()
+    for tok_idx, off in enumerate(offsets):
+        if off is None:
+            continue
+        try:
+            s, e = int(off[0]), int(off[1])
+        except Exception:
+            continue
+        if e <= s:
+            continue
+        for span_start, span_end in spans:
+            if s < span_end and e > span_start:
+                gold.add(tok_idx)
+                break
+
+    return sorted(gold)
+
+
 class DatasetLoader:
     """Thin loader that resolves and samples datasets for exp2."""
 

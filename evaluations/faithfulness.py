@@ -289,7 +289,7 @@ def load_model(model_name, device) -> Tuple[AutoModelForCausalLM, AutoTokenizer]
 def main(args) -> None:
     # login(token = "")
     
-    # Device selection policy (mirrors attribution_coverage):
+    # Device selection policy (mirrors attribution_recovery):
     # - If --cuda is a comma-separated list (e.g. "0,1"), set visibility to that list and shard with device_map='auto'.
     # - If --cuda is a single index (e.g. "0"), do NOT override CUDA_VISIBLE_DEVICES; place model on cuda:{index}.
     # - Else (no --cuda), use --cuda_num as single-device index relative to current visibility.
