@@ -17,7 +17,11 @@ def _postprocess_scores(vec: torch.Tensor, transform: str) -> torch.Tensor:
         return vec.clamp(min=0.0)
     if transform == "abs":
         return vec.abs()
-    raise ValueError(f"Unsupported transform={transform!r}; expected 'positive' or 'abs'.")
+    if transform == "signed":
+        return vec
+    raise ValueError(
+        f"Unsupported transform={transform!r}; expected 'positive', 'abs', or 'signed'."
+    )
 
 
 def vector_stats(vec: torch.Tensor) -> Dict[str, float]:
@@ -69,8 +73,11 @@ def package_token_hops(
         vec_tensor_raw = torch.as_tensor(vec, dtype=torch.float32)
         vec_tensor = _postprocess_scores(vec_tensor_raw, transform)
         token_scores = vec_tensor.tolist()
-        token_max = float(vec_tensor.max().item()) if vec_tensor.numel() > 0 else 0.0
-        total = float(vec_tensor.sum().item())
+        token_max = float(vec_tensor.abs().max().item()) if vec_tensor.numel() > 0 else 0.0
+        if transform == "signed":
+            total = float(vec_tensor.abs().sum().item())
+        else:
+            total = float(vec_tensor.sum().item())
         packaged.append(
             {
                 "hop": hop_idx,

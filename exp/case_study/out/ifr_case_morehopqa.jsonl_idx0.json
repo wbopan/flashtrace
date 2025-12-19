@@ -14,7 +14,7 @@
     "thinking_ratios": null,
     "mode": "ifr",
     "ifr_view": "aggregate",
-    "score_transform": "positive",
+    "score_transform": "signed",
     "vector_stats_raw": [
       {
         "min": 0.0,

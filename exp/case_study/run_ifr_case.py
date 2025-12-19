@@ -5,8 +5,8 @@ Modes supported (all emit JSON + HTML under ``exp/case_study/out``):
 
 - ``ft``: FlashTrace (current project implementation; multi-hop IFR)
 - ``ifr``: standard IFR single-hop visualization
-- ``attnlrp``: AttnLRP sink-span *span-aggregate* (one panel; route A includes pre-trim vector)
-- ``ft_attnlrp``: FlashTrace-style multi-hop AttnLRP (route A includes pre-trim vectors per hop)
+- ``attnlrp``: AttnLRP hop0 (reuse FT-AttnLRP span-aggregate; visualize raw hop0 vector)
+- ``ft_attnlrp``: FT-AttnLRP (multi-hop aggregated AttnLRP; matches exp/exp2)
 """
 
 from __future__ import annotations
@@ -204,7 +204,6 @@ from exp.exp2 import dataset_utils as ds_utils
 from evaluations.attribution_recovery import load_model
 
 from exp.case_study import analysis, viz
-from lrp_patches import lrp_context
 
 
 def resolve_device(cuda: Optional[str], cuda_num: int) -> str:
@@ -243,56 +242,6 @@ def load_example(dataset: str, index: int, data_root: Path) -> Tuple[ds_utils.Ca
     return examples[index], dataset_name
 
 
-def _pick_attnlrp_dtype() -> torch.dtype:
-    """Prefer bf16 for AttnLRP to avoid fp16 gradient underflow."""
-
-    if torch.cuda.is_available():
-        try:
-            if hasattr(torch.cuda, "is_bf16_supported") and torch.cuda.is_bf16_supported():
-                return torch.bfloat16
-        except Exception:
-            pass
-    return torch.float16
-
-
-def load_model_case_study(model_name: str, device: str, *, torch_dtype: torch.dtype) -> Tuple[Any, Any]:
-    """Local model loader so case_study can pick dtype without touching eval code."""
-
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-
-    kwargs = {
-        "attn_implementation": "eager",
-        "torch_dtype": torch_dtype,
-    }
-
-    if device == "auto":
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            device_map="auto",
-            **kwargs,
-        )
-    elif isinstance(device, str) and device.startswith("cuda:"):
-        try:
-            gpu_idx = int(device.split(":")[1])
-        except Exception:
-            gpu_idx = 0
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            device_map={"": gpu_idx},
-            **kwargs,
-        )
-    else:
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            **kwargs,
-        )
-    model.eval()
-
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    tokenizer.pad_token = tokenizer.eos_token
-    return model, tokenizer
-
-
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser("IFR multi-hop case study")
     parser.add_argument("--dataset", type=str, default="exp/exp2/data/morehopqa.jsonl", help="Dataset name or JSONL path.")
@@ -303,7 +252,7 @@ def parse_args() -> argparse.Namespace:
         type=str,
         choices=["ft", "ifr", "attnlrp", "ft_attnlrp"],
         default="ft",
-        help="ft = FlashTrace (multi-hop IFR); ifr = standard IFR; attnlrp = span-aggregate AttnLRP; ft_attnlrp = multi-hop AttnLRP.",
+        help="ft = FlashTrace (multi-hop IFR); ifr = standard IFR; attnlrp = AttnLRP hop0 (FT-AttnLRP span-aggregate); ft_attnlrp = FT-AttnLRP (multi-hop aggregated; exp2).",
     )
     parser.add_argument(
         "--ifr_view",
@@ -311,19 +260,6 @@ def parse_args() -> argparse.Namespace:
         choices=["aggregate", "per_token"],
         default="aggregate",
         help="Only for --mode ifr. aggregate = sink-span aggregated IFR (one panel); per_token = IFR per sink token (one panel per token).",
-    )
-    parser.add_argument(
-        "--lrp_score_mode",
-        type=str,
-        choices=["max", "generated"],
-        default="max",
-        help="Only for AttnLRP modes. max = objective uses max logit; generated = objective uses generated token logit.",
-    )
-    parser.add_argument(
-        "--lrp_normalize_weights",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Only for AttnLRP modes. Whether to normalize sink weights to sum to 1.",
     )
     parser.add_argument("--model", type=str, default="qwen-8B", help="HF repo id (ignored if --model_path set).")
     parser.add_argument("--model_path", type=str, default=None, help="Local model path to override --model.")
@@ -427,89 +363,6 @@ def build_raw_tokens_from_ids(tokenizer: Any, prompt_ids: Optional[Sequence[int]
     return _decode_token_ids(tokenizer, prompt_ids) + _decode_token_ids(tokenizer, generation_ids)
 
 
-def compute_attnlrp_span_aggregate_route_a(
-    attr: llm_attr.LLMLRPAttribution,
-    *,
-    sink_start: int,
-    sink_end: int,
-    sink_weights: Optional[torch.Tensor],
-    normalize_weights: bool,
-    score_mode: str,
-) -> Tuple[torch.Tensor, torch.Tensor]:
-    """Span-aggregate AttnLRP with route-A recording.
-
-    Returns:
-      - raw_vector_full: [prompt_len_full + gen_len] (pre-trim, includes chat template)
-      - trimmed_vector: [user_prompt_len + gen_len] (post-trim)
-    """
-
-    prompt_len_full = int(attr.prompt_ids.shape[1])
-    gen_len = int(attr.generation_ids.shape[1])
-    if gen_len == 0:
-        raw = torch.zeros((prompt_len_full,), dtype=torch.float32)
-        trimmed = torch.zeros((len(attr.user_prompt_tokens),), dtype=torch.float32)
-        return raw, trimmed
-
-    sink_start = int(sink_start)
-    sink_end = int(sink_end)
-    if not (0 <= sink_start <= sink_end < gen_len):
-        raise ValueError(f"Invalid sink span [{sink_start}, {sink_end}] for gen_len={gen_len}.")
-
-    input_ids = torch.cat([attr.prompt_ids, attr.generation_ids], dim=1)
-    embedding_layer = attr.model.get_input_embeddings()
-    model_dtype = next(attr.model.parameters()).dtype
-
-    with lrp_context(attr.model, attr.model_type):
-        input_embeds = embedding_layer(input_ids).float()
-        input_embeds = input_embeds.detach().clone().requires_grad_(True)
-
-        output_logits = attr.model(
-            inputs_embeds=input_embeds.to(model_dtype),
-            use_cache=False,
-        ).logits  # [1, total_len, vocab]
-
-        device = output_logits.device
-        logits_dtype = output_logits.dtype
-
-        span_len = sink_end - sink_start + 1
-        pos_start = prompt_len_full + sink_start - 1
-        pos_end = prompt_len_full + sink_end - 1
-        positions = torch.arange(pos_start, pos_end + 1, device=device)
-
-        if sink_weights is None:
-            w = torch.ones((span_len,), device=device, dtype=logits_dtype)
-            if normalize_weights:
-                w = w / float(span_len)
-        else:
-            w = sink_weights.to(device=device, dtype=logits_dtype)
-            if w.numel() != span_len:
-                raise ValueError("sink_weights length must equal (sink_end - sink_start + 1).")
-            if normalize_weights:
-                w = w / (w.sum() + 1e-12)
-
-        if score_mode == "max":
-            per_pos = output_logits[0, positions, :].max(dim=-1).values
-        elif score_mode == "generated":
-            token_ids = attr.generation_ids[0, sink_start : sink_end + 1].to(device=device)
-            per_pos = output_logits[0, positions, :].gather(-1, token_ids.unsqueeze(-1)).squeeze(-1)
-        else:
-            raise ValueError(f"Unsupported score_mode={score_mode}")
-
-        objective = (w * per_pos).sum()
-        try:
-            attr.model.zero_grad(set_to_none=True)
-        except Exception:
-            pass
-        if input_embeds.grad is not None:
-            input_embeds.grad.zero_()
-        objective.backward()
-
-        raw_vector_full = (input_embeds * input_embeds.grad).float().sum(-1).detach().cpu()[0]
-
-    trimmed_vector = attr.extract_user_prompt_attributions(attr.prompt_tokens, raw_vector_full.view(1, -1))[0].to(torch.float32).cpu()
-    return raw_vector_full.to(torch.float32).cpu(), trimmed_vector
-
-
 def build_trimmed_roles(tokens: Sequence[str], segments: Dict[str, Any]) -> List[str]:
     """Assign role labels for trimmed tokens (prompt + generation)."""
 
@@ -578,12 +431,8 @@ def main() -> None:
         print(f"[info] CUDA_VISIBLE_DEVICES={visible!r} torch.cuda.device_count()={torch.cuda.device_count()} device={device}")
 
     model_name = args.model_path if args.model_path is not None else args.model
-    if args.mode in ("attnlrp", "ft_attnlrp"):
-        lrp_dtype = _pick_attnlrp_dtype()
-        model, tokenizer = load_model_case_study(model_name, device, torch_dtype=lrp_dtype)
-        print(f"[info] AttnLRP model dtype: {lrp_dtype}")
-    else:
-        model, tokenizer = load_model(model_name, device)
+    # Align with exp/exp2: always use the shared fp16 loader.
+    model, tokenizer = load_model(model_name, device)
 
     example, ds_name = load_example(args.dataset, args.index, Path(args.data_root))
     mode = args.mode
@@ -747,95 +596,89 @@ def main() -> None:
             method_meta = {"ifr": analysis.tensor_to_list(meta)}
 
     elif mode in ("attnlrp", "ft_attnlrp"):
-        attr = llm_attr.LLMLRPAttribution(model, tokenizer)
-        attr.target_response(example.prompt, example.target)
+        # Reuse the shared LLMLRPAttribution implementations (root-level).
+        attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
 
-        gen_len = int(attr.generation_ids.shape[1])
-        if gen_len == 0:
-            raise RuntimeError("Empty generation for AttnLRP case study.")
-
-        sink_span = tuple(args.sink_span) if args.sink_span is not None else tuple(example.sink_span) if example.sink_span else (0, gen_len - 1)
+        sink_span = tuple(args.sink_span) if args.sink_span is not None else tuple(example.sink_span) if example.sink_span else None
         thinking_span = (
             tuple(args.thinking_span)
             if args.thinking_span is not None
             else tuple(example.thinking_span) if example.thinking_span else sink_span
         )
 
-        prompt_tokens_trimmed = list(attr.user_prompt_tokens)
-        generation_tokens_trimmed = list(attr.generation_tokens)
+        if mode == "attnlrp":
+            # Case-study AttnLRP: reuse FT-AttnLRP logic but take hop0 (the first span-aggregate)
+            # for a full, signed attribution vector (no observation masking).
+            multi_hop = attributor.calculate_attnlrp_multi_hop(
+                example.prompt,
+                target=example.target,
+                sink_span=sink_span,
+                thinking_span=thinking_span,
+                n_hops=0,
+            )
+            base_attr = (getattr(multi_hop, "raw_attributions", None) or [None])[0]
+            if base_attr is None or not hasattr(base_attr, "token_importance_total"):
+                raise RuntimeError("AttnLRP hop0 missing from multi-hop result.")
 
-        raw_prompt_ids = attr.prompt_ids.detach().cpu().tolist()[0]
-        raw_generation_ids = attr.generation_ids.detach().cpu().tolist()[0]
-        user_prompt_indices = list(getattr(attr, "user_prompt_indices", []) or [])
-        chat_prompt_indices = list(getattr(attr, "chat_prompt_indices", []) or [])
-        prompt_len_full = len(raw_prompt_ids)
+            hop0_vec = torch.as_tensor(getattr(base_attr, "token_importance_total"), dtype=torch.float32).detach().cpu()
+            if hop0_vec.numel() <= 0:
+                raise RuntimeError("Empty generation for AttnLRP case study.")
 
-        sink_start, sink_end = sink_span
-        think_start, think_end = thinking_span if thinking_span is not None else sink_span
+            # Use the actual sink span applied by hop0 (defaults to full generation when unset).
+            sink_span = tuple(getattr(base_attr, "sink_range"))
+            if thinking_span is None:
+                thinking_span = sink_span
 
-        hop0_raw, hop0_trim = compute_attnlrp_span_aggregate_route_a(
-            attr,
-            sink_start=sink_start,
-            sink_end=sink_end,
-            sink_weights=None,
-            normalize_weights=bool(args.lrp_normalize_weights),
-            score_mode=args.lrp_score_mode,
-        )
-        hop_vectors_raw.append(hop0_raw)
-        hop_vectors_trimmed.append(hop0_trim)
+            hop_vectors_trimmed = [hop0_vec]
+            thinking_ratios = list(getattr(multi_hop, "thinking_ratios", []) or [])
 
-        if mode == "ft_attnlrp":
-            hop_count = max(0, int(args.n_hops))
-            user_prompt_len = len(prompt_tokens_trimmed)
-            think_start_stripped = user_prompt_len + int(think_start)
-            think_end_stripped = user_prompt_len + int(think_end)
-
-            token_total = hop0_trim.clone()
-            w_thinking = token_total[think_start_stripped : think_end_stripped + 1].detach().clone()
-            total_mass = float(token_total.abs().sum().item())
-            thinking_mass = float(w_thinking.abs().sum().item())
-            current_ratio = thinking_mass / (total_mass + 1e-12) if total_mass > 0 else 0.0
-            ratios: List[float] = [current_ratio]
-
-            for _hop in range(1, hop_count + 1):
-                hop_raw, hop_trim = compute_attnlrp_span_aggregate_route_a(
-                    attr,
-                    sink_start=int(think_start),
-                    sink_end=int(think_end),
-                    sink_weights=w_thinking,
-                    normalize_weights=bool(args.lrp_normalize_weights),
-                    score_mode=args.lrp_score_mode,
-                )
-                hop_vectors_raw.append(hop_raw)
-                hop_vectors_trimmed.append(hop_trim)
-
-                token_total = hop_trim.clone()
-                w_thinking = token_total[think_start_stripped : think_end_stripped + 1].detach().clone()
-
-                hop_total_mass = float(token_total.abs().sum().item())
-                if hop_total_mass <= 0.0:
-                    current_ratio = 0.0
-                else:
-                    current_ratio *= float(w_thinking.abs().sum().item()) / (hop_total_mass + 1e-12)
-                ratios.append(current_ratio)
-
-            thinking_ratios = ratios
-
-        sink_abs = (prompt_len_full + sink_span[0], prompt_len_full + sink_span[1])
-        think_abs = (prompt_len_full + thinking_span[0], prompt_len_full + thinking_span[1]) if thinking_span else None
-        method_meta = {
-            "attnlrp": {
-                "type": "span_aggregate_route_a",
-                "score_mode": args.lrp_score_mode,
-                "normalize_weights": bool(args.lrp_normalize_weights),
-                "model_dtype": str(next(attr.model.parameters()).dtype),
-                "sink_span_generation": sink_span,
-                "sink_span_absolute": sink_abs,
-                "thinking_span_generation": thinking_span,
-                "thinking_span_absolute": think_abs,
-                "n_hops": int(args.n_hops) if mode == "ft_attnlrp" else 0,
+            method_meta = {
+                "attnlrp": {
+                    "type": "calculate_attnlrp_multi_hop(n_hops=0) hop0 raw_attributions[0]",
+                    "sink_span_generation": sink_span,
+                    "thinking_span_generation": thinking_span,
+                    "thinking_ratios": thinking_ratios,
+                }
             }
-        }
+        else:
+            # exp2 ft_attnlrp: multi-hop aggregated AttnLRP (metadata contains per-hop vectors).
+            attr_result = attributor.calculate_attnlrp_aggregated_multi_hop(
+                example.prompt,
+                target=example.target,
+                sink_span=sink_span,
+                thinking_span=thinking_span,
+                n_hops=int(args.n_hops),
+            )
+            meta = attr_result.metadata or {}
+            multi_hop = meta.get("multi_hop_result")
+            if multi_hop is None:
+                raise RuntimeError("FT-AttnLRP case study missing metadata.multi_hop_result.")
+
+            raw_attributions = getattr(multi_hop, "raw_attributions", None) or []
+            hop_vectors_trimmed = [
+                torch.as_tensor(getattr(hop, "token_importance_total"), dtype=torch.float32).detach().cpu()
+                for hop in raw_attributions
+            ]
+            thinking_ratios = list(getattr(multi_hop, "thinking_ratios", []) or [])
+
+            method_meta = {
+                "attnlrp": {
+                    "type": "calculate_attnlrp_aggregated_multi_hop (exp2 ft_attnlrp)",
+                    "n_hops": int(args.n_hops),
+                    "sink_span_generation": sink_span,
+                    "thinking_span_generation": thinking_span,
+                    "thinking_ratios": thinking_ratios,
+                }
+            }
+
+        prompt_tokens_trimmed = list(attributor.user_prompt_tokens)
+        generation_tokens_trimmed = list(attributor.generation_tokens)
+
+        raw_prompt_ids = attributor.prompt_ids.detach().cpu().tolist()[0]
+        raw_generation_ids = attributor.generation_ids.detach().cpu().tolist()[0]
+        user_prompt_indices = list(getattr(attributor, "user_prompt_indices", []) or [])
+        chat_prompt_indices = list(getattr(attributor, "chat_prompt_indices", []) or [])
+        prompt_len_full = len(raw_prompt_ids)
 
     else:
         raise ValueError(f"Unsupported mode={mode}")
@@ -870,7 +713,8 @@ def main() -> None:
         sink_span_abs,
     )
 
-    score_transform = "abs" if mode in ("attnlrp", "ft_attnlrp") else "positive"
+    # Visualize signed scores: blue = negative, red = positive.
+    score_transform = "signed"
 
     # Lightweight debug stats to catch silent all-zero / NaN cases.
     hop_stats_raw = [analysis.vector_stats(torch.nan_to_num(v.detach().cpu(), nan=0.0)) for v in hop_vectors_raw]
@@ -881,7 +725,7 @@ def main() -> None:
         print(f"[stats] panel {i}: raw_abs_max={raw_abs} trimmed_abs_max={trim_abs}")
 
     hop_token_trim = analysis.package_token_hops(hop_vectors_trimmed, transform=score_transform)
-    hop_token_raw = analysis.package_token_hops(hop_vectors_raw, transform=score_transform)
+    hop_token_raw = analysis.package_token_hops(hop_vectors_raw, transform=score_transform) if hop_vectors_raw else []
 
     case_meta: Dict[str, Any] = {
         "dataset": ds_name,
@@ -930,17 +774,21 @@ def main() -> None:
     html = viz.render_case_html(
         case_meta,
         token_view_trimmed={
-            "label": "Post-trim token-level heatmap (user prompt only)",
+            "label": "Post-trim token-level heatmap (user prompt + generation; chat template removed)",
             "tokens": tokens,
             "roles": roles_trimmed,
             "hops": hop_token_trim,
         },
-        token_view_raw={
-            "label": "Pre-trim token-level heatmap (with chat template)",
-            "tokens": raw_tokens,
-            "roles": roles_raw,
-            "hops": hop_token_raw,
-        },
+        token_view_raw=(
+            {
+                "label": "Pre-trim token-level heatmap (with chat template)",
+                "tokens": raw_tokens,
+                "roles": roles_raw,
+                "hops": hop_token_raw,
+            }
+            if hop_token_raw
+            else None
+        ),
     )
     html_path.write_text(html, encoding="utf-8")
 

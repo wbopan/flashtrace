@@ -19,7 +19,7 @@
     ],
     "mode": "ft",
     "ifr_view": null,
-    "score_transform": "positive",
+    "score_transform": "signed",
     "vector_stats_raw": [
       {
         "min": 0.0,

@@ -2,9 +2,42 @@
 
 from __future__ import annotations
 
+import math
 from typing import Any, Dict, List, Optional, Sequence
 
 from html import escape
+
+
+TOKEN_SCALE_QUANTILE = 0.995
+
+
+def _robust_abs_max(scores: Sequence[float], *, quantile: float = TOKEN_SCALE_QUANTILE) -> float:
+    """Return a robust abs max to avoid a single outlier washing out the colormap.
+
+    Uses a high quantile (default: p99.5) over |scores|. Top outliers saturate.
+    """
+
+    abs_vals: List[float] = []
+    for x in scores:
+        try:
+            v = float(x)
+        except Exception:
+            continue
+        if math.isnan(v):
+            continue
+        abs_vals.append(abs(v))
+
+    if not abs_vals:
+        return 0.0
+
+    abs_vals.sort()
+    q = float(quantile)
+    if q < 0.0:
+        q = 0.0
+    if q > 1.0:
+        q = 1.0
+    idx = int(q * (len(abs_vals) - 1))
+    return float(abs_vals[idx])
 
 
 def _color_for_score(score: float, max_score: float) -> str:
@@ -34,13 +67,23 @@ def _render_sentence_list(title: str, sentences: Sequence[str], scores: Sequence
     """
 
 
-def _render_tokens(tokens: Sequence[str], scores: Sequence[float], max_score: float, roles: Sequence[str]) -> str:
+def _render_tokens(
+    tokens: Sequence[str],
+    scores: Sequence[float],
+    max_score: float,
+    roles: Sequence[str],
+    *,
+    score_transform: str = "positive",
+) -> str:
     spans: List[str] = []
     if max_score <= 0:
         max_score = 1e-8
     for idx, tok in enumerate(tokens):
         score = float(scores[idx]) if idx < len(scores) else 0.0
-        style = _color_for_score(score, max_score)
+        if score_transform == "signed":
+            style = _color_for_signed_score(score, max_score)
+        else:
+            style = _color_for_score(score, max_score)
         role = roles[idx] if idx < len(roles) else "gen"
         safe_tok = escape(tok)
         spans.append(
@@ -95,17 +138,13 @@ def render_case_html(
             default=0.0,
         )
 
-    token_global_max_trim = max((h.get("token_score_max", 0.0) for h in token_view_trimmed.get("hops", [])), default=0.0)
-    token_global_max_raw = 0.0
-    if token_view_raw is not None:
-        token_global_max_raw = max((h.get("token_score_max", 0.0) for h in token_view_raw.get("hops", [])), default=0.0)
-
     hop_sections: List[str] = []
     trim_hops = token_view_trimmed.get("hops", [])
     hop_count = len(trim_hops)
     mode = case_meta.get("mode", "ft")
     ifr_view = case_meta.get("ifr_view", "aggregate")
     sink_span = case_meta.get("sink_span")
+    score_transform = str(case_meta.get("score_transform") or "positive")
 
     def _panel_title(panel_idx: int) -> str:
         if mode in ("ft", "ft_attnlrp"):
@@ -125,15 +164,26 @@ def render_case_html(
         tok_entry_trim = trim_hops[hop_idx] if hop_idx < len(trim_hops) else {}
         tok_scores_trim = tok_entry_trim.get("token_scores") or []
         hop_total_mass = float(tok_entry_trim.get("total_mass", 0.0))
+        tok_scale_trim = _robust_abs_max(tok_scores_trim)
+        if tok_scale_trim <= 0:
+            tok_scale_trim = float(tok_entry_trim.get("token_score_max") or 0.0)
+        if tok_scale_trim <= 0:
+            tok_scale_trim = 1e-8
 
         tok_raw_html = ""
         if token_view_raw is not None and hop_idx < len(token_view_raw.get("hops", [])):
             raw_entry = token_view_raw["hops"][hop_idx]
+            tok_scores_raw = raw_entry.get("token_scores") or []
+            tok_scale_raw = _robust_abs_max(tok_scores_raw)
+            if tok_scale_raw <= 0:
+                tok_scale_raw = float(raw_entry.get("token_score_max") or 0.0)
+            if tok_scale_raw <= 0:
+                tok_scale_raw = 1e-8
             tok_raw_html = f"""
                 <div class="tokens-block">
                   <div class="tokens-title">{escape(token_view_raw.get("label", "Pre-trim token-level heatmap"))}</div>
                   <div class="tokens-row">
-                  {_render_tokens(token_view_raw.get("tokens", []), raw_entry.get("token_scores", []), token_global_max_raw, token_view_raw.get("roles", []))}
+                  {_render_tokens(token_view_raw.get("tokens", []), tok_scores_raw, tok_scale_raw, token_view_raw.get("roles", []), score_transform=score_transform)}
                   </div>
                 </div>
             """
@@ -164,13 +214,13 @@ def render_case_html(
             <div class="hop">
               <div class="hop-header">
                 <div class="hop-title">{escape(_panel_title(hop_idx))}</div>
-                <div class="hop-meta">total mass: {hop_total_mass:.6f}</div>
+                <div class="hop-meta">total mass: {hop_total_mass:.6f} | scale(p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f} abs): {tok_scale_trim:.6g}</div>
               </div>
               {tok_raw_html}
               <div class="tokens-block">
                 <div class="tokens-title">{escape(token_view_trimmed.get("label", "Post-trim token-level heatmap"))}</div>
                 <div class="tokens-row">
-                  {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, token_global_max_trim, trim_roles)}
+                  {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, tok_scale_trim, trim_roles, score_transform=score_transform)}
                 </div>
               </div>
               {sentence_html}
@@ -201,13 +251,14 @@ def render_case_html(
         view_val = ifr_view
     elif mode == "attnlrp":
         view_key = "AttnLRP view"
-        view_val = "span_aggregate"
+        view_val = "ft_hop0_span_aggregate"
     else:
         view_key = "View"
         view_val = "N/A"
 
-    score_transform = case_meta.get("score_transform")
     transform_row = f"<div>Score transform: {escape(str(score_transform))}</div>" if score_transform else ""
+    scale_row = f"<div>Token scale: per-panel p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f}(|score|)</div>"
+    legend_row = "<div>Colors: red = +, blue = −</div>" if score_transform == "signed" else ""
 
     header = f"""
     <div class="header">
@@ -221,6 +272,8 @@ def render_case_html(
         <div>Panels: {hop_count}</div>
         <div>{escape(str(view_key))}: {escape(str(view_val))}</div>
         {transform_row}
+        {scale_row}
+        {legend_row}
         <div>Thinking ratios: {ratios_str}</div>
       </div>
     </div>

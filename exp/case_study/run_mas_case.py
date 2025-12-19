@@ -180,7 +180,6 @@ _stub_torchvision()
 _stub_timm()
 _stub_gemma3n()
 
-from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
 import transformers  # noqa: E402
 
 # Provide light stubs if Longformer classes are unavailable; we don't use them here.
@@ -200,6 +199,7 @@ from exp.exp2 import dataset_utils as ds_utils  # noqa: E402
 from shared_utils import DEFAULT_PROMPT_TEMPLATE  # noqa: E402
 
 import llm_attr  # noqa: E402
+from evaluations.attribution_recovery import load_model  # noqa: E402
 
 
 def resolve_device(cuda: Optional[str], cuda_num: int) -> str:
@@ -213,49 +213,6 @@ def resolve_device(cuda: Optional[str], cuda_num: int) -> str:
             idx = 0
         return f"cuda:{idx}" if torch.cuda.is_available() else "cpu"
     return f"cuda:{cuda_num}" if torch.cuda.is_available() else "cpu"
-
-
-def _pick_lrp_dtype() -> torch.dtype:
-    """Prefer bf16 for AttnLRP to avoid fp16 gradient underflow."""
-
-    if torch.cuda.is_available():
-        try:
-            if hasattr(torch.cuda, "is_bf16_supported") and torch.cuda.is_bf16_supported():
-                return torch.bfloat16
-        except Exception:
-            pass
-    return torch.float16
-
-
-def load_model(model_name: str, device: str, *, torch_dtype: torch.dtype) -> Tuple[Any, Any]:
-    if device == "auto":
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            device_map="auto",
-            attn_implementation="eager",
-            torch_dtype=torch_dtype,
-        )
-    elif isinstance(device, str) and device.startswith("cuda:"):
-        try:
-            gpu_idx = int(device.split(":")[1])
-        except Exception:
-            gpu_idx = 0
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            device_map={"": gpu_idx},
-            attn_implementation="eager",
-            torch_dtype=torch_dtype,
-        )
-    else:
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            attn_implementation="eager",
-            torch_dtype=torch_dtype,
-        )
-    model.eval()
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    tokenizer.pad_token = tokenizer.eos_token
-    return model, tokenizer
 
 
 def load_example(dataset: str, index: int, data_root: Path) -> Tuple[ds_utils.CachedExample, str]:
@@ -364,6 +321,7 @@ def mas_trace(
     attribution: torch.Tensor,
     prompt: str,
     generation: str,
+    user_prompt_indices: Optional[Sequence[int]] = None,
 ) -> Dict[str, Any]:
     """Return a token-level faithfulness trace (RISE/MAS/RISE+AP) plus per-token deltas."""
 
@@ -373,9 +331,6 @@ def mas_trace(
     formatted = format_prompt(tokenizer, user_prompt)
     formatted_ids = tokenizer(formatted, return_tensors="pt", add_special_tokens=False).input_ids
     user_ids = tokenizer(user_prompt, return_tensors="pt", add_special_tokens=False).input_ids
-    user_start = _find_subsequence_start(formatted_ids[0], user_ids[0])
-    if user_start is None:
-        raise RuntimeError("Failed to locate user prompt token span inside formatted chat prompt.")
 
     prompt_ids = formatted_ids.to(model.device)
     prompt_ids_perturbed = prompt_ids.clone()
@@ -397,6 +352,22 @@ def mas_trace(
             f"attr P={P}, user_prompt P={int(user_ids.shape[1])}."
         )
 
+    prompt_positions: List[int]
+    if user_prompt_indices is not None:
+        prompt_positions = [int(x) for x in user_prompt_indices]
+        if len(prompt_positions) != P:
+            raise ValueError(
+                "user_prompt_indices length does not match prompt-side attribution length: "
+                f"indices P={len(prompt_positions)}, attr P={P}."
+            )
+        if P and max(prompt_positions) >= int(prompt_ids_perturbed.shape[1]):
+            raise ValueError("user_prompt_indices contains an out-of-bounds index for formatted prompt ids.")
+    else:
+        user_start = _find_subsequence_start(formatted_ids[0], user_ids[0])
+        if user_start is None:
+            raise RuntimeError("Failed to locate user prompt token span inside formatted chat prompt.")
+        prompt_positions = [int(user_start) + j for j in range(P)]
+
     scores = np.zeros(P + 1, dtype=np.float64)
     density = np.zeros(P + 1, dtype=np.float64)
 
@@ -408,7 +379,8 @@ def mas_trace(
 
     for step, idx_t in enumerate(sorted_attr_indices):
         idx = int(idx_t.item())
-        prompt_ids_perturbed[0, user_start + idx] = pad_token_id
+        abs_pos = int(prompt_positions[idx])
+        prompt_ids_perturbed[0, abs_pos] = pad_token_id
 
         scores[step + 1] = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids_perturbed, generation_ids=gen_ids)
         if attr_sum > 0:
@@ -506,42 +478,54 @@ def compute_method_attribution(
 
     if method == "attnlrp":
         attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
-        if sink_span is None:
-            result = attributor.calculate_attnlrp_aggregated(prompt, target=target)
-            return "AttnLRP (attnlrp_aggregated)", attributor, result
-
-        sink_start, sink_end = int(sink_span[0]), int(sink_span[1])
-        aggregate = attributor.calculate_attnlrp_span_aggregate(
+        multi_hop = attributor.calculate_attnlrp_multi_hop(
             prompt,
             target=target,
-            sink_start=sink_start,
-            sink_end=sink_end,
-            normalize_weights=True,
-            score_mode="max",
+            sink_span=sink_span,
+            thinking_span=thinking_span,
+            n_hops=0,
         )
+        base_attr = (getattr(multi_hop, "raw_attributions", None) or [None])[0]
+        if base_attr is None or not hasattr(base_attr, "token_importance_total"):
+            raise RuntimeError("AttnLRP hop0 missing from multi-hop result.")
 
-        gen_len = len(aggregate.generation_tokens)
-        user_prompt_len = len(aggregate.user_prompt_tokens)
-        expected_len = user_prompt_len + gen_len
+        hop0_vec = torch.as_tensor(getattr(base_attr, "token_importance_total"), dtype=torch.float32).detach().cpu()
+        if hop0_vec.numel() <= 0:
+            raise RuntimeError("Empty generation for AttnLRP (hop0) MAS case study.")
+
+        user_prompt_len = len(attributor.user_prompt_tokens)
+        gen_len = len(attributor.generation_tokens)
+        gen_len_ids = int(attributor.generation_ids.shape[1])
+        if gen_len != gen_len_ids:
+            raise RuntimeError(
+                "AttnLRP generation length mismatch between decoded tokens and token ids: "
+                f"len(generation_tokens)={gen_len} vs generation_ids.shape[1]={gen_len_ids}."
+            )
+        expected_len = int(hop0_vec.numel())
+        if expected_len != user_prompt_len + gen_len:
+            raise RuntimeError("Unexpected AttnLRP hop0 vector length; cannot package into attribution matrix.")
+
         score_array = torch.full((gen_len, expected_len), torch.nan, dtype=torch.float32)
         for step in range(gen_len):
             gen_pos = user_prompt_len + step
-            score_array[step, :gen_pos] = aggregate.token_importance_total[:gen_pos]
+            score_array[step, :gen_pos] = hop0_vec[:gen_pos]
 
         metadata = {
-            "method": "attnlrp_span_aggregate_wrapped",
-            "sink_span": sink_span,
-            "aggregate": aggregate,
+            "method": "attnlrp_ft_hop0",
+            "sink_span": tuple(getattr(base_attr, "sink_range")),
+            "thinking_span": thinking_span,
+            "n_hops": 0,
+            "multi_hop_result": multi_hop,
         }
         result = llm_attr.LLMAttributionResult(
             tokenizer,
             score_array,
-            aggregate.user_prompt_tokens,
-            aggregate.generation_tokens,
-            all_tokens=aggregate.all_tokens,
+            list(attributor.user_prompt_tokens),
+            list(attributor.generation_tokens),
+            all_tokens=list(attributor.user_prompt_tokens) + list(attributor.generation_tokens),
             metadata=metadata,
         )
-        return "AttnLRP (attnlrp_span_aggregate)", attributor, result
+        return "AttnLRP (ft_attnlrp hop0)", attributor, result
 
     if method == "ft_attnlrp":
         attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
@@ -572,7 +556,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--thinking_span", type=int, nargs=2, default=None, help="Optional thinking span over generation tokens.")
     parser.add_argument("--chunk_tokens", type=int, default=128, help="IFR chunk size.")
     parser.add_argument("--sink_chunk_tokens", type=int, default=32, help="IFR sink chunk size.")
-    parser.add_argument("--score_transform", type=str, choices=["positive", "abs", "signed"], default="positive")
+    parser.add_argument("--score_transform", type=str, choices=["positive", "abs", "signed"], default="signed")
     parser.add_argument("--output_dir", type=str, default="exp/case_study/out", help="Where to write HTML/JSON artifacts.")
     return parser.parse_args()
 
@@ -585,10 +569,9 @@ def main() -> None:
         print(f"[info] CUDA_VISIBLE_DEVICES={visible!r} torch.cuda.device_count()={torch.cuda.device_count()} device={device}")
 
     method_key = "ft" if args.method == "ft_ifr" else args.method
-    torch_dtype = _pick_lrp_dtype() if method_key in ("attnlrp", "ft_attnlrp") else torch.float16
 
     model_name = args.model_path if args.model_path is not None else args.model
-    model, tokenizer = load_model(model_name, device, torch_dtype=torch_dtype)
+    model, tokenizer = load_model(model_name, device)
 
     example, ds_name = load_example(args.dataset, args.index, Path(args.data_root))
 
@@ -646,6 +629,7 @@ def main() -> None:
             attribution=attr_prompt.to(device="cpu"),
             prompt=example.prompt,
             generation=generation_text,
+            user_prompt_indices=getattr(attributor, "user_prompt_indices", None),
         )
         trace["variant"] = variant_key
         trace["variant_label"] = variant_label
@@ -666,7 +650,7 @@ def main() -> None:
             "variant_label": variant_label,
             "metrics": trace.get("metrics"),
             "sorted_attr_indices": trace.get("sorted_attr_indices"),
-            "attr_weights": transform_values(trace.get("attr_weights", []), "signed"),
+            "attr_weights": transform_values(trace.get("attr_weights", []), args.score_transform),
             "token_deltas_raw": transform_values(trace.get("token_deltas_raw", []), args.score_transform),
         }
         panels_display.append(panel_display)
