@@ -16,4 +16,7 @@ data/
 AGENTS.md
 readme_dev.md
 contribute/ruler/
-repos/
+repos/.DS_Store
+repomix-output.xml
+.DS_Store
+repomix-output.xml
