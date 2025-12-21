@@ -609,14 +609,16 @@ def main() -> None:
         if mode == "attnlrp":
             # Case-study AttnLRP: reuse FT-AttnLRP logic but take hop0 (the first span-aggregate)
             # for a full, signed attribution vector (no observation masking).
-            multi_hop = attributor.calculate_attnlrp_multi_hop(
+            attr_result = attributor.calculate_attnlrp_ft_hop0(
                 example.prompt,
                 target=example.target,
                 sink_span=sink_span,
                 thinking_span=thinking_span,
-                n_hops=0,
             )
-            base_attr = (getattr(multi_hop, "raw_attributions", None) or [None])[0]
+            meta = attr_result.metadata or {}
+            multi_hop = meta.get("multi_hop_result")
+            raw_attributions = getattr(multi_hop, "raw_attributions", None) or []
+            base_attr = raw_attributions[0] if raw_attributions else None
             if base_attr is None or not hasattr(base_attr, "token_importance_total"):
                 raise RuntimeError("AttnLRP hop0 missing from multi-hop result.")
 

@@ -127,7 +127,7 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
 
     elif testing_dict["attr_func"] == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
-        attr = llm_attributor.calculate_attnlrp(prompt, target=target)
+        attr = llm_attributor.calculate_attnlrp_ft_hop0(prompt, target=target)
         token_span = _resolve_indices_to_explain_token_span(attr, indices_to_explain)
         attributions = list(attr.get_all_token_attrs(token_span))
 

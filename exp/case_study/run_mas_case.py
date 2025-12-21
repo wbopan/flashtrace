@@ -478,52 +478,11 @@ def compute_method_attribution(
 
     if method == "attnlrp":
         attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
-        multi_hop = attributor.calculate_attnlrp_multi_hop(
+        result = attributor.calculate_attnlrp_ft_hop0(
             prompt,
             target=target,
             sink_span=sink_span,
             thinking_span=thinking_span,
-            n_hops=0,
-        )
-        base_attr = (getattr(multi_hop, "raw_attributions", None) or [None])[0]
-        if base_attr is None or not hasattr(base_attr, "token_importance_total"):
-            raise RuntimeError("AttnLRP hop0 missing from multi-hop result.")
-
-        hop0_vec = torch.as_tensor(getattr(base_attr, "token_importance_total"), dtype=torch.float32).detach().cpu()
-        if hop0_vec.numel() <= 0:
-            raise RuntimeError("Empty generation for AttnLRP (hop0) MAS case study.")
-
-        user_prompt_len = len(attributor.user_prompt_tokens)
-        gen_len = len(attributor.generation_tokens)
-        gen_len_ids = int(attributor.generation_ids.shape[1])
-        if gen_len != gen_len_ids:
-            raise RuntimeError(
-                "AttnLRP generation length mismatch between decoded tokens and token ids: "
-                f"len(generation_tokens)={gen_len} vs generation_ids.shape[1]={gen_len_ids}."
-            )
-        expected_len = int(hop0_vec.numel())
-        if expected_len != user_prompt_len + gen_len:
-            raise RuntimeError("Unexpected AttnLRP hop0 vector length; cannot package into attribution matrix.")
-
-        score_array = torch.full((gen_len, expected_len), torch.nan, dtype=torch.float32)
-        for step in range(gen_len):
-            gen_pos = user_prompt_len + step
-            score_array[step, :gen_pos] = hop0_vec[:gen_pos]
-
-        metadata = {
-            "method": "attnlrp_ft_hop0",
-            "sink_span": tuple(getattr(base_attr, "sink_range")),
-            "thinking_span": thinking_span,
-            "n_hops": 0,
-            "multi_hop_result": multi_hop,
-        }
-        result = llm_attr.LLMAttributionResult(
-            tokenizer,
-            score_array,
-            list(attributor.user_prompt_tokens),
-            list(attributor.generation_tokens),
-            all_tokens=list(attributor.user_prompt_tokens) + list(attributor.generation_tokens),
-            metadata=metadata,
         )
         return "AttnLRP (ft_attnlrp hop0)", attributor, result
 

@@ -166,7 +166,14 @@ def run_attribution(
 
     if attr_func == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
-        attr = llm_attributor.calculate_attnlrp(example.prompt, target=target)
+        sink_span = getattr(example, "sink_span", None)
+        thinking_span = getattr(example, "thinking_span", None)
+        attr = llm_attributor.calculate_attnlrp_ft_hop0(
+            example.prompt,
+            target=target,
+            sink_span=tuple(sink_span) if sink_span else None,
+            thinking_span=tuple(thinking_span) if thinking_span else None,
+        )
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
         return list(attr.get_all_token_attrs(token_span))
 

@@ -73,10 +73,10 @@ python exp/exp2/sample_and_filter.py \
 # 生成侧 RISE/MAS 忠实度
 python exp/exp2/run_exp.py \
   --datasets exp/exp2/data/morehopqa.jsonl \
-  --attr_funcs IG,perturbation_all,attention,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,attnlrp,ft_attnlrp \
+  --attr_funcs ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
-  --cuda 0,2,3,4,5 \
+  --cuda 2,3,4,5 \
   --num_examples 10 \
   --mode faithfulness_gen \
   --n_hops 3 \

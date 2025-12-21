@@ -1891,10 +1891,21 @@ class LLMLRPAttribution(LLMAttribution):
         else:
             self.model_type = model_type
 
+    def _resolve_score_mode(
+        self,
+        score_mode: Optional[Literal["max", "generated"]],
+        target: Optional[str],
+    ) -> Literal["max", "generated"]:
+        if score_mode is None:
+            return "generated" if target is not None else "max"
+        return score_mode
+
     def calculate_attnlrp(
         self,
         prompt: str,
         target: Optional[str] = None,
+        *,
+        score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> LLMAttributionResult:
         """Calculate AttnLRP attribution for a prompt-response pair.
 
@@ -1904,6 +1915,10 @@ class LLMLRPAttribution(LLMAttribution):
             The input prompt text
         target : str, optional
             The target response text. If None, the model generates a response.
+        score_mode : Literal["max", "generated"], optional
+            "max": use max logit at each position (original behavior).
+            "generated": use the logit of the generated/target token at each position.
+            Default: auto ("generated" if target is provided, else "max").
 
         Returns
         -------
@@ -1915,6 +1930,8 @@ class LLMLRPAttribution(LLMAttribution):
             self.response(prompt)
         else:
             self.target_response(prompt, target)
+
+        score_mode = self._resolve_score_mode(score_mode, target)
 
         # Get lengths
         prompt_len = int(self.prompt_ids.shape[1])
@@ -1954,14 +1971,19 @@ class LLMLRPAttribution(LLMAttribution):
             for step in range(gen_len):
                 gen_pos = prompt_len + step
 
-                # Get the maximum logit at this position (the predicted token)
-                max_logit = output_logits[0, gen_pos - 1, :].max()
+                if score_mode == "max":
+                    score_logit = output_logits[0, gen_pos - 1, :].max()
+                elif score_mode == "generated":
+                    token_id = self.generation_ids[0, step]
+                    score_logit = output_logits[0, gen_pos - 1, token_id]
+                else:
+                    raise ValueError(f"Unsupported score_mode={score_mode}")
 
                 # Backward pass - this computes LRP through the patched layers
                 if input_embeds.grad is not None:
                     input_embeds.grad.zero_()
 
-                max_logit.backward(retain_graph=(step < gen_len - 1))
+                score_logit.backward(retain_graph=(step < gen_len - 1))
 
                 # Compute relevance: Input * Gradient, summed over embedding dimension
                 # Cast to float32 for numerical stability before summing
@@ -1976,6 +1998,8 @@ class LLMLRPAttribution(LLMAttribution):
         self,
         prompt: str,
         target: Optional[str] = None,
+        *,
+        score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> LLMAttributionResult:
         """Calculate AttnLRP attribution using batched computation.
 
@@ -1989,6 +2013,10 @@ class LLMLRPAttribution(LLMAttribution):
             The input prompt text
         target : str, optional
             The target response text. If None, the model generates a response.
+        score_mode : Literal["max", "generated"], optional
+            "max": use max logit at each position (original behavior).
+            "generated": use the logit of the generated/target token at each position.
+            Default: auto ("generated" if target is provided, else "max").
 
         Returns
         -------
@@ -2000,6 +2028,8 @@ class LLMLRPAttribution(LLMAttribution):
             self.response(prompt)
         else:
             self.target_response(prompt, target)
+
+        score_mode = self._resolve_score_mode(score_mode, target)
 
         # Get lengths
         prompt_len = int(self.prompt_ids.shape[1])
@@ -2031,18 +2061,23 @@ class LLMLRPAttribution(LLMAttribution):
                 use_cache=False,
             ).logits
 
-            # Get max logits for all generation positions
+            # Get scoring logits for all generation positions
             gen_positions = list(range(prompt_len - 1, prompt_len + gen_len - 1))
-            max_logits = torch.stack([
-                output_logits[0, pos, :].max() for pos in gen_positions
-            ])
+            if score_mode == "max":
+                score_logits = torch.stack([output_logits[0, pos, :].max() for pos in gen_positions])
+            elif score_mode == "generated":
+                positions = torch.as_tensor(gen_positions, device=output_logits.device)
+                token_ids = self.generation_ids[0].to(device=output_logits.device)
+                score_logits = output_logits[0, positions, :].gather(-1, token_ids.unsqueeze(-1)).squeeze(-1)
+            else:
+                raise ValueError(f"Unsupported score_mode={score_mode}")
 
-            # Backward from sum of all max logits
+            # Backward from sum of all scoring logits
             # This gives us the total relevance across all positions
             if input_embeds.grad is not None:
                 input_embeds.grad.zero_()
 
-            max_logits.sum().backward()
+            score_logits.sum().backward()
 
             # Compute aggregated relevance
             relevance = (input_embeds * input_embeds.grad).float().sum(-1).detach().cpu()[0]
@@ -2108,7 +2143,7 @@ class LLMLRPAttribution(LLMAttribution):
         sink_end: Optional[int] = None,
         sink_weights: Optional[torch.Tensor] = None,
         normalize_weights: bool = True,
-        score_mode: Literal["max", "generated"] = "max",
+        score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> AttnLRPSpanAggregate:
         """Compute span-wise (multi-token) aggregated AttnLRP in ONE forward + ONE backward.
 
@@ -2144,9 +2179,10 @@ class LLMLRPAttribution(LLMAttribution):
         normalize_weights : bool
             If True, weights are normalized to sum to 1 (weighted average).
             If False, computes weighted sum. Default: True
-        score_mode : Literal["max", "generated"]
+        score_mode : Literal["max", "generated"], optional
             "max": use max logit at each sink position (matches existing calculate_attnlrp)
             "generated": use the logit of the actually generated token id at each position
+            Default: auto ("generated" if target is provided, else "max")
 
         Returns
         -------
@@ -2158,6 +2194,8 @@ class LLMLRPAttribution(LLMAttribution):
             self.response(prompt)
         else:
             self.target_response(prompt, target)
+
+        score_mode = self._resolve_score_mode(score_mode, target)
 
         prompt_len = int(self.prompt_ids.shape[1])
         gen_len = int(self.generation_ids.shape[1])
@@ -2280,6 +2318,8 @@ class LLMLRPAttribution(LLMAttribution):
         self,
         prompt: str,
         target: Optional[str] = None,
+        *,
+        score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> LLMAttributionResult:
         """Calculate aggregated AttnLRP attribution using span aggregation.
 
@@ -2297,6 +2337,10 @@ class LLMLRPAttribution(LLMAttribution):
             The input prompt text
         target : str, optional
             The target response text. If None, the model generates a response.
+        score_mode : Literal["max", "generated"], optional
+            "max": use max logit at each position (original behavior).
+            "generated": use the logit of the generated/target token at each position.
+            Default: auto ("generated" if target is provided, else "max").
 
         Returns
         -------
@@ -2308,6 +2352,8 @@ class LLMLRPAttribution(LLMAttribution):
             self.response(prompt)
         else:
             self.target_response(prompt, target)
+
+        score_mode = self._resolve_score_mode(score_mode, target)
 
         prompt_len = int(self.prompt_ids.shape[1])
         gen_len = int(self.generation_ids.shape[1])
@@ -2328,7 +2374,7 @@ class LLMLRPAttribution(LLMAttribution):
             sink_start=0,
             sink_end=gen_len - 1,
             normalize_weights=True,
-            score_mode="max",
+            score_mode=score_mode,
         )
 
         # Build score array: replicate the aggregated vector for each generation row
@@ -2366,6 +2412,69 @@ class LLMLRPAttribution(LLMAttribution):
             metadata=metadata,
         )
 
+    def calculate_attnlrp_ft_hop0(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        sink_span: Optional[Tuple[int, int]] = None,
+        thinking_span: Optional[Tuple[int, int]] = None,
+        score_mode: Optional[Literal["max", "generated"]] = None,
+    ) -> LLMAttributionResult:
+        """Return AttnLRP hop0 from the FT multi-hop path as a token-level matrix."""
+        multi_hop = self.calculate_attnlrp_multi_hop(
+            prompt,
+            target=target,
+            sink_span=sink_span,
+            thinking_span=thinking_span,
+            n_hops=0,
+            score_mode=score_mode,
+        )
+        raw_attributions = getattr(multi_hop, "raw_attributions", None) or []
+        base_attr = raw_attributions[0] if raw_attributions else None
+        if base_attr is None or not hasattr(base_attr, "token_importance_total"):
+            raise RuntimeError("AttnLRP hop0 missing from multi-hop result.")
+
+        hop0_vec = torch.as_tensor(getattr(base_attr, "token_importance_total"), dtype=torch.float32).detach().cpu()
+        if hop0_vec.numel() <= 0:
+            raise RuntimeError("Empty generation for AttnLRP (hop0).")
+
+        user_prompt_len = len(self.user_prompt_tokens)
+        gen_len = len(self.generation_tokens)
+        gen_len_ids = int(self.generation_ids.shape[1]) if self.generation_ids is not None else gen_len
+        if gen_len != gen_len_ids:
+            raise RuntimeError(
+                "AttnLRP generation length mismatch between decoded tokens and token ids: "
+                f"len(generation_tokens)={gen_len} vs generation_ids.shape[1]={gen_len_ids}."
+            )
+        expected_len = user_prompt_len + gen_len
+        if int(hop0_vec.numel()) != expected_len:
+            raise RuntimeError("Unexpected AttnLRP hop0 vector length; cannot package into attribution matrix.")
+
+        score_array = torch.full((gen_len, expected_len), torch.nan, dtype=torch.float32)
+        for step in range(gen_len):
+            gen_pos = user_prompt_len + step
+            score_array[step, :gen_pos] = hop0_vec[:gen_pos]
+
+        metadata = {
+            "method": "attnlrp_ft_hop0",
+            "sink_span": tuple(getattr(base_attr, "sink_range", (0, max(0, gen_len - 1)))),
+            "thinking_span": thinking_span,
+            "n_hops": 0,
+            "multi_hop_result": multi_hop,
+        }
+
+        all_tokens = self.user_prompt_tokens + self.generation_tokens
+
+        return LLMAttributionResult(
+            self.tokenizer,
+            score_array,
+            self.user_prompt_tokens,
+            self.generation_tokens,
+            all_tokens=all_tokens,
+            metadata=metadata,
+        )
+
     def calculate_attnlrp_multi_hop(
         self,
         prompt: str,
@@ -2375,7 +2484,7 @@ class LLMLRPAttribution(LLMAttribution):
         thinking_span: Optional[Tuple[int, int]] = None,
         n_hops: int = 1,
         normalize_weights: bool = True,
-        score_mode: Literal["max", "generated"] = "max",
+        score_mode: Optional[Literal["max", "generated"]] = None,
         observation_mask: Optional[torch.Tensor | List[float]] = None,
     ) -> MultiHopAttnLRPResult:
         """Compute multi-hop AttnLRP attribution recursively through thinking span.
@@ -2410,8 +2519,10 @@ class LLMLRPAttribution(LLMAttribution):
             Number of recursive hops. Default: 1
         normalize_weights : bool
             Whether to normalize weights at each hop. Default: True
-        score_mode : Literal["max", "generated"]
-            Scoring mode for AttnLRP. Default: "max"
+        score_mode : Literal["max", "generated"], optional
+            "max": use max logit at each position (original behavior).
+            "generated": use the logit of the generated/target token at each position.
+            Default: auto ("generated" if target is provided, else "max").
         observation_mask : torch.Tensor or List[float], optional
             Custom mask for observable tokens. Shape: (gen_len,) or (total_len,).
             1 = observable (input), 0 = not observable (thinking/output).
@@ -2427,6 +2538,8 @@ class LLMLRPAttribution(LLMAttribution):
             self.response(prompt)
         else:
             self.target_response(prompt, target)
+
+        score_mode = self._resolve_score_mode(score_mode, target)
 
         prompt_len = int(self.prompt_ids.shape[1])
         gen_len = int(self.generation_ids.shape[1])
@@ -2587,6 +2700,7 @@ class LLMLRPAttribution(LLMAttribution):
         sink_span: Optional[Tuple[int, int]] = None,
         thinking_span: Optional[Tuple[int, int]] = None,
         n_hops: int = 1,
+        score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> LLMAttributionResult:
         """Calculate multi-hop aggregated AttnLRP attribution.
 
@@ -2608,6 +2722,10 @@ class LLMLRPAttribution(LLMAttribution):
             (start, end) indices in generation tokens for the reasoning span.
         n_hops : int
             Number of recursive hops. Default: 1
+        score_mode : Literal["max", "generated"], optional
+            "max": use max logit at each position (original behavior).
+            "generated": use the logit of the generated/target token at each position.
+            Default: auto ("generated" if target is provided, else "max").
 
         Returns
         -------
@@ -2641,6 +2759,7 @@ class LLMLRPAttribution(LLMAttribution):
             sink_span=sink_span,
             thinking_span=thinking_span,
             n_hops=n_hops,
+            score_mode=score_mode,
         )
 
         # Use the accumulated observation as the relevance vector

@@ -367,7 +367,12 @@ def run_attribution(
         )
     elif attr_func == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
-        attr = llm_attributor.calculate_attnlrp(example.prompt, target=target)
+        attr = llm_attributor.calculate_attnlrp_ft_hop0(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+        )
     elif attr_func in ("ft_attnlrp", "attnlrp_aggregated_multi_hop"):
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         attr = llm_attributor.calculate_attnlrp_aggregated_multi_hop(
