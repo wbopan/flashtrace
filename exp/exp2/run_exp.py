@@ -55,12 +55,6 @@ def _sha1_text(text: str) -> str:
     return hashlib.sha1(text.encode("utf-8")).hexdigest()
 
 
-def _eval_nonneg_normalize_vector(v: torch.Tensor) -> torch.Tensor:
-    """Match LLMAttributionResult.normalize_sum_to_one for a single vector row."""
-    v_nonneg = torch.nan_to_num(v.to(dtype=torch.float32), nan=0.0).clamp(min=0.0)
-    return v_nonneg / (v_nonneg.sum() + 1e-8)
-
-
 def _infer_attnlrp_spans_from_hops(
     raw_attributions: Any,
     *,
@@ -82,7 +76,7 @@ def _build_hop_trace_payload(
     *,
     indices_to_explain: List[int],
 ) -> Optional[Dict[str, np.ndarray]]:
-    """Extract per-hop vectors (raw + eval-nonneg) and minimal span metadata."""
+    """Extract per-hop vectors (postprocessed) and minimal span metadata."""
     prompt_len = int(len(getattr(attr, "prompt_tokens", []) or []))
     gen_len = int(len(getattr(attr, "generation_tokens", []) or []))
     total_len = prompt_len + gen_len
@@ -92,6 +86,9 @@ def _build_hop_trace_payload(
     hop_vectors: List[torch.Tensor] = []
     sink_span_gen: Optional[Tuple[int, int]] = None
     thinking_span_gen: Optional[Tuple[int, int]] = None
+    attnlrp_neg_handling: str = ""
+    attnlrp_norm_mode: str = ""
+    attnlrp_ratio_enabled: int = -1
 
     if attr_func == "ifr_multi_hop":
         meta = (getattr(attr, "metadata", None) or {}).get("ifr") or {}
@@ -108,6 +105,10 @@ def _build_hop_trace_payload(
 
     elif attr_func in ("ft_attnlrp", "attnlrp_aggregated_multi_hop"):
         meta = getattr(attr, "metadata", None) or {}
+        attnlrp_neg_handling = str(meta.get("neg_handling") or "")
+        attnlrp_norm_mode = str(meta.get("norm_mode") or "")
+        if meta.get("ratio_enabled") is not None:
+            attnlrp_ratio_enabled = int(bool(meta.get("ratio_enabled")))
         multi_hop = meta.get("multi_hop_result")
         if multi_hop is None:
             return None
@@ -134,22 +135,22 @@ def _build_hop_trace_payload(
     if thinking_span_gen is None:
         thinking_span_gen = sink_span_gen
 
-    stacked_raw = torch.stack([v.reshape(-1) for v in hop_vectors], dim=0)
-    if stacked_raw.shape[1] != total_len:
+    stacked = torch.stack([v.reshape(-1) for v in hop_vectors], dim=0)
+    if stacked.shape[1] != total_len:
         raise ValueError(
-            f"Hop vector length mismatch for {attr_func}: expected T={total_len}, got {stacked_raw.shape[1]}."
+            f"Hop vector length mismatch for {attr_func}: expected T={total_len}, got {stacked.shape[1]}."
         )
 
-    stacked_eval = torch.stack([_eval_nonneg_normalize_vector(v) for v in stacked_raw], dim=0)
-
     return {
-        "vh_raw": stacked_raw.detach().cpu().numpy().astype(np.float32, copy=False),
-        "vh_eval": stacked_eval.detach().cpu().numpy().astype(np.float32, copy=False),
+        "vh": stacked.detach().cpu().numpy().astype(np.float32, copy=False),
         "prompt_len": np.asarray(prompt_len, dtype=np.int64),
         "gen_len": np.asarray(gen_len, dtype=np.int64),
         "sink_span_gen": np.asarray(sink_span_gen, dtype=np.int64),
         "thinking_span_gen": np.asarray(thinking_span_gen, dtype=np.int64),
         "indices_to_explain_gen": np.asarray(indices_to_explain, dtype=np.int64),
+        "attnlrp_neg_handling": np.asarray(attnlrp_neg_handling, dtype="U16"),
+        "attnlrp_norm_mode": np.asarray(attnlrp_norm_mode, dtype="U16"),
+        "attnlrp_ratio_enabled": np.asarray(attnlrp_ratio_enabled, dtype=np.int64),
     }
 
 
@@ -176,11 +177,14 @@ def _write_hop_trace(
         "target_sha1": _sha1_text(target) if target is not None else None,
         "prompt_len": int(payload["prompt_len"].item()),
         "gen_len": int(payload["gen_len"].item()),
-        "n_hops_plus_one": int(payload["vh_raw"].shape[0]),
-        "total_len": int(payload["vh_raw"].shape[1]),
+        "n_hops_plus_one": int(payload["vh"].shape[0]),
+        "total_len": int(payload["vh"].shape[1]),
         "sink_span_gen": payload["sink_span_gen"].tolist(),
         "thinking_span_gen": payload["thinking_span_gen"].tolist(),
         "indices_to_explain_gen": payload["indices_to_explain_gen"].tolist(),
+        "attnlrp_neg_handling": str(payload["attnlrp_neg_handling"].item()),
+        "attnlrp_norm_mode": str(payload["attnlrp_norm_mode"].item()),
+        "attnlrp_ratio_enabled": int(payload["attnlrp_ratio_enabled"].item()),
     }
     manifest_handle.write(json.dumps(record, ensure_ascii=False) + "\n")
     manifest_handle.flush()
@@ -372,6 +376,8 @@ def run_attribution(
             target=target,
             sink_span=tuple(example.sink_span) if example.sink_span else None,
             thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            neg_handling=str(testing_dict.get("attnlrp_neg_handling", "drop")),
+            norm_mode=str(testing_dict.get("attnlrp_norm_mode", "norm")),
         )
     elif attr_func in ("ft_attnlrp", "attnlrp_aggregated_multi_hop"):
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
@@ -381,6 +387,8 @@ def run_attribution(
             sink_span=tuple(example.sink_span) if example.sink_span else None,
             thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
             n_hops=testing_dict["n_hops"],
+            neg_handling=str(testing_dict.get("attnlrp_neg_handling", "drop")),
+            norm_mode=str(testing_dict.get("attnlrp_norm_mode", "norm")),
         )
     elif attr_func == "basic":
         llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
@@ -596,12 +604,26 @@ def main():
     parser.add_argument("--chunk_tokens", type=int, default=128)
     parser.add_argument("--sink_chunk_tokens", type=int, default=32)
     parser.add_argument("--n_hops", type=int, default=3)
+    parser.add_argument(
+        "--attnlrp_neg_handling",
+        type=str,
+        choices=["drop", "abs"],
+        default="drop",
+        help="FT-AttnLRP: how to handle negative values after each hop (drop=clamp>=0, abs=absolute value).",
+    )
+    parser.add_argument(
+        "--attnlrp_norm_mode",
+        type=str,
+        choices=["norm", "no_norm"],
+        default="norm",
+        help="FT-AttnLRP: norm enables per-hop global+thinking normalization + ratios; no_norm disables all three.",
+    )
     parser.add_argument("--data_root", type=str, default="exp/exp2/data", help="Filtered dataset cache directory.")
     parser.add_argument("--output_root", type=str, default="exp/exp2/output", help="Directory to store evaluation outputs.")
     parser.add_argument(
         "--save_hop_traces",
         action="store_true",
-        help="Save per-hop token vectors (vh_raw + vh_eval) for ifr_multi_hop and ft_attnlrp under output_root.",
+        help="Save per-hop token vectors (vh) for ifr_multi_hop and ft_attnlrp under output_root.",
     )
     args = parser.parse_args()
 
@@ -664,6 +686,8 @@ def main():
                 "chunk_tokens": args.chunk_tokens,
                 "sink_chunk_tokens": args.sink_chunk_tokens,
                 "n_hops": args.n_hops,
+                "attnlrp_neg_handling": args.attnlrp_neg_handling,
+                "attnlrp_norm_mode": args.attnlrp_norm_mode,
                 "device": device,
                 "batch_size": 1,
                 "save_hop_traces": bool(args.save_hop_traces),

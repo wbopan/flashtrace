@@ -54,7 +54,7 @@ def _color_for_score(score: float, max_score: float) -> str:
 def _render_sentence_list(title: str, sentences: Sequence[str], scores: Sequence[float], max_score: float) -> str:
     rows: List[str] = []
     for sent, sc in zip(sentences, scores):
-        style = _color_for_score(float(sc), max_score)
+        style = _color_for_score(abs(float(sc)), max_score)
         rows.append(
             f'<div class="sent-row" style="{style}"><span class="score">{sc:.4f}</span>'
             f'<span class="text">{escape(sent)}</span></div>'
@@ -72,18 +72,13 @@ def _render_tokens(
     scores: Sequence[float],
     max_score: float,
     roles: Sequence[str],
-    *,
-    score_transform: str = "positive",
 ) -> str:
     spans: List[str] = []
     if max_score <= 0:
         max_score = 1e-8
     for idx, tok in enumerate(tokens):
         score = float(scores[idx]) if idx < len(scores) else 0.0
-        if score_transform == "signed":
-            style = _color_for_signed_score(score, max_score)
-        else:
-            style = _color_for_score(score, max_score)
+        style = _color_for_score(abs(score), max_score)
         role = roles[idx] if idx < len(roles) else "gen"
         safe_tok = escape(tok)
         spans.append(
@@ -144,7 +139,6 @@ def render_case_html(
     mode = case_meta.get("mode", "ft")
     ifr_view = case_meta.get("ifr_view", "aggregate")
     sink_span = case_meta.get("sink_span")
-    score_transform = str(case_meta.get("score_transform") or "positive")
 
     def _panel_title(panel_idx: int) -> str:
         if mode in ("ft", "ft_attnlrp"):
@@ -183,7 +177,7 @@ def render_case_html(
                 <div class="tokens-block">
                   <div class="tokens-title">{escape(token_view_raw.get("label", "Pre-trim token-level heatmap"))}</div>
                   <div class="tokens-row">
-                  {_render_tokens(token_view_raw.get("tokens", []), tok_scores_raw, tok_scale_raw, token_view_raw.get("roles", []), score_transform=score_transform)}
+                  {_render_tokens(token_view_raw.get("tokens", []), tok_scores_raw, tok_scale_raw, token_view_raw.get("roles", []))}
                   </div>
                 </div>
             """
@@ -220,7 +214,7 @@ def render_case_html(
               <div class="tokens-block">
                 <div class="tokens-title">{escape(token_view_trimmed.get("label", "Post-trim token-level heatmap"))}</div>
                 <div class="tokens-row">
-                  {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, tok_scale_trim, trim_roles, score_transform=score_transform)}
+                  {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, tok_scale_trim, trim_roles)}
                 </div>
               </div>
               {sentence_html}
@@ -256,9 +250,17 @@ def render_case_html(
         view_key = "View"
         view_val = "N/A"
 
-    transform_row = f"<div>Score transform: {escape(str(score_transform))}</div>" if score_transform else ""
     scale_row = f"<div>Token scale: per-panel p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f}(|score|)</div>"
-    legend_row = "<div>Colors: red = +, blue = −</div>" if score_transform == "signed" else ""
+    neg_handling = case_meta.get("attnlrp_neg_handling")
+    norm_mode = case_meta.get("attnlrp_norm_mode")
+    ratio_enabled = case_meta.get("attnlrp_ratio_enabled")
+    attn_rows = []
+    if neg_handling:
+        attn_rows.append(f"<div>FT-AttnLRP neg_handling: {escape(str(neg_handling))}</div>")
+    if norm_mode:
+        attn_rows.append(f"<div>FT-AttnLRP norm_mode: {escape(str(norm_mode))}</div>")
+    if ratio_enabled is not None:
+        attn_rows.append(f"<div>FT-AttnLRP ratio_enabled: {escape(str(bool(ratio_enabled)))}</div>")
 
     header = f"""
     <div class="header">
@@ -271,9 +273,8 @@ def render_case_html(
         <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
         <div>Panels: {hop_count}</div>
         <div>{escape(str(view_key))}: {escape(str(view_val))}</div>
-        {transform_row}
         {scale_row}
-        {legend_row}
+        {''.join(attn_rows)}
         <div>Thinking ratios: {ratios_str}</div>
       </div>
     </div>
@@ -333,26 +334,12 @@ def render_case_html(
     return html
 
 
-def _color_for_signed_score(score: float, max_abs: float) -> str:
-    if max_abs <= 0:
-        return "background-color: rgba(245,245,245,0.7);"
-    ratio = min(1.0, abs(score) / (max_abs + 1e-12))
-    alpha = 0.10 + 0.70 * ratio
-
-    # Diverging palette: red for positive, blue for negative.
-    if score < 0:
-        r, g, b = 120, 170, 255
-    else:
-        r, g, b = 255, 120, 120
-    return f"background-color: rgba({r}, {g}, {b}, {alpha});"
-
-
 def _render_sentence_spans(title: str, sentences: Sequence[str], scores: Sequence[float]) -> str:
     max_abs = max((abs(float(x)) for x in scores), default=0.0)
     spans: List[str] = []
     for idx, sentence in enumerate(sentences):
         score = float(scores[idx]) if idx < len(scores) else 0.0
-        style = _color_for_signed_score(score, max_abs)
+        style = _color_for_score(abs(score), max_abs)
         spans.append(
             f'<span class="sent-span" title="idx={idx}, score={score:.6f}" style="{style}">{escape(sentence)}</span>'
         )
@@ -369,7 +356,7 @@ def _render_token_spans(title: str, tokens: Sequence[str], scores: Sequence[floa
     spans: List[str] = []
     for idx, tok in enumerate(tokens):
         score = float(scores[idx]) if idx < len(scores) else 0.0
-        style = _color_for_signed_score(score, max_abs)
+        style = _color_for_score(abs(score), max_abs)
         spans.append(
             f'<span class="tok-span" title="idx={idx}, score={score:.6f}" style="{style}">{escape(tok)}</span>'
         )
@@ -393,8 +380,16 @@ def render_mas_sentence_html(
     method_label = case_meta.get("attr_method_label") or case_meta.get("attr_method") or "Unknown method"
     title = f"MAS Sentence Study ({method_label})"
 
-    score_transform = case_meta.get("score_transform")
-    legend_row = "<div>Colors: red = +, blue = −</div>" if score_transform == "signed" else ""
+    neg_handling = case_meta.get("attnlrp_neg_handling")
+    norm_mode = case_meta.get("attnlrp_norm_mode")
+    ratio_enabled = case_meta.get("attnlrp_ratio_enabled")
+    attn_rows = []
+    if neg_handling:
+        attn_rows.append(f"<div>FT-AttnLRP neg_handling: {escape(str(neg_handling))}</div>")
+    if norm_mode:
+        attn_rows.append(f"<div>FT-AttnLRP norm_mode: {escape(str(norm_mode))}</div>")
+    if ratio_enabled is not None:
+        attn_rows.append(f"<div>FT-AttnLRP ratio_enabled: {escape(str(bool(ratio_enabled)))}</div>")
 
     base_score = case_meta.get("base_score")
     base_score_row = f"<div>Base score: {float(base_score):.6f}</div>" if isinstance(base_score, (int, float)) else ""
@@ -419,8 +414,7 @@ def render_mas_sentence_html(
         <div>Sink span (gen idx): {escape(str(case_meta.get('sink_span')))}</div>
         <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
         <div>Panels: {len(panels)}</div>
-        <div>Score transform: {escape(str(score_transform))}</div>
-        {legend_row}
+        {''.join(attn_rows)}
         {base_score_row}
       </div>
     </div>
@@ -513,8 +507,16 @@ def render_mas_token_html(
     method_label = case_meta.get("attr_method_label") or case_meta.get("attr_method") or "Unknown method"
     title = f"MAS Token Study ({method_label})"
 
-    score_transform = case_meta.get("score_transform")
-    legend_row = "<div>Colors: red = +, blue = −</div>" if score_transform == "signed" else ""
+    neg_handling = case_meta.get("attnlrp_neg_handling")
+    norm_mode = case_meta.get("attnlrp_norm_mode")
+    ratio_enabled = case_meta.get("attnlrp_ratio_enabled")
+    attn_rows = []
+    if neg_handling:
+        attn_rows.append(f"<div>FT-AttnLRP neg_handling: {escape(str(neg_handling))}</div>")
+    if norm_mode:
+        attn_rows.append(f"<div>FT-AttnLRP norm_mode: {escape(str(norm_mode))}</div>")
+    if ratio_enabled is not None:
+        attn_rows.append(f"<div>FT-AttnLRP ratio_enabled: {escape(str(bool(ratio_enabled)))}</div>")
 
     base_score = case_meta.get("base_score")
     base_score_row = f"<div>Base score: {float(base_score):.6f}</div>" if isinstance(base_score, (int, float)) else ""
@@ -540,8 +542,7 @@ def render_mas_token_html(
         <div>Thinking span (gen idx): {escape(str(case_meta.get('thinking_span')))}</div>
         <div>Prompt tokens: {len(prompt_tokens)}</div>
         <div>Panels: {len(panels)}</div>
-        <div>Score transform: {escape(str(score_transform))}</div>
-        {legend_row}
+        {''.join(attn_rows)}
         {base_score_row}
       </div>
     </div>

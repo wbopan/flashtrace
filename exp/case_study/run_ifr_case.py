@@ -268,6 +268,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--n_hops", type=int, default=1, help="Number of hops for IFR multi-hop.")
     parser.add_argument("--sink_span", type=int, nargs=2, default=None, help="Optional sink span over generation tokens.")
     parser.add_argument("--thinking_span", type=int, nargs=2, default=None, help="Optional thinking span over generation tokens.")
+    parser.add_argument(
+        "--attnlrp_neg_handling",
+        type=str,
+        choices=["drop", "abs"],
+        default="drop",
+        help="FT-AttnLRP: how to handle negative values after each hop (drop=clamp>=0, abs=absolute value).",
+    )
+    parser.add_argument(
+        "--attnlrp_norm_mode",
+        type=str,
+        choices=["norm", "no_norm"],
+        default="norm",
+        help="FT-AttnLRP: norm enables per-hop global+thinking normalization + ratios; no_norm disables all three.",
+    )
     parser.add_argument("--chunk_tokens", type=int, default=128, help="IFR chunk size.")
     parser.add_argument("--sink_chunk_tokens", type=int, default=32, help="IFR sink chunk size.")
     parser.add_argument("--output_dir", type=str, default="exp/case_study/out", help="Where to write HTML/JSON artifacts.")
@@ -614,6 +628,8 @@ def main() -> None:
                 target=example.target,
                 sink_span=sink_span,
                 thinking_span=thinking_span,
+                neg_handling=args.attnlrp_neg_handling,
+                norm_mode=args.attnlrp_norm_mode,
             )
             meta = attr_result.metadata or {}
             multi_hop = meta.get("multi_hop_result")
@@ -640,6 +656,9 @@ def main() -> None:
                     "sink_span_generation": sink_span,
                     "thinking_span_generation": thinking_span,
                     "thinking_ratios": thinking_ratios,
+                    "neg_handling": args.attnlrp_neg_handling,
+                    "norm_mode": args.attnlrp_norm_mode,
+                    "ratio_enabled": args.attnlrp_norm_mode == "norm",
                 }
             }
         else:
@@ -650,6 +669,8 @@ def main() -> None:
                 sink_span=sink_span,
                 thinking_span=thinking_span,
                 n_hops=int(args.n_hops),
+                neg_handling=args.attnlrp_neg_handling,
+                norm_mode=args.attnlrp_norm_mode,
             )
             meta = attr_result.metadata or {}
             multi_hop = meta.get("multi_hop_result")
@@ -670,6 +691,9 @@ def main() -> None:
                     "sink_span_generation": sink_span,
                     "thinking_span_generation": thinking_span,
                     "thinking_ratios": thinking_ratios,
+                    "neg_handling": args.attnlrp_neg_handling,
+                    "norm_mode": args.attnlrp_norm_mode,
+                    "ratio_enabled": args.attnlrp_norm_mode == "norm",
                 }
             }
 
@@ -715,9 +739,6 @@ def main() -> None:
         sink_span_abs,
     )
 
-    # Visualize signed scores: blue = negative, red = positive.
-    score_transform = "signed"
-
     # Lightweight debug stats to catch silent all-zero / NaN cases.
     hop_stats_raw = [analysis.vector_stats(torch.nan_to_num(v.detach().cpu(), nan=0.0)) for v in hop_vectors_raw]
     hop_stats_trimmed = [analysis.vector_stats(torch.nan_to_num(v.detach().cpu(), nan=0.0)) for v in hop_vectors_trimmed]
@@ -726,8 +747,8 @@ def main() -> None:
         trim_abs = hop_stats_trimmed[i]["abs_max"] if i < len(hop_stats_trimmed) else None
         print(f"[stats] panel {i}: raw_abs_max={raw_abs} trimmed_abs_max={trim_abs}")
 
-    hop_token_trim = analysis.package_token_hops(hop_vectors_trimmed, transform=score_transform)
-    hop_token_raw = analysis.package_token_hops(hop_vectors_raw, transform=score_transform) if hop_vectors_raw else []
+    hop_token_trim = analysis.package_token_hops(hop_vectors_trimmed)
+    hop_token_raw = analysis.package_token_hops(hop_vectors_raw) if hop_vectors_raw else []
 
     case_meta: Dict[str, Any] = {
         "dataset": ds_name,
@@ -738,7 +759,9 @@ def main() -> None:
         "thinking_ratios": thinking_ratios,
         "mode": mode,
         "ifr_view": method_meta.get("ifr", {}).get("ifr_view") if isinstance(method_meta.get("ifr"), dict) else None,
-        "score_transform": score_transform,
+        "attnlrp_neg_handling": args.attnlrp_neg_handling if mode in ("attnlrp", "ft_attnlrp") else None,
+        "attnlrp_norm_mode": args.attnlrp_norm_mode if mode in ("attnlrp", "ft_attnlrp") else None,
+        "attnlrp_ratio_enabled": (args.attnlrp_norm_mode == "norm") if mode in ("attnlrp", "ft_attnlrp") else None,
         "vector_stats_raw": hop_stats_raw,
         "vector_stats_trimmed": hop_stats_trimmed,
     }

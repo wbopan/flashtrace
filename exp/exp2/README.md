@@ -62,7 +62,7 @@ python exp/exp2/sample_and_filter.py \
 - 输入：优先读取 `exp/exp2/data/<dataset>.jsonl`（过滤缓存）；若不存在则回退到原始数据解析。
 - 方法：忠实度（token-level RISE/MAS）对齐 `evaluations/faithfulness.py` 的逻辑（AT2 未实现），math 自动拒绝。
 - 多跳 FlashTrace：若缓存含 `sink_span`/`thinking_span` 则用于 multi-hop IFR，否则默认整句答案为 sink。
-- 可选保存 hop 细节：加 `--save_hop_traces` 会为 `ifr_multi_hop` 与 `ft_attnlrp` 保存每跳的 token-level 向量 `V_h`（同时保存 raw 与评测一致的非负归一化版本）。
+- 可选保存 hop 细节：加 `--save_hop_traces` 会为 `ifr_multi_hop` 与 `ft_attnlrp` 保存每跳的 token-level 向量 `V_h`（保存为单一 `vh`，即实际参与多跳传播的向量；并在 manifest 中记录 `attnlrp_neg_handling/attnlrp_norm_mode` 等设置）。
 - 已知兼容性：部分 tokenizer 在 chat template 边界会出现 token 合并，导致评测侧用 token-id 子序列定位 user prompt 失败；exp2 已改为直接复用归因阶段算出的 `user_prompt_indices` 做扰动定位。
 - 批大小估算：沿用原脚本 `(max_input_len-100)/len(tokenizer(format_prompt(prompt)+target))` 的保守估计（至少 1）。`max_input_len` 由代码内置映射表基于 `--model` 字符串决定，未命中或仅传 `--model_path` 时默认 2000；如需映射值而又用本地路径，请同时传入对应的 `--model` 名称。
 - 计时：对每个样本的归因计算（recovery/faithfulness）分别计时，最终在 CSV 末尾追加 `Avg Sample Time (s)` 并在控制台打印平均耗时。
@@ -70,20 +70,24 @@ python exp/exp2/sample_and_filter.py \
 
 使用说明
 ```bash
-# 生成侧 RISE/MAS 忠实度
+# 生成侧 RISE/MAS 忠实度 ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention
 python exp/exp2/run_exp.py \
   --datasets exp/exp2/data/morehopqa.jsonl \
-  --attr_funcs ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention \
+  --attr_funcs ft_attnlrp,attnlrp \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 2,3,4,5 \
   --num_examples 10 \
   --mode faithfulness_gen \
   --n_hops 3 \
-  --save_hop_traces
+  --save_hop_traces \
+  --attnlrp_neg_handling drop \
+  --attnlrp_norm_mode norm
 ```
 常用参数：
 - `--datasets`：逗号分隔数据集名；若已存在 `exp/exp2/data/<name>.jsonl` 则直接使用。
 - `--attr_funcs`：逗号分隔方法（无 AT2）；`ifr_multi_hop` 与 `ft_attnlrp` 支持多跳（由 `--n_hops` 控制）。
+- `--attnlrp_neg_handling`：FT-AttnLRP 每跳负值处理（`drop`/`abs`）。
+- `--attnlrp_norm_mode`：FT-AttnLRP 正则化与 hop ratio 开关（`norm`/`no_norm`）。
 - `--data_root`/`--output_root`：缓存与结果目录（默认 `exp/exp2/data` / `exp/exp2/output`）。
 - `--mode`：faithfulness_gen | recovery_ruler；`--num_examples` 控制评测条数。 math 会被拒绝。***

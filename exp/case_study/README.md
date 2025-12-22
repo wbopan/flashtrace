@@ -68,7 +68,9 @@ python exp/case_study/run_ifr_case.py \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0,2,3,4,5,7 \
-  --n_hops 3
+  --n_hops 3 \
+  --attnlrp_neg_handling abs \
+  --attnlrp_norm_mode norm
 ```
 
 产物位于 `exp/case_study/out/`，文件名前缀根据模式变化，例如：
@@ -136,9 +138,10 @@ python -m http.server 8888 --directory exp/case_study/out
 ## 可选参数
 - `--sink_span a b` / `--thinking_span a b`：覆盖生成侧的 sink/thinking 句子 span（默认使用缓存字段）。
 - `--ifr_view aggregate|per_token`：仅 `--mode ifr` 生效；`aggregate` 为 sink-span 聚合 IFR（默认 1 个面板），`per_token` 为逐 token（多面板）。
+- `--attnlrp_neg_handling drop|abs`：FT-AttnLRP 每跳负值处理（drop=clamp>=0，abs=取绝对值）。
+- `--attnlrp_norm_mode norm|no_norm`：FT-AttnLRP 正则化与 hop ratio 开关（norm=全局+thinking 归一化并启用 ratio；no_norm=三者都禁用）。
 - `--chunk_tokens` / `--sink_chunk_tokens`：IFR 分块参数。
 - `--output_dir`：修改输出目录。
-- `--score_transform positive|abs|signed`：仅 `run_mas_case.py` 用于控制 token 热力图的显示方式（默认 `signed`，红=正/蓝=负；不改变 MAS 分数的计算逻辑）。
 
 ## 文件说明
 - `run_ifr_case.py`：命令行入口与落盘（支持 `ft`/`ifr`/`attnlrp`/`ft_attnlrp` 模式）。

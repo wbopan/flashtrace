@@ -2287,6 +2287,7 @@ class LLMLRPAttribution(LLMAttribution):
 
             # 4) Gradient*Input relevance over embedding dim -> per-token relevance
             relevance_full = (input_embeds * input_embeds.grad).float().sum(-1).detach().cpu()[0]  # [total_len]
+            relevance_with_chat_template = relevance_full.to(torch.float32).clone()
 
         # 5) Strip chat template tokens (extract only user prompt + full generation tokens)
         score_array = relevance_full.unsqueeze(0)  # [1, total_len]
@@ -2302,6 +2303,13 @@ class LLMLRPAttribution(LLMAttribution):
             "sink_range_gen": (sink_start, sink_end),
             "normalize_weights": normalize_weights,
             "score_mode": score_mode,
+            # Debug/analysis: token-level relevance aligned to the FULL tokenization
+            # (chat template prompt tokens + generation tokens). This does not affect
+            # the returned token_importance_total (which is trimmed for evaluation).
+            "token_importance_total_with_chat_template": relevance_with_chat_template,
+            "prompt_tokens_with_chat_template": list(self.prompt_tokens or []),
+            "user_prompt_indices": list(self.user_prompt_indices or []),
+            "chat_prompt_indices": list(self.chat_prompt_indices or []),
         }
 
         return AttnLRPSpanAggregate(
@@ -2419,6 +2427,8 @@ class LLMLRPAttribution(LLMAttribution):
         *,
         sink_span: Optional[Tuple[int, int]] = None,
         thinking_span: Optional[Tuple[int, int]] = None,
+        neg_handling: Literal["drop", "abs"] = "drop",
+        norm_mode: Literal["norm", "no_norm"] = "norm",
         score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> LLMAttributionResult:
         """Return AttnLRP hop0 from the FT multi-hop path as a token-level matrix."""
@@ -2428,6 +2438,8 @@ class LLMLRPAttribution(LLMAttribution):
             sink_span=sink_span,
             thinking_span=thinking_span,
             n_hops=0,
+            neg_handling=neg_handling,
+            norm_mode=norm_mode,
             score_mode=score_mode,
         )
         raw_attributions = getattr(multi_hop, "raw_attributions", None) or []
@@ -2461,6 +2473,9 @@ class LLMLRPAttribution(LLMAttribution):
             "sink_span": tuple(getattr(base_attr, "sink_range", (0, max(0, gen_len - 1)))),
             "thinking_span": thinking_span,
             "n_hops": 0,
+            "neg_handling": neg_handling,
+            "norm_mode": norm_mode,
+            "ratio_enabled": norm_mode == "norm",
             "multi_hop_result": multi_hop,
         }
 
@@ -2483,7 +2498,8 @@ class LLMLRPAttribution(LLMAttribution):
         sink_span: Optional[Tuple[int, int]] = None,
         thinking_span: Optional[Tuple[int, int]] = None,
         n_hops: int = 1,
-        normalize_weights: bool = True,
+        neg_handling: Literal["drop", "abs"] = "drop",
+        norm_mode: Literal["norm", "no_norm"] = "norm",
         score_mode: Optional[Literal["max", "generated"]] = None,
         observation_mask: Optional[torch.Tensor | List[float]] = None,
     ) -> MultiHopAttnLRPResult:
@@ -2517,8 +2533,12 @@ class LLMLRPAttribution(LLMAttribution):
             Default: same as sink_span
         n_hops : int
             Number of recursive hops. Default: 1
-        normalize_weights : bool
-            Whether to normalize weights at each hop. Default: True
+        neg_handling : Literal["drop", "abs"]
+            How to enforce non-negativity after each hop output.
+            "drop": clamp negative values to 0; "abs": take absolute value.
+        norm_mode : Literal["norm", "no_norm"]
+            "norm": per-hop global normalize + thinking-span normalize + enable hop ratios.
+            "no_norm": disable global normalize, thinking normalize, and hop ratios.
         score_mode : Literal["max", "generated"], optional
             "max": use max logit at each position (original behavior).
             "generated": use the logit of the generated/target token at each position.
@@ -2577,6 +2597,11 @@ class LLMLRPAttribution(LLMAttribution):
             raise ValueError(f"Invalid thinking_span ({think_start}, {think_end}) for gen_len={gen_len}.")
 
         hop_count = max(0, int(n_hops))
+        ratio_enabled = norm_mode == "norm"
+        if neg_handling not in ("drop", "abs"):
+            raise ValueError("neg_handling must be 'drop' or 'abs'.")
+        if norm_mode not in ("norm", "no_norm"):
+            raise ValueError("norm_mode must be 'norm' or 'no_norm'.")
 
         # Compute base attribution from sink_span
         base_attr = self.calculate_attnlrp_span_aggregate(
@@ -2585,14 +2610,38 @@ class LLMLRPAttribution(LLMAttribution):
             sink_start=sink_start,
             sink_end=sink_end,
             sink_weights=None,
-            normalize_weights=normalize_weights,
+            normalize_weights=ratio_enabled,
             score_mode=score_mode,
+        )
+
+        def _postprocess_hop_vector(v: torch.Tensor) -> torch.Tensor:
+            v = torch.nan_to_num(v.to(dtype=torch.float32), nan=0.0)
+            if neg_handling == "drop":
+                v = v.clamp(min=0.0)
+            else:
+                v = v.abs()
+            if ratio_enabled:
+                denom = float(v.sum().item())
+                if denom > 0.0:
+                    v = v / (denom + 1e-12)
+                else:
+                    v = torch.zeros_like(v)
+            return v
+
+        token_total = _postprocess_hop_vector(base_attr.token_importance_total)
+        base_attr.token_importance_total = token_total
+        base_attr.metadata = dict(base_attr.metadata or {})
+        base_attr.metadata.update(
+            {
+                "neg_handling": neg_handling,
+                "norm_mode": norm_mode,
+                "ratio_enabled": ratio_enabled,
+            }
         )
 
         raw_attributions: List[AttnLRPSpanAggregate] = [base_attr]
 
         # Get the stripped token importance vector (user_prompt + generation tokens)
-        token_total = base_attr.token_importance_total.clone()
         T = token_total.shape[0]  # This is user_prompt_len + gen_len after stripping
         user_prompt_len = len(self.user_prompt_tokens)
 
@@ -2633,14 +2682,20 @@ class LLMLRPAttribution(LLMAttribution):
         # Extract thinking slice weights for next hop
         think_start_stripped = user_prompt_len + think_start
         think_end_stripped = user_prompt_len + think_end
-        thinking_slice = token_total[think_start_stripped:think_end_stripped + 1]
-        w_thinking = thinking_slice.detach().clone()
-
-        # Compute initial thinking ratio
-        total_mass = float(token_total.abs().sum().item())
-        thinking_mass = float(w_thinking.abs().sum().item())
-        current_ratio = thinking_mass / (total_mass + 1e-12) if total_mass > 0 else 0.0
-        ratios: List[float] = [current_ratio]
+        thinking_slice = token_total[think_start_stripped:think_end_stripped + 1].detach().clone()
+        if ratio_enabled:
+            thinking_mass = float(thinking_slice.sum().item())
+            if thinking_mass > 0.0:
+                w_thinking = thinking_slice / (thinking_mass + 1e-12)
+            else:
+                w_thinking = torch.zeros_like(thinking_slice)
+            total_mass = float(token_total.sum().item())
+            current_ratio = thinking_mass / (total_mass + 1e-12) if total_mass > 0 else 0.0
+            ratios: List[float] = [current_ratio]
+        else:
+            w_thinking = thinking_slice
+            current_ratio = 1.0
+            ratios = []
 
         # Multi-hop iterations
         for hop in range(1, hop_count + 1):
@@ -2651,29 +2706,43 @@ class LLMLRPAttribution(LLMAttribution):
                 sink_start=think_start,
                 sink_end=think_end,
                 sink_weights=w_thinking,
-                normalize_weights=normalize_weights,
+                normalize_weights=False,
                 score_mode=score_mode,
             )
 
+            hop_total = _postprocess_hop_vector(hop_attr.token_importance_total)
+            hop_attr.token_importance_total = hop_total
+            hop_attr.metadata = dict(hop_attr.metadata or {})
+            hop_attr.metadata.update(
+                {
+                    "neg_handling": neg_handling,
+                    "norm_mode": norm_mode,
+                    "ratio_enabled": ratio_enabled,
+                }
+            )
             raw_attributions.append(hop_attr)
-            hop_total = hop_attr.token_importance_total.clone()
 
             # Compute observation for this hop (masked and weighted by current_ratio)
-            obs_only = hop_total * obs_mask * current_ratio
+            obs_only = hop_total * obs_mask * (current_ratio if ratio_enabled else 1.0)
             obs_accum += obs_only
             per_hop_obs.append(obs_only)
 
             # Update weights for next hop
-            thinking_slice = hop_total[think_start_stripped:think_end_stripped + 1]
-            w_thinking = thinking_slice.detach().clone()
-
-            # Update ratio
-            hop_total_mass = float(hop_total.abs().sum().item())
-            if hop_total_mass <= 0.0:
-                current_ratio = 0.0
+            thinking_slice = hop_total[think_start_stripped:think_end_stripped + 1].detach().clone()
+            if ratio_enabled:
+                thinking_mass = float(thinking_slice.sum().item())
+                if thinking_mass > 0.0:
+                    w_thinking = thinking_slice / (thinking_mass + 1e-12)
+                else:
+                    w_thinking = torch.zeros_like(thinking_slice)
+                hop_total_mass = float(hop_total.sum().item())
+                if hop_total_mass <= 0.0:
+                    current_ratio = 0.0
+                else:
+                    current_ratio *= thinking_mass / (hop_total_mass + 1e-12)
+                ratios.append(current_ratio)
             else:
-                current_ratio *= float(w_thinking.abs().sum().item()) / (hop_total_mass + 1e-12)
-            ratios.append(current_ratio)
+                w_thinking = thinking_slice
 
         # Compute average observation
         obs_avg = obs_accum / float(max(1, hop_count)) if hop_count > 0 else obs_accum
@@ -2700,6 +2769,8 @@ class LLMLRPAttribution(LLMAttribution):
         sink_span: Optional[Tuple[int, int]] = None,
         thinking_span: Optional[Tuple[int, int]] = None,
         n_hops: int = 1,
+        neg_handling: Literal["drop", "abs"] = "drop",
+        norm_mode: Literal["norm", "no_norm"] = "norm",
         score_mode: Optional[Literal["max", "generated"]] = None,
     ) -> LLMAttributionResult:
         """Calculate multi-hop aggregated AttnLRP attribution.
@@ -2722,6 +2793,11 @@ class LLMLRPAttribution(LLMAttribution):
             (start, end) indices in generation tokens for the reasoning span.
         n_hops : int
             Number of recursive hops. Default: 1
+        neg_handling : Literal["drop", "abs"]
+            How to enforce non-negativity after each hop output.
+        norm_mode : Literal["norm", "no_norm"]
+            "norm": per-hop global normalize + thinking-span normalize + enable hop ratios.
+            "no_norm": disable global normalize, thinking normalize, and hop ratios.
         score_mode : Literal["max", "generated"], optional
             "max": use max logit at each position (original behavior).
             "generated": use the logit of the generated/target token at each position.
@@ -2759,6 +2835,8 @@ class LLMLRPAttribution(LLMAttribution):
             sink_span=sink_span,
             thinking_span=thinking_span,
             n_hops=n_hops,
+            neg_handling=neg_handling,
+            norm_mode=norm_mode,
             score_mode=score_mode,
         )
 
@@ -2784,6 +2862,9 @@ class LLMLRPAttribution(LLMAttribution):
             "n_hops": n_hops,
             "sink_span": sink_span,
             "thinking_span": thinking_span,
+            "neg_handling": neg_handling,
+            "norm_mode": norm_mode,
+            "ratio_enabled": norm_mode == "norm",
             "thinking_ratios": multi_hop.thinking_ratios,
             "multi_hop_result": multi_hop,
         }

@@ -430,19 +430,6 @@ def mas_trace(
     }
 
 
-def transform_values(values: Sequence[float], transform: str) -> List[float]:
-    arr = np.asarray(list(values), dtype=np.float64)
-    if transform == "positive":
-        arr = np.clip(arr, 0.0, None)
-    elif transform == "abs":
-        arr = np.abs(arr)
-    elif transform == "signed":
-        pass
-    else:
-        raise ValueError(f"Unsupported score_transform={transform!r}; expected 'positive', 'abs', or 'signed'.")
-    return arr.tolist()
-
-
 def compute_method_attribution(
     method: str,
     example: ds_utils.CachedExample,
@@ -454,6 +441,8 @@ def compute_method_attribution(
     thinking_span: Optional[Tuple[int, int]],
     chunk_tokens: int,
     sink_chunk_tokens: int,
+    attnlrp_neg_handling: str,
+    attnlrp_norm_mode: str,
 ) -> Tuple[str, Any, llm_attr.LLMAttributionResult]:
     prompt = example.prompt
     target = example.target
@@ -483,6 +472,8 @@ def compute_method_attribution(
             target=target,
             sink_span=sink_span,
             thinking_span=thinking_span,
+            neg_handling=attnlrp_neg_handling,
+            norm_mode=attnlrp_norm_mode,
         )
         return "AttnLRP (ft_attnlrp hop0)", attributor, result
 
@@ -494,6 +485,8 @@ def compute_method_attribution(
             sink_span=sink_span,
             thinking_span=thinking_span,
             n_hops=int(n_hops),
+            neg_handling=attnlrp_neg_handling,
+            norm_mode=attnlrp_norm_mode,
         )
         return "FT-AttnLRP (attnlrp_aggregated_multi_hop)", attributor, result
 
@@ -515,7 +508,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--thinking_span", type=int, nargs=2, default=None, help="Optional thinking span over generation tokens.")
     parser.add_argument("--chunk_tokens", type=int, default=128, help="IFR chunk size.")
     parser.add_argument("--sink_chunk_tokens", type=int, default=32, help="IFR sink chunk size.")
-    parser.add_argument("--score_transform", type=str, choices=["positive", "abs", "signed"], default="signed")
+    parser.add_argument(
+        "--attnlrp_neg_handling",
+        type=str,
+        choices=["drop", "abs"],
+        default="drop",
+        help="FT-AttnLRP: how to handle negative values after each hop (drop=clamp>=0, abs=absolute value).",
+    )
+    parser.add_argument(
+        "--attnlrp_norm_mode",
+        type=str,
+        choices=["norm", "no_norm"],
+        default="norm",
+        help="FT-AttnLRP: norm enables per-hop global+thinking normalization + ratios; no_norm disables all three.",
+    )
     parser.add_argument("--output_dir", type=str, default="exp/case_study/out", help="Where to write HTML/JSON artifacts.")
     return parser.parse_args()
 
@@ -551,6 +557,8 @@ def main() -> None:
         thinking_span=thinking_span,
         chunk_tokens=args.chunk_tokens,
         sink_chunk_tokens=args.sink_chunk_tokens,
+        attnlrp_neg_handling=args.attnlrp_neg_handling,
+        attnlrp_norm_mode=args.attnlrp_norm_mode,
     )
 
     indices_to_explain = example.indices_to_explain or example.sink_span
@@ -609,8 +617,8 @@ def main() -> None:
             "variant_label": variant_label,
             "metrics": trace.get("metrics"),
             "sorted_attr_indices": trace.get("sorted_attr_indices"),
-            "attr_weights": transform_values(trace.get("attr_weights", []), args.score_transform),
-            "token_deltas_raw": transform_values(trace.get("token_deltas_raw", []), args.score_transform),
+            "attr_weights": trace.get("attr_weights"),
+            "token_deltas_raw": trace.get("token_deltas_raw"),
         }
         panels_display.append(panel_display)
 
@@ -623,7 +631,9 @@ def main() -> None:
         "sink_span": sink_span,
         "thinking_span": thinking_span,
         "n_hops": int(args.n_hops),
-        "score_transform": args.score_transform,
+        "attnlrp_neg_handling": args.attnlrp_neg_handling if method_key in ("attnlrp", "ft_attnlrp") else None,
+        "attnlrp_norm_mode": args.attnlrp_norm_mode if method_key in ("attnlrp", "ft_attnlrp") else None,
+        "attnlrp_ratio_enabled": (args.attnlrp_norm_mode == "norm") if method_key in ("attnlrp", "ft_attnlrp") else None,
         "base_score": float(base_score),
     }
 
