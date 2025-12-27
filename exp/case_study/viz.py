@@ -1,4 +1,4 @@
-"""HTML helpers for visualizing hop-wise IFR attributions."""
+"""HTML helpers for visualizing hop-wise IFR/AttnLRP attributions."""
 
 from __future__ import annotations
 
@@ -103,11 +103,11 @@ def _render_top_table(top_items: List[Dict[str, Any]]) -> str:
 
 def render_case_html(
     case_meta: Dict[str, Any],
-    token_view_trimmed: Dict[str, Any],
     *,
+    token_view_raw: Dict[str, Any],
+    token_view_prompt: Dict[str, Any],
     context: Optional[Dict[str, Any]] = None,
     hops_sent: Optional[Sequence[Dict[str, Any]]] = None,
-    token_view_raw: Optional[Dict[str, Any]] = None,
 ) -> str:
     has_sentence_view = bool(context) and bool(hops_sent)
     prompt_len = len((context or {}).get("prompt_sentences") or []) if has_sentence_view else 0
@@ -133,54 +133,73 @@ def render_case_html(
             default=0.0,
         )
 
+    raw_hops = token_view_raw.get("hops", []) or []
+    prompt_hops = token_view_prompt.get("hops", []) or []
+    if len(raw_hops) != len(prompt_hops):
+        raise ValueError(
+            "token_view_raw and token_view_prompt must have the same number of panels: "
+            f"raw={len(raw_hops)} prompt={len(prompt_hops)}"
+        )
+
     hop_sections: List[str] = []
-    trim_hops = token_view_trimmed.get("hops", [])
-    hop_count = len(trim_hops)
+    hop_count = len(prompt_hops)
     mode = case_meta.get("mode", "ft")
     ifr_view = case_meta.get("ifr_view", "aggregate")
     sink_span = case_meta.get("sink_span")
+    panel_titles = case_meta.get("panel_titles")
 
     def _panel_title(panel_idx: int) -> str:
+        if isinstance(panel_titles, list) and panel_idx < len(panel_titles):
+            try:
+                title = panel_titles[panel_idx]
+            except Exception:
+                title = None
+            if title is not None:
+                return str(title)
         if mode in ("ft", "ft_attnlrp"):
             return f"Hop {panel_idx}"
+        if mode == "ifr_all_positions_output_only":
+            return f"IFR output-only panel {panel_idx}"
         if mode == "attnlrp":
             return "AttnLRP (sink-span aggregate)"
-        if ifr_view == "per_token" and isinstance(sink_span, (list, tuple)) and len(sink_span) == 2:
-            try:
-                base = int(sink_span[0])
-            except Exception:
-                base = 0
-            return f"Sink token {base + panel_idx} (gen idx)"
         return "IFR (sink-span aggregate)"
 
-    trim_roles = token_view_trimmed.get("roles", [])
     for hop_idx in range(hop_count):
-        tok_entry_trim = trim_hops[hop_idx] if hop_idx < len(trim_hops) else {}
-        tok_scores_trim = tok_entry_trim.get("token_scores") or []
-        hop_total_mass = float(tok_entry_trim.get("total_mass", 0.0))
-        tok_scale_trim = _robust_abs_max(tok_scores_trim)
-        if tok_scale_trim <= 0:
-            tok_scale_trim = float(tok_entry_trim.get("token_score_max") or 0.0)
-        if tok_scale_trim <= 0:
-            tok_scale_trim = 1e-8
+        raw_entry = raw_hops[hop_idx]
+        raw_scores = raw_entry.get("token_scores") or []
+        raw_mass = float(raw_entry.get("total_mass", 0.0))
+        raw_scale = _robust_abs_max(raw_scores)
+        if raw_scale <= 0:
+            raw_scale = float(raw_entry.get("token_score_max") or 0.0)
+        if raw_scale <= 0:
+            raw_scale = 1e-8
 
-        tok_raw_html = ""
-        if token_view_raw is not None and hop_idx < len(token_view_raw.get("hops", [])):
-            raw_entry = token_view_raw["hops"][hop_idx]
-            tok_scores_raw = raw_entry.get("token_scores") or []
-            tok_scale_raw = _robust_abs_max(tok_scores_raw)
-            if tok_scale_raw <= 0:
-                tok_scale_raw = float(raw_entry.get("token_score_max") or 0.0)
-            if tok_scale_raw <= 0:
-                tok_scale_raw = 1e-8
-            tok_raw_html = f"""
-                <div class="tokens-block">
-                  <div class="tokens-title">{escape(token_view_raw.get("label", "Pre-trim token-level heatmap"))}</div>
-                  <div class="tokens-row">
-                  {_render_tokens(token_view_raw.get("tokens", []), tok_scores_raw, tok_scale_raw, token_view_raw.get("roles", []))}
-                  </div>
-                </div>
-            """
+        prompt_entry = prompt_hops[hop_idx]
+        prompt_scores = prompt_entry.get("token_scores") or []
+        prompt_mass = float(prompt_entry.get("total_mass", 0.0))
+        prompt_scale = _robust_abs_max(prompt_scores)
+        if prompt_scale <= 0:
+            prompt_scale = float(prompt_entry.get("token_score_max") or 0.0)
+        if prompt_scale <= 0:
+            prompt_scale = 1e-8
+
+        tok_raw_html = f"""
+            <div class="tokens-block">
+              <div class="tokens-title">{escape(token_view_raw.get("label", "Pre-trim token-level heatmap (full)"))}</div>
+              <div class="tokens-row">
+              {_render_tokens(token_view_raw.get("tokens", []), raw_scores, raw_scale, token_view_raw.get("roles", []))}
+              </div>
+            </div>
+        """
+
+        tok_prompt_html = f"""
+            <div class="tokens-block">
+              <div class="tokens-title">{escape(token_view_prompt.get("label", "Prompt-only token-level heatmap"))}</div>
+              <div class="tokens-row">
+              {_render_tokens(token_view_prompt.get("tokens", []), prompt_scores, prompt_scale, token_view_prompt.get("roles", []))}
+              </div>
+            </div>
+        """
 
         sentence_html = ""
         top_html = ""
@@ -189,7 +208,7 @@ def render_case_html(
             raw_scores = hop.get("sentence_scores_raw") or []
             prompt_scores = raw_scores[:prompt_len]
             gen_scores = raw_scores[prompt_len:]
-            hop_total_mass = float(hop.get("total_mass", hop_total_mass))
+            # Sentence view is not used by the current case-study runner; keep the path for completeness.
             sentence_html = f"""
               <div class="columns">
                 {_render_sentence_list('Prompt sentences', (context or {}).get('prompt_sentences') or [], prompt_scores, prompt_max)}
@@ -208,15 +227,14 @@ def render_case_html(
             <div class="hop">
               <div class="hop-header">
                 <div class="hop-title">{escape(_panel_title(hop_idx))}</div>
-                <div class="hop-meta">total mass: {hop_total_mass:.6f} | scale(p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f} abs): {tok_scale_trim:.6g}</div>
-              </div>
-              {tok_raw_html}
-              <div class="tokens-block">
-                <div class="tokens-title">{escape(token_view_trimmed.get("label", "Post-trim token-level heatmap"))}</div>
-                <div class="tokens-row">
-                  {_render_tokens(token_view_trimmed.get("tokens", []), tok_scores_trim, tok_scale_trim, trim_roles)}
+                <div class="hop-meta">
+                  raw mass: {raw_mass:.6f} | raw scale(p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f} abs): {raw_scale:.6g}
+                  &nbsp;|&nbsp;
+                  prompt mass: {prompt_mass:.6f} | prompt scale(p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f} abs): {prompt_scale:.6g}
                 </div>
               </div>
+              {tok_raw_html}
+              {tok_prompt_html}
               {sentence_html}
               {top_html}
             </div>
@@ -230,6 +248,8 @@ def render_case_html(
         mode_label = "FT Multi-hop (IFR)"
     elif mode == "ifr":
         mode_label = "IFR Standard"
+    elif mode == "ifr_all_positions_output_only":
+        mode_label = "IFR Output-only (all positions)"
     elif mode == "attnlrp":
         mode_label = "AttnLRP"
     elif mode == "ft_attnlrp":
@@ -240,7 +260,7 @@ def render_case_html(
     if mode in ("ft", "ft_attnlrp"):
         view_key = "Recursive hops"
         view_val = case_meta.get("n_hops")
-    elif mode == "ifr":
+    elif mode in ("ifr", "ifr_all_positions_output_only"):
         view_key = "IFR view"
         view_val = ifr_view
     elif mode == "attnlrp":
@@ -250,7 +270,7 @@ def render_case_html(
         view_key = "View"
         view_val = "N/A"
 
-    scale_row = f"<div>Token scale: per-panel p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f}(|score|)</div>"
+    scale_row = f"<div>Token scale: per-panel per-view p{int(TOKEN_SCALE_QUANTILE*1000)/10:.1f}(|score|)</div>"
     neg_handling = case_meta.get("attnlrp_neg_handling")
     norm_mode = case_meta.get("attnlrp_norm_mode")
     ratio_enabled = case_meta.get("attnlrp_ratio_enabled")

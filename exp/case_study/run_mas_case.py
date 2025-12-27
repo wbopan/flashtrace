@@ -454,6 +454,19 @@ def compute_method_attribution(
         result = attributor.calculate_ifr_span(prompt, target=target, span=sink_span)
         return "IFR (ifr_span)", attributor, result
 
+    if method == "ifr_all_positions_output_only":
+        if sink_span is None:
+            raise ValueError(
+                "ifr_all_positions_output_only requires sink_span (use dataset sink_span or pass --sink_span)."
+            )
+        attributor = llm_attr.LLMIFRAttribution(model, tokenizer, chunk_tokens=chunk_tokens, sink_chunk_tokens=sink_chunk_tokens)
+        result = attributor.calculate_ifr_for_all_positions_output_only(
+            prompt,
+            target=target,
+            sink_span=sink_span,
+        )
+        return "IFR (ifr_all_positions_output_only)", attributor, result
+
     if method in ("ft", "ft_ifr"):
         attributor = llm_attr.LLMIFRAttribution(model, tokenizer, chunk_tokens=chunk_tokens, sink_chunk_tokens=sink_chunk_tokens)
         result = attributor.calculate_ifr_multi_hop(
@@ -498,7 +511,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dataset", type=str, default="exp/exp2/data/morehopqa.jsonl", help="Dataset name or JSONL path.")
     parser.add_argument("--data_root", type=str, default="exp/exp2/data", help="Cache root for dataset names.")
     parser.add_argument("--index", type=int, default=0, help="Sample index (supports negative for reverse).")
-    parser.add_argument("--method", type=str, choices=["ifr", "ft", "ft_ifr", "attnlrp", "ft_attnlrp"], default="ft")
+    parser.add_argument(
+        "--method",
+        type=str,
+        choices=["ifr", "ifr_all_positions_output_only", "ft", "ft_ifr", "attnlrp", "ft_attnlrp"],
+        default="ft",
+    )
     parser.add_argument("--model", type=str, default="qwen-8B", help="HF repo id (ignored if --model_path set).")
     parser.add_argument("--model_path", type=str, default=None, help="Local model path to override --model.")
     parser.add_argument("--cuda", type=str, default=None, help="CUDA spec (e.g., '0' or '0,1').")

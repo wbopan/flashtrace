@@ -355,6 +355,19 @@ def run_attribution(
             sink_chunk_tokens=testing_dict["sink_chunk_tokens"],
         )
         attr = llm_attributor.calculate_ifr_for_all_positions(example.prompt, target=target)
+    elif attr_func == "ifr_all_positions_output_only":
+        llm_attributor = llm_attr.LLMIFRAttribution(
+            model,
+            tokenizer,
+            chunk_tokens=testing_dict["chunk_tokens"],
+            sink_chunk_tokens=testing_dict["sink_chunk_tokens"],
+        )
+        sink_span = tuple(example.sink_span) if example.sink_span else tuple(indices_to_explain)
+        attr = llm_attributor.calculate_ifr_for_all_positions_output_only(
+            example.prompt,
+            target=target,
+            sink_span=sink_span,
+        )
     elif attr_func == "ifr_multi_hop":
         llm_attributor = llm_attr.LLMIFRAttribution(
             model,

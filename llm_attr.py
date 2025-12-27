@@ -1088,6 +1088,77 @@ class LLMIFRAttribution(LLMAttribution):
         return self._finalize_result(all_positions.token_importance_matrix, metadata=meta)
 
     @torch.no_grad()
+    def calculate_ifr_for_all_positions_output_only(
+        self,
+        prompt: str,
+        target: Optional[str] = None,
+        *,
+        sink_span: Optional[Tuple[int, int]] = None,
+        renorm_threshold: Optional[float] = None,
+    ) -> LLMAttributionResult:
+        """Compute IFR for sink positions restricted to an output span.
+
+        This mirrors calculate_ifr_for_all_positions but only computes per-token IFR
+        rows for sink positions in sink_span (generation-token indices). All other
+        generation rows are left as NaN (becoming 0 after normalization).
+        """
+        input_ids_all, attn_mask, prompt_len, gen_len = self._ensure_generation(prompt, target)
+        total_len = int(input_ids_all.shape[1])
+        if gen_len == 0:
+            empty = torch.zeros((0, total_len), dtype=torch.float32)
+            metadata = {
+                "ifr": {
+                    "type": "all_positions_output_only",
+                    "sink_span_generation": None,
+                    "sink_indices": [],
+                    "renorm_threshold": renorm_threshold,
+                    "note": "No generation tokens; returning empty attribution matrix.",
+                }
+            }
+            return self._finalize_result(empty, metadata=metadata)
+
+        note = ""
+        if sink_span is None:
+            sink_span = (0, gen_len - 1)
+            note = "sink_span not provided; fell back to full generation."
+        span_start, span_end = sink_span
+        if span_start < 0 or span_end < span_start or span_end >= gen_len:
+            raise ValueError(f"Invalid sink_span ({span_start}, {span_end}) for generation length {gen_len}.")
+
+        sink_start_abs = prompt_len + span_start
+        sink_end_abs = prompt_len + span_end
+
+        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        params = self._build_ifr_params(metadata, total_len)
+        renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
+
+        sink_range = (sink_start_abs, sink_end_abs)
+        all_positions = compute_ifr_for_all_positions(
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            renorm_threshold=renorm,
+            sink_range=sink_range,
+            return_layerwise=False,
+        )
+
+        score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
+        score_array[span_start : span_end + 1, :] = all_positions.token_importance_matrix
+
+        meta = {
+            "ifr": {
+                "type": "all_positions_output_only",
+                "sink_span_generation": (span_start, span_end),
+                "sink_span_absolute": (sink_start_abs, sink_end_abs),
+                "sink_indices": all_positions.sink_indices,
+                "renorm_threshold": renorm,
+                "note": note,
+            }
+        }
+        return self._finalize_result(score_array, metadata=meta)
+
+    @torch.no_grad()
     def calculate_ifr_span(
         self,
         prompt: str,

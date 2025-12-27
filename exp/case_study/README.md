@@ -7,12 +7,13 @@
 - 支持多种模式：
   - `ft`：当前使用的多跳 FT 归因（内部调用 `LLMIFRAttribution.calculate_ifr_multi_hop`）。
   - `ifr`：标准 IFR（单 hop），默认对指定 sink span 做**聚合 IFR**（只显示 1 个面板）。
+  - `ifr_all_positions_output_only`：只对 `sink_span` 范围内的 output tokens 计算 IFR token-level 矩阵，并基于该矩阵得到 Row / Recursive（CAGE）两张面板。
   - `attnlrp`：AttnLRP hop0（复用 FT-AttnLRP 的 span-aggregate 逻辑，等价于 `LLMLRPAttribution.calculate_attnlrp_multi_hop(n_hops=0)`，并可视化 `raw_attributions[0].token_importance_total`）。
   - `ft_attnlrp`：FT-AttnLRP（严格复用 `LLMLRPAttribution.calculate_attnlrp_aggregated_multi_hop`，与 `exp/exp2/` 保持一致；直接可视化每 hop 的 `token_importance_total`）。
-- 可视化三个阶段：
-  - **裁剪前 token 级**：带 chat template 的完整序列热力图（仅当归因路径能提供该向量时；目前主要用于 IFR）。
-  - **裁剪后 token 级**：去除模板后的用户输入 + 生成热力图，按 input/thinking/output 分段。
-- 可视化默认保留正负：红=正贡献，蓝=负贡献。
+- 可视化两个视图：
+  - **裁剪前 token 级（full）**：带 chat template 的完整序列热力图（template + user prompt + generation）。
+  - **Prompt-only token 级**：只显示 user prompt tokens 的热力图（不包含 generation tokens）。
+- 热力图按 `|score|` 上色（不区分正负）；每个面板的 full/prompt 两张图各自用 p99.5(`|score|`) 独立归一化颜色深度。
 - 输出 JSON（完整数值）和 HTML（逐跳热力图）。
 - 额外提供 MAS（faithfulness / token perturbation）可视化：对指定归因方法做 token 级扰动评估，并渲染扰动影响热力图 + MAS 分数。
 
@@ -22,12 +23,12 @@
 # 多跳 FT（默认）
 python exp/case_study/run_ifr_case.py \
   --mode ft \
-  --dataset exp/exp2/data/morehopqa.jsonl \
+  --dataset exp/exp2/data/short-morehopqa.jsonl \
   --index 0 \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0 \
-  --n_hops 1
+  --n_hops 3
 
 # 标准 IFR（单 hop，可指定 sink span）
 python exp/case_study/run_ifr_case.py \
@@ -39,16 +40,14 @@ python exp/case_study/run_ifr_case.py \
   --cuda 0 \
   --sink_span 0 0
 
-#（可选）IFR 按 sink_span 内每个生成 token 单独计算（会显示多个面板）
+# IFR output-only：只在 output 范围计算 IFR 矩阵，并生成 Row/Recursive（CAGE）两面板
 python exp/case_study/run_ifr_case.py \
-  --mode ifr \
-  --ifr_view per_token \
-  --dataset exp/exp2/data/morehopqa.jsonl \
+  --mode ifr_all_positions_output_only \
+  --dataset exp/exp2/data/short-morehopqa.jsonl \
   --index 0 \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
-  --cuda 0 \
-  --sink_span 0 20
+  --cuda 0
 
 # AttnLRP hop0（复用 FT-AttnLRP span-aggregate；可视化 hop0 raw 向量）
 python exp/case_study/run_ifr_case.py \
@@ -76,6 +75,7 @@ python exp/case_study/run_ifr_case.py \
 产物位于 `exp/case_study/out/`，文件名前缀根据模式变化，例如：
 - `ft_case_<dataset>_idx<idx>.json/html`
 - `ifr_case_<dataset>_idx<idx>.json/html`
+- `ifr_output_only_case_<dataset>_idx<idx>.json/html`
 - `attnlrp_case_<dataset>_idx<idx>.json/html`
 - `ft_attnlrp_case_<dataset>_idx<idx>.json/html`
 
@@ -90,19 +90,22 @@ python exp/case_study/run_ifr_case.py \
 ```bash
 # FT-IFR（ifr_multi_hop；默认 --method ft）
 python exp/case_study/run_mas_case.py \
-  --dataset exp/exp2/data/morehopqa.jsonl \
+  --dataset exp/exp2/data/short-morehopqa.jsonl \
   --index 0 \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 0 \
   --method ft \
-  --n_hops 1
+  --n_hops 3
 ```
 
 常用方法选择（与 `run_ifr_case.py` 的模式名对齐）：
 ```bash
 # IFR（需要 sink_span；默认会优先使用数据集缓存字段）
 python exp/case_study/run_mas_case.py --method ifr --sink_span 0 20 ...
+
+# IFR output-only（仅对 sink_span 内的 output token 计算 IFR token-level matrix）
+python exp/case_study/run_mas_case.py --method ifr_all_positions_output_only --sink_span 0 20 ...
 
 # FT-IFR（ifr_multi_hop）
 python exp/case_study/run_mas_case.py --method ft --n_hops 1 --sink_span 0 20 --thinking_span 0 20 ...
@@ -137,14 +140,13 @@ python -m http.server 8888 --directory exp/case_study/out
 
 ## 可选参数
 - `--sink_span a b` / `--thinking_span a b`：覆盖生成侧的 sink/thinking 句子 span（默认使用缓存字段）。
-- `--ifr_view aggregate|per_token`：仅 `--mode ifr` 生效；`aggregate` 为 sink-span 聚合 IFR（默认 1 个面板），`per_token` 为逐 token（多面板）。
 - `--attnlrp_neg_handling drop|abs`：FT-AttnLRP 每跳负值处理（drop=clamp>=0，abs=取绝对值）。
 - `--attnlrp_norm_mode norm|no_norm`：FT-AttnLRP 正则化与 hop ratio 开关（norm=全局+thinking 归一化并启用 ratio；no_norm=三者都禁用）。
 - `--chunk_tokens` / `--sink_chunk_tokens`：IFR 分块参数。
 - `--output_dir`：修改输出目录。
 
 ## 文件说明
-- `run_ifr_case.py`：命令行入口与落盘（支持 `ft`/`ifr`/`attnlrp`/`ft_attnlrp` 模式）。
-- `run_mas_case.py`：MAS（faithfulness / token perturbation）可视化入口与落盘（支持 `ifr`/`ft`/`attnlrp`/`ft_attnlrp`）。
+- `run_ifr_case.py`：命令行入口与落盘（支持 `ft`/`ifr`/`ifr_all_positions_output_only`/`attnlrp`/`ft_attnlrp` 模式）。
+- `run_mas_case.py`：MAS（faithfulness / token perturbation）可视化入口与落盘（支持 `ifr`/`ifr_all_positions_output_only`/`ft`/`attnlrp`/`ft_attnlrp`）。
 - `analysis.py`：逐跳清洗与封装（token-level）。
 - `viz.py`：HTML 渲染与热力图。

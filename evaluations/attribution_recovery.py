@@ -139,6 +139,17 @@ def run_attribution(
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
         return list(attr.get_all_token_attrs(token_span))
 
+    if attr_func == "ifr_all_positions_output_only":
+        llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
+        sink_span = tuple(example.sink_span) if example.sink_span else None
+        attr = llm_attributor.calculate_ifr_for_all_positions_output_only(
+            example.prompt,
+            target=target,
+            sink_span=sink_span,
+        )
+        token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
+        return list(attr.get_all_token_attrs(token_span))
+
     if attr_func == "ifr_span":
         llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
         span = example.sink_span if example.sink_span else None

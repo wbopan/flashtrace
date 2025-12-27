@@ -4,7 +4,8 @@
 Modes supported (all emit JSON + HTML under ``exp/case_study/out``):
 
 - ``ft``: FlashTrace (current project implementation; multi-hop IFR)
-- ``ifr``: standard IFR single-hop visualization
+- ``ifr``: IFR span-aggregate visualization (single hop; one panel)
+- ``ifr_all_positions_output_only``: IFR output-only token matrix + CAGE (Row/Recursive panels)
 - ``attnlrp``: AttnLRP hop0 (reuse FT-AttnLRP span-aggregate; visualize raw hop0 vector)
 - ``ft_attnlrp``: FT-AttnLRP (multi-hop aggregated AttnLRP; matches exp/exp2)
 """
@@ -250,16 +251,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["ft", "ifr", "attnlrp", "ft_attnlrp"],
+        choices=["ft", "ifr", "ifr_all_positions_output_only", "attnlrp", "ft_attnlrp"],
         default="ft",
-        help="ft = FlashTrace (multi-hop IFR); ifr = standard IFR; attnlrp = AttnLRP hop0 (FT-AttnLRP span-aggregate); ft_attnlrp = FT-AttnLRP (multi-hop aggregated; exp2).",
-    )
-    parser.add_argument(
-        "--ifr_view",
-        type=str,
-        choices=["aggregate", "per_token"],
-        default="aggregate",
-        help="Only for --mode ifr. aggregate = sink-span aggregated IFR (one panel); per_token = IFR per sink token (one panel per token).",
+        help=(
+            "ft = FlashTrace (multi-hop IFR); ifr = standard IFR span-aggregate; "
+            "ifr_all_positions_output_only = output-only IFR matrix + CAGE row/rec; "
+            "attnlrp = AttnLRP hop0 (FT-AttnLRP span-aggregate); "
+            "ft_attnlrp = FT-AttnLRP (multi-hop aggregated; exp2)."
+        ),
     )
     parser.add_argument("--model", type=str, default="qwen-8B", help="HF repo id (ignored if --model_path set).")
     parser.add_argument("--model_path", type=str, default=None, help="Local model path to override --model.")
@@ -349,6 +348,7 @@ def make_output_stem(dataset_name: str, index: int, mode: str) -> str:
     prefix = {
         "ft": "ft_case_",
         "ifr": "ifr_case_",
+        "ifr_all_positions_output_only": "ifr_output_only_case_",
         "attnlrp": "attnlrp_case_",
         "ft_attnlrp": "ft_attnlrp_case_",
     }.get(mode, f"{mode}_case_")
@@ -437,6 +437,89 @@ def build_raw_roles(
     return roles
 
 
+def extract_prompt_only_vectors(hop_vectors: Sequence[torch.Tensor], prompt_len: int) -> List[torch.Tensor]:
+    """Slice hop vectors down to user-prompt tokens only (no generation tokens)."""
+
+    if prompt_len < 0:
+        raise ValueError("prompt_len must be >= 0.")
+
+    out: List[torch.Tensor] = []
+    for vec in hop_vectors:
+        v = torch.as_tensor(vec, dtype=torch.float32).detach().cpu()
+        if int(v.numel()) < int(prompt_len):
+            raise ValueError(f"Hop vector too short for prompt-only slice: len={int(v.numel())} prompt_len={int(prompt_len)}.")
+        out.append(v[:prompt_len])
+    return out
+
+
+def _lift_trimmed_to_full(
+    trimmed: torch.Tensor,
+    *,
+    prompt_len_full: int,
+    gen_len: int,
+    user_prompt_indices: Sequence[int],
+) -> torch.Tensor:
+    """Lift a trimmed (user prompt + generation) vector into full token space with zeros for chat-template tokens."""
+
+    t = torch.as_tensor(trimmed, dtype=torch.float32).detach().cpu()
+    user_len = len(user_prompt_indices)
+    expected = int(user_len + gen_len)
+    if int(t.numel()) != expected:
+        raise ValueError(f"Trimmed vector length mismatch: got {int(t.numel())}, expected {expected}.")
+
+    total_len = int(prompt_len_full + gen_len)
+    full = torch.zeros((total_len,), dtype=torch.float32)
+    for j, abs_pos in enumerate(user_prompt_indices):
+        full[int(abs_pos)] = t[j]
+    full[int(prompt_len_full) : int(prompt_len_full + gen_len)] = t[user_len:]
+    return full
+
+
+def _postprocess_attnlrp_full_vector(
+    raw_full: torch.Tensor,
+    *,
+    prompt_len_full: int,
+    gen_len: int,
+    user_prompt_indices: Sequence[int],
+    neg_handling: str,
+    norm_mode: str,
+) -> torch.Tensor:
+    """Mirror FT-AttnLRP hop postprocessing while preserving stripped-token normalization.
+
+    The underlying AttnLRP implementation postprocesses the *stripped* vector (user prompt + generation):
+      - NaN->0, then neg_handling ('drop' or 'abs')
+      - if norm_mode=='norm': normalize by sum over stripped tokens
+
+    For the pre-trim full view (chat template + generation), we apply the same non-negativity transform
+    to the full vector and normalize using *only the stripped indices*, so overlapping token scores
+    match the trimmed vectors used by the evaluation/case-study hop outputs.
+    """
+
+    v = torch.as_tensor(raw_full, dtype=torch.float32).detach().cpu()
+    v = torch.nan_to_num(v, nan=0.0)
+
+    if neg_handling == "drop":
+        v = v.clamp(min=0.0)
+    elif neg_handling == "abs":
+        v = v.abs()
+    else:
+        raise ValueError(f"Unsupported neg_handling={neg_handling!r} (expected 'drop' or 'abs').")
+
+    ratio_enabled = norm_mode == "norm"
+    if not ratio_enabled:
+        return v
+
+    keep = list(int(i) for i in user_prompt_indices) + list(range(int(prompt_len_full), int(prompt_len_full + gen_len)))
+    if not keep:
+        return torch.zeros_like(v)
+
+    keep_idx = torch.as_tensor(keep, dtype=torch.long)
+    denom = float(v.index_select(0, keep_idx).sum().item())
+    if denom <= 0.0:
+        return torch.zeros_like(v)
+    return v / (denom + 1e-12)
+
+
 def main() -> None:
     args = parse_args()
     device = resolve_device(args.cuda, args.cuda_num)
@@ -465,6 +548,7 @@ def main() -> None:
     method_meta: Dict[str, Any] = {}
     raw_prompt_ids: Optional[List[int]] = None
     raw_generation_ids: Optional[List[int]] = None
+    attnlrp_raw_attributions: Optional[List[Any]] = None
 
     if mode == "ft":
         attr_result, sink_span, thinking_span, debug_info = run_ft_multihop(
@@ -502,7 +586,7 @@ def main() -> None:
         method_meta = {"ifr": analysis.sanitize_ifr_meta(ifr_meta)}
 
     elif mode == "ifr":
-        # Standard IFR (single-hop), with pre/post trim views.
+        # Standard IFR (single-hop span aggregate), with pre/post trim views.
         attr = llm_attr.LLMIFRAttribution(
             model,
             tokenizer,
@@ -514,100 +598,98 @@ def main() -> None:
 
         if sink_span is None:
             raise ValueError("sink_span is required for IFR mode (use dataset sink_span or pass --sink_span).")
+        span_result = attr.calculate_ifr_span(
+            example.prompt,
+            target=example.target,
+            span=tuple(sink_span),
+        )
+        span_meta = span_result.metadata.get("ifr") if span_result.metadata else None
+        aggregate = span_meta.get("aggregate") if isinstance(span_meta, dict) else None
+        if aggregate is None or not hasattr(aggregate, "token_importance_total"):
+            raise RuntimeError("IFR span aggregate missing from metadata; cannot render pre-trim view.")
 
-        if args.ifr_view == "aggregate":
-            span_result = attr.calculate_ifr_span(
-                example.prompt,
-                target=example.target,
-                span=tuple(sink_span),
-            )
-            span_meta = span_result.metadata.get("ifr") if span_result.metadata else None
-            aggregate = span_meta.get("aggregate") if isinstance(span_meta, dict) else None
-            if aggregate is None or not hasattr(aggregate, "token_importance_total"):
-                raise RuntimeError("IFR span aggregate missing from metadata; cannot render pre-trim view.")
+        raw_vector = aggregate.token_importance_total.detach().cpu()
+        trimmed_vector = attr._project_vector(raw_vector)
+        hop_vectors_raw = [raw_vector]
+        hop_vectors_trimmed = [trimmed_vector]
 
-            raw_vector = aggregate.token_importance_total.detach().cpu()
-            trimmed_vector = attr._project_vector(raw_vector)
-            hop_vectors_raw = [raw_vector]
-            hop_vectors_trimmed = [trimmed_vector]
+        prompt_tokens_trimmed = list(attr.user_prompt_tokens)
+        generation_tokens_trimmed = list(attr.generation_tokens)
 
-            prompt_tokens_trimmed = list(attr.user_prompt_tokens)
-            generation_tokens_trimmed = list(attr.generation_tokens)
+        raw_prompt_ids = attr.prompt_ids.detach().cpu().tolist()[0]
+        raw_generation_ids = attr.generation_ids.detach().cpu().tolist()[0]
+        user_prompt_indices = list(getattr(attr, "user_prompt_indices", []) or [])
+        chat_prompt_indices = list(getattr(attr, "chat_prompt_indices", []) or [])
+        prompt_len_full = len(raw_prompt_ids)
 
-            raw_prompt_ids = attr.prompt_ids.detach().cpu().tolist()[0]
-            raw_generation_ids = attr.generation_ids.detach().cpu().tolist()[0]
-            user_prompt_indices = list(getattr(attr, "user_prompt_indices", []) or [])
-            chat_prompt_indices = list(getattr(attr, "chat_prompt_indices", []) or [])
-            prompt_len_full = len(raw_prompt_ids)
+        sink_abs = (prompt_len_full + sink_span[0], prompt_len_full + sink_span[1])
+        think_abs = (prompt_len_full + thinking_span[0], prompt_len_full + thinking_span[1]) if thinking_span else None
 
-            sink_abs = (prompt_len_full + sink_span[0], prompt_len_full + sink_span[1])
-            think_abs = (prompt_len_full + thinking_span[0], prompt_len_full + thinking_span[1]) if thinking_span else None
+        meta = {
+            "type": "span_aggregate",
+            "ifr_view": "aggregate",
+            "sink_span_generation": sink_span,
+            "sink_span_absolute": sink_abs,
+            "thinking_span_generation": thinking_span,
+            "thinking_span_absolute": think_abs,
+        }
+        method_meta = {"ifr": analysis.tensor_to_list(meta)}
 
-            meta = {
-                "type": "span_aggregate",
-                "ifr_view": "aggregate",
-                "sink_span_generation": sink_span,
-                "sink_span_absolute": sink_abs,
-                "thinking_span_generation": thinking_span,
-                "thinking_span_absolute": think_abs,
-            }
-            method_meta = {"ifr": analysis.tensor_to_list(meta)}
-        else:
-            input_ids_all, attn_mask, prompt_len_full_tmp, gen_len = attr._ensure_generation(example.prompt, example.target)
-            total_len = int(input_ids_all.shape[1])
+    elif mode == "ifr_all_positions_output_only":
+        # IFR all-positions (output-only) + token-level CAGE (row/recursive) derived from the matrix.
+        attr = llm_attr.LLMIFRAttribution(
+            model,
+            tokenizer,
+            chunk_tokens=args.chunk_tokens,
+            sink_chunk_tokens=args.sink_chunk_tokens,
+        )
+        sink_span = tuple(args.sink_span) if args.sink_span is not None else tuple(example.sink_span) if example.sink_span else None
+        thinking_span = tuple(args.thinking_span) if args.thinking_span is not None else tuple(example.thinking_span) if example.thinking_span else sink_span
 
-            cache, attentions, metadata_full, weight_pack = attr._capture_model_state(input_ids_all, attn_mask)
-            params = attr._build_ifr_params(metadata_full, total_len)
-            renorm = attr.renorm_threshold_default
-
-            sink_range = (prompt_len_full_tmp, prompt_len_full_tmp + gen_len - 1)
-            all_positions = llm_attr.compute_ifr_for_all_positions(
-                cache=cache,
-                attentions=attentions,
-                weight_pack=weight_pack,
-                params=params,
-                renorm_threshold=renorm,
-                sink_range=sink_range,
-                return_layerwise=False,
+        if sink_span is None:
+            raise ValueError(
+                "sink_span is required for ifr_all_positions_output_only mode "
+                "(use dataset sink_span or pass --sink_span)."
             )
 
-            span_start, span_end = sink_span
-            if span_start < 0 or span_end >= gen_len:
-                raise ValueError(f"Invalid sink_span {sink_span} for generation length {gen_len}")
-            sink_abs_start = prompt_len_full_tmp + span_start
-            sink_abs_end = prompt_len_full_tmp + span_end
+        attr_result = attr.calculate_ifr_for_all_positions_output_only(
+            example.prompt,
+            target=example.target,
+            sink_span=tuple(sink_span),
+        )
 
-            raw_vectors = []
-            if all_positions.token_importance_matrix.numel() > 0:
-                mat = all_positions.token_importance_matrix.detach().cpu()
-                raw_vectors = [mat[idx] for idx in range(span_start, span_end + 1)]
+        indices_to_explain = list(sink_span)
+        _, row_attr, rec_attr = attr_result.get_all_token_attrs(indices_to_explain)
+        row_vec = row_attr.squeeze(0).detach().cpu()
+        rec_vec = rec_attr.squeeze(0).detach().cpu()
 
-            trimmed_vectors = []
-            for vec in raw_vectors:
-                projected = attr.extract_user_prompt_attributions(attr.prompt_tokens, vec.view(1, -1))[0]
-                trimmed_vectors.append(projected)
+        hop_vectors_trimmed = [row_vec, rec_vec]
 
-            hop_vectors_raw = [vec.detach().cpu() if hasattr(vec, "detach") else torch.as_tensor(vec) for vec in raw_vectors]
-            hop_vectors_trimmed = trimmed_vectors
+        prompt_tokens_trimmed = list(attr.user_prompt_tokens)
+        generation_tokens_trimmed = list(attr.generation_tokens)
 
-            prompt_tokens_trimmed = list(attr.user_prompt_tokens)
-            generation_tokens_trimmed = list(attr.generation_tokens)
+        raw_prompt_ids = attr.prompt_ids.detach().cpu().tolist()[0]
+        raw_generation_ids = attr.generation_ids.detach().cpu().tolist()[0]
+        user_prompt_indices = list(getattr(attr, "user_prompt_indices", []) or [])
+        chat_prompt_indices = list(getattr(attr, "chat_prompt_indices", []) or [])
+        prompt_len_full = len(raw_prompt_ids)
 
-            raw_prompt_ids = attr.prompt_ids.detach().cpu().tolist()[0]
-            raw_generation_ids = attr.generation_ids.detach().cpu().tolist()[0]
-            user_prompt_indices = list(getattr(attr, "user_prompt_indices", []) or [])
-            chat_prompt_indices = list(getattr(attr, "chat_prompt_indices", []) or [])
-            prompt_len_full = len(raw_prompt_ids)
+        gen_len = len(raw_generation_ids or [])
+        hop_vectors_raw = [
+            _lift_trimmed_to_full(
+                v,
+                prompt_len_full=int(prompt_len_full or 0),
+                gen_len=gen_len,
+                user_prompt_indices=user_prompt_indices,
+            )
+            for v in hop_vectors_trimmed
+        ]
 
-            meta = {
-                "type": "all_positions_subset",
-                "ifr_view": "per_token",
-                "sink_span_generation": sink_span,
-                "sink_span_absolute": (sink_abs_start, sink_abs_end),
-                "thinking_span_generation": thinking_span,
-                "thinking_span_absolute": (prompt_len_full + thinking_span[0], prompt_len_full + thinking_span[1]) if thinking_span else None,
-            }
-            method_meta = {"ifr": analysis.tensor_to_list(meta)}
+        ifr_meta = dict((attr_result.metadata or {}).get("ifr") or {})
+        ifr_meta["ifr_view"] = "all_positions_output_only (row+rec)"
+        ifr_meta["panel_titles"] = ["Row attribution", "Recursive attribution (CAGE)"]
+        ifr_meta["indices_to_explain"] = indices_to_explain
+        method_meta = {"ifr": analysis.tensor_to_list(ifr_meta)}
 
     elif mode in ("attnlrp", "ft_attnlrp"):
         # Reuse the shared LLMLRPAttribution implementations (root-level).
@@ -634,6 +716,7 @@ def main() -> None:
             meta = attr_result.metadata or {}
             multi_hop = meta.get("multi_hop_result")
             raw_attributions = getattr(multi_hop, "raw_attributions", None) or []
+            attnlrp_raw_attributions = list(raw_attributions)
             base_attr = raw_attributions[0] if raw_attributions else None
             if base_attr is None or not hasattr(base_attr, "token_importance_total"):
                 raise RuntimeError("AttnLRP hop0 missing from multi-hop result.")
@@ -678,6 +761,7 @@ def main() -> None:
                 raise RuntimeError("FT-AttnLRP case study missing metadata.multi_hop_result.")
 
             raw_attributions = getattr(multi_hop, "raw_attributions", None) or []
+            attnlrp_raw_attributions = list(raw_attributions)
             hop_vectors_trimmed = [
                 torch.as_tensor(getattr(hop, "token_importance_total"), dtype=torch.float32).detach().cpu()
                 for hop in raw_attributions
@@ -712,16 +796,7 @@ def main() -> None:
     if not hop_vectors_trimmed:
         raise RuntimeError("No hop vectors to visualize.")
 
-    tokens = list(prompt_tokens_trimmed) + list(generation_tokens_trimmed)
     raw_tokens = build_raw_tokens_from_ids(tokenizer, raw_prompt_ids, raw_generation_ids)
-
-    segments = {
-        "prompt_len": len(prompt_tokens_trimmed),
-        "thinking_span": thinking_span,
-        "sink_span": sink_span,
-        "generation_len": len(generation_tokens_trimmed),
-    }
-    roles_trimmed = build_trimmed_roles(tokens, segments)
 
     sink_span_abs = None
     thinking_span_abs = None
@@ -739,16 +814,63 @@ def main() -> None:
         sink_span_abs,
     )
 
+    prompt_tokens_only = list(prompt_tokens_trimmed)
+    prompt_only_vectors = extract_prompt_only_vectors(hop_vectors_trimmed, len(prompt_tokens_only))
+
+    # Ensure every method has a pre-trim full vector per panel.
+    if not hop_vectors_raw:
+        if mode in ("attnlrp", "ft_attnlrp") and attnlrp_raw_attributions is not None:
+            gen_len = len(raw_generation_ids or [])
+            expected = int((prompt_len_full_safe + gen_len) if prompt_len_full is not None else 0)
+            full_vectors: List[torch.Tensor] = []
+            for hop in attnlrp_raw_attributions:
+                meta = getattr(hop, "metadata", None) or {}
+                raw_full = meta.get("token_importance_total_with_chat_template")
+                if raw_full is None:
+                    full_vectors = []
+                    break
+                v = _postprocess_attnlrp_full_vector(
+                    torch.as_tensor(raw_full, dtype=torch.float32),
+                    prompt_len_full=prompt_len_full_safe,
+                    gen_len=gen_len,
+                    user_prompt_indices=user_prompt_indices,
+                    neg_handling=args.attnlrp_neg_handling,
+                    norm_mode=args.attnlrp_norm_mode,
+                )
+                if expected and int(v.numel()) != expected:
+                    raise RuntimeError(
+                        "AttnLRP full-vector length mismatch for pre-trim view: "
+                        f"got {int(v.numel())}, expected {expected}."
+                    )
+                full_vectors.append(v)
+            hop_vectors_raw = full_vectors
+
+    if not hop_vectors_raw and prompt_len_full is not None:
+        # Fallback: lift trimmed vectors back to full token space with zeros for template tokens.
+        gen_len = len(raw_generation_ids or [])
+        hop_vectors_raw = [
+            _lift_trimmed_to_full(
+                v,
+                prompt_len_full=prompt_len_full_safe,
+                gen_len=gen_len,
+                user_prompt_indices=user_prompt_indices,
+            )
+            for v in hop_vectors_trimmed
+        ]
+
+    if not hop_vectors_raw:
+        raise RuntimeError("Missing pre-trim vectors; cannot render required full-sequence heatmap.")
+
     # Lightweight debug stats to catch silent all-zero / NaN cases.
     hop_stats_raw = [analysis.vector_stats(torch.nan_to_num(v.detach().cpu(), nan=0.0)) for v in hop_vectors_raw]
-    hop_stats_trimmed = [analysis.vector_stats(torch.nan_to_num(v.detach().cpu(), nan=0.0)) for v in hop_vectors_trimmed]
-    for i in range(max(len(hop_stats_raw), len(hop_stats_trimmed))):
+    hop_stats_prompt = [analysis.vector_stats(torch.nan_to_num(v.detach().cpu(), nan=0.0)) for v in prompt_only_vectors]
+    for i in range(max(len(hop_stats_raw), len(hop_stats_prompt))):
         raw_abs = hop_stats_raw[i]["abs_max"] if i < len(hop_stats_raw) else None
-        trim_abs = hop_stats_trimmed[i]["abs_max"] if i < len(hop_stats_trimmed) else None
-        print(f"[stats] panel {i}: raw_abs_max={raw_abs} trimmed_abs_max={trim_abs}")
+        prompt_abs = hop_stats_prompt[i]["abs_max"] if i < len(hop_stats_prompt) else None
+        print(f"[stats] panel {i}: raw_abs_max={raw_abs} prompt_abs_max={prompt_abs}")
 
-    hop_token_trim = analysis.package_token_hops(hop_vectors_trimmed)
-    hop_token_raw = analysis.package_token_hops(hop_vectors_raw) if hop_vectors_raw else []
+    hop_token_raw = analysis.package_token_hops(hop_vectors_raw)
+    hop_token_prompt = analysis.package_token_hops(prompt_only_vectors)
 
     case_meta: Dict[str, Any] = {
         "dataset": ds_name,
@@ -759,11 +881,12 @@ def main() -> None:
         "thinking_ratios": thinking_ratios,
         "mode": mode,
         "ifr_view": method_meta.get("ifr", {}).get("ifr_view") if isinstance(method_meta.get("ifr"), dict) else None,
+        "panel_titles": method_meta.get("ifr", {}).get("panel_titles") if isinstance(method_meta.get("ifr"), dict) else None,
         "attnlrp_neg_handling": args.attnlrp_neg_handling if mode in ("attnlrp", "ft_attnlrp") else None,
         "attnlrp_norm_mode": args.attnlrp_norm_mode if mode in ("attnlrp", "ft_attnlrp") else None,
         "attnlrp_ratio_enabled": (args.attnlrp_norm_mode == "norm") if mode in ("attnlrp", "ft_attnlrp") else None,
         "vector_stats_raw": hop_stats_raw,
-        "vector_stats_trimmed": hop_stats_trimmed,
+        "vector_stats_prompt": hop_stats_prompt,
     }
 
     generation_text = "".join(generation_tokens_trimmed) if generation_tokens_trimmed else ""
@@ -773,16 +896,12 @@ def main() -> None:
         "prompt": prompt_text,
         "target": example.target,
         "generation": generation_text,
-        "prompt_tokens": prompt_tokens_trimmed,
-        "generation_tokens": generation_tokens_trimmed,
-        "all_tokens": tokens,
-        "full_prompt_tokens": raw_tokens[:prompt_len_full_safe] if prompt_len_full_safe else [],
         "full_all_tokens": raw_tokens,
-        "token_roles": roles_trimmed,
         "raw_token_roles": roles_raw,
-        "segments": segments,
-        "token_hops_trimmed": hop_token_trim,
+        "prompt_tokens": prompt_tokens_only,
+        "prompt_token_roles": ["user" for _ in range(len(prompt_tokens_only))],
         "token_hops_raw": hop_token_raw,
+        "token_hops_prompt": hop_token_prompt,
         "ifr_meta": method_meta.get("ifr"),
         "attnlrp_meta": method_meta.get("attnlrp"),
     }
@@ -798,22 +917,18 @@ def main() -> None:
 
     html = viz.render_case_html(
         case_meta,
-        token_view_trimmed={
-            "label": "Post-trim token-level heatmap (user prompt + generation; chat template removed)",
-            "tokens": tokens,
-            "roles": roles_trimmed,
-            "hops": hop_token_trim,
+        token_view_raw={
+            "label": "Pre-trim token-level heatmap (full sequence with chat template)",
+            "tokens": raw_tokens,
+            "roles": roles_raw,
+            "hops": hop_token_raw,
         },
-        token_view_raw=(
-            {
-                "label": "Pre-trim token-level heatmap (with chat template)",
-                "tokens": raw_tokens,
-                "roles": roles_raw,
-                "hops": hop_token_raw,
-            }
-            if hop_token_raw
-            else None
-        ),
+        token_view_prompt={
+            "label": "Prompt-only token-level heatmap (user prompt only)",
+            "tokens": prompt_tokens_only,
+            "roles": ["user" for _ in range(len(prompt_tokens_only))],
+            "hops": hop_token_prompt,
+        },
     )
     html_path.write_text(html, encoding="utf-8")
 

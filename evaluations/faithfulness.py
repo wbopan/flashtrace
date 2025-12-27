@@ -95,6 +95,13 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
 
         if attr_func == "ifr_all_positions":
             attr = llm_attributor.calculate_ifr_for_all_positions(prompt, target=target, renorm_threshold=renorm_threshold)
+        elif attr_func == "ifr_all_positions_output_only":
+            attr = llm_attributor.calculate_ifr_for_all_positions_output_only(
+                prompt,
+                target=target,
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                renorm_threshold=renorm_threshold,
+            )
         elif attr_func == "ifr_span":
             span = testing_dict.get("sink_span")
             attr = llm_attributor.calculate_ifr_span(
