@@ -382,6 +382,54 @@ def run_attribution(
             thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
             n_hops=testing_dict["n_hops"],
         )
+    elif attr_func == "ifr_multi_hop_stop_words":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionImproved(
+            model,
+            tokenizer,
+            chunk_tokens=testing_dict["chunk_tokens"],
+            sink_chunk_tokens=testing_dict["sink_chunk_tokens"],
+        )
+        attr = llm_attributor.calculate_ifr_multi_hop_stop_words(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict["n_hops"],
+        )
+    elif attr_func == "ifr_multi_hop_both":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionBoth(
+            model,
+            tokenizer,
+            chunk_tokens=testing_dict["chunk_tokens"],
+            sink_chunk_tokens=testing_dict["sink_chunk_tokens"],
+        )
+        attr = llm_attributor.calculate_ifr_multi_hop_both(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict["n_hops"],
+        )
+    elif attr_func == "ifr_multi_hop_split_hop":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionSplitHop(
+            model,
+            tokenizer,
+            chunk_tokens=testing_dict["chunk_tokens"],
+            sink_chunk_tokens=testing_dict["sink_chunk_tokens"],
+        )
+        attr = llm_attributor.calculate_ifr_multi_hop_split_hop(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict["n_hops"],
+        )
     elif attr_func == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         attr = llm_attributor.calculate_attnlrp_ft_hop0(
@@ -424,7 +472,16 @@ def run_attribution(
     else:
         user_prompt_indices = None
 
-    return [seq_attr, row_attr, rec_attr], hop_payload, user_prompt_indices
+    keep_prompt_token_indices = None
+    if attr_func in ("ifr_multi_hop_stop_words", "ifr_multi_hop_both"):
+        try:
+            import ft_ifr_improve
+
+            keep_prompt_token_indices = ft_ifr_improve.keep_token_indices(list(attr.prompt_tokens))
+        except Exception:
+            keep_prompt_token_indices = None
+
+    return [seq_attr, row_attr, rec_attr], hop_payload, user_prompt_indices, keep_prompt_token_indices
 
 
 def faithfulness_generation(
@@ -433,7 +490,10 @@ def faithfulness_generation(
     prompt = example.prompt
     generation = target
 
-    attr_list, hop_payload, user_prompt_indices = run_attribution(testing_dict, example, target)
+    attr_func = str(testing_dict.get("attr_func") or "")
+    attr_list, hop_payload, user_prompt_indices, keep_prompt_token_indices = run_attribution(
+        testing_dict, example, target
+    )
     seq_attr = attr_list[0]
     prompt_len = int(seq_attr.shape[1] - seq_attr.shape[0])  # cols=(P+G), rows=G
 
@@ -441,7 +501,18 @@ def faithfulness_generation(
     for attr in attr_list:
         # Only use prompt-side attribution, matching evaluations/faithfulness.py
         attr_prompt = attr[:, :prompt_len]
-        if user_prompt_indices is not None:
+        if attr_func in ("ifr_multi_hop_stop_words", "ifr_multi_hop_both") and keep_prompt_token_indices is not None:
+            import ft_ifr_improve
+
+            scores = ft_ifr_improve.faithfulness_test_skip_tokens(
+                llm_evaluator,
+                attr_prompt,
+                prompt,
+                generation,
+                keep_prompt_token_indices=keep_prompt_token_indices,
+                user_prompt_indices=user_prompt_indices,
+            )
+        elif user_prompt_indices is not None:
             scores = _faithfulness_test_with_user_prompt_indices(
                 llm_evaluator,
                 attr_prompt,
@@ -565,7 +636,8 @@ def evaluate_dataset_recovery_ruler(args, dataset_name: str, examples: List[ds_u
             continue
 
         sample_start = time.perf_counter()
-        attr_list, _, _ = run_attribution(testing_dict, ex, ex.target)
+        attr_func = str(testing_dict.get("attr_func") or "")
+        attr_list, _, _, keep_prompt_token_indices = run_attribution(testing_dict, ex, ex.target)
         durations.append(time.perf_counter() - sample_start)
 
         seq_attr = attr_list[0]
@@ -574,15 +646,34 @@ def evaluate_dataset_recovery_ruler(args, dataset_name: str, examples: List[ds_u
             skipped += 1
             continue
 
-        scores = [
-            llm_evaluator.evaluate_attr_recovery(
-                attr,
-                prompt_len=prompt_len,
-                gold_prompt_token_indices=gold_prompt,
-                top_fraction=0.1,
-            )
-            for attr in attr_list
-        ]
+        if attr_func in ("ifr_multi_hop_stop_words", "ifr_multi_hop_both") and keep_prompt_token_indices is not None:
+            import ft_ifr_improve
+
+            keep_set = {int(x) for x in keep_prompt_token_indices}
+            gold_filtered = [idx for idx in gold_prompt if int(idx) in keep_set]
+            if not gold_filtered:
+                skipped += 1
+                continue
+
+            scores = [
+                ft_ifr_improve.evaluate_attr_recovery_skip_tokens(
+                    attr[:, :prompt_len],
+                    keep_prompt_token_indices=keep_prompt_token_indices,
+                    gold_prompt_token_indices=gold_prompt,
+                    top_fraction=0.1,
+                )
+                for attr in attr_list
+            ]
+        else:
+            scores = [
+                llm_evaluator.evaluate_attr_recovery(
+                    attr,
+                    prompt_len=prompt_len,
+                    gold_prompt_token_indices=gold_prompt,
+                    top_fraction=0.1,
+                )
+                for attr in attr_list
+            ]
         results.append(np.asarray(scores, dtype=np.float64))
 
     if not results:

@@ -70,19 +70,19 @@ python exp/exp2/sample_and_filter.py \
 
 使用说明
 ```bash
-# 生成侧 RISE/MAS 忠实度 ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention
+# 生成侧 RISE/MAS 忠实度 ifr_multi_hop_stop_words,ifr_multi_hop_both,ifr_multi_hop_split_hop,ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention
 python exp/exp2/run_exp.py \
   --datasets exp/exp2/data/morehopqa.jsonl \
-  --attr_funcs ft_attnlrp,attnlrp \
+  --attr_funcs ifr_multi_hop_both \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
-  --cuda 2,3,4,5 \
+  --cuda 2,3,4,5,6,7 \
   --num_examples 10 \
   --mode faithfulness_gen \
   --n_hops 3 \
-  --save_hop_traces \
-  --attnlrp_neg_handling drop \
-  --attnlrp_norm_mode norm
+  --save_hop_traces
+  # --attnlrp_neg_handling drop \
+  # --attnlrp_norm_mode norm
 ```
 常用参数：
 - `--datasets`：逗号分隔数据集名；若已存在 `exp/exp2/data/<name>.jsonl` 则直接使用。

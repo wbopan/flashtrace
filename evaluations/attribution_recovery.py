@@ -87,7 +87,7 @@ def _resolve_indices_to_explain_token_span(
 
 def run_attribution(
     testing_dict, example: ds_utils.CachedExample, batch_size: int, target: Optional[str]
-) -> List[torch.Tensor]:
+) -> tuple[List[torch.Tensor], dict | None]:
     model = testing_dict["model"]
     tokenizer = testing_dict["tokenizer"]
     attr_func = testing_dict["attr_func"]
@@ -102,7 +102,7 @@ def run_attribution(
             target=target,
         )
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if "perturbation" in attr_func:
         llm_attributor = llm_attr.LLMPerturbationAttribution(model, tokenizer)
@@ -119,7 +119,7 @@ def run_attribution(
         else:
             raise ValueError(f"Unsupported perturbation attr_func {attr_func}")
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if "attention" in attr_func:
         llm_attributor = llm_attr.LLMAttentionAttribution(model, tokenizer)
@@ -131,13 +131,13 @@ def run_attribution(
             )
             attr.attribution_matrix = attr.attribution_matrix * attr_b.attribution_matrix
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "ifr_all_positions":
         llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
         attr = llm_attributor.calculate_ifr_for_all_positions(example.prompt, target=target)
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "ifr_all_positions_output_only":
         llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
@@ -148,14 +148,14 @@ def run_attribution(
             sink_span=sink_span,
         )
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "ifr_span":
         llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
         span = example.sink_span if example.sink_span else None
         attr = llm_attributor.calculate_ifr_span(example.prompt, target=target, span=tuple(span) if span else None)
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "ifr_multi_hop":
         llm_attributor = llm_attr.LLMIFRAttribution(model, tokenizer)
@@ -167,13 +167,61 @@ def run_attribution(
             n_hops=testing_dict.get("n_hops", 1),
         )
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
+
+    if attr_func == "ifr_multi_hop_stop_words":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionImproved(model, tokenizer)
+        attr = llm_attributor.calculate_ifr_multi_hop_stop_words(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict.get("n_hops", 1),
+        )
+        token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
+        extra = {
+            "keep_prompt_token_indices": ft_ifr_improve.keep_token_indices(list(attr.prompt_tokens)),
+        }
+        return list(attr.get_all_token_attrs(token_span)), extra
+
+    if attr_func == "ifr_multi_hop_both":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionBoth(model, tokenizer)
+        attr = llm_attributor.calculate_ifr_multi_hop_both(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict.get("n_hops", 1),
+        )
+        token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
+        extra = {
+            "keep_prompt_token_indices": ft_ifr_improve.keep_token_indices(list(attr.prompt_tokens)),
+        }
+        return list(attr.get_all_token_attrs(token_span)), extra
+
+    if attr_func == "ifr_multi_hop_split_hop":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionSplitHop(model, tokenizer)
+        attr = llm_attributor.calculate_ifr_multi_hop_split_hop(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict.get("n_hops", 1),
+        )
+        token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "basic":
         llm_attributor = llm_attr.LLMBasicAttribution(model, tokenizer)
         attr = llm_attributor.calculate_basic_attribution(example.prompt, target=target)
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "attnlrp":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
@@ -186,13 +234,13 @@ def run_attribution(
             thinking_span=tuple(thinking_span) if thinking_span else None,
         )
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "attnlrp_aggregated":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         attr = llm_attributor.calculate_attnlrp_aggregated(example.prompt, target=target)
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     if attr_func == "attnlrp_aggregated_multi_hop":
         llm_attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
@@ -204,7 +252,7 @@ def run_attribution(
             n_hops=testing_dict.get("n_hops", 1),
         )
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
-        return list(attr.get_all_token_attrs(token_span))
+        return list(attr.get_all_token_attrs(token_span)), None
 
     raise ValueError(f"Unsupported attribution function '{attr_func}'.")
 
@@ -246,7 +294,7 @@ def evaluate_dataset_recovery_ruler(testing_dict, dataset_name: str, examples: L
         batch_size = max(1, math.floor((testing_dict["max_input_len"] - 100) / max(1, response_len)))
 
         sample_start = time.perf_counter()
-        attr_list = run_attribution(testing_dict, ex, batch_size, target)
+        attr_list, extra = run_attribution(testing_dict, ex, batch_size, target)
         durations.append(time.perf_counter() - sample_start)
 
         seq_attr = attr_list[0]
@@ -255,15 +303,33 @@ def evaluate_dataset_recovery_ruler(testing_dict, dataset_name: str, examples: L
             skipped += 1
             continue
 
-        scores = [
-            llm_evaluator.evaluate_attr_recovery(
-                attr,
-                prompt_len=prompt_len,
-                gold_prompt_token_indices=gold_prompt,
-                top_fraction=0.1,
-            )
-            for attr in attr_list
-        ]
+        if testing_dict["attr_func"] in ("ifr_multi_hop_stop_words", "ifr_multi_hop_both") and extra is not None:
+            import ft_ifr_improve
+
+            keep_prompt_token_indices = extra.get("keep_prompt_token_indices") or []
+            gold_filtered = [idx for idx in gold_prompt if int(idx) in set(int(x) for x in keep_prompt_token_indices)]
+            if not gold_filtered:
+                skipped += 1
+                continue
+            scores = [
+                ft_ifr_improve.evaluate_attr_recovery_skip_tokens(
+                    attr[:, :prompt_len],
+                    keep_prompt_token_indices=keep_prompt_token_indices,
+                    gold_prompt_token_indices=gold_prompt,
+                    top_fraction=0.1,
+                )
+                for attr in attr_list
+            ]
+        else:
+            scores = [
+                llm_evaluator.evaluate_attr_recovery(
+                    attr,
+                    prompt_len=prompt_len,
+                    gold_prompt_token_indices=gold_prompt,
+                    top_fraction=0.1,
+                )
+                for attr in attr_list
+            ]
         results.append(np.asarray(scores, dtype=np.float64))
 
     scores = np.stack(results, axis=0) if results else np.zeros((0, 3), dtype=np.float64)

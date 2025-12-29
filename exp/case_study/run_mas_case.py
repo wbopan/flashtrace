@@ -322,6 +322,7 @@ def mas_trace(
     prompt: str,
     generation: str,
     user_prompt_indices: Optional[Sequence[int]] = None,
+    keep_prompt_token_indices: Optional[Sequence[int]] = None,
 ) -> Dict[str, Any]:
     """Return a token-level faithfulness trace (RISE/MAS/RISE+AP) plus per-token deltas."""
 
@@ -342,10 +343,33 @@ def mas_trace(
 
     attr_cpu = attribution.detach().cpu()
     w = attr_cpu.sum(0)
-    sorted_attr_indices = torch.argsort(w, descending=True)
-    attr_sum = float(w.sum().item())
-
     P = int(w.numel())
+
+    if keep_prompt_token_indices is None:
+        keep = list(range(P))
+    else:
+        keep = []
+        seen: set[int] = set()
+        for raw in keep_prompt_token_indices:
+            try:
+                idx = int(raw)
+            except Exception:
+                continue
+            if 0 <= idx < P and idx not in seen:
+                keep.append(idx)
+                seen.add(idx)
+        keep.sort()
+
+    K = len(keep)
+    if K:
+        w_keep = w.index_select(0, torch.as_tensor(keep, dtype=torch.long))
+        sorted_local = torch.argsort(w_keep, descending=True)
+        sorted_attr_indices = torch.as_tensor([keep[int(i.item())] for i in sorted_local], dtype=torch.long)
+        attr_sum = float(w_keep.sum().item())
+    else:
+        sorted_attr_indices = torch.zeros((0,), dtype=torch.long)
+        attr_sum = 0.0
+
     if int(user_ids.shape[1]) != P:
         raise ValueError(
             "Prompt-side attribution length does not match tokenized user prompt length: "
@@ -368,14 +392,28 @@ def mas_trace(
             raise RuntimeError("Failed to locate user prompt token span inside formatted chat prompt.")
         prompt_positions = [int(user_start) + j for j in range(P)]
 
-    scores = np.zeros(P + 1, dtype=np.float64)
-    density = np.zeros(P + 1, dtype=np.float64)
+    scores = np.zeros(K + 1, dtype=np.float64)
+    density = np.zeros(K + 1, dtype=np.float64)
 
     scores[0] = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids_perturbed, generation_ids=gen_ids)
     density[0] = 1.0
 
+    if K == 0:
+        return {
+            "num_tokens": P,
+            "sorted_attr_indices": [],
+            "scores_raw": scores.tolist(),
+            "density": density.tolist(),
+            "normalized_model_response": scores.tolist(),
+            "alignment_penalty": np.zeros_like(scores).tolist(),
+            "corrected_scores": scores.tolist(),
+            "token_deltas_raw": np.zeros(P, dtype=np.float64).tolist(),
+            "attr_weights": np.zeros(P, dtype=np.float64).tolist(),
+            "metrics": {"RISE": 0.0, "MAS": 0.0, "RISE+AP": 0.0},
+        }
+
     if attr_sum <= 0:
-        density = np.linspace(1.0, 0.0, P + 1)
+        density = np.linspace(1.0, 0.0, K + 1)
 
     for step, idx_t in enumerate(sorted_attr_indices):
         idx = int(idx_t.item())
@@ -412,7 +450,9 @@ def mas_trace(
         per_token_delta[idx] = scores[step] - scores[step + 1]
 
     if attr_sum > 0:
-        attr_weights = (w.numpy() / (attr_sum + 1e-12)).astype(np.float64)
+        attr_weights = np.zeros(P, dtype=np.float64)
+        for idx in keep:
+            attr_weights[idx] = float(w[idx].item()) / (attr_sum + 1e-12)
     else:
         attr_weights = np.zeros(P, dtype=np.float64)
 
@@ -478,6 +518,42 @@ def compute_method_attribution(
         )
         return "FT-IFR (ifr_multi_hop)", attributor, result
 
+    if method in ("ft_improve", "ft_ifr_improve"):
+        import ft_ifr_improve
+
+        attributor = ft_ifr_improve.LLMIFRAttributionImproved(
+            model,
+            tokenizer,
+            chunk_tokens=chunk_tokens,
+            sink_chunk_tokens=sink_chunk_tokens,
+        )
+        result = attributor.calculate_ifr_multi_hop_stop_words(
+            prompt,
+            target=target,
+            sink_span=sink_span,
+            thinking_span=thinking_span,
+            n_hops=int(n_hops),
+        )
+        return "FT-IFR (ifr_multi_hop_stop_words)", attributor, result
+
+    if method == "ft_split_hop":
+        import ft_ifr_improve
+
+        attributor = ft_ifr_improve.LLMIFRAttributionSplitHop(
+            model,
+            tokenizer,
+            chunk_tokens=chunk_tokens,
+            sink_chunk_tokens=sink_chunk_tokens,
+        )
+        result = attributor.calculate_ifr_multi_hop_split_hop(
+            prompt,
+            target=target,
+            sink_span=sink_span,
+            thinking_span=thinking_span,
+            n_hops=int(n_hops),
+        )
+        return "FT-IFR (ifr_multi_hop_split_hop)", attributor, result
+
     if method == "attnlrp":
         attributor = llm_attr.LLMLRPAttribution(model, tokenizer)
         result = attributor.calculate_attnlrp_ft_hop0(
@@ -514,7 +590,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--method",
         type=str,
-        choices=["ifr", "ifr_all_positions_output_only", "ft", "ft_ifr", "attnlrp", "ft_attnlrp"],
+        choices=[
+            "ifr",
+            "ifr_all_positions_output_only",
+            "ft",
+            "ft_ifr",
+            "ft_improve",
+            "ft_ifr_improve",
+            "ft_split_hop",
+            "attnlrp",
+            "ft_attnlrp",
+        ],
         default="ft",
     )
     parser.add_argument("--model", type=str, default="qwen-8B", help="HF repo id (ignored if --model_path set).")
@@ -551,7 +637,12 @@ def main() -> None:
         visible = os.environ.get("CUDA_VISIBLE_DEVICES")
         print(f"[info] CUDA_VISIBLE_DEVICES={visible!r} torch.cuda.device_count()={torch.cuda.device_count()} device={device}")
 
-    method_key = "ft" if args.method == "ft_ifr" else args.method
+    if args.method == "ft_ifr":
+        method_key = "ft"
+    elif args.method == "ft_ifr_improve":
+        method_key = "ft_improve"
+    else:
+        method_key = args.method
 
     model_name = args.model_path if args.model_path is not None else args.model
     model, tokenizer = load_model(model_name, device)
@@ -608,6 +699,11 @@ def main() -> None:
     for variant_key, variant_label, variant_attr in variant_specs:
         prompt_len = int(seq_attr.shape[1] - seq_attr.shape[0])  # cols=(P+G), rows=G
         attr_prompt = variant_attr[:, :prompt_len]
+        keep_prompt_token_indices = None
+        if method_key == "ft_improve":
+            import ft_ifr_improve
+
+            keep_prompt_token_indices = ft_ifr_improve.keep_token_indices(list(getattr(attributor, "user_prompt_tokens", []) or []))
         trace = mas_trace(
             model,
             tokenizer,
@@ -615,6 +711,7 @@ def main() -> None:
             prompt=example.prompt,
             generation=generation_text,
             user_prompt_indices=getattr(attributor, "user_prompt_indices", None),
+            keep_prompt_token_indices=keep_prompt_token_indices,
         )
         trace["variant"] = variant_key
         trace["variant_label"] = variant_label

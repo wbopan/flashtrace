@@ -251,10 +251,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["ft", "ifr", "ifr_all_positions_output_only", "attnlrp", "ft_attnlrp"],
+        choices=["ft", "ft_improve", "ft_split_hop", "ifr", "ifr_all_positions_output_only", "attnlrp", "ft_attnlrp"],
         default="ft",
         help=(
             "ft = FlashTrace (multi-hop IFR); ifr = standard IFR span-aggregate; "
+            "ft_improve = FlashTrace (multi-hop IFR, stop-token soft deletion); "
+            "ft_split_hop = FlashTrace (split-hop IFR over segmented thinking span); "
             "ifr_all_positions_output_only = output-only IFR matrix + CAGE row/rec; "
             "attnlrp = AttnLRP hop0 (FT-AttnLRP span-aggregate); "
             "ft_attnlrp = FT-AttnLRP (multi-hop aggregated; exp2)."
@@ -343,10 +345,129 @@ def run_ft_multihop(
     return result, sink, thinking, debug_info
 
 
+def run_ft_multihop_improve(
+    example: ds_utils.CachedExample,
+    model: Any,
+    tokenizer: Any,
+    *,
+    n_hops: int,
+    sink_span: Optional[Sequence[int]],
+    thinking_span: Optional[Sequence[int]],
+    chunk_tokens: int,
+    sink_chunk_tokens: int,
+) -> Tuple[Any, Optional[Tuple[int, int]], Optional[Tuple[int, int]], Dict[str, Any]]:
+    """Execute experimental FT (multi-hop IFR) with stop-token soft deletion."""
+
+    import ft_ifr_improve
+
+    attr = ft_ifr_improve.LLMIFRAttributionImproved(
+        model,
+        tokenizer,
+        chunk_tokens=chunk_tokens,
+        sink_chunk_tokens=sink_chunk_tokens,
+    )
+
+    sink = tuple(sink_span) if sink_span is not None else tuple(example.sink_span) if example.sink_span else None
+    thinking = (
+        tuple(thinking_span)
+        if thinking_span is not None
+        else tuple(example.thinking_span) if example.thinking_span else None
+    )
+
+    result = attr.calculate_ifr_multi_hop_stop_words(
+        example.prompt,
+        target=example.target,
+        sink_span=sink,
+        thinking_span=thinking,
+        n_hops=n_hops,
+    )
+
+    debug_info: Dict[str, Any] = {
+        "full_prompt_tokens": list(getattr(attr, "prompt_tokens", []) or []),
+        "generation_tokens": list(getattr(attr, "generation_tokens", []) or []),
+        "user_prompt_indices": list(getattr(attr, "user_prompt_indices", []) or []),
+        "chat_prompt_indices": list(getattr(attr, "chat_prompt_indices", []) or []),
+        "prompt_ids": getattr(attr, "prompt_ids", None).detach().cpu().tolist() if getattr(attr, "prompt_ids", None) is not None else None,
+        "generation_ids": getattr(attr, "generation_ids", None).detach().cpu().tolist() if getattr(attr, "generation_ids", None) is not None else None,
+    }
+
+    raw_vectors = []
+    if result.metadata and "ifr" in result.metadata:
+        raw_ifr = result.metadata["ifr"].get("raw")
+        if raw_ifr is not None and hasattr(raw_ifr, "raw_attributions"):
+            try:
+                raw_vectors = [r.token_importance_total.detach().cpu() for r in raw_ifr.raw_attributions]
+            except Exception:
+                raw_vectors = []
+    debug_info["raw_hop_vectors"] = raw_vectors
+
+    return result, sink, thinking, debug_info
+
+
+def run_ft_multihop_split_hop(
+    example: ds_utils.CachedExample,
+    model: Any,
+    tokenizer: Any,
+    *,
+    n_hops: int,
+    sink_span: Optional[Sequence[int]],
+    thinking_span: Optional[Sequence[int]],
+    chunk_tokens: int,
+    sink_chunk_tokens: int,
+) -> Tuple[Any, Optional[Tuple[int, int]], Optional[Tuple[int, int]], Dict[str, Any]]:
+    """Execute experimental FT (split-hop IFR over segmented thinking span)."""
+
+    import ft_ifr_improve
+
+    attr = ft_ifr_improve.LLMIFRAttributionSplitHop(
+        model,
+        tokenizer,
+        chunk_tokens=chunk_tokens,
+        sink_chunk_tokens=sink_chunk_tokens,
+    )
+
+    sink = tuple(sink_span) if sink_span is not None else tuple(example.sink_span) if example.sink_span else None
+    thinking = (
+        tuple(thinking_span)
+        if thinking_span is not None
+        else tuple(example.thinking_span) if example.thinking_span else None
+    )
+
+    result = attr.calculate_ifr_multi_hop_split_hop(
+        example.prompt,
+        target=example.target,
+        sink_span=sink,
+        thinking_span=thinking,
+        n_hops=int(n_hops),
+    )
+
+    debug_info: Dict[str, Any] = {
+        "full_prompt_tokens": list(getattr(attr, "prompt_tokens", []) or []),
+        "generation_tokens": list(getattr(attr, "generation_tokens", []) or []),
+        "user_prompt_indices": list(getattr(attr, "user_prompt_indices", []) or []),
+        "chat_prompt_indices": list(getattr(attr, "chat_prompt_indices", []) or []),
+        "prompt_ids": getattr(attr, "prompt_ids", None).detach().cpu().tolist() if getattr(attr, "prompt_ids", None) is not None else None,
+        "generation_ids": getattr(attr, "generation_ids", None).detach().cpu().tolist() if getattr(attr, "generation_ids", None) is not None else None,
+    }
+
+    raw_vectors = []
+    if result.metadata and "ifr" in result.metadata:
+        raw_ifr = result.metadata["ifr"].get("raw")
+        if raw_ifr is not None and hasattr(raw_ifr, "raw_attributions"):
+            try:
+                raw_vectors = [r.token_importance_total.detach().cpu() for r in raw_ifr.raw_attributions]
+            except Exception:
+                raw_vectors = []
+    debug_info["raw_hop_vectors"] = raw_vectors
+
+    return result, sink, thinking, debug_info
+
+
 def make_output_stem(dataset_name: str, index: int, mode: str) -> str:
     safe_name = dataset_name.replace("/", "_").replace(" ", "_")
     prefix = {
         "ft": "ft_case_",
+        "ft_improve": "ft_improve_case_",
         "ifr": "ifr_case_",
         "ifr_all_positions_output_only": "ifr_output_only_case_",
         "attnlrp": "attnlrp_case_",
@@ -550,21 +671,46 @@ def main() -> None:
     raw_generation_ids: Optional[List[int]] = None
     attnlrp_raw_attributions: Optional[List[Any]] = None
 
-    if mode == "ft":
-        attr_result, sink_span, thinking_span, debug_info = run_ft_multihop(
-            example,
-            model,
-            tokenizer,
-            n_hops=args.n_hops,
-            sink_span=args.sink_span,
-            thinking_span=args.thinking_span,
-            chunk_tokens=args.chunk_tokens,
-            sink_chunk_tokens=args.sink_chunk_tokens,
-        )
+    if mode in ("ft", "ft_improve", "ft_split_hop"):
+        if mode == "ft":
+            attr_result, sink_span, thinking_span, debug_info = run_ft_multihop(
+                example,
+                model,
+                tokenizer,
+                n_hops=args.n_hops,
+                sink_span=args.sink_span,
+                thinking_span=args.thinking_span,
+                chunk_tokens=args.chunk_tokens,
+                sink_chunk_tokens=args.sink_chunk_tokens,
+            )
+        elif mode == "ft_improve":
+            attr_result, sink_span, thinking_span, debug_info = run_ft_multihop_improve(
+                example,
+                model,
+                tokenizer,
+                n_hops=args.n_hops,
+                sink_span=args.sink_span,
+                thinking_span=args.thinking_span,
+                chunk_tokens=args.chunk_tokens,
+                sink_chunk_tokens=args.sink_chunk_tokens,
+            )
+        elif mode == "ft_split_hop":
+            attr_result, sink_span, thinking_span, debug_info = run_ft_multihop_split_hop(
+                example,
+                model,
+                tokenizer,
+                n_hops=args.n_hops,
+                sink_span=args.sink_span,
+                thinking_span=args.thinking_span,
+                chunk_tokens=args.chunk_tokens,
+                sink_chunk_tokens=args.sink_chunk_tokens,
+            )
+        else:
+            raise ValueError(f"Unsupported mode={mode}")
         ifr_meta = (attr_result.metadata or {}).get("ifr") or {}
         hop_vectors_trimmed = list(ifr_meta.get("per_hop_projected") or [])
         if not hop_vectors_trimmed:
-            raise RuntimeError("No per-hop vectors found for ft mode.")
+            raise RuntimeError(f"No per-hop vectors found for {mode} mode.")
 
         prompt_tokens_trimmed = list(attr_result.prompt_tokens)
         generation_tokens_trimmed = list(attr_result.generation_tokens)

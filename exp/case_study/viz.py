@@ -156,7 +156,7 @@ def render_case_html(
                 title = None
             if title is not None:
                 return str(title)
-        if mode in ("ft", "ft_attnlrp"):
+        if mode in ("ft", "ft_improve", "ft_split_hop", "ft_attnlrp"):
             return f"Hop {panel_idx}"
         if mode == "ifr_all_positions_output_only":
             return f"IFR output-only panel {panel_idx}"

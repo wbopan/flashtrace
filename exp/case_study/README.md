@@ -20,10 +20,10 @@
 ## 快速开始
 ```bash
 # 根据本地模型修改 model/model_path
-# 多跳 FT（默认）
+# 多跳 FT（默认） ft_split_hop,ft_improve
 python exp/case_study/run_ifr_case.py \
-  --mode ft \
-  --dataset exp/exp2/data/short-morehopqa.jsonl \
+  --mode ft_split_hop \
+  --dataset exp/exp2/data/morehopqa.jsonl \
   --index 0 \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \

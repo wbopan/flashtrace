@@ -49,7 +49,7 @@ def _resolve_indices_to_explain_token_span(
     return [0, end_tok]
 
 
-def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], target = None) -> list[torch.Tensor]:
+def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], target = None) -> tuple[list[torch.Tensor], dict | None]:
     model = testing_dict["model"]
     tokenizer = testing_dict["tokenizer"]
 
@@ -120,6 +120,45 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
                 renorm_threshold=renorm_threshold,
                 observation_mask=testing_dict.get("observation_mask"),
             )
+        elif attr_func == "ifr_multi_hop_stop_words":
+            import ft_ifr_improve
+
+            llm_attributor = ft_ifr_improve.LLMIFRAttributionImproved(model, tokenizer)
+            attr = llm_attributor.calculate_ifr_multi_hop_stop_words(
+                prompt,
+                target=target,
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
+                n_hops=testing_dict.get("n_hops", 1),
+                renorm_threshold=renorm_threshold,
+                observation_mask=testing_dict.get("observation_mask"),
+            )
+        elif attr_func == "ifr_multi_hop_both":
+            import ft_ifr_improve
+
+            llm_attributor = ft_ifr_improve.LLMIFRAttributionBoth(model, tokenizer)
+            attr = llm_attributor.calculate_ifr_multi_hop_both(
+                prompt,
+                target=target,
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
+                n_hops=testing_dict.get("n_hops", 1),
+                renorm_threshold=renorm_threshold,
+                observation_mask=testing_dict.get("observation_mask"),
+            )
+        elif attr_func == "ifr_multi_hop_split_hop":
+            import ft_ifr_improve
+
+            llm_attributor = ft_ifr_improve.LLMIFRAttributionSplitHop(model, tokenizer)
+            attr = llm_attributor.calculate_ifr_multi_hop_split_hop(
+                prompt,
+                target=target,
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
+                n_hops=testing_dict.get("n_hops", 1),
+                renorm_threshold=renorm_threshold,
+                observation_mask=testing_dict.get("observation_mask"),
+            )
         else:
             raise ValueError(f"Unsupported IFR attribution function '{testing_dict['attr_func']}'.")
 
@@ -159,7 +198,16 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
     else:
         raise ValueError(f"Unsupported attribution function '{testing_dict['attr_func']}'.")
 
-    return attributions
+    extra = None
+    if testing_dict["attr_func"].lower() in ("ifr_multi_hop_stop_words", "ifr_multi_hop_both"):
+        import ft_ifr_improve
+
+        extra = {
+            "keep_prompt_token_indices": ft_ifr_improve.keep_token_indices(list(attr.prompt_tokens)),
+            "user_prompt_indices": list(getattr(llm_attributor, "user_prompt_indices", []) or []),
+        }
+
+    return attributions, extra
 
 def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, target = None) -> np.ndarray[float]:
     tokenizer = testing_dict["tokenizer"]
@@ -179,14 +227,28 @@ def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, t
 
     # We run an attribution on the input
     # A list of attribution tensors will be returned and scored individually.
-    attr_list = run_attribution(testing_dict, prompt, batch_size, indices_to_explain = indices_to_explain, target = target)
+    attr_list, extra = run_attribution(testing_dict, prompt, batch_size, indices_to_explain = indices_to_explain, target = target)
 
     seq_attr = attr_list[0]
     prompt_len = int(seq_attr.shape[1] - seq_attr.shape[0])  # cols=(P+G), rows=G
 
     for i in range(len(attr_list)):
         attr = attr_list[i][:, :prompt_len]
-        scores.append(llm_evaluator.faithfulness_test(attr, prompt, generation)) # [3 scores]
+        if testing_dict["attr_func"].lower() in ("ifr_multi_hop_stop_words", "ifr_multi_hop_both") and extra is not None:
+            import ft_ifr_improve
+
+            scores.append(
+                ft_ifr_improve.faithfulness_test_skip_tokens(
+                    llm_evaluator,
+                    attr,
+                    prompt,
+                    generation,
+                    keep_prompt_token_indices=extra.get("keep_prompt_token_indices") or [],
+                    user_prompt_indices=extra.get("user_prompt_indices"),
+                )
+            )
+        else:
+            scores.append(llm_evaluator.faithfulness_test(attr, prompt, generation)) # [3 scores]
 
     return np.array(scores)
 
