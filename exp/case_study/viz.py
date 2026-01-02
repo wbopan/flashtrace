@@ -156,10 +156,12 @@ def render_case_html(
                 title = None
             if title is not None:
                 return str(title)
-        if mode in ("ft", "ft_improve", "ft_split_hop", "ft_attnlrp"):
+        if mode in ("ft", "ft_improve", "ft_split_hop", "ifr_in_all_gen", "ft_attnlrp"):
             return f"Hop {panel_idx}"
         if mode == "ifr_all_positions_output_only":
             return f"IFR output-only panel {panel_idx}"
+        if mode == "ifr_all_positions":
+            return f"IFR all-positions panel {panel_idx}"
         if mode == "attnlrp":
             return "AttnLRP (sink-span aggregate)"
         return "IFR (sink-span aggregate)"
@@ -246,8 +248,12 @@ def render_case_html(
 
     if mode == "ft":
         mode_label = "FT Multi-hop (IFR)"
+    elif mode == "ifr_in_all_gen":
+        mode_label = "IFR In-all-gen (multi-hop)"
     elif mode == "ifr":
         mode_label = "IFR Standard"
+    elif mode == "ifr_all_positions":
+        mode_label = "IFR All-positions"
     elif mode == "ifr_all_positions_output_only":
         mode_label = "IFR Output-only (all positions)"
     elif mode == "attnlrp":
@@ -257,10 +263,10 @@ def render_case_html(
     else:
         mode_label = str(mode)
 
-    if mode in ("ft", "ft_attnlrp"):
+    if mode in ("ft", "ifr_in_all_gen", "ft_attnlrp"):
         view_key = "Recursive hops"
         view_val = case_meta.get("n_hops")
-    elif mode in ("ifr", "ifr_all_positions_output_only"):
+    elif mode in ("ifr", "ifr_all_positions", "ifr_all_positions_output_only"):
         view_key = "IFR view"
         view_val = ifr_view
     elif mode == "attnlrp":

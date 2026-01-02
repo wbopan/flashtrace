@@ -169,6 +169,20 @@ def run_attribution(
         token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
         return list(attr.get_all_token_attrs(token_span)), None
 
+    if attr_func == "ifr_in_all_gen":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionInAllGen(model, tokenizer)
+        attr = llm_attributor.calculate_ifr_in_all_gen(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict.get("n_hops", 1),
+        )
+        token_span = _resolve_indices_to_explain_token_span(attr, example.indices_to_explain)
+        return list(attr.get_all_token_attrs(token_span)), None
+
     if attr_func == "ifr_multi_hop_stop_words":
         import ft_ifr_improve
 

@@ -4,7 +4,9 @@
 Modes supported (all emit JSON + HTML under ``exp/case_study/out``):
 
 - ``ft``: FlashTrace (current project implementation; multi-hop IFR)
+- ``ifr_in_all_gen``: Experimental multi-hop IFR variant (hops over CoT+output; scheme B, aligns with exp/exp2)
 - ``ifr``: IFR span-aggregate visualization (single hop; one panel)
+- ``ifr_all_positions``: IFR full matrix + CAGE (Row/Recursive panels)
 - ``ifr_all_positions_output_only``: IFR output-only token matrix + CAGE (Row/Recursive panels)
 - ``attnlrp``: AttnLRP hop0 (reuse FT-AttnLRP span-aggregate; visualize raw hop0 vector)
 - ``ft_attnlrp``: FT-AttnLRP (multi-hop aggregated AttnLRP; matches exp/exp2)
@@ -251,10 +253,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["ft", "ft_improve", "ft_split_hop", "ifr", "ifr_all_positions_output_only", "attnlrp", "ft_attnlrp"],
+        choices=[
+            "ft",
+            "ft_improve",
+            "ft_split_hop",
+            "ifr_in_all_gen",
+            "ifr",
+            "ifr_all_positions",
+            "ifr_all_positions_output_only",
+            "attnlrp",
+            "ft_attnlrp",
+        ],
         default="ft",
         help=(
             "ft = FlashTrace (multi-hop IFR); ifr = standard IFR span-aggregate; "
+            "ifr_in_all_gen = multi-hop IFR over CoT+output (scheme B; exp2-aligned); "
+            "ifr_all_positions = full IFR matrix + CAGE row/rec; "
             "ft_improve = FlashTrace (multi-hop IFR, stop-token soft deletion); "
             "ft_split_hop = FlashTrace (split-hop IFR over segmented thinking span); "
             "ifr_all_positions_output_only = output-only IFR matrix + CAGE row/rec; "
@@ -463,12 +477,72 @@ def run_ft_multihop_split_hop(
     return result, sink, thinking, debug_info
 
 
+def run_ifr_in_all_gen(
+    example: ds_utils.CachedExample,
+    model: Any,
+    tokenizer: Any,
+    *,
+    n_hops: int,
+    sink_span: Optional[Sequence[int]],
+    thinking_span: Optional[Sequence[int]],
+    chunk_tokens: int,
+    sink_chunk_tokens: int,
+) -> Tuple[Any, Optional[Tuple[int, int]], Optional[Tuple[int, int]], Dict[str, Any]]:
+    """Execute experimental IFR variant: multi-hop over all generation (CoT + output)."""
+
+    import ft_ifr_improve
+
+    attr = ft_ifr_improve.LLMIFRAttributionInAllGen(
+        model,
+        tokenizer,
+        chunk_tokens=chunk_tokens,
+        sink_chunk_tokens=sink_chunk_tokens,
+    )
+
+    sink = tuple(sink_span) if sink_span is not None else tuple(example.sink_span) if example.sink_span else None
+    thinking = (
+        tuple(thinking_span)
+        if thinking_span is not None
+        else tuple(example.thinking_span) if example.thinking_span else None
+    )
+
+    result = attr.calculate_ifr_in_all_gen(
+        example.prompt,
+        target=example.target,
+        sink_span=sink,
+        thinking_span=thinking,
+        n_hops=int(n_hops),
+    )
+
+    debug_info: Dict[str, Any] = {
+        "full_prompt_tokens": list(getattr(attr, "prompt_tokens", []) or []),
+        "generation_tokens": list(getattr(attr, "generation_tokens", []) or []),
+        "user_prompt_indices": list(getattr(attr, "user_prompt_indices", []) or []),
+        "chat_prompt_indices": list(getattr(attr, "chat_prompt_indices", []) or []),
+        "prompt_ids": getattr(attr, "prompt_ids", None).detach().cpu().tolist() if getattr(attr, "prompt_ids", None) is not None else None,
+        "generation_ids": getattr(attr, "generation_ids", None).detach().cpu().tolist() if getattr(attr, "generation_ids", None) is not None else None,
+    }
+
+    raw_vectors = []
+    if result.metadata and "ifr" in result.metadata:
+        raw_ifr = result.metadata["ifr"].get("raw")
+        if raw_ifr is not None and hasattr(raw_ifr, "raw_attributions"):
+            try:
+                raw_vectors = [r.token_importance_total.detach().cpu() for r in raw_ifr.raw_attributions]
+            except Exception:
+                raw_vectors = []
+    debug_info["raw_hop_vectors"] = raw_vectors
+
+    return result, sink, thinking, debug_info
+
+
 def make_output_stem(dataset_name: str, index: int, mode: str) -> str:
     safe_name = dataset_name.replace("/", "_").replace(" ", "_")
     prefix = {
         "ft": "ft_case_",
         "ft_improve": "ft_improve_case_",
         "ifr": "ifr_case_",
+        "ifr_all_positions": "ifr_all_positions_case_",
         "ifr_all_positions_output_only": "ifr_output_only_case_",
         "attnlrp": "attnlrp_case_",
         "ft_attnlrp": "ft_attnlrp_case_",
@@ -671,7 +745,7 @@ def main() -> None:
     raw_generation_ids: Optional[List[int]] = None
     attnlrp_raw_attributions: Optional[List[Any]] = None
 
-    if mode in ("ft", "ft_improve", "ft_split_hop"):
+    if mode in ("ft", "ft_improve", "ft_split_hop", "ifr_in_all_gen"):
         if mode == "ft":
             attr_result, sink_span, thinking_span, debug_info = run_ft_multihop(
                 example,
@@ -696,6 +770,17 @@ def main() -> None:
             )
         elif mode == "ft_split_hop":
             attr_result, sink_span, thinking_span, debug_info = run_ft_multihop_split_hop(
+                example,
+                model,
+                tokenizer,
+                n_hops=args.n_hops,
+                sink_span=args.sink_span,
+                thinking_span=args.thinking_span,
+                chunk_tokens=args.chunk_tokens,
+                sink_chunk_tokens=args.sink_chunk_tokens,
+            )
+        elif mode == "ifr_in_all_gen":
+            attr_result, sink_span, thinking_span, debug_info = run_ifr_in_all_gen(
                 example,
                 model,
                 tokenizer,
@@ -833,6 +918,60 @@ def main() -> None:
 
         ifr_meta = dict((attr_result.metadata or {}).get("ifr") or {})
         ifr_meta["ifr_view"] = "all_positions_output_only (row+rec)"
+        ifr_meta["panel_titles"] = ["Row attribution", "Recursive attribution (CAGE)"]
+        ifr_meta["indices_to_explain"] = indices_to_explain
+        method_meta = {"ifr": analysis.tensor_to_list(ifr_meta)}
+
+    elif mode == "ifr_all_positions":
+        # IFR all-positions (full generation) + token-level CAGE (row/recursive) derived from the matrix.
+        attr = llm_attr.LLMIFRAttribution(
+            model,
+            tokenizer,
+            chunk_tokens=args.chunk_tokens,
+            sink_chunk_tokens=args.sink_chunk_tokens,
+        )
+        sink_span = tuple(args.sink_span) if args.sink_span is not None else tuple(example.sink_span) if example.sink_span else None
+        thinking_span = tuple(args.thinking_span) if args.thinking_span is not None else tuple(example.thinking_span) if example.thinking_span else sink_span
+
+        if sink_span is None:
+            raise ValueError(
+                "sink_span is required for ifr_all_positions mode (use dataset sink_span or pass --sink_span)."
+            )
+
+        attr_result = attr.calculate_ifr_for_all_positions(
+            example.prompt,
+            target=example.target,
+        )
+
+        indices_to_explain = list(sink_span)
+        _, row_attr, rec_attr = attr_result.get_all_token_attrs(indices_to_explain)
+        row_vec = row_attr.squeeze(0).detach().cpu()
+        rec_vec = rec_attr.squeeze(0).detach().cpu()
+
+        hop_vectors_trimmed = [row_vec, rec_vec]
+
+        prompt_tokens_trimmed = list(attr.user_prompt_tokens)
+        generation_tokens_trimmed = list(attr.generation_tokens)
+
+        raw_prompt_ids = attr.prompt_ids.detach().cpu().tolist()[0]
+        raw_generation_ids = attr.generation_ids.detach().cpu().tolist()[0]
+        user_prompt_indices = list(getattr(attr, "user_prompt_indices", []) or [])
+        chat_prompt_indices = list(getattr(attr, "chat_prompt_indices", []) or [])
+        prompt_len_full = len(raw_prompt_ids)
+
+        gen_len = len(raw_generation_ids or [])
+        hop_vectors_raw = [
+            _lift_trimmed_to_full(
+                v,
+                prompt_len_full=int(prompt_len_full or 0),
+                gen_len=gen_len,
+                user_prompt_indices=user_prompt_indices,
+            )
+            for v in hop_vectors_trimmed
+        ]
+
+        ifr_meta = dict((attr_result.metadata or {}).get("ifr") or {})
+        ifr_meta["ifr_view"] = "all_positions (row+rec)"
         ifr_meta["panel_titles"] = ["Row attribution", "Recursive attribution (CAGE)"]
         ifr_meta["indices_to_explain"] = indices_to_explain
         method_meta = {"ifr": analysis.tensor_to_list(ifr_meta)}

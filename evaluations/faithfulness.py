@@ -120,6 +120,19 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
                 renorm_threshold=renorm_threshold,
                 observation_mask=testing_dict.get("observation_mask"),
             )
+        elif attr_func == "ifr_in_all_gen":
+            import ft_ifr_improve
+
+            llm_attributor = ft_ifr_improve.LLMIFRAttributionInAllGen(model, tokenizer)
+            attr = llm_attributor.calculate_ifr_in_all_gen(
+                prompt,
+                target=target,
+                sink_span=tuple(testing_dict.get("sink_span")) if testing_dict.get("sink_span") is not None else None,
+                thinking_span=tuple(testing_dict.get("thinking_span")) if testing_dict.get("thinking_span") is not None else None,
+                n_hops=testing_dict.get("n_hops", 1),
+                renorm_threshold=renorm_threshold,
+                observation_mask=testing_dict.get("observation_mask"),
+            )
         elif attr_func == "ifr_multi_hop_stop_words":
             import ft_ifr_improve
 

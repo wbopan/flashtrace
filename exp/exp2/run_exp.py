@@ -382,6 +382,22 @@ def run_attribution(
             thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
             n_hops=testing_dict["n_hops"],
         )
+    elif attr_func == "ifr_in_all_gen":
+        import ft_ifr_improve
+
+        llm_attributor = ft_ifr_improve.LLMIFRAttributionInAllGen(
+            model,
+            tokenizer,
+            chunk_tokens=testing_dict["chunk_tokens"],
+            sink_chunk_tokens=testing_dict["sink_chunk_tokens"],
+        )
+        attr = llm_attributor.calculate_ifr_in_all_gen(
+            example.prompt,
+            target=target,
+            sink_span=tuple(example.sink_span) if example.sink_span else None,
+            thinking_span=tuple(example.thinking_span) if example.thinking_span else None,
+            n_hops=testing_dict["n_hops"],
+        )
     elif attr_func == "ifr_multi_hop_stop_words":
         import ft_ifr_improve
 
