@@ -48,10 +48,18 @@ class RateLimitError(RuntimeError):
         super().__init__(detail)
         self.wait_seconds = wait_seconds
 
+# GEN_SYSTEM_PROMPT = (
+#     "You are a careful reasoning assistant. "
+#     "Before answering, engage in an extremely detailed and exhaustive chain of thought. **No fewer than 2k tokens.** "
+#     "Do not skip any logical steps, even if they seem obvious. "
+#     "Process this freely and naturally without using specific headers or strict formatting. "
+#     "When you reach the conclusion, wrap the entire final sentence containing the answer inside \\box{}. "
+#     "Ensure the box wraps the **sentence** that naturally delivers the answer. DO NOT rewrite the answer word for the box separately."
+# )
+
 GEN_SYSTEM_PROMPT = (
-    "You are a careful reasoning assistant. "
-    "Before answering, engage in an extremely detailed and exhaustive chain of thought. **No fewer than 2k tokens.** "
-    "Do not skip any logical steps, even if they seem obvious. "
+    "You are a reasoning assistant. "
+    "Before answering, engage in an chain of thought. "
     "Process this freely and naturally without using specific headers or strict formatting. "
     "When you reach the conclusion, wrap the entire final sentence containing the answer inside \\box{}. "
     "Ensure the box wraps the **sentence** that naturally delivers the answer. DO NOT rewrite the answer word for the box separately."

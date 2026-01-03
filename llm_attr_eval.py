@@ -126,12 +126,20 @@ class LLMAttributionEvaluator():
         # add back on the last sentence that we left out
         return result
 
-    def faithfulness_test(self, attribution: torch.Tensor, prompt: str, generation: str) -> Tuple[float, float, float]:
-        """Token-level MAS/RISE faithfulness via guided deletion (no optimization).
+    def faithfulness_test(
+        self,
+        attribution: torch.Tensor,
+        prompt: str,
+        generation: str,
+        *,
+        k: int = 20,
+    ) -> Tuple[float, float, float]:
+        """Token-level MAS/RISE faithfulness via guided deletion in k perturbation steps (no optimization).
 
         attribution: [R, P] token attribution on *prompt-side tokens* only.
         prompt: raw prompt string (NOT sentence-segmented).
         generation: target generation string (think + output); scored as generation + eos.
+        k: number of perturbation steps; each step perturbs ~1/k of prompt tokens.
         """
 
         def auc(arr: np.ndarray) -> float:
@@ -170,8 +178,16 @@ class LLMAttributionEvaluator():
                 "Prompt-side attribution length does not match tokenized user prompt length: "
                 f"attr P={P}, user_prompt P={int(user_ids.shape[1])}."
             )
-        scores = np.zeros(P + 1, dtype=np.float64)
-        density = np.zeros(P + 1, dtype=np.float64)
+        if P > 0:
+            steps = int(k) if k is not None else 0
+            if steps <= 0:
+                steps = 1
+            steps = min(steps, P)
+        else:
+            steps = 0
+
+        scores = np.zeros(steps + 1, dtype=np.float64)
+        density = np.zeros(steps + 1, dtype=np.float64)
 
         scores[0] = self.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
         density[0] = 1.0
@@ -180,14 +196,25 @@ class LLMAttributionEvaluator():
             return auc(scores), auc(scores), auc(scores)
 
         if attr_sum <= 0:
-            density = np.linspace(1.0, 0.0, P + 1)
+            density = np.linspace(1.0, 0.0, steps + 1)
 
-        for i, idx in enumerate(sorted_attr_indices):
-            j = int(idx.item())
-            prompt_ids_perturbed[0, user_start + j] = pad_token_id
-            scores[i + 1] = self.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
+        base = P // steps
+        remainder = P % steps
+        start = 0
+        for step in range(steps):
+            size = base + (1 if step < remainder else 0)
+            group = sorted_attr_indices[start : start + size]
+            start += size
+
+            for idx in group:
+                j = int(idx.item())
+                prompt_ids_perturbed[0, user_start + j] = pad_token_id
+            scores[step + 1] = (
+                self.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
+            )
             if attr_sum > 0:
-                density[i + 1] = density[i] - (float(w[j].item()) / attr_sum)
+                dec = float(w.index_select(0, group).sum().item()) / attr_sum
+                density[step + 1] = density[step] - dec
 
         min_normalized_pred = 1.0
         normalized_model_response = scores.copy()

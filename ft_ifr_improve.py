@@ -79,8 +79,9 @@ def faithfulness_test_skip_tokens(
     *,
     keep_prompt_token_indices: Sequence[int],
     user_prompt_indices: Optional[Sequence[int]] = None,
+    k: int = 20,
 ) -> Tuple[float, float, float]:
-    """Token-level MAS/RISE faithfulness via guided deletion, skipping specified prompt tokens.
+    """Token-level MAS/RISE faithfulness via guided deletion in k perturbation steps, skipping specified prompt tokens.
 
     This is a drop-in replacement for llm_attr_eval.LLMAttributionEvaluator.faithfulness_test
     when an experimental protocol wants to soft-delete some prompt tokens (e.g., stop tokens)
@@ -122,8 +123,16 @@ def faithfulness_test_skip_tokens(
     keep.sort()
 
     K = len(keep)
-    scores = np.zeros(K + 1, dtype=np.float64)
-    density = np.zeros(K + 1, dtype=np.float64)
+    if K > 0:
+        steps = int(k) if k is not None else 0
+        if steps <= 0:
+            steps = 1
+        steps = min(steps, K)
+    else:
+        steps = 0
+
+    scores = np.zeros(steps + 1, dtype=np.float64)
+    density = np.zeros(steps + 1, dtype=np.float64)
 
     if user_prompt_indices is not None:
         prompt_positions = [int(x) for x in user_prompt_indices]
@@ -155,16 +164,25 @@ def faithfulness_test_skip_tokens(
     attr_sum = float(w_keep.sum().item())
 
     if attr_sum <= 0:
-        density = np.linspace(1.0, 0.0, K + 1)
+        density = np.linspace(1.0, 0.0, steps + 1)
 
-    for step, idx in enumerate(sorted_keep):
-        abs_pos = int(prompt_positions[int(idx)])
-        prompt_ids_perturbed[0, abs_pos] = pad_token_id
+    base = K // steps
+    remainder = K % steps
+    start = 0
+    for step in range(steps):
+        size = base + (1 if step < remainder else 0)
+        group = sorted_keep[start : start + size]
+        start += size
+
+        for idx in group:
+            abs_pos = int(prompt_positions[int(idx)])
+            prompt_ids_perturbed[0, abs_pos] = pad_token_id
         scores[step + 1] = (
             llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
         )
         if attr_sum > 0:
-            density[step + 1] = density[step] - (float(w[int(idx)].item()) / attr_sum)
+            dec = float(w.index_select(0, torch.as_tensor(group, dtype=torch.long)).sum().item()) / attr_sum
+            density[step + 1] = density[step] - dec
 
     min_normalized_pred = 1.0
     normalized_model_response = scores.copy()
@@ -786,12 +804,18 @@ class LLMIFRAttributionSplitHop(llm_attr.LLMIFRAttribution):
 
         return self._finalize_result(score_array, metadata=meta)
 
+### both
 
 class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
-    """Experimental FT-IFR variant combining stop-token soft deletion and split-hop."""
+    """Experimental FT-IFR variant combining stop-token soft deletion with in_all_gen multi-hop.
 
-    def _split_hop_config(self, *, num_segments: int) -> SplitHopConfig:
-        return SplitHopConfig(num_segments=int(num_segments))
+    Notes
+    -----
+    - Internally, hop0 and subsequent hops aggregate over all_gen_span (= CoT + output).
+    - The EOS token (assumed to be the last generation token) is excluded from all spans.
+    - Stop tokens are soft-deleted from hop aggregation weights and observation vectors.
+    - Returned attribution matrix follows scheme B (rows filled for sink_span_generation).
+    """
 
     def _stop_config(self) -> StopTokenConfig:
         return StopTokenConfig(
@@ -815,10 +839,6 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
         input_ids_all, attn_mask, prompt_len_full, gen_len = self._ensure_generation(prompt, target)
         total_len = int(input_ids_all.shape[1])
 
-        num_segments = int(n_hops) if n_hops is not None else int(SPLIT_HOP_NUM_SEGMENTS)
-        if num_segments < 0:
-            num_segments = 0
-
         if gen_len == 0:
             empty = torch.zeros((0, total_len), dtype=torch.float32)
             metadata = {
@@ -828,28 +848,65 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
                     "thinking_span_generation": thinking_span,
                     "renorm_threshold": renorm_threshold,
                     "stop_config": self._stop_config().__dict__,
-                    "split_hop_config": self._split_hop_config(num_segments=num_segments).__dict__,
                     "note": "No generation tokens; returning empty attribution matrix.",
                 }
             }
             return self._finalize_result(empty, metadata=metadata)
 
-        if sink_span is None:
-            sink_span = (0, gen_len - 1)
-        span_start, span_end = sink_span
-        if span_start < 0 or span_end < span_start or span_end >= gen_len:
-            raise ValueError(f"Invalid sink_span ({span_start}, {span_end}) for generation length {gen_len}.")
+        # Exclude EOS (assumed to be the last generation token).
+        end_no_eos = int(gen_len) - 2
+        if end_no_eos < 0:
+            score_array = torch.full((int(gen_len), total_len), torch.nan, dtype=torch.float32)
+            metadata = {
+                "ifr": {
+                    "type": "multi_hop_both",
+                    "sink_span_generation": sink_span,
+                    "thinking_span_generation": thinking_span,
+                    "renorm_threshold": renorm_threshold,
+                    "stop_config": self._stop_config().__dict__,
+                    "note": "No non-EOS generation tokens; returning NaN attribution matrix.",
+                }
+            }
+            return self._finalize_result(score_array, metadata=metadata)
 
-        if thinking_span is None:
-            thinking_span = sink_span
-        think_start, think_end = thinking_span
-        if think_start < 0 or think_end < think_start or think_end >= gen_len:
-            raise ValueError(f"Invalid thinking_span ({think_start}, {think_end}) for generation length {gen_len}.")
+        # Scheme B: fill only sink_span rows; default to all_gen_span.
+        if sink_span is None:
+            span_start, span_end = (0, end_no_eos)
+        else:
+            span_start, span_end = sink_span
+        if span_start < 0 or span_end < span_start or span_end > end_no_eos:
+            raise ValueError(
+                f"Invalid sink_span ({span_start}, {span_end}) for generation length {gen_len} with EOS excluded."
+            )
+
+        think_start_abs: Optional[int] = None
+        think_end_abs: Optional[int] = None
+        if thinking_span is not None:
+            think_start, think_end = thinking_span
+            if think_start < 0 or think_end < think_start or think_end > end_no_eos:
+                raise ValueError(
+                    f"Invalid thinking_span ({think_start}, {think_end}) for generation length {gen_len} with EOS excluded."
+                )
+            think_start_abs = int(prompt_len_full) + int(think_start)
+            think_end_abs = int(prompt_len_full) + int(think_end)
+
+        # Internal hop span: CoT+output when both spans are provided; otherwise default all_gen.
+        if sink_span is not None and thinking_span is not None:
+            all_gen_start = min(int(span_start), int(thinking_span[0]))
+            all_gen_end = max(int(span_end), int(thinking_span[1]))
+        else:
+            all_gen_start = 0
+            all_gen_end = int(end_no_eos)
+
+        all_gen_start = max(0, int(all_gen_start))
+        all_gen_end = min(int(end_no_eos), int(all_gen_end))
+        if all_gen_end < all_gen_start:
+            raise ValueError("Derived all_gen_span is empty after EOS exclusion and bounds checking.")
 
         sink_start_abs = int(prompt_len_full) + int(span_start)
         sink_end_abs = int(prompt_len_full) + int(span_end)
-        think_start_abs = int(prompt_len_full) + int(think_start)
-        think_end_abs = int(prompt_len_full) + int(think_end)
+        all_gen_start_abs = int(prompt_len_full) + int(all_gen_start)
+        all_gen_end_abs = int(prompt_len_full) + int(all_gen_end)
 
         obs_mask_tensor: Optional[torch.Tensor] = None
         if observation_mask is not None:
@@ -877,21 +934,24 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
-        sink_gen_tokens = list(getattr(self, "generation_tokens", []) or [])
-        sink_stops = []
-        for gi in range(int(span_start), int(span_end) + 1):
-            tok = sink_gen_tokens[gi] if 0 <= gi < len(sink_gen_tokens) else ""
-            sink_stops.append(is_stop_token(tok))
+        hop_count = max(0, int(n_hops))
+
+        # Base hop: aggregate over all_gen_span, excluding stop tokens from the sink weights.
+        gen_tokens = list(getattr(self, "generation_tokens", []) or [])
+        span_stops = []
+        for gi in range(int(all_gen_start), int(all_gen_end) + 1):
+            tok = gen_tokens[gi] if 0 <= gi < len(gen_tokens) else ""
+            span_stops.append(is_stop_token(tok))
         base_weights = None
-        if any(sink_stops):
+        if any(span_stops):
             base_weights = torch.as_tensor(
-                [0.0 if st else 1.0 for st in sink_stops],
+                [0.0 if st else 1.0 for st in span_stops],
                 dtype=params.model_dtype,
             )
 
         base_ifr_raw = compute_ifr_sentence_aggregate(
-            sink_start=sink_start_abs,
-            sink_end=sink_end_abs,
+            sink_start=all_gen_start_abs,
+            sink_end=all_gen_end_abs,
             cache=cache,
             attentions=attentions,
             weight_pack=weight_pack,
@@ -899,7 +959,13 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             renorm_threshold=renorm,
             sink_weights=base_weights,
         )
-        base_total = base_ifr_raw.token_importance_total.to(dtype=torch.float32) * stop_keep_mask_full
+        base_total = torch.nan_to_num(
+            base_ifr_raw.token_importance_total.to(dtype=torch.float32),
+            nan=0.0,
+            posinf=0.0,
+            neginf=0.0,
+        )
+        base_total = base_total * stop_keep_mask_full
         base_ifr = IFRAggregate(
             per_layer=base_ifr_raw.per_layer,
             token_importance_total=base_total,
@@ -908,12 +974,13 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             resid_ffn_importance_per_layer=base_ifr_raw.resid_ffn_importance_per_layer,
         )
 
+        # Observation mask: respect provided observation_mask, otherwise follow in_all_gen scheme B,
+        # and then apply stop-token masking so stop tokens are removed from the observation path.
         if obs_mask_tensor is None:
             obs_mask = torch.ones((total_len,), dtype=torch.float32)
-            obs_mask[int(think_start_abs) : min(int(think_end_abs) + 1, total_len)] = 0.0
-            obs_mask[int(sink_start_abs) : min(int(sink_end_abs) + 1, total_len)] = 0.0
-            if int(think_end_abs) + 1 < total_len:
-                obs_mask[int(think_end_abs) + 1 :] = 0.0
+            obs_mask[int(all_gen_start_abs) : min(int(all_gen_end_abs) + 1, total_len)] = 0.0
+            if int(all_gen_end_abs) + 1 < total_len:
+                obs_mask[int(all_gen_end_abs) + 1 :] = 0.0
         else:
             obs_mask = obs_mask_tensor.clone().to(dtype=torch.float32)
             if int(obs_mask.shape[0]) != int(total_len):
@@ -925,98 +992,85 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
         obs_accum = base_obs.clone()
         per_hop_obs: List[torch.Tensor] = []
 
-        if num_segments <= 0:
-            segments_gen = []
-        else:
-            segments_gen = _split_span_equal(int(think_start), int(think_end), num_segments)
-        segments_abs: List[Tuple[int, int]] = [
-            (int(prompt_len_full) + int(s), int(prompt_len_full) + int(e)) for s, e in segments_gen
-        ]
-
-        pending_weights: List[torch.Tensor] = [
-            base_total[s_abs : e_abs + 1].clone().to(dtype=torch.float32) for (s_abs, e_abs) in segments_abs
-        ]
-
         raw_attributions: List[IFRAggregate] = [base_ifr]
-        hop_details: List[Dict[str, Any]] = []
 
-        for seg_idx in range(len(segments_abs) - 1, -1, -1):
-            seg_start_abs, seg_end_abs = segments_abs[seg_idx]
-            w_pending = pending_weights[seg_idx]
-            pending_mass = float(w_pending.sum().item())
+        denom_base = float(base_total.sum().item())
+        w_span_raw = base_total[int(all_gen_start_abs) : int(all_gen_end_abs) + 1].detach().clone()
+        w_span_raw = torch.nan_to_num(w_span_raw, nan=0.0, posinf=0.0, neginf=0.0)
+        w_span_sum = float(w_span_raw.sum().item())
+        w_span_weights = (
+            (w_span_raw / (w_span_sum + 1e-12))
+            if w_span_sum > 0.0
+            else torch.zeros_like(w_span_raw, dtype=torch.float32)
+        )
+        current_ratio = float(w_span_sum) / (denom_base + 1e-12) if denom_base > 0.0 else 0.0
+        ratios: List[float] = [float(current_ratio)]
 
-            if pending_mass <= 0.0:
-                raw_attributions.append(
-                    IFRAggregate(
-                        per_layer=[],
-                        token_importance_total=torch.zeros_like(base_total),
-                        head_importance_total=torch.zeros_like(base_ifr.head_importance_total),
-                        ffn_importance_per_layer=torch.zeros_like(base_ifr.ffn_importance_per_layer),
-                        resid_ffn_importance_per_layer=torch.zeros_like(base_ifr.resid_ffn_importance_per_layer),
+        for hop in range(1, hop_count + 1):
+            if float(w_span_sum) <= 0.0 or float(current_ratio) <= 0.0:
+                zeros = torch.zeros_like(base_total)
+                for _ in range(hop, hop_count + 1):
+                    raw_attributions.append(
+                        IFRAggregate(
+                            per_layer=[],
+                            token_importance_total=zeros,
+                            head_importance_total=torch.zeros_like(base_ifr.head_importance_total),
+                            ffn_importance_per_layer=torch.zeros_like(base_ifr.ffn_importance_per_layer),
+                            resid_ffn_importance_per_layer=torch.zeros_like(base_ifr.resid_ffn_importance_per_layer),
+                        )
                     )
-                )
-                per_hop_obs.append(torch.zeros_like(base_total))
-                hop_details.append(
-                    {
-                        "segment_index": int(seg_idx),
-                        "segment_span_generation": segments_gen[seg_idx],
-                        "segment_span_absolute": (int(seg_start_abs), int(seg_end_abs)),
-                        "pending_mass": float(pending_mass),
-                        "masked_denom": 0.0,
-                        "alpha": 0.0,
-                    }
-                )
-                continue
+                    per_hop_obs.append(torch.zeros_like(base_total))
+                    ratios.append(0.0)
+                break
 
             hop_ifr_raw = compute_ifr_sentence_aggregate(
-                sink_start=int(seg_start_abs),
-                sink_end=int(seg_end_abs),
+                sink_start=all_gen_start_abs,
+                sink_end=all_gen_end_abs,
                 cache=cache,
                 attentions=attentions,
                 weight_pack=weight_pack,
                 params=params,
                 renorm_threshold=renorm,
-                sink_weights=w_pending.to(dtype=params.model_dtype),
+                sink_weights=w_span_weights,
             )
 
-            hop_total = hop_ifr_raw.token_importance_total.to(dtype=torch.float32) * stop_keep_mask_full
-            hop_total_masked = hop_total.clone()
-            hop_total_masked[int(seg_start_abs) : int(seg_end_abs) + 1] = 0.0
-
-            masked_denom = float(hop_total_masked.sum().item())
-            alpha = float(pending_mass) / (masked_denom + 1e-12) if masked_denom > 0.0 else 0.0
-            distributed = hop_total_masked * alpha
-
-            obs_only = distributed * obs_mask
-            obs_accum += obs_only
-            per_hop_obs.append(obs_only)
-
-            if alpha > 0.0:
-                for j in range(seg_idx):
-                    js_abs, je_abs = segments_abs[j]
-                    pending_weights[j] = pending_weights[j] + distributed[js_abs : je_abs + 1]
-            pending_weights[seg_idx] = torch.zeros_like(pending_weights[seg_idx])
-
+            hop_total = torch.nan_to_num(
+                hop_ifr_raw.token_importance_total.to(dtype=torch.float32),
+                nan=0.0,
+                posinf=0.0,
+                neginf=0.0,
+            )
+            hop_total = hop_total * stop_keep_mask_full
             hop_ifr = IFRAggregate(
                 per_layer=hop_ifr_raw.per_layer,
-                token_importance_total=hop_total_masked,
+                token_importance_total=hop_total,
                 head_importance_total=hop_ifr_raw.head_importance_total,
                 ffn_importance_per_layer=hop_ifr_raw.ffn_importance_per_layer,
                 resid_ffn_importance_per_layer=hop_ifr_raw.resid_ffn_importance_per_layer,
             )
             raw_attributions.append(hop_ifr)
-            hop_details.append(
-                {
-                    "segment_index": int(seg_idx),
-                    "segment_span_generation": segments_gen[seg_idx],
-                    "segment_span_absolute": (int(seg_start_abs), int(seg_end_abs)),
-                    "pending_mass": float(pending_mass),
-                    "masked_denom": float(masked_denom),
-                    "alpha": float(alpha),
-                }
+
+            obs_only = hop_total * obs_mask * float(current_ratio)
+            obs_accum += obs_only
+            per_hop_obs.append(obs_only)
+
+            w_span_raw = hop_total[int(all_gen_start_abs) : int(all_gen_end_abs) + 1].detach().clone()
+            w_span_raw = torch.nan_to_num(w_span_raw, nan=0.0, posinf=0.0, neginf=0.0)
+            w_span_sum = float(w_span_raw.sum().item())
+            w_span_weights = (
+                (w_span_raw / (w_span_sum + 1e-12))
+                if w_span_sum > 0.0
+                else torch.zeros_like(w_span_raw, dtype=torch.float32)
             )
 
-        obs_avg = obs_accum / float(max(1, len(per_hop_obs)))
+            hop_denom = float(hop_total.sum().item())
+            if hop_denom <= 0.0:
+                current_ratio = 0.0
+            else:
+                current_ratio *= float(w_span_sum) / (hop_denom + 1e-12)
+            ratios.append(float(current_ratio))
+
+        obs_avg = obs_accum / float(max(1, hop_count))
         observation: Dict[str, torch.Tensor | List[torch.Tensor]] = {
             "mask": obs_mask,
             "base": base_obs,
@@ -1025,12 +1079,12 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             "avg": obs_avg,
         }
 
-        multi_hop = MultiHopIFRResult(raw_attributions=raw_attributions, thinking_ratios=[], observation=observation)
+        multi_hop = MultiHopIFRResult(raw_attributions=raw_attributions, thinking_ratios=ratios, observation=observation)
         eval_vector = multi_hop.observation["sum"]
 
-        score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
+        score_array = torch.full((int(gen_len), total_len), torch.nan, dtype=torch.float32)
         for offset in range(int(span_start), int(span_end) + 1):
-            tok = sink_gen_tokens[offset] if 0 <= offset < len(sink_gen_tokens) else ""
+            tok = gen_tokens[offset] if 0 <= offset < len(gen_tokens) else ""
             if is_stop_token(tok):
                 continue
             score_array[offset] = eval_vector
@@ -1050,22 +1104,28 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
                 "type": "multi_hop_both",
                 "sink_span_generation": (int(span_start), int(span_end)),
                 "sink_span_absolute": (int(sink_start_abs), int(sink_end_abs)),
-                "thinking_span_generation": (int(think_start), int(think_end)),
-                "thinking_span_absolute": (int(think_start_abs), int(think_end_abs)),
+                "thinking_span_generation": (
+                    (int(thinking_span[0]), int(thinking_span[1])) if thinking_span is not None else None
+                ),
+                "thinking_span_absolute": (
+                    (int(think_start_abs), int(think_end_abs)) if think_start_abs is not None else None
+                ),
+                "all_gen_span_generation": (int(all_gen_start), int(all_gen_end)),
+                "all_gen_span_absolute": (int(all_gen_start_abs), int(all_gen_end_abs)),
                 "renorm_threshold": float(renorm),
-                "split_hop_config": self._split_hop_config(num_segments=num_segments).__dict__,
-                "stop_config": self._stop_config().__dict__,
-                "segments_generation": [(int(s), int(e)) for (s, e) in segments_gen],
-                "segments_absolute": [(int(s), int(e)) for (s, e) in segments_abs],
-                "hop_details": hop_details,
+                "n_hops": int(n_hops),
+                "thinking_ratios": multi_hop.thinking_ratios,
                 "per_hop_projected": projected_per_hop,
                 "observation_projected": observation_projected,
+                "stop_config": self._stop_config().__dict__,
                 "raw": multi_hop,
+                "note": "both = stop_words + in_all_gen (scheme B; hops over all_gen_span with EOS excluded).",
             }
         }
 
         return self._finalize_result(score_array, metadata=meta)
 
+### in_all_gen
 
 class LLMIFRAttributionInAllGen(llm_attr.LLMIFRAttribution):
     """Experimental FT-IFR variant that runs all hops over the full generation span (CoT + output).

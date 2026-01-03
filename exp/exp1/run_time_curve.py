@@ -45,7 +45,7 @@ if str(REPO_ROOT) not in sys.path:
 
 import llm_attr
 
-DEFAULT_TOTAL_LENGTHS = [1024, 4096, 8192]
+DEFAULT_INPUT_LENGTHS = [1024, 4096, 8192]
 DEFAULT_OUTPUT_LENGTHS = [32, 256, 512]
 DEFAULT_ATTRS = [
     "IG",
@@ -72,23 +72,27 @@ def parse_args() -> argparse.Namespace:
         default=",".join(DEFAULT_ATTRS),
         help="Comma-separated attribution methods.",
     )
-    parser.add_argument(
-        "--total_lengths",
-        type=str,
-        default=",".join(str(x) for x in DEFAULT_TOTAL_LENGTHS),
-        help="Comma-separated target total token lengths (prompt + output).",
-    )
+
+    length_group = parser.add_mutually_exclusive_group()
     parser.add_argument(
         "--output_lengths",
         type=str,
         default=",".join(str(x) for x in DEFAULT_OUTPUT_LENGTHS),
         help="Comma-separated target output token lengths (sink/output segment).",
     )
-    parser.add_argument(
+    length_group.add_argument(
+        "--input_lengths",
+        type=str,
+        default=",".join(str(x) for x in DEFAULT_INPUT_LENGTHS),
+        help="Comma-separated target input/prompt token lengths (user prompt only; excludes chat template).",
+    )
+    length_group.add_argument(
+        "--total_lengths",
         "--lengths",
+        dest="total_lengths",
         type=str,
         default=None,
-        help="Deprecated alias for --total_lengths (prompt+output).",
+        help="Deprecated. Target total token lengths (prompt + output). Use --input_lengths instead.",
     )
     parser.add_argument("--repeats", type=int, default=3, help="Number of runs per cell.")
     parser.add_argument("--output_dir", type=str, default="exp/exp1/out", help="Output directory.")
@@ -123,6 +127,10 @@ def parse_args() -> argparse.Namespace:
         help="Base text to tile when constructing outputs of a given length.",
     )
     return parser.parse_args()
+
+
+def parse_csv_ints(value: str) -> List[int]:
+    return [int(x) for x in value.split(",") if x.strip()]
 
 
 def resolve_device(cuda: Optional[str], cuda_num: int) -> str:
@@ -191,11 +199,38 @@ def build_output_to_length(tokenizer, base_text: str, target_tokens: int) -> Tup
     return text, len(tiled)
 
 
+def build_formatted_prompt(tokenizer, prompt: str) -> str:
+    user_prompt = " " + prompt
+    modified_prompt = llm_attr.DEFAULT_PROMPT_TEMPLATE.format(context=user_prompt, query="")
+    formatted_prompt = [{"role": "user", "content": modified_prompt}]
+    return tokenizer.apply_chat_template(
+        formatted_prompt,
+        tokenize=False,
+        add_generation_prompt=True,
+        enable_thinking=False,
+    )
+
+
+def estimate_model_lengths(tokenizer, prompt: str, target: str) -> Dict[str, int]:
+    user_prompt = " " + prompt
+    formatted_prompt = build_formatted_prompt(tokenizer, prompt)
+
+    user_prompt_len = len(tokenizer(user_prompt, add_special_tokens=False).input_ids)
+    formatted_prompt_len = len(tokenizer(formatted_prompt, add_special_tokens=False).input_ids)
+    generation_len = len(tokenizer(target + tokenizer.eos_token, add_special_tokens=False).input_ids)
+
+    return {
+        "user_prompt_tokens": user_prompt_len,
+        "formatted_prompt_tokens": formatted_prompt_len,
+        "generation_tokens": generation_len,
+        "total_tokens": formatted_prompt_len + generation_len,
+    }
+
+
 def exceeds_model_ctx(tokenizer, prompt: str, target: str, max_ctx: Optional[int]) -> bool:
     if max_ctx is None:
         return False
-    total = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
-    return total > max_ctx
+    return estimate_model_lengths(tokenizer, prompt, target)["total_tokens"] > max_ctx
 
 
 def load_model_balanced(model_name: str, device: str):
@@ -426,6 +461,18 @@ def make_attr_runner(
 
         return fn
 
+    if lf == "ifr_multi_hop_both":
+        import ft_ifr_improve
+
+        llm_attrtor = ft_ifr_improve.LLMIFRAttributionBoth(
+            model, tokenizer, chunk_tokens=chunk_tokens, sink_chunk_tokens=sink_chunk_tokens
+        )
+
+        def fn():
+            return llm_attrtor.calculate_ifr_multi_hop_both(prompt, target=target)
+
+        return fn
+
     if lf == "attnlrp":
         llm_attrtor = llm_attr.LLMLRPAttribution(model, tokenizer)
 
@@ -437,8 +484,8 @@ def make_attr_runner(
     raise ValueError(f"Unsupported attr_func {attr_func}")
 
 
-def compute_batch_size(tokenizer, prompt: str, target: str, max_input_len: int) -> int:
-    denom = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
+def compute_batch_size(sequence_length: int, max_input_len: int) -> int:
+    denom = int(sequence_length)
     return max(1, math.floor((max_input_len - 100) / max(1, denom)))
 
 
@@ -446,7 +493,7 @@ def aggregate_results(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     grouped: Dict[Tuple[str, int, int], Dict[str, List[float]]] = defaultdict(lambda: {"time": [], "mem": []})
     statuses: Dict[Tuple[str, int, int], List[str]] = defaultdict(list)
     for row in rows:
-        key = (row["attr_func"], row["target_total_tokens"], row["target_output_tokens"])
+        key = (row["attr_func"], row["target_input_tokens"], row["target_output_tokens"])
         statuses[key].append(row["status"])
         if row.get("time_sec") is not None:
             grouped[key]["time"].append(row["time_sec"])
@@ -455,12 +502,14 @@ def aggregate_results(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
     summary = []
     for key, vals in grouped.items():
-        attr_func, total_tokens, output_tokens = key
+        attr_func, input_tokens, output_tokens = key
+        total_tokens = input_tokens + output_tokens
         times = vals["time"]
         mems = vals["mem"]
         summary.append(
             {
                 "attr_func": attr_func,
+                "target_input_tokens": input_tokens,
                 "target_total_tokens": total_tokens,
                 "target_output_tokens": output_tokens,
                 "time_mean": np.mean(times) if times else None,
@@ -477,10 +526,7 @@ def main() -> None:
     args = parse_args()
     device = resolve_device(args.cuda, args.cuda_num)
     attr_funcs = [a.strip() for a in args.attr_funcs.split(",") if a.strip()]
-    target_total_lengths = [
-        int(x) for x in (args.lengths if args.lengths is not None else args.total_lengths).split(",") if x.strip()
-    ]
-    target_output_lengths = [int(x) for x in args.output_lengths.split(",") if x.strip()]
+    target_output_lengths = parse_csv_ints(args.output_lengths)
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -497,92 +543,118 @@ def main() -> None:
     target_base = args.target_text
     all_rows: List[Dict[str, Any]] = []
 
-    for total_tokens in target_total_lengths:
-        for output_tokens in target_output_lengths:
-            prompt_target_len = total_tokens - output_tokens
-            if prompt_target_len <= 0:
-                for attr in attr_funcs:
-                    for rep in range(args.repeats):
-                        all_rows.append(
-                            {
-                                "attr_func": attr,
-                                "target_total_tokens": total_tokens,
-                                "target_output_tokens": output_tokens,
-                                "target_prompt_tokens": prompt_target_len,
-                                "actual_prompt_tokens": None,
-                                "actual_output_tokens": None,
-                                "actual_total_tokens": None,
-                                "status": "skipped_negative_prompt",
-                                "time_sec": None,
-                                "peak_mem_gb": None,
-                                "peak_mem_reserved_gb": None,
-                                "repeat": rep,
-                            }
-                        )
-                continue
+    using_deprecated_total = args.total_lengths is not None
+    if using_deprecated_total:
+        target_total_lengths = parse_csv_ints(args.total_lengths)
+        length_grid: List[Tuple[int, int, int]] = []
+        for total_tokens in target_total_lengths:
+            for output_tokens in target_output_lengths:
+                length_grid.append((total_tokens - output_tokens, output_tokens, total_tokens))
+    else:
+        target_input_lengths = parse_csv_ints(args.input_lengths)
+        length_grid = []
+        for input_tokens in target_input_lengths:
+            for output_tokens in target_output_lengths:
+                length_grid.append((input_tokens, output_tokens, input_tokens + output_tokens))
 
-            prompt, actual_prompt_len = build_prompt_to_length(tokenizer, base_text, prompt_target_len)
-            target, actual_output_len = build_output_to_length(tokenizer, target_base, output_tokens)
-            actual_total_tokens = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
-
-            if exceeds_model_ctx(tokenizer, prompt, target, max_ctx):
-                for attr in attr_funcs:
-                    for rep in range(args.repeats):
-                        all_rows.append(
-                            {
-                                "attr_func": attr,
-                                "target_total_tokens": total_tokens,
-                                "target_output_tokens": output_tokens,
-                                "target_prompt_tokens": prompt_target_len,
-                                "actual_prompt_tokens": actual_prompt_len,
-                                "actual_output_tokens": actual_output_len,
-                                "actual_total_tokens": actual_total_tokens,
-                                "status": "skipped_model_ctx",
-                                "time_sec": None,
-                                "peak_mem_gb": None,
-                                "peak_mem_reserved_gb": None,
-                                "repeat": rep,
-                            }
-                        )
-                continue
-
-            batch_size = compute_batch_size(
-                tokenizer, prompt=prompt, target=target, max_input_len=max_ctx or 200000
-            )
-
+    for input_tokens, output_tokens, total_tokens in length_grid:
+        if input_tokens <= 0:
             for attr in attr_funcs:
                 for rep in range(args.repeats):
-                    maybe_reset_cuda(device_indices)
-                    runner = make_attr_runner(
-                        attr,
-                        model=model,
-                        tokenizer=tokenizer,
-                        chunk_tokens=args.chunk_tokens,
-                        sink_chunk_tokens=args.sink_chunk_tokens,
-                        batch_size=batch_size,
-                        prompt=prompt,
-                        target=target,
-                    )
-                    status, wall, mem_alloc, mem_reserved, mem_by_device = measure(
-                        runner, device_indices=device_indices, catch_oom=args.catch_oom
-                    )
                     all_rows.append(
                         {
                             "attr_func": attr,
-                            "target_total_tokens": total_tokens,
+                            "target_input_tokens": input_tokens,
                             "target_output_tokens": output_tokens,
-                            "target_prompt_tokens": prompt_target_len,
-                            "actual_prompt_tokens": actual_prompt_len,
-                            "actual_output_tokens": actual_output_len,
-                            "actual_total_tokens": actual_total_tokens,
-                            "status": status,
-                            "time_sec": wall,
-                            "peak_mem_gb": mem_reserved if mem_reserved is not None else mem_alloc,
-                            "peak_mem_reserved_gb": mem_reserved,
-                            "peak_mem_by_device_gb": mem_by_device if mem_by_device else None,
+                            "target_total_tokens": total_tokens,
+                            "actual_input_tokens": None,
+                            "actual_output_tokens": None,
+                            "actual_total_tokens_raw": None,
+                            "actual_user_prompt_tokens": None,
+                            "actual_formatted_prompt_tokens": None,
+                            "actual_generation_tokens": None,
+                            "actual_total_tokens": None,
+                            "status": "skipped_nonpositive_input",
+                            "time_sec": None,
+                            "peak_mem_gb": None,
+                            "peak_mem_reserved_gb": None,
                             "repeat": rep,
+                            "used_deprecated_total_lengths": using_deprecated_total,
                         }
                     )
+            continue
+
+        prompt, actual_input_len = build_prompt_to_length(tokenizer, base_text, input_tokens)
+        target, actual_output_len = build_output_to_length(tokenizer, target_base, output_tokens)
+        actual_total_tokens_raw = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
+        model_lens = estimate_model_lengths(tokenizer, prompt, target)
+
+        if max_ctx is not None and model_lens["total_tokens"] > max_ctx:
+            for attr in attr_funcs:
+                for rep in range(args.repeats):
+                    all_rows.append(
+                        {
+                            "attr_func": attr,
+                            "target_input_tokens": input_tokens,
+                            "target_output_tokens": output_tokens,
+                            "target_total_tokens": total_tokens,
+                            "actual_input_tokens": actual_input_len,
+                            "actual_output_tokens": actual_output_len,
+                            "actual_total_tokens_raw": actual_total_tokens_raw,
+                            "actual_user_prompt_tokens": model_lens["user_prompt_tokens"],
+                            "actual_formatted_prompt_tokens": model_lens["formatted_prompt_tokens"],
+                            "actual_generation_tokens": model_lens["generation_tokens"],
+                            "actual_total_tokens": model_lens["total_tokens"],
+                            "status": "skipped_model_ctx",
+                            "time_sec": None,
+                            "peak_mem_gb": None,
+                            "peak_mem_reserved_gb": None,
+                            "repeat": rep,
+                            "used_deprecated_total_lengths": using_deprecated_total,
+                        }
+                    )
+            continue
+
+        batch_size = compute_batch_size(model_lens["total_tokens"], max_input_len=max_ctx or 200000)
+
+        for attr in attr_funcs:
+            for rep in range(args.repeats):
+                maybe_reset_cuda(device_indices)
+                runner = make_attr_runner(
+                    attr,
+                    model=model,
+                    tokenizer=tokenizer,
+                    chunk_tokens=args.chunk_tokens,
+                    sink_chunk_tokens=args.sink_chunk_tokens,
+                    batch_size=batch_size,
+                    prompt=prompt,
+                    target=target,
+                )
+                status, wall, mem_alloc, mem_reserved, mem_by_device = measure(
+                    runner, device_indices=device_indices, catch_oom=args.catch_oom
+                )
+                all_rows.append(
+                    {
+                        "attr_func": attr,
+                        "target_input_tokens": input_tokens,
+                        "target_output_tokens": output_tokens,
+                        "target_total_tokens": total_tokens,
+                        "actual_input_tokens": actual_input_len,
+                        "actual_output_tokens": actual_output_len,
+                        "actual_total_tokens_raw": actual_total_tokens_raw,
+                        "actual_user_prompt_tokens": model_lens["user_prompt_tokens"],
+                        "actual_formatted_prompt_tokens": model_lens["formatted_prompt_tokens"],
+                        "actual_generation_tokens": model_lens["generation_tokens"],
+                        "actual_total_tokens": model_lens["total_tokens"],
+                        "status": status,
+                        "time_sec": wall,
+                        "peak_mem_gb": mem_reserved if mem_reserved is not None else mem_alloc,
+                        "peak_mem_reserved_gb": mem_reserved,
+                        "peak_mem_by_device_gb": mem_by_device if mem_by_device else None,
+                        "repeat": rep,
+                        "used_deprecated_total_lengths": using_deprecated_total,
+                    }
+                )
 
     summary = aggregate_results(all_rows)
 
@@ -594,14 +666,15 @@ def main() -> None:
     summary_path = out_dir / "time_curve_summary.csv"
     with summary_path.open("w") as f:
         f.write(
-            "attr_func,target_total_tokens,target_output_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses\n"
+            "attr_func,target_input_tokens,target_output_tokens,target_total_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses\n"
         )
         for row in summary:
             f.write(
-                "{},{},{},{},{},{},{},{}\n".format(
+                "{},{},{},{},{},{},{},{},{}\n".format(
                     row["attr_func"],
-                    row["target_total_tokens"],
+                    row["target_input_tokens"],
                     row["target_output_tokens"],
+                    row["target_total_tokens"],
                     "" if row["time_mean"] is None else f"{row['time_mean']:.4f}",
                     "" if row["time_std"] is None else f"{row['time_std']:.4f}",
                     "" if row["mem_mean"] is None else f"{row['mem_mean']:.4f}",

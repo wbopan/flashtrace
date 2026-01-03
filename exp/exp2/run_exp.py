@@ -197,8 +197,9 @@ def _faithfulness_test_with_user_prompt_indices(
     generation: str,
     *,
     user_prompt_indices: List[int],
+    k: int = 20, ### control the MAS steps per sample
 ) -> Tuple[float, float, float]:
-    """Token-level MAS/RISE faithfulness via guided deletion using provided prompt indices.
+    """Token-level MAS/RISE faithfulness via guided deletion in k perturbation steps using provided prompt indices.
 
     This mirrors llm_attr_eval.LLMAttributionEvaluator.faithfulness_test, but avoids
     locating the user prompt span via token-id subsequence matching (which may fail
@@ -239,8 +240,16 @@ def _faithfulness_test_with_user_prompt_indices(
     if max(user_prompt_indices) >= int(prompt_ids_perturbed.shape[1]):
         raise ValueError("user_prompt_indices contains an out-of-bounds index for formatted prompt ids.")
 
-    scores = np.zeros(P + 1, dtype=np.float64)
-    density = np.zeros(P + 1, dtype=np.float64)
+    if P > 0:
+        steps = int(k) if k is not None else 0
+        if steps <= 0:
+            steps = 1
+        steps = min(steps, P)
+    else:
+        steps = 0
+
+    scores = np.zeros(steps + 1, dtype=np.float64)
+    density = np.zeros(steps + 1, dtype=np.float64)
 
     scores[0] = (
         llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
@@ -248,17 +257,26 @@ def _faithfulness_test_with_user_prompt_indices(
     density[0] = 1.0
 
     if attr_sum <= 0:
-        density = np.linspace(1.0, 0.0, P + 1)
+        density = np.linspace(1.0, 0.0, steps + 1)
 
-    for i, idx in enumerate(sorted_attr_indices):
-        j = int(idx.item())
-        abs_pos = int(user_prompt_indices[j])
-        prompt_ids_perturbed[0, abs_pos] = pad_token_id
-        scores[i + 1] = (
+    base = P // steps
+    remainder = P % steps
+    start = 0
+    for step in range(steps):
+        size = base + (1 if step < remainder else 0)
+        group = sorted_attr_indices[start : start + size]
+        start += size
+
+        for idx in group:
+            j = int(idx.item())
+            abs_pos = int(user_prompt_indices[j])
+            prompt_ids_perturbed[0, abs_pos] = pad_token_id
+        scores[step + 1] = (
             llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
         )
         if attr_sum > 0:
-            density[i + 1] = density[i] - (float(w[j].item()) / attr_sum)
+            dec = float(w.index_select(0, group).sum().item()) / attr_sum
+            density[step + 1] = density[step] - dec
 
     min_normalized_pred = 1.0
     normalized_model_response = scores.copy()

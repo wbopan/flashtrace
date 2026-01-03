@@ -323,6 +323,7 @@ def mas_trace(
     generation: str,
     user_prompt_indices: Optional[Sequence[int]] = None,
     keep_prompt_token_indices: Optional[Sequence[int]] = None,
+    k: int = 20,
 ) -> Dict[str, Any]:
     """Return a token-level faithfulness trace (RISE/MAS/RISE+AP) plus per-token deltas."""
 
@@ -392,8 +393,16 @@ def mas_trace(
             raise RuntimeError("Failed to locate user prompt token span inside formatted chat prompt.")
         prompt_positions = [int(user_start) + j for j in range(P)]
 
-    scores = np.zeros(K + 1, dtype=np.float64)
-    density = np.zeros(K + 1, dtype=np.float64)
+    if K > 0:
+        steps = int(k) if k is not None else 0
+        if steps <= 0:
+            steps = 1
+        steps = min(steps, K)
+    else:
+        steps = 0
+
+    scores = np.zeros(steps + 1, dtype=np.float64)
+    density = np.zeros(steps + 1, dtype=np.float64)
 
     scores[0] = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids_perturbed, generation_ids=gen_ids)
     density[0] = 1.0
@@ -413,17 +422,32 @@ def mas_trace(
         }
 
     if attr_sum <= 0:
-        density = np.linspace(1.0, 0.0, K + 1)
+        density = np.linspace(1.0, 0.0, steps + 1)
 
-    for step, idx_t in enumerate(sorted_attr_indices):
-        idx = int(idx_t.item())
-        abs_pos = int(prompt_positions[idx])
-        prompt_ids_perturbed[0, abs_pos] = pad_token_id
+    per_token_delta = np.zeros(P, dtype=np.float64)
+
+    base = K // steps
+    remainder = K % steps
+    start = 0
+    for step in range(steps):
+        size = base + (1 if step < remainder else 0)
+        group = sorted_attr_indices[start : start + size]
+        start += size
+
+        for idx_t in group:
+            idx = int(idx_t.item())
+            abs_pos = int(prompt_positions[idx])
+            prompt_ids_perturbed[0, abs_pos] = pad_token_id
 
         scores[step + 1] = score_prompt_ids_with_generation(model, prompt_ids=prompt_ids_perturbed, generation_ids=gen_ids)
         if attr_sum > 0:
-            dec = float(w[idx].item()) / attr_sum
+            dec = float(w.index_select(0, group).sum().item()) / attr_sum
             density[step + 1] = density[step] - dec
+
+        delta = scores[step] - scores[step + 1]
+        for idx_t in group:
+            idx = int(idx_t.item())
+            per_token_delta[idx] = delta
 
     min_normalized_pred = 1.0
     normalized_model_response = scores.copy()
@@ -443,11 +467,6 @@ def mas_trace(
     rise = auc(normalized_model_response)
     mas = auc(corrected_scores)
     rise_ap = auc(normalized_model_response + alignment_penalty)
-
-    per_token_delta = np.zeros(P, dtype=np.float64)
-    for step, idx_t in enumerate(sorted_attr_indices):
-        idx = int(idx_t.item())
-        per_token_delta[idx] = scores[step] - scores[step + 1]
 
     if attr_sum > 0:
         attr_weights = np.zeros(P, dtype=np.float64)

@@ -224,6 +224,7 @@ def run_attribution(testing_dict, prompt, batch_size, indices_to_explain = [1], 
 
 def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, target = None) -> np.ndarray[float]:
     tokenizer = testing_dict["tokenizer"]
+    faithfulness_k = int(testing_dict.get("faithfulness_k", 20))
 
     scores = []
 
@@ -258,10 +259,11 @@ def faithfulness_test(testing_dict, llm_evaluator, prompt, indices_to_explain, t
                     generation,
                     keep_prompt_token_indices=extra.get("keep_prompt_token_indices") or [],
                     user_prompt_indices=extra.get("user_prompt_indices"),
+                    k=faithfulness_k,
                 )
             )
         else:
-            scores.append(llm_evaluator.faithfulness_test(attr, prompt, generation)) # [3 scores]
+            scores.append(llm_evaluator.faithfulness_test(attr, prompt, generation, k=faithfulness_k)) # [3 scores]
 
     return np.array(scores)
 
@@ -441,7 +443,8 @@ def main(args) -> None:
         "max_input_len": max_input_len,
         "attr_func": args.attr_func,
         "num_examples": args.num_examples,
-        "device": device
+        "device": device,
+        "faithfulness_k": args.faithfulness_k,
     }
 
     # call the test function
@@ -476,6 +479,12 @@ if __name__ == "__main__":
     parser.add_argument('--dataset',
             type = str, default = "math",
             help = 'The dataset to evaluate on: math, facts, or morehopqa')
+    parser.add_argument(
+        "--faithfulness_k",
+        type=int,
+        default=20,
+        help="Total perturbation steps k for MAS/RISE (each step perturbs ~1/k of prompt tokens).",
+    )
     
     args, unparsed = parser.parse_known_args()
     
