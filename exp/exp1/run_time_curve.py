@@ -522,6 +522,48 @@ def aggregate_results(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return summary
 
 
+def append_jsonl_row(f, row: Dict[str, Any]) -> None:
+    f.write(json.dumps(row) + "\n")
+    f.flush()
+    try:
+        os.fsync(f.fileno())
+    except OSError:
+        pass
+
+
+def write_summary_csv(rows: List[Dict[str, Any]], out_dir: Path) -> Path:
+    summary = aggregate_results(rows)
+    summary_path = out_dir / "time_curve_summary.csv"
+    tmp_path = out_dir / "time_curve_summary.csv.tmp"
+
+    with tmp_path.open("w") as f:
+        f.write(
+            "attr_func,target_input_tokens,target_output_tokens,target_total_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses\n"
+        )
+        for row in summary:
+            f.write(
+                "{},{},{},{},{},{},{},{},{}\n".format(
+                    row["attr_func"],
+                    row["target_input_tokens"],
+                    row["target_output_tokens"],
+                    row["target_total_tokens"],
+                    "" if row["time_mean"] is None else f"{row['time_mean']:.4f}",
+                    "" if row["time_std"] is None else f"{row['time_std']:.4f}",
+                    "" if row["mem_mean"] is None else f"{row['mem_mean']:.4f}",
+                    "" if row["mem_std"] is None else f"{row['mem_std']:.4f}",
+                    "|".join(row["statuses"]),
+                )
+            )
+        f.flush()
+        try:
+            os.fsync(f.fileno())
+        except OSError:
+            pass
+
+    tmp_path.replace(summary_path)
+    return summary_path
+
+
 def main() -> None:
     args = parse_args()
     device = resolve_device(args.cuda, args.cuda_num)
@@ -542,6 +584,17 @@ def main() -> None:
     base_text = load_ruler_base(Path(args.ruler_file), fallback="RULER fallback text. ")
     target_base = args.target_text
     all_rows: List[Dict[str, Any]] = []
+    runner = None
+    raised: Optional[BaseException] = None
+    jsonl_f = None
+    jsonl_path = out_dir / "time_curve_runs.jsonl"
+    summary_path = out_dir / "time_curve_summary.csv"
+
+    def record_row(row: Dict[str, Any]) -> None:
+        all_rows.append(row)
+        if jsonl_f is not None:
+            append_jsonl_row(jsonl_f, row)
+        write_summary_csv(all_rows, out_dir)
 
     using_deprecated_total = args.total_lengths is not None
     if using_deprecated_total:
@@ -557,42 +610,114 @@ def main() -> None:
             for output_tokens in target_output_lengths:
                 length_grid.append((input_tokens, output_tokens, input_tokens + output_tokens))
 
-    for input_tokens, output_tokens, total_tokens in length_grid:
-        if input_tokens <= 0:
+    try:
+        jsonl_f = jsonl_path.open("w")
+        write_summary_csv([], out_dir)
+
+        for input_tokens, output_tokens, total_tokens in length_grid:
+            if input_tokens <= 0:
+                for attr in attr_funcs:
+                    for rep in range(args.repeats):
+                        record_row(
+                            {
+                                "attr_func": attr,
+                                "target_input_tokens": input_tokens,
+                                "target_output_tokens": output_tokens,
+                                "target_total_tokens": total_tokens,
+                                "actual_input_tokens": None,
+                                "actual_output_tokens": None,
+                                "actual_total_tokens_raw": None,
+                                "actual_user_prompt_tokens": None,
+                                "actual_formatted_prompt_tokens": None,
+                                "actual_generation_tokens": None,
+                                "actual_total_tokens": None,
+                                "status": "skipped_nonpositive_input",
+                                "time_sec": None,
+                                "peak_mem_gb": None,
+                                "peak_mem_reserved_gb": None,
+                                "repeat": rep,
+                                "used_deprecated_total_lengths": using_deprecated_total,
+                            }
+                        )
+                continue
+
+            prompt, actual_input_len = build_prompt_to_length(tokenizer, base_text, input_tokens)
+            target, actual_output_len = build_output_to_length(tokenizer, target_base, output_tokens)
+            actual_total_tokens_raw = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
+            model_lens = estimate_model_lengths(tokenizer, prompt, target)
+
+            if max_ctx is not None and model_lens["total_tokens"] > max_ctx:
+                for attr in attr_funcs:
+                    for rep in range(args.repeats):
+                        record_row(
+                            {
+                                "attr_func": attr,
+                                "target_input_tokens": input_tokens,
+                                "target_output_tokens": output_tokens,
+                                "target_total_tokens": total_tokens,
+                                "actual_input_tokens": actual_input_len,
+                                "actual_output_tokens": actual_output_len,
+                                "actual_total_tokens_raw": actual_total_tokens_raw,
+                                "actual_user_prompt_tokens": model_lens["user_prompt_tokens"],
+                                "actual_formatted_prompt_tokens": model_lens["formatted_prompt_tokens"],
+                                "actual_generation_tokens": model_lens["generation_tokens"],
+                                "actual_total_tokens": model_lens["total_tokens"],
+                                "status": "skipped_model_ctx",
+                                "time_sec": None,
+                                "peak_mem_gb": None,
+                                "peak_mem_reserved_gb": None,
+                                "repeat": rep,
+                                "used_deprecated_total_lengths": using_deprecated_total,
+                            }
+                        )
+                continue
+
+            batch_size = compute_batch_size(model_lens["total_tokens"], max_input_len=max_ctx or 200000)
+
             for attr in attr_funcs:
                 for rep in range(args.repeats):
-                    all_rows.append(
-                        {
-                            "attr_func": attr,
-                            "target_input_tokens": input_tokens,
-                            "target_output_tokens": output_tokens,
-                            "target_total_tokens": total_tokens,
-                            "actual_input_tokens": None,
-                            "actual_output_tokens": None,
-                            "actual_total_tokens_raw": None,
-                            "actual_user_prompt_tokens": None,
-                            "actual_formatted_prompt_tokens": None,
-                            "actual_generation_tokens": None,
-                            "actual_total_tokens": None,
-                            "status": "skipped_nonpositive_input",
-                            "time_sec": None,
-                            "peak_mem_gb": None,
-                            "peak_mem_reserved_gb": None,
-                            "repeat": rep,
-                            "used_deprecated_total_lengths": using_deprecated_total,
-                        }
-                    )
-            continue
+                    runner = None
+                    maybe_reset_cuda(device_indices)
+                    try:
+                        runner = make_attr_runner(
+                            attr,
+                            model=model,
+                            tokenizer=tokenizer,
+                            chunk_tokens=args.chunk_tokens,
+                            sink_chunk_tokens=args.sink_chunk_tokens,
+                            batch_size=batch_size,
+                            prompt=prompt,
+                            target=target,
+                        )
+                    except RuntimeError as e:
+                        if "out of memory" in str(e).lower():
+                            status = "oom"
+                            if not args.catch_oom:
+                                raise
+                        else:
+                            status = f"init_runtime_error: {e}"
+                            if not args.catch_oom:
+                                raise
+                        wall = None
+                        mem_alloc = None
+                        mem_reserved = None
+                        mem_by_device = {}
+                    except Exception as e:
+                        status = f"init_error: {e}"
+                        if not args.catch_oom:
+                            raise
+                        wall = None
+                        mem_alloc = None
+                        mem_reserved = None
+                        mem_by_device = {}
+                    else:
+                        status, wall, mem_alloc, mem_reserved, mem_by_device = measure(
+                            runner, device_indices=device_indices, catch_oom=args.catch_oom
+                        )
+                    finally:
+                        runner = None
 
-        prompt, actual_input_len = build_prompt_to_length(tokenizer, base_text, input_tokens)
-        target, actual_output_len = build_output_to_length(tokenizer, target_base, output_tokens)
-        actual_total_tokens_raw = len(tokenizer(prompt + target, add_special_tokens=False).input_ids)
-        model_lens = estimate_model_lengths(tokenizer, prompt, target)
-
-        if max_ctx is not None and model_lens["total_tokens"] > max_ctx:
-            for attr in attr_funcs:
-                for rep in range(args.repeats):
-                    all_rows.append(
+                    record_row(
                         {
                             "attr_func": attr,
                             "target_input_tokens": input_tokens,
@@ -605,86 +730,27 @@ def main() -> None:
                             "actual_formatted_prompt_tokens": model_lens["formatted_prompt_tokens"],
                             "actual_generation_tokens": model_lens["generation_tokens"],
                             "actual_total_tokens": model_lens["total_tokens"],
-                            "status": "skipped_model_ctx",
-                            "time_sec": None,
-                            "peak_mem_gb": None,
-                            "peak_mem_reserved_gb": None,
+                            "status": status,
+                            "time_sec": wall,
+                            "peak_mem_gb": mem_reserved if mem_reserved is not None else mem_alloc,
+                            "peak_mem_reserved_gb": mem_reserved,
+                            "peak_mem_by_device_gb": mem_by_device if mem_by_device else None,
                             "repeat": rep,
                             "used_deprecated_total_lengths": using_deprecated_total,
                         }
                     )
-            continue
+    except BaseException as e:
+        raised = e
+    finally:
+        runner = None
+        if jsonl_f is not None:
+            jsonl_f.close()
+        write_summary_csv(all_rows, out_dir)
+        print(f"Wrote per-run records to {jsonl_path}")
+        print(f"Wrote summary to {summary_path}")
 
-        batch_size = compute_batch_size(model_lens["total_tokens"], max_input_len=max_ctx or 200000)
-
-        for attr in attr_funcs:
-            for rep in range(args.repeats):
-                maybe_reset_cuda(device_indices)
-                runner = make_attr_runner(
-                    attr,
-                    model=model,
-                    tokenizer=tokenizer,
-                    chunk_tokens=args.chunk_tokens,
-                    sink_chunk_tokens=args.sink_chunk_tokens,
-                    batch_size=batch_size,
-                    prompt=prompt,
-                    target=target,
-                )
-                status, wall, mem_alloc, mem_reserved, mem_by_device = measure(
-                    runner, device_indices=device_indices, catch_oom=args.catch_oom
-                )
-                all_rows.append(
-                    {
-                        "attr_func": attr,
-                        "target_input_tokens": input_tokens,
-                        "target_output_tokens": output_tokens,
-                        "target_total_tokens": total_tokens,
-                        "actual_input_tokens": actual_input_len,
-                        "actual_output_tokens": actual_output_len,
-                        "actual_total_tokens_raw": actual_total_tokens_raw,
-                        "actual_user_prompt_tokens": model_lens["user_prompt_tokens"],
-                        "actual_formatted_prompt_tokens": model_lens["formatted_prompt_tokens"],
-                        "actual_generation_tokens": model_lens["generation_tokens"],
-                        "actual_total_tokens": model_lens["total_tokens"],
-                        "status": status,
-                        "time_sec": wall,
-                        "peak_mem_gb": mem_reserved if mem_reserved is not None else mem_alloc,
-                        "peak_mem_reserved_gb": mem_reserved,
-                        "peak_mem_by_device_gb": mem_by_device if mem_by_device else None,
-                        "repeat": rep,
-                        "used_deprecated_total_lengths": using_deprecated_total,
-                    }
-                )
-
-    summary = aggregate_results(all_rows)
-
-    jsonl_path = out_dir / "time_curve_runs.jsonl"
-    with jsonl_path.open("w") as f:
-        for row in all_rows:
-            f.write(json.dumps(row) + "\n")
-
-    summary_path = out_dir / "time_curve_summary.csv"
-    with summary_path.open("w") as f:
-        f.write(
-            "attr_func,target_input_tokens,target_output_tokens,target_total_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses\n"
-        )
-        for row in summary:
-            f.write(
-                "{},{},{},{},{},{},{},{},{}\n".format(
-                    row["attr_func"],
-                    row["target_input_tokens"],
-                    row["target_output_tokens"],
-                    row["target_total_tokens"],
-                    "" if row["time_mean"] is None else f"{row['time_mean']:.4f}",
-                    "" if row["time_std"] is None else f"{row['time_std']:.4f}",
-                    "" if row["mem_mean"] is None else f"{row['mem_mean']:.4f}",
-                    "" if row["mem_std"] is None else f"{row['mem_std']:.4f}",
-                    "|".join(row["statuses"]),
-                )
-            )
-
-    print(f"Wrote per-run records to {jsonl_path}")
-    print(f"Wrote summary to {summary_path}")
+    if raised is not None:
+        raise raised
 
 
 if __name__ == "__main__":
