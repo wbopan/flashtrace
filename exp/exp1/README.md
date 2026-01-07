@@ -20,11 +20,11 @@
 python exp/exp1/run_time_curve.py \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
-  --cuda 0,5,7 \
-  --attr_funcs IG,perturbation_all,attention_I_G,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,ifr_multi_hop_both,attnlrp \
+  --cuda 2,3,4,5,6,7 \
+  --attr_funcs perturbation_all,perturbation_REAGENT,ifr_all_positions,perturbation_CLP,ifr_multi_hop,ifr_multi_hop_both,attnlrp \
   --input_lengths 10 \
-  --output_lengths 10,100,500,1000,2000,5000,10000 \
-  --repeats 3 \
+  --output_lengths 2000,5000,10000 \
+  --repeats 1 \
   --chunk_tokens 128 \
   --sink_chunk_tokens 32 \
   --catch_oom \

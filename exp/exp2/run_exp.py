@@ -2,7 +2,7 @@
 """
 Experiment 2 runner: token-level faithfulness (generation perturbation).
 
-Math is intentionally rejected. AT2 is omitted.
+AT2 is omitted.
 """
 
 from __future__ import annotations
@@ -574,7 +574,7 @@ def evaluate_dataset_multi(
                 )
                 time_faith_s = time.perf_counter() - t1
                 faith_results.append(faith_scores)
-                faith_durations.append(float(time_attr_s) + float(time_faith_s))
+                faith_durations.append(float(time_attr_s))
 
             recovery_scores = None
             recovery_skip_reason = None
@@ -1126,10 +1126,10 @@ def main():
     }.get(args.model, 2000)
 
     for ds_name in datasets:
-        if ds_name.startswith("math"):
-            raise SystemExit("Math is skipped by design for exp2.")
         if "recovery_ruler" in modes and ds_name == "morehopqa":
             raise SystemExit("recovery_ruler only supports RULER datasets (with needle_spans), not morehopqa.")
+        if "recovery_ruler" in modes and ds_name.startswith("math"):
+            raise SystemExit("recovery_ruler only supports RULER datasets (with needle_spans), not math.")
 
         # Resolve dataset (prefer prepared cache under data_root)
         cached_path = Path(args.data_root) / f"{ds_name}.jsonl"
@@ -1141,10 +1141,10 @@ def main():
             if p.exists():
                 examples = ds_utils.load_cached(p, sample=args.sample, seed=args.seed)
             else:
-                raise SystemExit(
-                    f"Missing exp2 cache for '{ds_name}'. "
-                    f"Expected {cached_path}; please run exp/exp2/sample_and_filter.py first (or pass an explicit cached JSONL path)."
-                )
+                hint = "please run exp/exp2/sample_and_filter.py first (or pass an explicit cached JSONL path)."
+                if ds_name.startswith("math"):
+                    hint = "please run exp/exp2/map_math_mine_to_exp2_cache.py first (or pass an explicit cached JSONL path)."
+                raise SystemExit(f"Missing exp2 cache for '{ds_name}'. Expected {cached_path}; {hint}")
 
         for attr_func in attr_funcs:
             if attr_func.lower() == "at2":

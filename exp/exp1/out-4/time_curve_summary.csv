@@ -1,0 +1,8 @@
+attr_func,target_input_tokens,target_output_tokens,target_total_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses
+perturbation_all,10,2000,2010,12187.5624,0.0000,429.0899,0.0000,ok
+perturbation_REAGENT,10,2000,2010,16030.9560,0.0000,429.0857,0.0000,ok
+ifr_all_positions,10,2000,2010,391.5628,0.0000,135.8913,0.0000,ok
+perturbation_CLP,10,2000,2010,12165.3336,0.0000,428.9179,0.0000,ok
+ifr_multi_hop,10,2000,2010,3.4831,0.0000,156.4077,0.0000,ok
+ifr_multi_hop_both,10,2000,2010,3.5458,0.0000,43.7676,0.0000,ok
+attnlrp,10,2000,2010,1152.6436,0.0000,97.7315,0.0000,ok

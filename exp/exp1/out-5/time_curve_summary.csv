@@ -1,0 +1,21 @@
+attr_func,target_input_tokens,target_output_tokens,target_total_tokens,time_mean,time_std,peak_mem_mean,peak_mem_std,statuses
+ifr_all_positions,10,5000,5010,2294.8041,0.0000,166.8683,0.0000,ok
+ifr_multi_hop,10,5000,5010,17.1402,0.0000,170.0895,0.0000,ok
+ifr_multi_hop_both,10,5000,5010,17.3079,0.0000,170.0874,0.0000,ok
+attnlrp,10,5000,5010,9832.7801,0.0000,353.8671,0.0000,ok
+ifr_all_positions,10,10000,10010,,,463.9487,0.0000,oom
+ifr_multi_hop,10,10000,10010,,,463.9487,0.0000,runtime_error: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+ifr_multi_hop_both,10,10000,10010,,,463.9487,0.0000,runtime_error: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+attnlrp,10,10000,10010,,,463.9487,0.0000,runtime_error: CUDA error: unspecified launch failure
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+

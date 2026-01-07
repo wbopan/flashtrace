@@ -73,15 +73,16 @@ python exp/exp2/sample_and_filter.py \
 ```bash
 # 生成侧 RISE/MAS 忠实度 ifr_multi_hop_stop_words,ifr_multi_hop_both,ifr_multi_hop_split_hop,ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention
 python exp/exp2/run_exp.py \
-  --datasets exp/exp2/data/niah_mq_q2.jsonl \
-  --attr_funcs IG,attention,perturbation_all,perturbation_REAGENT,ifr_all_positions,attnlrp,perturbation_CLP,ifr_multi_hop,ifr_multi_hop_both \
+  --datasets exp/exp2/data/math.jsonl \
+  --attr_funcs attnlrp,ifr_all_positions,ifr_multi_hop_both,ifr_multi_hop_stop_words \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
-  --cuda 2,3,4,5,6 \
+  --cuda 2,3,4,5,6,7 \
   --num_examples 100 \
   --mode faithfulness_gen \
   --n_hops 1 \
   --save_hop_traces
+
   # --attnlrp_neg_handling drop \
   # --attnlrp_norm_mode norm
 ```
