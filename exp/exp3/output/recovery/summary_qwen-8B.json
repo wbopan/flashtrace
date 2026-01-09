@@ -1,0 +1,24 @@
+[
+  {
+    "dataset": "niah_mq_q2_short_cot",
+    "model": "qwen-8B",
+    "neg_handling": "drop",
+    "norm_mode": "norm",
+    "seq_recovery@10%": 0.2619047619047619,
+    "row_recovery@10%": 0.2619047619047619,
+    "rec_recovery@10%": 0.2619047619047619,
+    "used": 1,
+    "skipped": 0
+  },
+  {
+    "dataset": "niah_mq_q2_long_cot",
+    "model": "qwen-8B",
+    "neg_handling": "drop",
+    "norm_mode": "norm",
+    "seq_recovery@10%": 0.09523809523809523,
+    "row_recovery@10%": 0.09523809523809523,
+    "rec_recovery@10%": 0.09523809523809523,
+    "used": 1,
+    "skipped": 0
+  }
+]

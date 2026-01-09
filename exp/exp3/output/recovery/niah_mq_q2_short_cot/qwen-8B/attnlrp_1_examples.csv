@@ -1,0 +1,10 @@
+Method,Recovery@10%
+Seq Attr Recovery Mean,0.2619047619047619
+Row Attr Recovery Mean,0.2619047619047619
+Recursive Attr Recovery Mean,0.2619047619047619
+Seq Attr Recovery Std,0.0
+Row Attr Recovery Std,0.0
+Recursive Attr Recovery Std,0.0
+Examples Used,1
+Examples Skipped,0
+Avg Sample Time (s),1.9781014937907457

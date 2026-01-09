@@ -814,19 +814,46 @@ def run_attribution(
             target=target,
         )
     elif "perturbation" in attr_func:
-        llm_attributor = llm_attr.LLMPerturbationAttribution(model, tokenizer)
-        if attr_func == "perturbation_all":
-            attr = llm_attributor.calculate_feature_ablation_sentences(
-                example.prompt, baseline=tokenizer.eos_token_id, measure="log_loss", target=target
-            )
-        elif attr_func == "perturbation_CLP":
-            attr = llm_attributor.calculate_feature_ablation_sentences(
-                example.prompt, baseline=tokenizer.eos_token_id, measure="KL", target=target
-            )
-        elif attr_func == "perturbation_REAGENT":
-            attr = llm_attributor.calculate_feature_ablation_sentences_mlm(example.prompt, target=target)
+        if attr_func in ("perturbation_all_fast", "perturbation_CLP_fast", "perturbation_REAGENT_fast"):
+            import perturbation_fast
+
+            llm_attributor = perturbation_fast.LLMPerturbationFastAttribution(model, tokenizer)
+            if attr_func == "perturbation_all_fast":
+                attr = llm_attributor.calculate_feature_ablation_segments(
+                    example.prompt,
+                    baseline=tokenizer.eos_token_id,
+                    measure="log_loss",
+                    target=target,
+                    source_k=20,
+                )
+            elif attr_func == "perturbation_CLP_fast":
+                attr = llm_attributor.calculate_feature_ablation_segments(
+                    example.prompt,
+                    baseline=tokenizer.eos_token_id,
+                    measure="KL",
+                    target=target,
+                    source_k=20,
+                )
+            else:
+                attr = llm_attributor.calculate_feature_ablation_segments_mlm(
+                    example.prompt,
+                    target=target,
+                    source_k=20,
+                )
         else:
-            raise ValueError(f"Unsupported perturbation attr_func {attr_func}")
+            llm_attributor = llm_attr.LLMPerturbationAttribution(model, tokenizer)
+            if attr_func == "perturbation_all":
+                attr = llm_attributor.calculate_feature_ablation_sentences(
+                    example.prompt, baseline=tokenizer.eos_token_id, measure="log_loss", target=target
+                )
+            elif attr_func == "perturbation_CLP":
+                attr = llm_attributor.calculate_feature_ablation_sentences(
+                    example.prompt, baseline=tokenizer.eos_token_id, measure="KL", target=target
+                )
+            elif attr_func == "perturbation_REAGENT":
+                attr = llm_attributor.calculate_feature_ablation_sentences_mlm(example.prompt, target=target)
+            else:
+                raise ValueError(f"Unsupported perturbation attr_func {attr_func}")
     elif "attention" in attr_func:
         llm_attributor = llm_attr.LLMAttentionAttribution(model, tokenizer)
         llm_attributor_ig = llm_attr.LLMGradientAttribtion(model, tokenizer)

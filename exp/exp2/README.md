@@ -71,15 +71,105 @@ python exp/exp2/sample_and_filter.py \
 
 使用说明
 ```bash
-# 生成侧 RISE/MAS 忠实度 ifr_multi_hop_stop_words,ifr_multi_hop_both,ifr_multi_hop_split_hop,ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention
+# 生成侧 RISE/MAS 忠实度 perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast,ifr_multi_hop_stop_words,ifr_multi_hop_both,ifr_multi_hop_split_hop,ft_attnlrp,ifr_multi_hop,attnlrp,ifr_all_positions,perturbation_all,perturbation_REAGENT,perturbation_CLP,IG,attention
 python exp/exp2/run_exp.py \
-  --datasets exp/exp2/data/math.jsonl \
-  --attr_funcs attnlrp,ifr_all_positions,ifr_multi_hop_both,ifr_multi_hop_stop_words \
+  --datasets exp/exp2/data/niah_mq_q4.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 2,3,4,5,6,7 \
   --num_examples 100 \
-  --mode faithfulness_gen \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/niah_mq_q8.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/niah_mv_v2.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/niah_mv_v4.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/niah_mv_v8.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/vt_h2_c3.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/vt_h4_c1.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/vt_h6_c1.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/vt_h10_c1.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
+  --n_hops 1 \
+  --save_hop_traces \
+&& python exp/exp2/run_exp.py \
+  --datasets exp/exp2/data/hotpotqa_long.jsonl \
+  --attr_funcs perturbation_all_fast,perturbation_CLP_fast,perturbation_REAGENT_fast \
+  --model qwen-8B \
+  --model_path /opt/share/models/Qwen/Qwen3-8B/ \
+  --cuda 2,3,4,5,6,7 \
+  --num_examples 100 \
+  --mode faithfulness_gen,recovery_ruler \
   --n_hops 1 \
   --save_hop_traces
 
