@@ -90,14 +90,14 @@ def _build_hop_trace_payload(
     attnlrp_norm_mode: str = ""
     attnlrp_ratio_enabled: int = -1
 
-    if attr_func == "ifr_multi_hop":
-        meta = (getattr(attr, "metadata", None) or {}).get("ifr") or {}
-        per_hop = meta.get("per_hop_projected") or []
-        if not per_hop:
-            return None
-        hop_vectors = [torch.as_tensor(v, dtype=torch.float32) for v in per_hop]
-        sink_span_gen = meta.get("sink_span_generation")
-        thinking_span_gen = meta.get("thinking_span_generation")
+    # IFR multi-hop variants expose projected hop vectors via metadata["ifr"]["per_hop_projected"].
+    ifr_meta = (getattr(attr, "metadata", None) or {}).get("ifr") or {}
+    ifr_per_hop = ifr_meta.get("per_hop_projected") or []
+
+    if ifr_per_hop:
+        hop_vectors = [torch.as_tensor(v, dtype=torch.float32) for v in ifr_per_hop]
+        sink_span_gen = ifr_meta.get("sink_span_generation")
+        thinking_span_gen = ifr_meta.get("thinking_span_generation")
         if sink_span_gen is not None:
             sink_span_gen = tuple(int(x) for x in sink_span_gen)
         if thinking_span_gen is not None:
@@ -373,6 +373,49 @@ def _write_sample_trace(
         if payload.get("time_recovery_s") is not None
         else None,
     }
+
+    # Derived, sample-level bookkeeping (token lengths and per-sample MAS/RISE).
+    record["input_len"] = int(prompt_len)
+
+    sink_span = record.get("sink_span_gen")
+    if isinstance(sink_span, list) and len(sink_span) == 2:
+        try:
+            start = int(sink_span[0])
+            end = int(sink_span[1])
+            record["output_len"] = (end - start + 1) if end >= start else None
+        except Exception:
+            record["output_len"] = None
+    else:
+        record["output_len"] = None
+
+    thinking_span = record.get("thinking_span_gen")
+    if isinstance(thinking_span, list) and len(thinking_span) == 2:
+        try:
+            start = int(thinking_span[0])
+            end = int(thinking_span[1])
+            record["cot_len"] = (end - start + 1) if end >= start else None
+        except Exception:
+            record["cot_len"] = None
+    else:
+        record["cot_len"] = None
+
+    record["rise_seq"] = None
+    record["mas_seq"] = None
+    record["rise_row"] = None
+    record["mas_row"] = None
+    record["rise_rec"] = None
+    record["mas_rec"] = None
+    faith = record.get("faithfulness_scores")
+    if isinstance(faith, list) and len(faith) == 3:
+        try:
+            record["rise_seq"] = float(faith[0][0])
+            record["mas_seq"] = float(faith[0][1])
+            record["rise_row"] = float(faith[1][0])
+            record["mas_row"] = float(faith[1][1])
+            record["rise_rec"] = float(faith[2][0])
+            record["mas_rec"] = float(faith[2][1])
+        except Exception:
+            pass
 
     if payload.get("vh") is not None:
         vh = payload["vh"]
