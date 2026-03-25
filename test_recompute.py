@@ -1,14 +1,15 @@
-"""Smoke test: verify attention recomputation matches output_attentions=True."""
+"""End-to-end test: verify recompute_attention mode produces identical IFR results
+through the full LLMIFRAttribution pipeline."""
 
 import torch
-import torch.nn as nn
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer, PreTrainedTokenizerFast
+from tokenizers import Tokenizer, models, pre_tokenizers, trainers
 
-# --- 1. Create a tiny Qwen2-style model from scratch ---
-print("Creating tiny Qwen2 model...")
+# --- 1. Create a tiny Qwen2-style model ---
+print("1. Creating tiny Qwen2 model...")
 config = AutoConfig.for_model(
     "qwen2",
-    vocab_size=1000,
+    vocab_size=500,
     hidden_size=64,
     intermediate_size=128,
     num_hidden_layers=4,
@@ -20,117 +21,74 @@ config = AutoConfig.for_model(
 )
 model = AutoModelForCausalLM.from_config(config, attn_implementation="eager")
 model.eval()
-print(f"  layers={config.num_hidden_layers}, heads={config.num_attention_heads}, "
+print(f"   layers={config.num_hidden_layers}, heads={config.num_attention_heads}, "
       f"kv_heads={config.num_key_value_heads}, d_model={config.hidden_size}")
 
-# --- 2. Create dummy input ---
-seq_len = 16
-input_ids = torch.randint(0, config.vocab_size, (1, seq_len))
-attention_mask = torch.ones_like(input_ids)
-
-# --- 3. Get ground truth attention from model ---
-print("\nRunning forward with output_attentions=True...")
-with torch.no_grad():
-    outputs = model(
-        input_ids=input_ids,
-        attention_mask=attention_mask,
-        output_attentions=True,
-        use_cache=False,
-        return_dict=True,
-    )
-gt_attentions = outputs.attentions  # tuple of [1, n_heads_q, S, S] per layer
-print(f"  Got {len(gt_attentions)} layers, shape={gt_attentions[0].shape}")
-
-# --- 4. Test recompute_layer_attention ---
-print("\nTesting recompute_layer_attention...")
-from ifr_core import (
-    extract_model_metadata,
-    build_weight_pack,
-    recompute_layer_attention,
-    IFRParameters,
-    attach_hooks,
+# --- 2. Create a minimal tokenizer with chat template ---
+print("2. Creating minimal tokenizer...")
+tok_backend = Tokenizer(models.WordLevel(vocab={f"t{i}": i for i in range(500)}, unk_token="t0"))
+tok_backend.pre_tokenizer = pre_tokenizers.Whitespace()
+tokenizer = PreTrainedTokenizerFast(
+    tokenizer_object=tok_backend,
+    eos_token="t1",
+    pad_token="t2",
 )
+# Minimal chat template that just concatenates messages
+tokenizer.chat_template = "{% for m in messages %}{{ m['content'] }}{% endfor %}"
 
-metadata = extract_model_metadata(model)
-print(f"  rotary_emb found: {metadata.rotary_emb is not None}")
+# --- 3. Run full pipeline in BOTH modes ---
+print("3. Running LLMIFRAttribution end-to-end...")
+from llm_attr import LLMIFRAttribution
 
-model_dtype = next(model.parameters()).dtype
-weight_pack = build_weight_pack(metadata, model_dtype)
+prompt = "t10 t20 t30 t40 t50"
+target = "t60 t70 t80"
 
-# Capture intermediate activations
-cache, hooks = attach_hooks(metadata.layers, model_dtype)
-with torch.no_grad():
-    _ = model(
-        input_ids=input_ids,
-        attention_mask=attention_mask,
-        output_attentions=False,
-        use_cache=False,
-        return_dict=True,
-    )
-for h in hooks:
-    h.remove()
+# Mode A: stored attentions (default)
+attr_a = LLMIFRAttribution(model, tokenizer, recompute_attention=False)
+result_a = attr_a.calculate_ifr_for_all_positions(prompt, target)
+print(f"   Mode A (stored):    score_shape={result_a.attribution_matrix.shape}")
 
-params = IFRParameters(
-    n_layers=metadata.n_layers,
-    n_heads_q=metadata.n_heads_q,
-    n_kv_heads=metadata.n_kv_heads,
-    head_dim=metadata.head_dim,
-    group_size=metadata.group_size,
-    d_model=metadata.d_model,
-    sequence_length=seq_len,
-    model_dtype=model_dtype,
-    chunk_tokens=128,
-    sink_chunk_tokens=32,
-)
+# Mode B: recomputed attentions
+attr_b = LLMIFRAttribution(model, tokenizer, recompute_attention=True)
+result_b = attr_b.calculate_ifr_for_all_positions(prompt, target)
+print(f"   Mode B (recompute): score_shape={result_b.attribution_matrix.shape}")
 
-max_diff_all = 0.0
-for li in range(metadata.n_layers):
-    x_prev = cache["pre_attn_resid"][li][0]  # [S, d_model]
-    recomputed = recompute_layer_attention(x_prev, weight_pack[li], metadata.rotary_emb, params)
-    ground_truth = gt_attentions[li][0]  # [n_heads_q, S, S]
+# --- 4. Compare ---
+print("\n4. Comparing results...")
+diff = (result_a.attribution_matrix - result_b.attribution_matrix).abs()
+max_diff = diff.max().item()
+mean_diff = diff.mean().item()
+print(f"   max_diff:  {max_diff:.2e}")
+print(f"   mean_diff: {mean_diff:.2e}")
 
-    diff = (recomputed - ground_truth).abs().max().item()
-    max_diff_all = max(max_diff_all, diff)
-    print(f"  Layer {li}: max_diff={diff:.2e}, "
-          f"recomputed_sum={recomputed.sum():.4f}, gt_sum={ground_truth.sum():.4f}")
-
-print(f"\n  Overall max diff across all layers: {max_diff_all:.2e}")
-if max_diff_all < 1e-5:
-    print("  PASS: Recomputed attention matches ground truth!")
+if max_diff < 1e-5:
+    print("   PASS: End-to-end results match!")
 else:
-    print("  FAIL: Significant difference detected!")
+    print("   FAIL: Results differ!")
+    # Print details for debugging
+    print(f"   result_a:\n{result_a.attribution_matrix}")
+    print(f"   result_b:\n{result_b.attribution_matrix}")
 
-# --- 5. Test full IFR pipeline in both modes ---
-print("\n\nTesting full IFR pipeline (both modes)...")
-from ifr_core import compute_ifr_for_all_positions
-
-# Mode A: with stored attentions
-result_a = compute_ifr_for_all_positions(
-    cache=cache,
-    attentions=gt_attentions,
-    weight_pack=weight_pack,
-    params=params,
-    sink_range=(4, seq_len - 1),
-)
-
-# Mode B: with recomputed attentions
-result_b = compute_ifr_for_all_positions(
-    cache=cache,
-    attentions=None,
-    weight_pack=weight_pack,
-    params=params,
-    sink_range=(4, seq_len - 1),
-    rotary_emb=metadata.rotary_emb,
-)
-
-token_diff = (result_a.token_importance_matrix - result_b.token_importance_matrix).abs().max().item()
-head_diff = (result_a.head_importance_matrix - result_b.head_importance_matrix).abs().max().item()
-print(f"  token_importance max_diff: {token_diff:.2e}")
-print(f"  head_importance max_diff: {head_diff:.2e}")
-
-if token_diff < 1e-4 and head_diff < 1e-4:
-    print("  PASS: Full IFR pipeline produces matching results!")
+# --- 5. Also test span aggregate ---
+print("\n5. Testing calculate_ifr_span...")
+result_sa_a = attr_a.calculate_ifr_span(prompt, target)
+result_sa_b = attr_b.calculate_ifr_span(prompt, target)
+sa_diff = (result_sa_a.attribution_matrix - result_sa_b.attribution_matrix).abs().max().item()
+print(f"   max_diff: {sa_diff:.2e}")
+if sa_diff < 1e-5:
+    print("   PASS")
 else:
-    print("  FAIL: IFR results differ between modes!")
+    print("   FAIL")
 
-print("\nAll tests complete.")
+# --- 6. Also test multi-hop ---
+print("\n6. Testing calculate_ifr_multi_hop...")
+result_mh_a = attr_a.calculate_ifr_multi_hop(prompt, target, n_hops=2)
+result_mh_b = attr_b.calculate_ifr_multi_hop(prompt, target, n_hops=2)
+mh_diff = (result_mh_a.attribution_matrix - result_mh_b.attribution_matrix).abs().max().item()
+print(f"   max_diff: {mh_diff:.2e}")
+if mh_diff < 1e-5:
+    print("   PASS")
+else:
+    print("   FAIL")
+
+print("\nAll end-to-end tests complete.")
