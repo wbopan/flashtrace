@@ -341,7 +341,9 @@ class LLMIFRAttributionImproved(llm_attr.LLMIFRAttribution):
             generation_tokens=list(getattr(self, "generation_tokens", []) or []),
         )
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -369,6 +371,7 @@ class LLMIFRAttributionImproved(llm_attr.LLMIFRAttribution):
             params=params,
             renorm_threshold=renorm,
             sink_weights=base_weights,
+            rotary_emb=metadata.rotary_emb,
         )
 
         base_total = base_ifr_raw.token_importance_total.to(dtype=torch.float32) * stop_keep_mask_full
@@ -435,6 +438,7 @@ class LLMIFRAttributionImproved(llm_attr.LLMIFRAttribution):
                 params=params,
                 renorm_threshold=renorm,
                 sink_weights=w_thinking,
+                rotary_emb=metadata.rotary_emb,
             )
 
             hop_total = hop_ifr_raw.token_importance_total.to(dtype=torch.float32) * stop_keep_mask_full
@@ -626,7 +630,9 @@ class LLMIFRAttributionSplitHop(llm_attr.LLMIFRAttribution):
                     f"observation_mask must have length {gen_len} (generation) or {total_len} (full sequence)."
                 )
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -638,6 +644,7 @@ class LLMIFRAttributionSplitHop(llm_attr.LLMIFRAttribution):
             weight_pack=weight_pack,
             params=params,
             renorm_threshold=renorm,
+            rotary_emb=metadata.rotary_emb,
         )
         base_total = base_ifr_raw.token_importance_total.to(dtype=torch.float32)
         base_ifr = IFRAggregate(
@@ -717,6 +724,7 @@ class LLMIFRAttributionSplitHop(llm_attr.LLMIFRAttribution):
                 params=params,
                 renorm_threshold=renorm,
                 sink_weights=w_pending.to(dtype=params.model_dtype),
+                rotary_emb=metadata.rotary_emb,
             )
 
             hop_total = hop_ifr_raw.token_importance_total.to(dtype=torch.float32)
@@ -930,7 +938,9 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             generation_tokens=list(getattr(self, "generation_tokens", []) or []),
         )
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -958,6 +968,7 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             params=params,
             renorm_threshold=renorm,
             sink_weights=base_weights,
+            rotary_emb=metadata.rotary_emb,
         )
         base_total = torch.nan_to_num(
             base_ifr_raw.token_importance_total.to(dtype=torch.float32),
@@ -1032,6 +1043,7 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
                 params=params,
                 renorm_threshold=renorm,
                 sink_weights=w_span_weights,
+                rotary_emb=metadata.rotary_emb,
             )
 
             hop_total = torch.nan_to_num(
@@ -1235,7 +1247,9 @@ class LLMIFRAttributionInAllGen(llm_attr.LLMIFRAttribution):
                     f"observation_mask must have length {gen_len} (generation) or {total_len} (full sequence)."
                 )
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -1251,6 +1265,7 @@ class LLMIFRAttributionInAllGen(llm_attr.LLMIFRAttribution):
             weight_pack=weight_pack,
             params=params,
             renorm_threshold=renorm,
+            rotary_emb=metadata.rotary_emb,
         )
         base_total = torch.nan_to_num(
             base_ifr_raw.token_importance_total.to(dtype=torch.float32),
@@ -1320,6 +1335,7 @@ class LLMIFRAttributionInAllGen(llm_attr.LLMIFRAttribution):
                 params=params,
                 renorm_threshold=renorm,
                 sink_weights=w_span_weights,
+                rotary_emb=metadata.rotary_emb,
             )
 
             hop_total = torch.nan_to_num(

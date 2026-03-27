@@ -9,6 +9,7 @@ directly by the attribution pipeline without depending on the agenttrace repo.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Dict, List, NamedTuple, Optional, Sequence, Tuple
 
@@ -30,6 +31,7 @@ class ModelMetadata:
     n_kv_heads: int
     head_dim: int
     group_size: int
+    rotary_emb: Optional[nn.Module] = None
 
 
 def extract_model_metadata(model: nn.Module) -> ModelMetadata:
@@ -74,6 +76,10 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
         v_rows = layers[0].self_attn.v_proj.weight.shape[0]
         head_dim = v_rows // n_kv_heads
 
+    rotary_emb = getattr(decoder, "rotary_emb", None)
+    if rotary_emb is None:
+        rotary_emb = getattr(layers[0].self_attn, "rotary_emb", None)
+
     return ModelMetadata(
         decoder=decoder,
         layers=layers,
@@ -83,6 +89,7 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
         n_kv_heads=n_kv_heads,
         head_dim=head_dim,
         group_size=group_size,
+        rotary_emb=rotary_emb,
     )
 
 
@@ -92,16 +99,119 @@ def build_weight_pack(metadata: ModelMetadata, model_dtype: torch.dtype) -> List
     weight_pack: List[Dict[str, torch.Tensor | nn.Module]] = []
     for layer in metadata.layers:
         attn = layer.self_attn
-        weight_pack.append(
-            {
-                "v_w": attn.v_proj.weight.detach().to(dtype=model_dtype),
-                "o_w": attn.o_proj.weight.detach().to(dtype=model_dtype),
-                "in_ln": layer.input_layernorm,
-                "post_attn_ln": layer.post_attention_layernorm,
-                "mlp": layer.mlp,
-            }
-        )
+        pack: Dict[str, torch.Tensor | nn.Module] = {
+            "v_w": attn.v_proj.weight.detach().to(dtype=model_dtype),
+            "o_w": attn.o_proj.weight.detach().to(dtype=model_dtype),
+            "q_w": attn.q_proj.weight.detach().to(dtype=model_dtype),
+            "k_w": attn.k_proj.weight.detach().to(dtype=model_dtype),
+            "in_ln": layer.input_layernorm,
+            "post_attn_ln": layer.post_attention_layernorm,
+            "mlp": layer.mlp,
+        }
+        q_bias = getattr(attn.q_proj, "bias", None)
+        k_bias = getattr(attn.k_proj, "bias", None)
+        if q_bias is not None:
+            pack["q_bias"] = q_bias.detach().to(dtype=model_dtype)
+        if k_bias is not None:
+            pack["k_bias"] = k_bias.detach().to(dtype=model_dtype)
+        weight_pack.append(pack)
     return weight_pack
+
+
+# ---------------------------------------------------------------------------
+# Attention recomputation utilities
+# ---------------------------------------------------------------------------
+
+def _rotate_half(x: torch.Tensor) -> torch.Tensor:
+    """Rotate the last dimension by half — standard RoPE helper."""
+    x1 = x[..., : x.shape[-1] // 2]
+    x2 = x[..., x.shape[-1] // 2 :]
+    return torch.cat((-x2, x1), dim=-1)
+
+
+def _apply_rotary_pos_emb(
+    q: torch.Tensor, k: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Apply rotary position embeddings to Q and K tensors."""
+    # cos/sin shape from HF: [1, S, head_dim] or [S, head_dim] — broadcast to [1, 1, S, head_dim]
+    if cos.dim() == 2:
+        cos = cos.unsqueeze(0).unsqueeze(0)
+    elif cos.dim() == 3:
+        cos = cos.unsqueeze(1)
+    if sin.dim() == 2:
+        sin = sin.unsqueeze(0).unsqueeze(0)
+    elif sin.dim() == 3:
+        sin = sin.unsqueeze(1)
+    q_embed = (q * cos) + (_rotate_half(q) * sin)
+    k_embed = (k * cos) + (_rotate_half(k) * sin)
+    return q_embed, k_embed
+
+
+@torch.no_grad()
+def recompute_layer_attention(
+    x_prev: torch.Tensor,
+    layer_weights: Dict[str, torch.Tensor | nn.Module],
+    rotary_emb: nn.Module,
+    params: IFRParameters,
+) -> torch.Tensor:
+    """Recompute attention weights for a single layer from cached activations.
+
+    Returns attention weights of shape ``[n_heads_q, S, S]`` (post-softmax, causal masked).
+    This avoids the need to store all layers' attention maps simultaneously.
+    """
+    device = x_prev.device
+    model_dtype = params.model_dtype
+    S = x_prev.shape[0]
+    n_heads_q = params.n_heads_q
+    n_kv_heads = params.n_kv_heads
+    head_dim = params.head_dim
+    group_size = params.group_size
+
+    in_ln_mod = layer_weights["in_ln"]
+    q_w = layer_weights["q_w"].to(device, non_blocking=True)
+    k_w = layer_weights["k_w"].to(device, non_blocking=True)
+
+    # Apply layernorm (actual, not linearized) to get the true normed input
+    x_normed = in_ln_mod(x_prev.unsqueeze(0)).squeeze(0).to(model_dtype)
+
+    # Project Q and K
+    Q = torch.matmul(x_normed, q_w.T)  # [S, n_heads_q * head_dim]
+    K = torch.matmul(x_normed, k_w.T)  # [S, n_kv_heads * head_dim]
+
+    q_bias = layer_weights.get("q_bias")
+    k_bias = layer_weights.get("k_bias")
+    if q_bias is not None:
+        Q = Q + q_bias.to(device, non_blocking=True)
+    if k_bias is not None:
+        K = K + k_bias.to(device, non_blocking=True)
+
+    # Reshape to [1, n_heads, S, head_dim]
+    Q = Q.view(S, n_heads_q, head_dim).transpose(0, 1).unsqueeze(0)
+    K = K.view(S, n_kv_heads, head_dim).transpose(0, 1).unsqueeze(0)
+
+    # Apply rotary position embeddings
+    position_ids = torch.arange(S, device=device).unsqueeze(0)
+    cos, sin = rotary_emb(K, position_ids)
+    Q, K = _apply_rotary_pos_emb(Q, K, cos, sin)
+
+    # GQA: repeat K for grouped-query attention
+    K = K.repeat_interleave(group_size, dim=1)  # [1, n_heads_q, S, head_dim]
+
+    # Compute attention scores
+    attn_weights = torch.matmul(Q, K.transpose(2, 3)) / math.sqrt(head_dim)
+
+    # Apply causal mask
+    causal_mask = torch.triu(
+        torch.full((S, S), float("-inf"), device=device, dtype=attn_weights.dtype),
+        diagonal=1,
+    )
+    attn_weights = attn_weights + causal_mask.unsqueeze(0).unsqueeze(0)
+
+    # Softmax
+    attn_weights = torch.nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32)
+    attn_weights = attn_weights.to(model_dtype)
+
+    return attn_weights[0]  # [n_heads_q, S, S]
 
 
 @dataclass
@@ -254,10 +364,11 @@ def proximity(a: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
 def compute_ifr_for_position(
     focus_idx: int,
     cache: Dict[str, List[Optional[torch.Tensor]]],
-    attentions: Sequence[torch.Tensor],
+    attentions: Optional[Sequence[torch.Tensor]],
     weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
     params: IFRParameters,
     renorm_threshold: float = 0.0,
+    rotary_emb: Optional[nn.Module] = None,
 ) -> IFRAggregate:
     """Convenience wrapper computing IFR for a single sink position."""
 
@@ -269,6 +380,7 @@ def compute_ifr_for_position(
         renorm_threshold=renorm_threshold,
         sink_range=(focus_idx, focus_idx),
         return_layerwise=True,
+        rotary_emb=rotary_emb,
     )
 
     token_total_cpu = all_ifr.token_importance_matrix[0]
@@ -293,11 +405,12 @@ def compute_ifr_sentence_aggregate(
     sink_start: int,
     sink_end: int,
     cache: Dict[str, List[Optional[torch.Tensor]]],
-    attentions: Sequence[torch.Tensor],
+    attentions: Optional[Sequence[torch.Tensor]],
     weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
     params: IFRParameters,
     renorm_threshold: float = 0.0,
     sink_weights: Optional[torch.Tensor] = None,
+    rotary_emb: Optional[nn.Module] = None,
 ) -> IFRAggregate:
     """Aggregate IFR contributions over an inclusive sink span [sink_start, sink_end]."""
 
@@ -344,9 +457,13 @@ def compute_ifr_sentence_aggregate(
         if mlp_out.device != layer_device:
             mlp_out = mlp_out.to(layer_device, non_blocking=True)
 
-        attn_li = attentions[li][0]
-        if attn_li.device != layer_device or attn_li.dtype != model_dtype:
-            attn_li = attn_li.to(device=layer_device, dtype=model_dtype, non_blocking=True)
+        if attentions is not None:
+            attn_li = attentions[li][0]
+            if attn_li.device != layer_device or attn_li.dtype != model_dtype:
+                attn_li = attn_li.to(device=layer_device, dtype=model_dtype, non_blocking=True)
+        else:
+            assert rotary_emb is not None, "rotary_emb is required when attentions is None"
+            attn_li = recompute_layer_attention(x_prev, weight_pack[li], rotary_emb, params)
 
         v_w = weight_pack[li]["v_w"].to(device=layer_device, non_blocking=True)
         o_w = weight_pack[li]["o_w"].to(device=layer_device, non_blocking=True)
@@ -462,11 +579,12 @@ def compute_multi_hop_ifr(
     thinking_span: Tuple[int, int],
     n_hops: int,
     cache: Dict[str, List[Optional[torch.Tensor]]],
-    attentions: Sequence[torch.Tensor],
+    attentions: Optional[Sequence[torch.Tensor]],
     weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
     params: IFRParameters,
     renorm_threshold: float = 0.0,
     observation_mask: Optional[torch.Tensor] = None,
+    rotary_emb: Optional[nn.Module] = None,
 ) -> MultiHopIFRResult:
     """Compute the base and multi-hop IFR distribution for a sink span."""
 
@@ -487,6 +605,7 @@ def compute_multi_hop_ifr(
         weight_pack=weight_pack,
         params=params,
         renorm_threshold=renorm_threshold,
+        rotary_emb=rotary_emb,
     )
 
     raw_attributions: List[IFRAggregate] = [base_ifr]
@@ -524,6 +643,7 @@ def compute_multi_hop_ifr(
             params=params,
             renorm_threshold=renorm_threshold,
             sink_weights=w_thinking,
+            rotary_emb=rotary_emb,
         )
 
         raw_attributions.append(hop_ifr)
@@ -556,12 +676,13 @@ def compute_multi_hop_ifr(
 @torch.no_grad()
 def compute_ifr_for_all_positions(
     cache: Dict[str, List[Optional[torch.Tensor]]],
-    attentions: Sequence[torch.Tensor],
+    attentions: Optional[Sequence[torch.Tensor]],
     weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
     params: IFRParameters,
     renorm_threshold: float = 0.0,
     sink_range: Optional[Tuple[int, int]] = None,
     return_layerwise: bool = False,
+    rotary_emb: Optional[nn.Module] = None,
 ) -> IFRAllPositions:
     """Compute IFR importances for every sink position in the selected range."""
 
@@ -609,9 +730,13 @@ def compute_ifr_for_all_positions(
         if mlp_out.device != layer_device:
             mlp_out = mlp_out.to(layer_device, non_blocking=True)
 
-        attn_li = attentions[li][0]
-        if attn_li.device != layer_device or attn_li.dtype != model_dtype:
-            attn_li = attn_li.to(device=layer_device, dtype=model_dtype, non_blocking=True)
+        if attentions is not None:
+            attn_li = attentions[li][0]
+            if attn_li.device != layer_device or attn_li.dtype != model_dtype:
+                attn_li = attn_li.to(device=layer_device, dtype=model_dtype, non_blocking=True)
+        else:
+            assert rotary_emb is not None, "rotary_emb is required when attentions is None"
+            attn_li = recompute_layer_attention(x_prev, weight_pack[li], rotary_emb, params)
 
         v_w = weight_pack[li]["v_w"].to(layer_device, non_blocking=True)
         o_w = weight_pack[li]["o_w"].to(layer_device, non_blocking=True)
@@ -710,6 +835,7 @@ __all__ = [
     "ModelMetadata",
     "extract_model_metadata",
     "build_weight_pack",
+    "recompute_layer_attention",
     "IFRParameters",
     "IFRLayerResult",
     "IFRAggregate",

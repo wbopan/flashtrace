@@ -954,12 +954,14 @@ class LLMIFRAttribution(LLMAttribution):
         sink_chunk_tokens: int = 32,
         renorm_threshold_default: float = 0.0,
         show_progress: bool = True,
+        recompute_attention: bool = False,
     ) -> None:
         super().__init__(model, tokenizer, generate_kwargs)
         self.chunk_tokens = int(chunk_tokens)
         self.sink_chunk_tokens = int(sink_chunk_tokens)
         self.renorm_threshold_default = float(renorm_threshold_default)
         self.show_progress = bool(show_progress)
+        self.recompute_attention = bool(recompute_attention)
 
     @property
     def _model_dtype(self) -> torch.dtype:
@@ -981,7 +983,8 @@ class LLMIFRAttribution(LLMAttribution):
         self,
         input_ids: torch.Tensor,
         attention_mask: torch.Tensor,
-    ) -> Tuple[Dict[str, List[Optional[torch.Tensor]]], Sequence[torch.Tensor], ModelMetadata, List[Dict[str, torch.Tensor | nn.Module]]]:
+        recompute_attention: bool = False,
+    ) -> Tuple[Dict[str, List[Optional[torch.Tensor]]], Optional[Sequence[torch.Tensor]], ModelMetadata, List[Dict[str, torch.Tensor | nn.Module]]]:
         metadata = extract_model_metadata(self.model)
         cache, hooks = attach_hooks(metadata.layers, self._model_dtype)
 
@@ -990,7 +993,7 @@ class LLMIFRAttribution(LLMAttribution):
                 input_ids=input_ids,
                 attention_mask=attention_mask,
                 use_cache=False,
-                output_attentions=True,
+                output_attentions=not recompute_attention,
                 output_hidden_states=False,
                 return_dict=True,
             )
@@ -1001,7 +1004,7 @@ class LLMIFRAttribution(LLMAttribution):
                 except Exception:
                     pass
 
-        attentions = outputs.attentions
+        attentions = None if recompute_attention else outputs.attentions
         weight_pack = build_weight_pack(metadata, self._model_dtype)
         return cache, attentions, metadata, weight_pack
 
@@ -1063,7 +1066,9 @@ class LLMIFRAttribution(LLMAttribution):
             }
             return self._finalize_result(empty, metadata=metadata)
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -1076,6 +1081,7 @@ class LLMIFRAttribution(LLMAttribution):
             renorm_threshold=renorm,
             sink_range=sink_range,
             return_layerwise=False,
+            rotary_emb=metadata.rotary_emb,
         )
 
         meta = {
@@ -1128,7 +1134,9 @@ class LLMIFRAttribution(LLMAttribution):
         sink_start_abs = prompt_len + span_start
         sink_end_abs = prompt_len + span_end
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -1141,6 +1149,7 @@ class LLMIFRAttribution(LLMAttribution):
             renorm_threshold=renorm,
             sink_range=sink_range,
             return_layerwise=False,
+            rotary_emb=metadata.rotary_emb,
         )
 
         score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
@@ -1191,7 +1200,9 @@ class LLMIFRAttribution(LLMAttribution):
         sink_start_abs = prompt_len + span_start
         sink_end_abs = prompt_len + span_end
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -1203,6 +1214,7 @@ class LLMIFRAttribution(LLMAttribution):
             weight_pack=weight_pack,
             params=params,
             renorm_threshold=renorm,
+            rotary_emb=metadata.rotary_emb,
         )
 
         score_array = torch.full((gen_len, total_len), torch.nan, dtype=torch.float32)
@@ -1282,7 +1294,9 @@ class LLMIFRAttribution(LLMAttribution):
                     f"observation_mask must have length {gen_len} (generation) or {total_len} (full sequence)."
                 )
 
-        cache, attentions, metadata, weight_pack = self._capture_model_state(input_ids_all, attn_mask)
+        cache, attentions, metadata, weight_pack = self._capture_model_state(
+            input_ids_all, attn_mask, recompute_attention=self.recompute_attention,
+        )
         params = self._build_ifr_params(metadata, total_len)
         renorm = self.renorm_threshold_default if renorm_threshold is None else float(renorm_threshold)
 
@@ -1297,6 +1311,7 @@ class LLMIFRAttribution(LLMAttribution):
             params=params,
             renorm_threshold=renorm,
             observation_mask=obs_mask_tensor,
+            rotary_emb=metadata.rotary_emb,
         )
 
         eval_vector = multi_hop.observation["sum"]
