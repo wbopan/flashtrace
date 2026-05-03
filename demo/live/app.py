@@ -334,34 +334,63 @@ def build_demo():
     with gr.Blocks(title="FlashTrace Live Demo") as demo:
         gr.Markdown(
             "# FlashTrace Live Demo\n"
-            "Trace a generated answer back to the prompt tokens that shaped it."
+            "Generate with Qwen, inspect token spans, then trace selected answer."
         )
+
         with gr.Row():
             with gr.Column(scale=2):
                 model_name = gr.Textbox(label="Model", value=DEFAULT_MODEL)
                 prompt = gr.Textbox(label="Prompt", value=DEFAULT_PROMPT, lines=10)
-                target = gr.Textbox(label="Target response", value=DEFAULT_TARGET, lines=3)
+                with gr.Row():
+                    max_new_tokens = gr.Number(label="Max new tokens", value=128, precision=0)
+                    generate_btn = gr.Button("Generate", variant="secondary")
             with gr.Column(scale=1):
                 method = gr.Dropdown(
                     label="Method",
                     choices=["flashtrace", "ifr-span", "ifr-matrix"],
                     value="flashtrace",
                 )
-                output_span = gr.Textbox(label="Output span", value="0:0")
+                output_span = gr.Textbox(label="Output span (auto-filled by Generate)", value="0:0")
                 reasoning_span = gr.Textbox(label="Reasoning span", value="")
                 hops = gr.Slider(label="Hops", minimum=1, maximum=4, step=1, value=1)
                 top_k = gr.Slider(label="Top K", minimum=1, maximum=50, step=1, value=20)
-                device_map = gr.Textbox(label="Device map", value=os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"))
-                dtype = gr.Dropdown(label="Dtype", choices=["auto", "float16", "bfloat16", "float32"], value="auto")
+                device_map = gr.Textbox(
+                    label="Device map",
+                    value=os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"),
+                )
+                dtype = gr.Dropdown(
+                    label="Dtype",
+                    choices=["auto", "float16", "bfloat16", "float32"],
+                    value="auto",
+                )
                 chunk_tokens = gr.Number(label="Chunk tokens", value=128, precision=0)
                 sink_chunk_tokens = gr.Number(label="Sink chunk tokens", value=32, precision=0)
                 use_chat_template = gr.Checkbox(label="Use chat template", value=False)
-                submit = gr.Button("Trace", variant="primary")
+                submit = gr.Button("Trace selected answer", variant="primary")
+
+        target = gr.Textbox(label="Generated response (used as trace target)", value=DEFAULT_TARGET, lines=6)
+        sections_state = gr.JSON(label="Detected sections")
+        raw_tokens = gr.Dataframe(
+            headers=["section#idx", "token_id", "token_text", "char_span", "kind", "selectable"],
+            label="Raw tokens",
+        )
 
         top_table = gr.Dataframe(headers=["Index", "Token", "Score"], label="Top input tokens")
         generation_tokens = gr.Textbox(label="Generation tokens", lines=8)
         heatmap = gr.HTML(label="Trace heatmap")
         json_file = gr.File(label="JSON trace")
+
+        generate_btn.click(
+            fn=lambda model_name, prompt, device_map, dtype, max_new_tokens: run_generate_phase(
+                model_name=model_name,
+                prompt=prompt,
+                device_map=device_map,
+                dtype=dtype,
+                max_new_tokens=max_new_tokens,
+            ),
+            inputs=[model_name, prompt, device_map, dtype, max_new_tokens],
+            outputs=[target, sections_state, raw_tokens, output_span, reasoning_span],
+        )
 
         submit.click(
             fn=run_trace_from_ui,
