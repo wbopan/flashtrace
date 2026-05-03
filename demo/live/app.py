@@ -18,6 +18,18 @@ def _bootstrap_local_flashtrace() -> None:
 
 _bootstrap_local_flashtrace()
 
+from demo.live.qwen_generation import (
+    GenerationOutput,
+    generate_smoke_response,
+    generate_with_qwen,
+)
+from demo.live.token_overlay import (
+    GenerationSections,
+    build_token_records,
+    detect_sections,
+    group_into_word_boxes,
+)
+
 if TYPE_CHECKING:
     from flashtrace.result import TraceResult
 
@@ -226,6 +238,93 @@ def run_trace_from_ui(
         loader=loader,
         tracer_cls=tracer_cls,
         work_dir=work_dir,
+    )
+
+
+def _format_span(span: tuple[int, int] | None) -> str:
+    if span is None:
+        return ""
+    return f"{span[0]}:{span[1]}"
+
+
+def _sections_to_dict(sections: GenerationSections) -> dict[str, object]:
+    return {
+        "generation_text": sections.generation_text,
+        "thinking_char_span": sections.thinking_char_span,
+        "answer_char_span": sections.answer_char_span,
+        "thinking_token_span": sections.thinking_token_span,
+        "answer_token_span": sections.answer_token_span,
+        "parser": sections.parser,
+    }
+
+
+def _raw_token_rows(generation_text: str, tokenizer) -> list[list[object]]:
+    records = build_token_records(
+        text=generation_text,
+        tokenizer=tokenizer,
+        section="answer",
+        role="assistant",
+    )
+    return [
+        [
+            f"{r.section}#{r.token_index}",
+            r.token_id,
+            r.token_text,
+            f"{r.char_start}:{r.char_end}",
+            r.kind,
+            "yes" if r.selectable else "no",
+        ]
+        for r in records
+    ]
+
+
+def _smoke_tokenizer():
+    from tests.helpers import make_tiny_qwen2_model_and_tokenizer
+
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    return tokenizer
+
+
+def run_generate_phase(
+    *,
+    model_name: str,
+    prompt: str,
+    device_map: str,
+    dtype: str,
+    max_new_tokens: int,
+    loader: Callable | None = None,
+) -> tuple[str, dict[str, object], list[list[object]], str, str]:
+    model_id = model_name.strip()
+    prompt_text = prompt.strip()
+    if not model_id:
+        raise ValueError("Model is required.")
+    if not prompt_text:
+        raise ValueError("Prompt is required.")
+    if len(prompt_text) > MAX_PROMPT_CHARS:
+        raise ValueError(f"Prompt must be at most {MAX_PROMPT_CHARS} characters.")
+
+    if model_id == SMOKE_MODEL_ID:
+        output = generate_smoke_response(prompt=prompt_text)
+        tokenizer = _smoke_tokenizer()
+    else:
+        model, tokenizer = _load_cached_model(
+            model_id, device_map=device_map, dtype=dtype, loader=loader
+        )
+        output = generate_with_qwen(
+            model=model,
+            tokenizer=tokenizer,
+            prompt=prompt_text,
+            max_new_tokens=int(max_new_tokens),
+        )
+
+    sections = detect_sections(text=output.text, tokenizer=tokenizer)
+    raw_rows = _raw_token_rows(output.text, tokenizer)
+    return (
+        output.text,
+        _sections_to_dict(sections),
+        raw_rows,
+        _format_span(sections.answer_token_span),
+        _format_span(sections.thinking_token_span),
     )
 
 

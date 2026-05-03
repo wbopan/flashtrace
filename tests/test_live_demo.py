@@ -211,3 +211,21 @@ def test_live_app_script_entrypoint_imports_local_package():
 
     assert result.returncode == 0
     assert "FlashTrace live demo dry run OK" in result.stdout
+
+
+def test_generate_phase_smoke_returns_text_and_sections(tmp_path):
+    module = load_live_app_module()
+
+    text, sections, raw_rows, output_span_text, reasoning_span_text = module.run_generate_phase(
+        model_name="demo/paris-smoke",
+        prompt="What is the capital of France?",
+        device_map="auto",
+        dtype="auto",
+        max_new_tokens=64,
+    )
+
+    assert "<answer>" in text and "Paris" in text
+    assert sections["parser"] == "think_answer"
+    assert ":" in output_span_text
+    assert ":" in reasoning_span_text
+    assert any("answer" in row[0] or "thinking" in row[0] for row in raw_rows)
