@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/flashtrace-logo.png" alt="FlashTrace logo" width="160">
+  <img src="https://raw.githubusercontent.com/wbopan/flashtrace/master/docs/assets/flashtrace-logo.png" alt="FlashTrace logo" width="160">
 </p>
 
 <h1 align="center">FlashTrace</h1>
