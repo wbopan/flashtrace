@@ -2,13 +2,31 @@
   <img src="docs/assets/flashtrace-logo.png" alt="FlashTrace logo" width="160">
 </p>
 
-# FlashTrace
+<h1 align="center">FlashTrace</h1>
 
-Fast token attribution for reasoning language models.
+<p align="center">
+  <em>Fast token attribution for reasoning language models.</em>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/flashtrace/"><img alt="PyPI" src="https://img.shields.io/pypi/v/flashtrace.svg?style=flat-square&logo=pypi&logoColor=white&label=PyPI"></a>
+  <a href="https://pypi.org/project/flashtrace/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/flashtrace.svg?style=flat-square&logo=python&logoColor=white"></a>
+  <a href="https://github.com/wbopan/flashtrace/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"></a>
+  <a href="https://pytorch.org/"><img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-2.5%2B-EE4C2C.svg?style=flat-square&logo=pytorch&logoColor=white"></a>
+  <a href="https://arxiv.org/abs/2602.01914"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-2602.01914-B31B1B.svg?style=flat-square&logo=arxiv&logoColor=white"></a>
+</p>
 
 FlashTrace traces generated answers back to the prompt tokens that shaped them. Use it from Python or the command line, export JSON traces, and render standalone HTML heatmaps for inspection and sharing.
 
-[Paper](https://arxiv.org/abs/2602.01914) | [Quickstart](#quickstart) | [CLI](#command-line) | [Citation](#citation)
+<p align="center">
+  <a href="https://arxiv.org/abs/2602.01914">📄 Paper</a>
+  &nbsp;·&nbsp;
+  <a href="#quickstart">🚀 Quickstart</a>
+  &nbsp;·&nbsp;
+  <a href="#command-line">💻 CLI</a>
+  &nbsp;·&nbsp;
+  <a href="#citation">📝 Citation</a>
+</p>
 
 ## Why FlashTrace
 
