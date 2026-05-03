@@ -1,34 +1,84 @@
 # FlashTrace
 
-FlashTrace is an efficient multi-token attribution toolkit for reasoning language models. It implements the method described in [Towards Long-Horizon Interpretability: Efficient and Faithful Multi-Token Attribution for Reasoning LLMs](https://arxiv.org/abs/2602.01914).
+Fast token attribution for reasoning language models.
+
+FlashTrace traces generated answers back to the prompt tokens that shaped them. Use it from Python or the command line, export JSON traces, and render standalone HTML heatmaps for inspection and sharing.
+
+[Paper](https://arxiv.org/abs/2602.01914) | [Quickstart](#quickstart) | [CLI](#command-line) | [Citation](#citation)
+
+## Why FlashTrace
+
+Reasoning models produce long generated chains, final answers, and intermediate spans that deserve targeted inspection. FlashTrace gives researchers a package-first workflow for tracing a selected generated span back to its supporting prompt tokens.
+
+You get:
+
+- top-k prompt tokens ranked by attribution score
+- JSON traces for downstream analysis
+- standalone HTML token heatmaps
+- optional per-hop attribution panels
+- inclusive generation-token span controls for answer and reasoning segments
 
 ## Install
+
+From a local checkout:
 
 ```bash
 pip install -e .
 ```
 
-## Python Quickstart
+For development:
+
+```bash
+pip install -e ".[dev]"
+```
+
+FlashTrace uses PyTorch, Transformers, Accelerate, NumPy, and tqdm. A CUDA-capable GPU is recommended for public-scale Hugging Face models.
+
+## Quickstart
 
 ```python
 from flashtrace import FlashTrace, load_model_and_tokenizer
 
-model, tokenizer = load_model_and_tokenizer("Qwen/Qwen3-8B")
-tracer = FlashTrace(model, tokenizer)
+prompt = """Context: Paris is the capital of France.
+Question: What is the capital of France?"""
+target = "Paris"
+
+model, tokenizer = load_model_and_tokenizer("Qwen/Qwen3-8B", device_map="auto")
+tracer = FlashTrace(model, tokenizer, chunk_tokens=128, sink_chunk_tokens=32)
 
 trace = tracer.trace(
-    prompt="Context: Paris is the capital of France.\nQuestion: What is the capital of France?",
-    target="Paris",
+    prompt=prompt,
+    target=target,
     output_span=(0, 0),
     hops=1,
 )
 
 print(trace.topk_inputs(10))
-trace.to_html("trace.html")
 trace.to_json("trace.json")
+trace.to_html("trace.html")
 ```
 
-## CLI Quickstart
+`trace.topk_inputs(10)` returns `TokenScore` objects aligned to prompt-token indices:
+
+```text
+rank  index  token      score
+1     2      Paris      0.184
+2     7      capital    0.131
+3     10     France     0.119
+```
+
+`trace.html` is a standalone heatmap that highlights prompt tokens by final attribution score and includes trace metadata for the selected generated span.
+
+## Command Line
+
+Create prompt and target files:
+
+```bash
+printf "Context: Paris is the capital of France.\nQuestion: What is the capital of France?\n" > prompt.txt
+printf "Paris" > target.txt
+```
+
+Run a trace:
 
 ```bash
 flashtrace trace \
@@ -41,20 +91,160 @@ flashtrace trace \
   --json trace.json
 ```
 
+The command prints a compact top-k table and writes the requested artifacts.
+
+Useful flags:
+
+- `--model`: Hugging Face model id or local model path
+- `--target`: UTF-8 target text file
+- `--output-span`: inclusive `START:END` indices over generated tokens
+- `--reasoning-span`: inclusive `START:END` indices for a reasoning segment
+- `--method`: `flashtrace`, `ifr-span`, or `ifr-matrix`
+- `--recompute-attention`: lower-memory attention recomputation path
+- `--device-map`: Transformers device map, default `auto`
+- `--dtype`: `auto`, `float16`, `bfloat16`, or `float32`
+
 ## Token Spans
 
-`output_span` and `reasoning_span` use inclusive generation-token indices. Inspect `trace.generation_tokens` after an initial run to choose spans for a target answer or reasoning segment.
+`output_span` and `reasoning_span` use inclusive generation-token indices. The first generated token has index `0`.
+
+Use an initial trace to inspect tokenization:
+
+```python
+for index, token in enumerate(trace.generation_tokens):
+    print(index, repr(token))
+```
+
+Then choose spans:
+
+```python
+trace = tracer.trace(
+    prompt=prompt,
+    target=target,
+    reasoning_span=(0, 79),
+    output_span=(80, 85),
+    hops=1,
+)
+```
+
+Scores are aligned to `trace.prompt_tokens`. `trace.per_hop_scores` stores the same prompt-token alignment for each hop.
+
+## Interpreting Results
+
+High-scoring prompt tokens are the tokens FlashTrace attributes most strongly to the selected generated span. For answer inspection, use `output_span` around the final answer tokens. For chain-of-thought or reasoning inspection, use `reasoning_span` around the generated reasoning segment.
+
+Recommended workflow:
+
+1. Run a trace with your prompt and target.
+2. Inspect `trace.generation_tokens`.
+3. Select the answer or reasoning span.
+4. Export `trace.html`.
+5. Compare top-k tokens with the source prompt and any expected evidence.
 
 ## Supported Models
 
-The package targets Llama/Qwen-style decoder-only Hugging Face causal LMs with standard Q/K/V/O projections, RMSNorm or LayerNorm, and RoPE metadata. Qwen2, Qwen3, and Llama are the first validated model families.
+FlashTrace targets Llama/Qwen-style decoder-only Hugging Face causal LMs with:
+
+- `model.layers`
+- Q/K/V/O attention projections
+- RMSNorm or LayerNorm
+- RoPE metadata
+
+Validated model families for the first public release:
+
+- Qwen2
+- Qwen3
+- Llama
+
+## Python API
+
+The public package exports:
+
+```python
+from flashtrace import FlashTrace, TraceResult, load_model_and_tokenizer
+```
+
+`FlashTrace.trace(...)` accepts:
+
+- `prompt: str`
+- `target: str | None`
+- `output_span: tuple[int, int] | None`
+- `reasoning_span: tuple[int, int] | None`
+- `hops: int`
+- `method: "flashtrace" | "ifr-span" | "ifr-matrix"`
+- `renorm_threshold: float | None`
+
+`TraceResult` includes:
+
+- `prompt_tokens`
+- `generation_tokens`
+- `scores`
+- `per_hop_scores`
+- `thinking_ratios`
+- `output_span`
+- `reasoning_span`
+- `method`
+- `metadata`
+
+Export helpers:
+
+```python
+trace.topk_inputs(20)
+trace.to_dict()
+trace.to_json("trace.json")
+trace.to_html("trace.html")
+```
+
+## Examples
+
+```bash
+python examples/quickstart.py --help
+python examples/quickstart.py \
+  --model Qwen/Qwen3-8B \
+  --prompt prompt.txt \
+  --target target.txt \
+  --html trace.html
+```
+
+Heavy model examples are intended for GPU environments. CPU smoke tests use tiny randomly initialized models.
 
 ## Repository Map
 
-- `flashtrace/`: reusable package
-- `examples/`: public examples
+- `flashtrace/`: reusable Python package
+- `examples/`: public quickstarts
 - `tests/`: CPU smoke tests
-- `exp/`: paper experiments and artifacts
+- `exp/`: paper experiments and research artifacts
+- `docs/superpowers/`: design and implementation planning documents
+
+## Research Experiments
+
+The `exp/` directory contains the paper-era experiment runners, case studies, and saved artifacts. The public package API lives in `flashtrace/`; experiment scripts keep compatibility imports during the package migration.
+
+## Troubleshooting
+
+**CUDA memory**
+
+Use smaller models, lower precision, `device_map="auto"`, shorter prompts, or `--recompute-attention`.
+
+**Span selection**
+
+Print `trace.generation_tokens` and select inclusive generated-token indices. Tokenization can split visible words into multiple model tokens.
+
+**Deterministic generation**
+
+Pass a `target` file for attribution against a known output. Leave `--target` out when you want the CLI to generate with deterministic defaults.
+
+**Tokenizer alignment**
+
+Inspect `trace.prompt_tokens` and `trace.generation_tokens` when scores appear shifted from visible text. Attribution scores follow tokenizer-level alignment.
+
+**HTML export**
+
+`trace.to_html("trace.html")` writes a standalone file that can be opened locally or shared as an artifact.
+
+## Paper
+
+FlashTrace implements the method described in [Towards Long-Horizon Interpretability: Efficient and Faithful Multi-Token Attribution for Reasoning LLMs](https://arxiv.org/abs/2602.01914).
 
 ## Citation
 
