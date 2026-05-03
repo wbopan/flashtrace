@@ -40,3 +40,14 @@ def generate_with_qwen(
     new_token_ids = generated[0, prompt_len:].tolist()
     text = tokenizer.decode(new_token_ids, skip_special_tokens=False)
     return GenerationOutput(text=text, token_ids=[int(t) for t in new_token_ids])
+
+
+def generate_smoke_response(*, prompt: str) -> GenerationOutput:
+    text = (
+        "<think>\n"
+        "The user is asking about the capital of France. "
+        "From the context, Paris is mapped to France.\n"
+        "</think>\n"
+        "<answer>\nParis\n</answer>"
+    )
+    return GenerationOutput(text=text, token_ids=[])

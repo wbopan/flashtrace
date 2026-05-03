@@ -34,3 +34,14 @@ def test_generate_with_qwen_is_deterministic():
 
     assert a.token_ids == b.token_ids
     assert a.text == b.text
+
+
+from demo.live.qwen_generation import generate_smoke_response
+
+
+def test_generate_smoke_response_includes_think_and_answer():
+    output = generate_smoke_response(prompt="What is the capital of France?")
+    assert "<think>" in output.text and "</think>" in output.text
+    assert "<answer>" in output.text and "</answer>" in output.text
+    assert "Paris" in output.text
+    assert output.token_ids == []
