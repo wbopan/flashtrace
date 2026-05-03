@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
 from demo.live.token_overlay import classify_token_kind
+from demo.live.token_overlay import char_span_to_token_span
 
 
 def test_classify_whitespace_only():
@@ -30,3 +33,25 @@ def test_classify_regular_word_is_content():
 
 def test_classify_empty_string_is_content():
     assert classify_token_kind(token_text="", token_id=0, special_ids=set()) == "content"
+
+
+def test_char_span_picks_overlapping_tokens():
+    offsets = [(0, 5), (5, 6), (6, 11), (11, 12), (12, 16)]
+    assert char_span_to_token_span(offsets, 0, 11) == (0, 2)
+    assert char_span_to_token_span(offsets, 6, 16) == (2, 4)
+
+
+def test_char_span_includes_partial_overlap():
+    offsets = [(0, 5), (5, 10), (10, 15)]
+    assert char_span_to_token_span(offsets, 3, 12) == (0, 2)
+
+
+def test_char_span_raises_on_no_overlap():
+    offsets = [(0, 5), (5, 10)]
+    with pytest.raises(ValueError, match="No tokenizer tokens overlap"):
+        char_span_to_token_span(offsets, 20, 30)
+
+
+def test_char_span_skips_zero_length_tokens():
+    offsets = [(0, 5), (5, 5), (5, 10)]
+    assert char_span_to_token_span(offsets, 5, 10) == (2, 2)

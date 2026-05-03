@@ -42,3 +42,21 @@ def classify_token_kind(
     if token_id is not None and token_id in special_ids:
         return "special"
     return "content"
+
+
+def char_span_to_token_span(
+    offsets: list[tuple[int, int]] | tuple[tuple[int, int], ...],
+    start_char: int,
+    end_char: int,
+) -> tuple[int, int]:
+    indices = [
+        i
+        for i, (start, end) in enumerate(offsets)
+        if start < end and start < end_char and end > start_char
+    ]
+    if not indices:
+        raise ValueError(
+            f"No tokenizer tokens overlap the selected character span "
+            f"[{start_char}, {end_char})"
+        )
+    return min(indices), max(indices)
