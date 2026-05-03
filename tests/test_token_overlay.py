@@ -101,7 +101,7 @@ def test_build_token_records_marks_specials_unselectable():
     assert all(r.token_text == "t1" for r in eos_records)
 
 
-from demo.live.token_overlay import WordBox, group_into_word_boxes
+from demo.live.token_overlay import WordBox, group_into_word_boxes, TokenKind, Section
 
 
 def _record(
@@ -110,9 +110,9 @@ def _record(
     text: str,
     char_start: int,
     char_end: int,
-    kind: str = "content",
+    kind: TokenKind = "content",
     selectable: bool = True,
-    section: str = "answer",
+    section: Section = "answer",
 ) -> TokenRecord:
     return TokenRecord(
         section=section,
@@ -168,3 +168,26 @@ def test_group_assigns_unique_box_ids():
 
     ids = [b.box_id for b in boxes]
     assert len(set(ids)) == len(ids)
+
+
+def test_group_flushes_on_section_change():
+    records = [
+        _record(index=0, text="ab", char_start=0, char_end=2, section="thinking"),
+        _record(index=1, text="cd", char_start=2, char_end=4, section="answer"),
+    ]
+
+    boxes = group_into_word_boxes(records, source_text="abcd")
+
+    assert len(boxes) == 2
+    assert [b.section for b in boxes] == ["thinking", "answer"]
+    assert boxes[0].text == "ab"
+    assert boxes[1].text == "cd"
+
+
+def test_group_raises_when_source_text_too_short():
+    records = [
+        _record(index=0, text="hello", char_start=0, char_end=5),
+    ]
+
+    with pytest.raises(ValueError, match="cannot satisfy"):
+        group_into_word_boxes(records, source_text="hi")

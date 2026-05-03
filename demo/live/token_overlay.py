@@ -144,9 +144,15 @@ def group_into_word_boxes(
             return
         char_start = pending[0].char_start
         char_end = pending[-1].char_end
-        text = source_text[char_start:char_end] if source_text else "".join(
-            r.token_text for r in pending
-        )
+        if source_text:
+            if char_end > len(source_text):
+                raise ValueError(
+                    f"source_text length {len(source_text)} cannot satisfy "
+                    f"char_end {char_end}; records must come from this text"
+                )
+            text = source_text[char_start:char_end]
+        else:
+            text = "".join(r.token_text for r in pending)
         section = pending[0].section
         boxes.append(
             WordBox(
@@ -164,7 +170,10 @@ def group_into_word_boxes(
 
     for record in records:
         if record.kind == "content":
-            if pending and record.char_start != pending[-1].char_end:
+            if pending and (
+                record.char_start != pending[-1].char_end
+                or record.section != pending[-1].section
+            ):
                 flush_pending()
             pending.append(record)
             continue
