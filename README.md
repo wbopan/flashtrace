@@ -5,10 +5,11 @@
 <h1 align="center">FlashTrace</h1>
 
 <p align="center">
-  <em>Fast token attribution for reasoning language models.</em>
+  <em>ICML 2026 Spotlight · Fast token attribution for reasoning language models.</em>
 </p>
 
 <p align="center">
+  <a href="https://arxiv.org/abs/2602.01914"><img alt="ICML 2026 Spotlight" src="https://img.shields.io/badge/ICML%202026-Spotlight-00A3A3.svg?style=flat-square"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="PyPI" src="https://img.shields.io/pypi/v/flashtrace.svg?style=flat-square&logo=pypi&logoColor=white&label=PyPI"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/flashtrace.svg?style=flat-square&logo=python&logoColor=white"></a>
   <a href="https://github.com/wbopan/flashtrace/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"></a>
@@ -31,6 +32,8 @@ FlashTrace traces generated answers back to the prompt tokens that shaped them. 
 ## Why FlashTrace
 
 Reasoning models produce long generated chains, final answers, and intermediate spans that deserve targeted inspection. FlashTrace gives researchers a package-first workflow for tracing a selected generated span back to its supporting prompt tokens.
+
+The method combines span-wise aggregation with recursive attribution, delivering more than 130x acceleration on long generated spans while preserving strong faithfulness on RULER, MATH, MoreHopQA, HotpotQA, and Aider code generation tasks.
 
 You get:
 

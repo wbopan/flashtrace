@@ -23,6 +23,7 @@ repomix-output.xml
 # FlashTrace generated artifacts
 trace.json
 trace.html
+demo/live/out/
 *.trace.json
 *.trace.html
 exp/**/output/
