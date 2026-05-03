@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/flashtrace-logo.png" alt="FlashTrace logo" width="160">
+</p>
+
 # FlashTrace
 
 Fast token attribution for reasoning language models.
