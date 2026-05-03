@@ -19,7 +19,6 @@ def _bootstrap_local_flashtrace() -> None:
 _bootstrap_local_flashtrace()
 
 from demo.live.qwen_generation import (
-    GenerationOutput,
     generate_smoke_response,
     generate_with_qwen,
 )
@@ -27,7 +26,6 @@ from demo.live.token_overlay import (
     GenerationSections,
     build_token_records,
     detect_sections,
-    group_into_word_boxes,
 )
 
 if TYPE_CHECKING:
@@ -258,16 +256,30 @@ def _sections_to_dict(sections: GenerationSections) -> dict[str, object]:
     }
 
 
-def _raw_token_rows(generation_text: str, tokenizer) -> list[list[object]]:
+def _raw_token_rows(
+    generation_text: str,
+    tokenizer,
+    sections: GenerationSections,
+) -> list[list[object]]:
     records = build_token_records(
         text=generation_text,
         tokenizer=tokenizer,
         section="answer",
         role="assistant",
     )
+    thinking_span = sections.thinking_token_span
+    answer_span = sections.answer_token_span
+
+    def label_for(idx: int) -> str:
+        if thinking_span is not None and thinking_span[0] <= idx <= thinking_span[1]:
+            return "thinking"
+        if answer_span[0] <= idx <= answer_span[1]:
+            return "answer"
+        return "other"
+
     return [
         [
-            f"{r.section}#{r.token_index}",
+            f"{label_for(r.token_index)}#{r.token_index}",
             r.token_id,
             r.token_text,
             f"{r.char_start}:{r.char_end}",
@@ -279,9 +291,20 @@ def _raw_token_rows(generation_text: str, tokenizer) -> list[list[object]]:
 
 
 def _smoke_tokenizer():
-    from tests.helpers import make_tiny_qwen2_model_and_tokenizer
+    from tokenizers import AddedToken, Tokenizer, models, pre_tokenizers
+    from transformers import PreTrainedTokenizerFast
 
-    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    backend = Tokenizer(
+        models.WordLevel(vocab={f"t{i}": i for i in range(500)}, unk_token="t0")
+    )
+    backend.pre_tokenizer = pre_tokenizers.Whitespace()
+    tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend)
+    tokenizer.add_special_tokens(
+        {
+            "eos_token": AddedToken("t1", single_word=True),
+            "pad_token": AddedToken("t2", single_word=True),
+        }
+    )
     return tokenizer
 
 
@@ -318,7 +341,7 @@ def run_generate_phase(
         )
 
     sections = detect_sections(text=output.text, tokenizer=tokenizer)
-    raw_rows = _raw_token_rows(output.text, tokenizer)
+    raw_rows = _raw_token_rows(output.text, tokenizer, sections)
     return (
         output.text,
         _sections_to_dict(sections),
