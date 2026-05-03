@@ -48,6 +48,9 @@ eval = [
 dev = [
     "pytest>=8.0",
 ]
+demo = [
+    "gradio>=5.0",
+]
 
 [dependency-groups]
 dev = [
