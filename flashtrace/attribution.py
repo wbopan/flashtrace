@@ -138,7 +138,9 @@ class LLMAttribution():
         self, 
         model: Any, 
         tokenizer: Any, 
-        generate_kwargs: Optional[Dict[str, Any]] = None
+        generate_kwargs: Optional[Dict[str, Any]] = None,
+        *,
+        use_chat_template: bool = False,
     ) -> None:
         
         self.model = model
@@ -146,6 +148,7 @@ class LLMAttribution():
         self.device = model.device
 
         self.generate_kwargs = generate_kwargs or DEFAULT_GENERATE_KWARGS
+        self.use_chat_template = bool(use_chat_template)
 
         self.prompt = None
         self.prompt_ids = None
@@ -197,6 +200,9 @@ class LLMAttribution():
         return padded_vector
     
     def format_prompt(self, prompt) -> str:
+        if not self.use_chat_template:
+            return prompt
+
         modified_prompt = DEFAULT_PROMPT_TEMPLATE.format(context = prompt, query = "")
         formatted_prompt = [{"role": "user", "content": modified_prompt}]
         formatted_prompt = self.tokenizer.apply_chat_template(
@@ -211,7 +217,7 @@ class LLMAttribution():
     # Query the model for its generation
     # This internally saves the input and generated token ids for attribution target
     def response(self, prompt) -> str:
-        self.user_prompt = " " + prompt
+        self.user_prompt = " " + prompt if self.use_chat_template else prompt
         self.prompt = self.format_prompt(self.user_prompt)
 
         # these are the ids for the user supplied prompt
@@ -252,7 +258,7 @@ class LLMAttribution():
     # nearly identical to response(), but we do not actually query the model
     # we assume generation = target, and generate all the class variables as done in response()
     def target_response(self, prompt, target) -> str:
-        self.user_prompt = " " + prompt
+        self.user_prompt = " " + prompt if self.use_chat_template else prompt
         self.prompt = self.format_prompt(self.user_prompt)
 
         # these are the ids for the user supplied prompt
@@ -260,7 +266,8 @@ class LLMAttribution():
         # this is the tokenization of the chat prompt
         self.prompt_ids = self.tokenizer(self.prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_prompt_tokens]
         # Tokenize the target generation
-        self.generation_ids = self.tokenizer(target + self.tokenizer.eos_token, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_generations]
+        target_text = target + (self.tokenizer.eos_token or "")
+        self.generation_ids = self.tokenizer(target_text, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_generations]
         self.generation = target
         gen_with_eos = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = False, clean_up_tokenization_spaces = False)
 
@@ -955,8 +962,9 @@ class LLMIFRAttribution(LLMAttribution):
         renorm_threshold_default: float = 0.0,
         show_progress: bool = True,
         recompute_attention: bool = False,
+        use_chat_template: bool = False,
     ) -> None:
-        super().__init__(model, tokenizer, generate_kwargs)
+        super().__init__(model, tokenizer, generate_kwargs, use_chat_template=use_chat_template)
         self.chunk_tokens = int(chunk_tokens)
         self.sink_chunk_tokens = int(sink_chunk_tokens)
         self.renorm_threshold_default = float(renorm_threshold_default)

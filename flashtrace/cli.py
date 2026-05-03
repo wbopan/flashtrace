@@ -43,6 +43,7 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--chunk-tokens", type=int, default=128)
     trace.add_argument("--sink-chunk-tokens", type=int, default=32)
     trace.add_argument("--recompute-attention", action="store_true")
+    trace.add_argument("--use-chat-template", action="store_true", help="Format prompts with the tokenizer chat template.")
     return parser
 
 
@@ -60,6 +61,7 @@ def _run_trace(args: argparse.Namespace) -> int:
         chunk_tokens=args.chunk_tokens,
         sink_chunk_tokens=args.sink_chunk_tokens,
         recompute_attention=args.recompute_attention,
+        use_chat_template=args.use_chat_template,
     )
     result = tracer.trace(
         prompt=_read_text(args.prompt) or "",

@@ -40,6 +40,28 @@ def keep_token_indices(tokens: Sequence[str]) -> List[int]:
     return [i for i, tok in enumerate(tokens) if not is_stop_token(tok)]
 
 
+def _last_attributable_generation_index(
+    tokenizer: Any,
+    generation_ids: torch.Tensor,
+    generation_tokens: Sequence[str],
+) -> int:
+    end = int(generation_ids.shape[1]) - 1
+    if end < 0:
+        return -1
+
+    last_id = int(generation_ids[0, end].item())
+    eos_token_id = getattr(tokenizer, "eos_token_id", None)
+    if eos_token_id is not None:
+        eos_ids = eos_token_id if isinstance(eos_token_id, (list, tuple, set)) else [eos_token_id]
+        if any(last_id == int(eos_id) for eos_id in eos_ids if eos_id is not None):
+            return end - 1
+
+    if end < len(generation_tokens) and is_stop_token(generation_tokens[end]):
+        return end - 1
+
+    return end
+
+
 def _stop_keep_mask(tokens: Sequence[str]) -> torch.Tensor:
     keep = [0.0 if is_stop_token(tok) else 1.0 for tok in tokens]
     return torch.as_tensor(keep, dtype=torch.float32)
@@ -861,8 +883,11 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             }
             return self._finalize_result(empty, metadata=metadata)
 
-        # Exclude EOS (assumed to be the last generation token).
-        end_no_eos = int(gen_len) - 2
+        end_no_eos = _last_attributable_generation_index(
+            self.tokenizer,
+            self.generation_ids,
+            list(getattr(self, "generation_tokens", []) or []),
+        )
         if end_no_eos < 0:
             score_array = torch.full((int(gen_len), total_len), torch.nan, dtype=torch.float32)
             metadata = {
@@ -1179,8 +1204,11 @@ class LLMIFRAttributionInAllGen(llm_attr.LLMIFRAttribution):
             }
             return self._finalize_result(empty, metadata=metadata)
 
-        # Exclude EOS (assumed to be the last generation token).
-        end_no_eos = int(gen_len) - 2
+        end_no_eos = _last_attributable_generation_index(
+            self.tokenizer,
+            self.generation_ids,
+            list(getattr(self, "generation_tokens", []) or []),
+        )
         if end_no_eos < 0:
             score_array = torch.full((int(gen_len), total_len), torch.nan, dtype=torch.float32)
             metadata = {

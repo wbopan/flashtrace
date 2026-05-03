@@ -4,10 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flashtrace"
-version = "0.1.0"
+version = "0.1.1"
 description = "Efficient multi-token attribution for reasoning language models."
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    { name = "Wenbo Pan" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
     "accelerate>=1.11.0",
     "matplotlib>=3.6",
@@ -42,6 +56,11 @@ dev = [
 
 [project.scripts]
 flashtrace = "flashtrace.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/wbopan/flashtrace"
+Repository = "https://github.com/wbopan/flashtrace"
+Issues = "https://github.com/wbopan/flashtrace/issues"
 
 [tool.setuptools.packages.find]
 include = ["flashtrace*"]

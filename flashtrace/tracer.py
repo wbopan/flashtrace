@@ -29,6 +29,7 @@ class FlashTrace:
         sink_chunk_tokens: int = 32,
         recompute_attention: bool = False,
         generate_kwargs: dict[str, Any] | None = None,
+        use_chat_template: bool = False,
     ) -> None:
         self.model = model
         self.tokenizer = tokenizer
@@ -36,6 +37,7 @@ class FlashTrace:
         self.sink_chunk_tokens = int(sink_chunk_tokens)
         self.recompute_attention = bool(recompute_attention)
         self.generate_kwargs = generate_kwargs
+        self.use_chat_template = bool(use_chat_template)
 
     def trace(
         self,
@@ -56,6 +58,7 @@ class FlashTrace:
                 chunk_tokens=self.chunk_tokens,
                 sink_chunk_tokens=self.sink_chunk_tokens,
                 recompute_attention=self.recompute_attention,
+                use_chat_template=self.use_chat_template,
             )
             raw = engine.calculate_ifr_multi_hop_both(
                 prompt,
@@ -73,6 +76,7 @@ class FlashTrace:
                 chunk_tokens=self.chunk_tokens,
                 sink_chunk_tokens=self.sink_chunk_tokens,
                 recompute_attention=self.recompute_attention,
+                use_chat_template=self.use_chat_template,
             )
             raw = engine.calculate_ifr_span(
                 prompt,
@@ -88,6 +92,7 @@ class FlashTrace:
                 chunk_tokens=self.chunk_tokens,
                 sink_chunk_tokens=self.sink_chunk_tokens,
                 recompute_attention=self.recompute_attention,
+                use_chat_template=self.use_chat_template,
             )
             raw = engine.calculate_ifr_for_all_positions_output_only(
                 prompt,

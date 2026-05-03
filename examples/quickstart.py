@@ -13,6 +13,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-span", default=None, help="Inclusive generation-token span START:END.")
     parser.add_argument("--reasoning-span", default=None, help="Inclusive generation-token span START:END.")
     parser.add_argument("--html", default="trace.html", help="Output HTML path.")
+    parser.add_argument("--use-chat-template", action="store_true", help="Format prompts with the tokenizer chat template.")
     return parser
 
 
@@ -25,7 +26,7 @@ def parse_span(value: str | None) -> tuple[int, int] | None:
 def main() -> int:
     args = build_parser().parse_args()
     model, tokenizer = load_model_and_tokenizer(args.model)
-    tracer = FlashTrace(model, tokenizer)
+    tracer = FlashTrace(model, tokenizer, use_chat_template=args.use_chat_template)
     trace = tracer.trace(
         prompt=args.prompt,
         target=args.target,

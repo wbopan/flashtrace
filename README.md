@@ -69,6 +69,8 @@ rank  index  token      score
 
 `trace.html` is a standalone heatmap that highlights prompt tokens by final attribution score and includes trace metadata for the selected generated span.
 
+`FlashTrace(..., use_chat_template=True)` formats prompts with the tokenizer chat template for chat-tuned models.
+
 ## Command Line
 
 Create prompt and target files:
@@ -96,11 +98,13 @@ The command prints a compact top-k table and writes the requested artifacts.
 Useful flags:
 
 - `--model`: Hugging Face model id or local model path
+- `--prompt`: UTF-8 prompt text file
 - `--target`: UTF-8 target text file
 - `--output-span`: inclusive `START:END` indices over generated tokens
 - `--reasoning-span`: inclusive `START:END` indices for a reasoning segment
 - `--method`: `flashtrace`, `ifr-span`, or `ifr-matrix`
 - `--recompute-attention`: lower-memory attention recomputation path
+- `--use-chat-template`: format prompts with the tokenizer chat template
 - `--device-map`: Transformers device map, default `auto`
 - `--dtype`: `auto`, `float16`, `bfloat16`, or `float32`
 
@@ -201,8 +205,9 @@ trace.to_html("trace.html")
 python examples/quickstart.py --help
 python examples/quickstart.py \
   --model Qwen/Qwen3-8B \
-  --prompt prompt.txt \
-  --target target.txt \
+  --prompt "Context: Paris is the capital of France. Question: What is the capital of France?" \
+  --target "Paris" \
+  --output-span 0:0 \
   --html trace.html
 ```
 
