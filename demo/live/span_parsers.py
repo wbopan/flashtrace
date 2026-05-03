@@ -6,6 +6,8 @@ from typing import Callable, Optional
 
 _THINK_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
 _ANSWER_RE = re.compile(r"<answer>(.*?)</answer>", re.DOTALL | re.IGNORECASE)
+# Matches \boxed{simple content}. Does not match nested braces
+# (e.g., \boxed{\frac{1}{2}}); such inputs fall through to parse_last_paragraph.
 _BOXED_RE = re.compile(r"\\boxed\{([^{}]*)\}")
 _SENT_END_RE = re.compile(r"[.!?](?=\s|$)")
 
@@ -56,7 +58,7 @@ def parse_boxed_answer(text: str) -> Optional[ParseResult]:
 def parse_last_paragraph(text: str) -> Optional[ParseResult]:
     if not text.strip():
         return None
-    blocks = re.split(r"\n\s*\n", text)
+    blocks = [b for b in re.split(r"\n\s*\n", text) if b.strip()]
     if len(blocks) <= 1:
         stripped = text.strip()
         start = text.find(stripped)
