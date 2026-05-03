@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import sys
 import uuid
 from pathlib import Path
@@ -20,7 +21,8 @@ _bootstrap_local_flashtrace()
 if TYPE_CHECKING:
     from flashtrace.result import TraceResult
 
-DEFAULT_MODEL = os.environ.get("FLASHTRACE_DEMO_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
+SMOKE_MODEL_ID = "demo/paris-smoke"
+DEFAULT_MODEL = os.environ.get("FLASHTRACE_DEMO_MODEL", SMOKE_MODEL_ID)
 APP_DIR = Path(__file__).resolve().parent
 DEFAULT_PROMPT = """Context:
 Paris is the capital of France.
@@ -79,6 +81,45 @@ def _generation_token_text(result: TraceResult) -> str:
     return "\n".join(f"{index}: {token!r}" for index, token in enumerate(result.generation_tokens))
 
 
+def _run_paris_smoke_trace(
+    *,
+    prompt: str,
+    target: str | None,
+    output_span: str,
+    reasoning_span: str,
+    method: str,
+    work_dir: str | Path,
+    top_k: int,
+) -> tuple[list[list[object]], str, str, str]:
+    from flashtrace.result import TraceResult
+    from flashtrace.viz import render_trace_html
+
+    tokens = re.findall(r"[A-Za-z0-9_]+|[^A-Za-z0-9_\s]", prompt)
+    scores = [0.02 for _ in tokens]
+    for index, token in enumerate(tokens):
+        if token == "Paris":
+            scores[index] = 1.0
+        elif token == "France":
+            scores[index] = 0.45
+        elif token in {"capital", "Question"}:
+            scores[index] = 0.18
+
+    result = TraceResult(
+        prompt_tokens=tokens,
+        generation_tokens=[target or "Paris"],
+        scores=scores,
+        output_span=_parse_optional_span(output_span),
+        reasoning_span=_parse_optional_span(reasoning_span),
+        method=method,
+        metadata={"model": SMOKE_MODEL_ID, "mode": "deterministic-smoke"},
+    )
+    output_dir = Path(work_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = output_dir / f"flashtrace-{uuid.uuid4().hex}.json"
+    result.to_json(json_path)
+    return _top_rows(result, int(top_k)), _generation_token_text(result), render_trace_html(result), str(json_path)
+
+
 def run_trace(
     *,
     model_name: str,
@@ -107,6 +148,17 @@ def run_trace(
         raise ValueError("Prompt is required.")
     if len(prompt_text) > MAX_PROMPT_CHARS:
         raise ValueError(f"Prompt must be at most {MAX_PROMPT_CHARS} characters.")
+
+    if model_id == SMOKE_MODEL_ID:
+        return _run_paris_smoke_trace(
+            prompt=prompt_text,
+            target=target_text,
+            output_span=output_span,
+            reasoning_span=reasoning_span,
+            method=method,
+            work_dir=work_dir,
+            top_k=top_k,
+        )
 
     if tracer_cls is None:
         from flashtrace import FlashTrace

@@ -80,6 +80,38 @@ def test_run_trace_returns_table_html_and_json(tmp_path):
     assert Path(json_path).exists()
 
 
+def test_paris_smoke_trace_ranks_context_paris_first(tmp_path):
+    module = load_live_app_module()
+
+    top_rows, generation_tokens, html, json_path = module.run_trace(
+        model_name="demo/paris-smoke",
+        prompt="Context: Paris is the capital of France. Berlin is the capital of Germany. Madrid is the capital of Spain. Question: What is the capital of France?",
+        target="Paris",
+        output_span="0:0",
+        reasoning_span="",
+        method="flashtrace",
+        hops=1,
+        top_k=3,
+        device_map="auto",
+        dtype="auto",
+        chunk_tokens=16,
+        sink_chunk_tokens=4,
+        use_chat_template=False,
+        work_dir=tmp_path,
+    )
+
+    assert top_rows[0][1:] == ["Paris", 1.0]
+    assert generation_tokens == "0: 'Paris'"
+    assert "Paris" in html
+    assert Path(json_path).exists()
+
+
+def test_default_model_uses_fast_paris_smoke_demo():
+    module = load_live_app_module()
+
+    assert module.DEFAULT_MODEL == "demo/paris-smoke"
+
+
 def test_run_trace_validates_required_prompt(tmp_path):
     module = load_live_app_module()
 

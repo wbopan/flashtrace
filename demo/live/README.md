@@ -14,7 +14,7 @@ Then open:
 http://127.0.0.1:7860
 ```
 
-The app loads the model lazily on the first trace request. Override defaults with environment variables:
+The default `demo/paris-smoke` model is a deterministic local smoke path for instant UI validation. Real Hugging Face models load lazily on the first trace request. Override defaults with environment variables:
 
 ```bash
 FLASHTRACE_DEMO_MODEL=Qwen/Qwen2.5-0.5B-Instruct \
