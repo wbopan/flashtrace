@@ -60,3 +60,61 @@ def char_span_to_token_span(
             f"[{start_char}, {end_char})"
         )
     return min(indices), max(indices)
+
+
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
+class TokenRecord:
+    section: Section
+    token_index: int
+    token_id: int | None
+    token_text: str
+    char_start: int
+    char_end: int
+    kind: TokenKind
+    selectable: bool
+    role: str
+
+
+def build_token_records(
+    *,
+    text: str,
+    tokenizer,
+    section: Section,
+    role: str,
+) -> list[TokenRecord]:
+    encoded = tokenizer(
+        text,
+        add_special_tokens=False,
+        return_offsets_mapping=True,
+    )
+    token_ids: list[int] = list(encoded["input_ids"])
+    offsets: list[tuple[int, int]] = [tuple(o) for o in encoded["offset_mapping"]]
+    special_ids = set(getattr(tokenizer, "all_special_ids", []) or [])
+    records: list[TokenRecord] = []
+    for index, (token_id, (start, end)) in enumerate(zip(token_ids, offsets)):
+        token_text = tokenizer.convert_ids_to_tokens(int(token_id))
+        if isinstance(token_text, bytes):
+            token_text = token_text.decode("utf-8", errors="replace")
+        kind = classify_token_kind(
+            token_text=token_text,
+            token_id=int(token_id),
+            special_ids=special_ids,
+        )
+        selectable = kind == "content"
+        records.append(
+            TokenRecord(
+                section=section,
+                token_index=index,
+                token_id=int(token_id),
+                token_text=token_text,
+                char_start=int(start),
+                char_end=int(end),
+                kind=kind,
+                selectable=selectable,
+                role=role,
+            )
+        )
+    return records

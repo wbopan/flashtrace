@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from tokenizers import AddedToken
 from tokenizers import Tokenizer, models, pre_tokenizers
 from transformers import AutoConfig, AutoModelForCausalLM, PreTrainedTokenizerFast
 
@@ -29,6 +30,12 @@ def make_tiny_qwen2_model_and_tokenizer(
 
     backend = Tokenizer(models.WordLevel(vocab={f"t{i}": i for i in range(500)}, unk_token="t0"))
     backend.pre_tokenizer = pre_tokenizers.Whitespace()
-    tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend, eos_token="t1", pad_token="t2")
+    tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend)
+    tokenizer.add_special_tokens(
+        {
+            "eos_token": AddedToken("t1", single_word=True),
+            "pad_token": AddedToken("t2", single_word=True),
+        }
+    )
     tokenizer.chat_template = "{% for m in messages %}{{ m['content'] }}{% endfor %}"
     return model, tokenizer
