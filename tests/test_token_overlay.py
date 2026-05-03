@@ -98,3 +98,4 @@ def test_build_token_records_marks_specials_unselectable():
     eos_records = [r for r in records if r.token_id == eos_id]
     assert eos_records, "expected an EOS-id token in records"
     assert all(r.kind == "special" and not r.selectable for r in eos_records)
+    assert all(r.token_text == "t1" for r in eos_records)

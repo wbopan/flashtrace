@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Collection
+from dataclasses import dataclass
 from typing import Literal
 
 Section = Literal["prompt", "thinking", "answer", "other"]
@@ -62,14 +63,11 @@ def char_span_to_token_span(
     return min(indices), max(indices)
 
 
-from dataclasses import dataclass
-
-
 @dataclass(frozen=True)
 class TokenRecord:
     section: Section
     token_index: int
-    token_id: int | None
+    token_id: int
     token_text: str
     char_start: int
     char_end: int
