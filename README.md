@@ -24,6 +24,12 @@ You get:
 
 ## Install
 
+From PyPI:
+
+```bash
+pip install flashtrace
+```
+
 From a local checkout:
 
 ```bash
