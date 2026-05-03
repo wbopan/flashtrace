@@ -191,3 +191,33 @@ def test_group_raises_when_source_text_too_short():
 
     with pytest.raises(ValueError, match="cannot satisfy"):
         group_into_word_boxes(records, source_text="hi")
+
+
+from demo.live.token_overlay import GenerationSections, detect_sections
+
+
+def test_detect_sections_with_think_answer_markers():
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    text = "t10 t20 t30 t40"
+
+    sections = detect_sections(text=text, tokenizer=tokenizer)
+
+    assert isinstance(sections, GenerationSections)
+    assert sections.generation_text == text
+    assert sections.parser == "last_paragraph"
+    assert sections.thinking_token_span is None
+    answer_start, answer_end = sections.answer_token_span
+    assert 0 <= answer_start <= answer_end
+
+
+def test_detect_sections_maps_think_answer_to_token_indices():
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    text = "<think> t10 t20 </think> <answer> t30 t40 </answer>"
+
+    sections = detect_sections(text=text, tokenizer=tokenizer)
+
+    assert sections.parser == "think_answer"
+    assert sections.thinking_token_span is not None
+    t_start, t_end = sections.thinking_token_span
+    a_start, a_end = sections.answer_token_span
+    assert t_start <= t_end < a_start <= a_end

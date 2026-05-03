@@ -4,6 +4,8 @@ from collections.abc import Collection
 from dataclasses import dataclass
 from typing import Literal
 
+from demo.live.span_parsers import run_parser_chain
+
 Section = Literal["prompt", "thinking", "answer", "other"]
 TokenKind = Literal["content", "whitespace", "special", "template", "control"]
 
@@ -195,3 +197,44 @@ def group_into_word_boxes(
 
     flush_pending()
     return boxes
+
+
+@dataclass(frozen=True)
+class GenerationSections:
+    generation_text: str
+    thinking_char_span: tuple[int, int] | None
+    answer_char_span: tuple[int, int]
+    thinking_token_span: tuple[int, int] | None
+    answer_token_span: tuple[int, int]
+    parser: str
+
+
+def detect_sections(*, text: str, tokenizer) -> GenerationSections:
+    parse = run_parser_chain(text)
+    encoded = tokenizer(
+        text,
+        add_special_tokens=False,
+        return_offsets_mapping=True,
+    )
+    offsets = [tuple(o) for o in encoded["offset_mapping"]]
+
+    answer_token_span = char_span_to_token_span(
+        offsets, parse.answer_char_span[0], parse.answer_char_span[1]
+    )
+    thinking_token_span: tuple[int, int] | None = None
+    if parse.thinking_char_span is not None:
+        try:
+            thinking_token_span = char_span_to_token_span(
+                offsets, parse.thinking_char_span[0], parse.thinking_char_span[1]
+            )
+        except ValueError:
+            thinking_token_span = None
+
+    return GenerationSections(
+        generation_text=text,
+        thinking_char_span=parse.thinking_char_span,
+        answer_char_span=parse.answer_char_span,
+        thinking_token_span=thinking_token_span,
+        answer_token_span=answer_token_span,
+        parser=parse.parser,
+    )
