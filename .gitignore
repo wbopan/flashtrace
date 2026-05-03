@@ -15,6 +15,7 @@ data/
 # dev
 AGENTS.md
 readme_dev.md
+.superpowers/
 contribute/ruler/
 repos/.DS_Store
 repomix-output.xml
