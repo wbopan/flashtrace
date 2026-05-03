@@ -116,3 +116,73 @@ def build_token_records(
             )
         )
     return records
+
+
+@dataclass(frozen=True)
+class WordBox:
+    box_id: str
+    section: Section
+    text: str
+    char_start: int
+    char_end: int
+    token_indices: tuple[int, ...]
+    kind: TokenKind
+    selectable: bool
+    score: float | None = None
+
+
+def group_into_word_boxes(
+    records: list[TokenRecord],
+    *,
+    source_text: str,
+) -> list[WordBox]:
+    boxes: list[WordBox] = []
+    pending: list[TokenRecord] = []
+
+    def flush_pending() -> None:
+        if not pending:
+            return
+        char_start = pending[0].char_start
+        char_end = pending[-1].char_end
+        text = source_text[char_start:char_end] if source_text else "".join(
+            r.token_text for r in pending
+        )
+        section = pending[0].section
+        boxes.append(
+            WordBox(
+                box_id=f"{section}-w-{len(boxes)}",
+                section=section,
+                text=text,
+                char_start=char_start,
+                char_end=char_end,
+                token_indices=tuple(r.token_index for r in pending),
+                kind="content",
+                selectable=True,
+            )
+        )
+        pending.clear()
+
+    for record in records:
+        if record.kind == "content":
+            if pending and record.char_start != pending[-1].char_end:
+                flush_pending()
+            pending.append(record)
+            continue
+
+        flush_pending()
+        section = record.section
+        boxes.append(
+            WordBox(
+                box_id=f"{section}-t-{len(boxes)}",
+                section=section,
+                text=record.token_text,
+                char_start=record.char_start,
+                char_end=record.char_end,
+                token_indices=(record.token_index,),
+                kind=record.kind,
+                selectable=record.selectable,
+            )
+        )
+
+    flush_pending()
+    return boxes

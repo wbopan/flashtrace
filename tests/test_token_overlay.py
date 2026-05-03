@@ -99,3 +99,72 @@ def test_build_token_records_marks_specials_unselectable():
     assert eos_records, "expected an EOS-id token in records"
     assert all(r.kind == "special" and not r.selectable for r in eos_records)
     assert all(r.token_text == "t1" for r in eos_records)
+
+
+from demo.live.token_overlay import WordBox, group_into_word_boxes
+
+
+def _record(
+    *,
+    index: int,
+    text: str,
+    char_start: int,
+    char_end: int,
+    kind: str = "content",
+    selectable: bool = True,
+    section: str = "answer",
+) -> TokenRecord:
+    return TokenRecord(
+        section=section,
+        token_index=index,
+        token_id=index,
+        token_text=text,
+        char_start=char_start,
+        char_end=char_end,
+        kind=kind,
+        selectable=selectable,
+        role="assistant",
+    )
+
+
+def test_group_into_word_boxes_joins_subwords():
+    records = [
+        _record(index=0, text="Par", char_start=0, char_end=3),
+        _record(index=1, text="is", char_start=3, char_end=5),
+        _record(index=2, text=" ", char_start=5, char_end=6, kind="whitespace", selectable=False),
+        _record(index=3, text="rocks", char_start=6, char_end=11),
+    ]
+
+    boxes = group_into_word_boxes(records, source_text="Paris rocks")
+
+    content_boxes = [b for b in boxes if b.kind == "content"]
+    assert len(content_boxes) == 2
+    assert content_boxes[0].text == "Paris"
+    assert content_boxes[0].token_indices == (0, 1)
+    assert content_boxes[1].text == "rocks"
+    assert content_boxes[1].token_indices == (3,)
+
+
+def test_group_keeps_special_tokens_as_their_own_box():
+    records = [
+        _record(index=0, text="Hi", char_start=0, char_end=2),
+        _record(index=1, text="<eos>", char_start=2, char_end=2, kind="special", selectable=False),
+    ]
+
+    boxes = group_into_word_boxes(records, source_text="Hi")
+
+    assert any(b.kind == "special" and b.text == "<eos>" for b in boxes)
+    assert any(b.kind == "content" and b.text == "Hi" for b in boxes)
+
+
+def test_group_assigns_unique_box_ids():
+    records = [
+        _record(index=0, text="a", char_start=0, char_end=1),
+        _record(index=1, text=" ", char_start=1, char_end=2, kind="whitespace", selectable=False),
+        _record(index=2, text="b", char_start=2, char_end=3),
+    ]
+
+    boxes = group_into_word_boxes(records, source_text="a b")
+
+    ids = [b.box_id for b in boxes]
+    assert len(set(ids)) == len(ids)
