@@ -36,6 +36,8 @@ def load_model_and_tokenizer(
     """Load a Hugging Face causal LM and matching tokenizer."""
 
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, trust_remote_code=trust_remote_code)
+    # FlashTrace needs attention weights; SDPA returns None for them.
+    model_kwargs.setdefault("attn_implementation", "eager")
     model = AutoModelForCausalLM.from_pretrained(
         model_name_or_path,
         torch_dtype=_resolve_dtype(dtype),
