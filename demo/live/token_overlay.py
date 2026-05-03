@@ -210,12 +210,24 @@ class GenerationSections:
 
 
 def detect_sections(*, text: str, tokenizer) -> GenerationSections:
+    """Run the parser chain on `text`, then map char spans to token spans.
+
+    The tokenizer must be a fast HF tokenizer that supports
+    `return_offsets_mapping=True` (i.e. `PreTrainedTokenizerFast`).
+    Use the same `tokenizer` and `text` here as in `build_token_records`
+    so token indices line up across both calls.
+    """
     parse = run_parser_chain(text)
     encoded = tokenizer(
         text,
         add_special_tokens=False,
         return_offsets_mapping=True,
     )
+    if "offset_mapping" not in encoded:
+        raise ValueError(
+            "tokenizer did not return 'offset_mapping'; pass a fast HF tokenizer "
+            "(PreTrainedTokenizerFast) so detect_sections can align spans."
+        )
     offsets = [tuple(o) for o in encoded["offset_mapping"]]
 
     answer_token_span = char_span_to_token_span(

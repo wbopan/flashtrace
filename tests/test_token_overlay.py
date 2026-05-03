@@ -196,7 +196,7 @@ def test_group_raises_when_source_text_too_short():
 from demo.live.token_overlay import GenerationSections, detect_sections
 
 
-def test_detect_sections_with_think_answer_markers():
+def test_detect_sections_no_markers_falls_back_to_last_paragraph():
     _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
     text = "t10 t20 t30 t40"
 
@@ -221,3 +221,48 @@ def test_detect_sections_maps_think_answer_to_token_indices():
     t_start, t_end = sections.thinking_token_span
     a_start, a_end = sections.answer_token_span
     assert t_start <= t_end < a_start <= a_end
+
+
+def test_detect_sections_thinking_token_span_falls_back_to_none_when_no_overlap():
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    # The thinking section in this constructed text contains only whitespace,
+    # so the parser produces a non-empty char span but no tokens overlap it.
+    # Verify thinking_token_span gracefully becomes None instead of raising.
+
+    class StubParserChain:
+        def __init__(self, real_text: str):
+            self.real_text = real_text
+
+        def __call__(self, text: str):
+            from demo.live.span_parsers import ParseResult
+
+            # Force a thinking span over a whitespace-only region (no tokens overlap).
+            return ParseResult(
+                thinking_char_span=(3, 4),  # the whitespace between "t10" and "t20"
+                answer_char_span=(0, 7),
+                parser="forced",
+            )
+
+    import demo.live.token_overlay as overlay_mod
+    original_chain = overlay_mod.run_parser_chain
+    overlay_mod.run_parser_chain = StubParserChain("t10 t20")
+    try:
+        sections = detect_sections(text="t10 t20", tokenizer=tokenizer)
+    finally:
+        overlay_mod.run_parser_chain = original_chain
+
+    assert sections.parser == "forced"
+    assert sections.thinking_token_span is None
+    assert sections.answer_token_span == (0, 1)
+
+
+def test_detect_sections_routes_boxed_input_through_boxed_parser():
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    text = "t10 t20. \\boxed{t30}"
+
+    sections = detect_sections(text=text, tokenizer=tokenizer)
+
+    assert sections.parser == "boxed"
+    a_start, a_end = sections.answer_token_span
+    # The answer is "t30" — should map to a single token in the tokenized output.
+    assert 0 <= a_start <= a_end
