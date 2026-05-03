@@ -229,3 +229,39 @@ def test_generate_phase_smoke_returns_text_and_sections(tmp_path):
     assert ":" in output_span_text
     assert ":" in reasoning_span_text
     assert any("answer" in row[0] or "thinking" in row[0] for row in raw_rows)
+
+
+def test_full_pipeline_smoke_traces_paris(tmp_path):
+    module = load_live_app_module()
+
+    text, sections, _raw, output_span_text, reasoning_span_text = module.run_generate_phase(
+        model_name="demo/paris-smoke",
+        prompt="Context:\nParis is the capital of France.\nQuestion: What is the capital of France?",
+        device_map="auto",
+        dtype="auto",
+        max_new_tokens=64,
+    )
+
+    assert sections["parser"] == "think_answer"
+    assert "Paris" in text
+
+    top_rows, _generation_tokens, _html, json_path = module.run_trace(
+        model_name="demo/paris-smoke",
+        prompt="Context:\nParis is the capital of France.\nQuestion: What is the capital of France?",
+        target=text,
+        output_span=output_span_text,
+        reasoning_span=reasoning_span_text,
+        method="flashtrace",
+        hops=1,
+        top_k=3,
+        device_map="auto",
+        dtype="auto",
+        chunk_tokens=16,
+        sink_chunk_tokens=4,
+        use_chat_template=False,
+        work_dir=tmp_path,
+    )
+
+    assert top_rows[0][1] == "Paris"
+    assert top_rows[0][2] == 1.0
+    assert Path(json_path).exists()
