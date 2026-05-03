@@ -18,5 +18,15 @@ readme_dev.md
 contribute/ruler/
 repos/.DS_Store
 repomix-output.xml
+
+# FlashTrace generated artifacts
+trace.json
+trace.html
+*.trace.json
+*.trace.html
+exp/**/output/
+exp/**/out/
+exp/**/out-*/
+*.npz
 .DS_Store
 repomix-output.xml
