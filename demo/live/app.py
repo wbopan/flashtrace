@@ -307,6 +307,7 @@ def build_demo():
     import gradio as gr
 
     with gr.Blocks(title="FlashTrace Live Demo") as demo:
+        gr.HTML(f"<style>{TOKEN_DOCUMENT_CSS}</style>")
         gr.Markdown(
             "# FlashTrace Live Demo\n"
             "Generate with Qwen, inspect token spans, then trace selected answer."
@@ -458,6 +459,10 @@ def build_demo():
             inputs=[model_name, prompt, device_map, dtype, chat_template_toggle],
             outputs=[token_doc, status],
         )
+        # Install the persistent token-document JS island on page load. Attaching
+        # it to the Blocks (rather than launch(js=...)) keeps it working under
+        # `gradio` hot-reload, which bypasses the __main__ launch block.
+        demo.load(js=TOKEN_DOCUMENT_JS)
 
         generate_btn.click(
             fn=on_generate,
@@ -498,13 +503,17 @@ def build_demo():
     return demo
 
 
+# Module-level Blocks so `gradio demo/live/app.py` hot-reload can discover it.
+# The persistent JS/CSS island is attached to the Blocks itself (not launch),
+# so it survives reload-mode launches that bypass the __main__ block.
+demo = build_demo()
+
+
 if __name__ == "__main__":
     if os.environ.get("FLASHTRACE_DEMO_DRY_RUN") == "1":
         print("FlashTrace live demo dry run OK")
         raise SystemExit(0)
-    build_demo().queue(max_size=8).launch(
+    demo.queue(max_size=8).launch(
         server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
         server_port=int(os.environ.get("GRADIO_SERVER_PORT", "7860")),
-        js=TOKEN_DOCUMENT_JS,
-        css=TOKEN_DOCUMENT_CSS,
     )
