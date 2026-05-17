@@ -10,13 +10,74 @@ directly by the attribution pipeline without depending on the agenttrace repo.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
-from typing import Dict, List, NamedTuple, Optional, Sequence, Tuple
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Tuple
 
 import torch
 import torch.nn as nn
 from torch.utils.hooks import RemovableHandle
 from tqdm import tqdm
+
+
+@dataclass
+class LayerSpec:
+    """Per-layer geometry for a (possibly hybrid) decoder stack.
+
+    ``kind`` is ``"full"`` for softmax self-attention layers and ``"linear"``
+    for Gated-DeltaNet style linear-attention layers (e.g. Qwen3.5). The head
+    counts describe the value/output geometry IFR attributes through: for
+    linear layers this is the Gated-DeltaNet value head layout.
+    """
+
+    kind: str
+    n_heads_q: int
+    n_kv_heads: int
+    head_dim: int
+    group_size: int
+
+
+def _detect_layer_kind(layer: nn.Module, config: Any, idx: int) -> str:
+    """Classify a decoder layer as ``"full"`` or ``"linear"`` attention."""
+
+    layer_types = getattr(config, "layer_types", None)
+    if layer_types is not None and idx < len(layer_types):
+        return "linear" if "linear" in str(layer_types[idx]) else "full"
+    if hasattr(layer, "linear_attn") and not hasattr(layer, "self_attn"):
+        return "linear"
+    return "full"
+
+
+def _build_layer_spec(
+    layer: nn.Module,
+    config: Any,
+    idx: int,
+    *,
+    full_n_heads_q: int,
+    full_n_kv_heads: int,
+    full_head_dim: int,
+) -> "LayerSpec":
+    """Build the per-layer geometry descriptor for one decoder layer."""
+
+    kind = _detect_layer_kind(layer, config, idx)
+    if kind == "linear":
+        n_v_heads = int(getattr(config, "linear_num_value_heads"))
+        head_dim = int(getattr(config, "linear_value_head_dim"))
+        # Gated-DeltaNet mixes value heads independently: no GQA grouping at
+        # the value/output stage IFR attributes through.
+        return LayerSpec(
+            kind="linear",
+            n_heads_q=n_v_heads,
+            n_kv_heads=n_v_heads,
+            head_dim=head_dim,
+            group_size=1,
+        )
+    return LayerSpec(
+        kind="full",
+        n_heads_q=full_n_heads_q,
+        n_kv_heads=full_n_kv_heads,
+        head_dim=full_head_dim,
+        group_size=full_n_heads_q // full_n_kv_heads,
+    )
 
 
 @dataclass
@@ -32,6 +93,7 @@ class ModelMetadata:
     head_dim: int
     group_size: int
     rotary_emb: Optional[nn.Module] = None
+    layer_specs: Sequence[LayerSpec] = field(default_factory=tuple)
 
 
 def extract_model_metadata(model: nn.Module) -> ModelMetadata:
@@ -78,7 +140,20 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
 
     rotary_emb = getattr(decoder, "rotary_emb", None)
     if rotary_emb is None:
-        rotary_emb = getattr(layers[0].self_attn, "rotary_emb", None)
+        first_attn = getattr(layers[0], "self_attn", None)
+        rotary_emb = getattr(first_attn, "rotary_emb", None) if first_attn is not None else None
+
+    layer_specs = tuple(
+        _build_layer_spec(
+            layer,
+            model.config,
+            idx,
+            full_n_heads_q=n_heads_q,
+            full_n_kv_heads=n_kv_heads,
+            full_head_dim=head_dim,
+        )
+        for idx, layer in enumerate(layers)
+    )
 
     return ModelMetadata(
         decoder=decoder,
@@ -90,6 +165,7 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
         head_dim=head_dim,
         group_size=group_size,
         rotary_emb=rotary_emb,
+        layer_specs=layer_specs,
     )
 
 
