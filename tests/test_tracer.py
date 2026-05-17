@@ -1,4 +1,7 @@
+import pytest
+
 from flashtrace import FlashTrace, TraceResult
+from flashtrace.attribution import LLMAttribution
 from tests.helpers import make_tiny_qwen2_model_and_tokenizer
 
 
@@ -143,6 +146,52 @@ def test_flashtrace_default_raw_prompt_does_not_call_chat_template():
 
     assert result.method == "ifr-span"
     assert result.prompt_tokens == ["t3", "t4", "t5"]
+
+
+def test_format_prompt_uses_official_chat_template_without_private_wrapper():
+    model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    engine = LLMAttribution(model, tokenizer, use_chat_template=True)
+    prompt = "t10 t20"
+
+    formatted = engine.format_prompt(prompt)
+
+    assert formatted == tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}],
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+    assert "Context:" not in formatted
+    assert "Query:" not in formatted
+    assert " t10 t20" not in formatted
+
+
+def test_user_prompt_indices_decode_to_prompt_for_chat_templated_input():
+    model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    tokenizer.chat_template = (
+        "t10 <|im_start|>\n"
+        "{% for m in messages %}{{ m['content'] }}\n<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>\n{% endif %}"
+    )
+    engine = LLMAttribution(model, tokenizer, use_chat_template=True)
+    prompt = "t10 t20"
+
+    engine.target_response(prompt, "t30")
+
+    located_ids = engine.prompt_ids[0, engine.user_prompt_indices].tolist()
+    assert tokenizer.decode(
+        located_ids,
+        skip_special_tokens=False,
+        clean_up_tokenization_spaces=False,
+    ) == prompt
+
+
+def test_user_prompt_indices_raise_when_prompt_subsequence_is_missing():
+    model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    tokenizer.chat_template = "<|im_start|>\nt30\n<|im_end|>\n<|im_start|>\n"
+    engine = LLMAttribution(model, tokenizer, use_chat_template=True)
+
+    with pytest.raises(ValueError, match="User prompt token subsequence"):
+        engine.target_response("t10 t20", "t30")
 
 
 def test_flashtrace_target_without_eos_token():

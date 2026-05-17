@@ -16,7 +16,7 @@ def _bootstrap_local_flashtrace() -> None:
 
 _bootstrap_local_flashtrace()
 
-from demo.live.qwen_generation import generate_with_qwen
+from demo.live.qwen_generation import format_chat_prompt, generate_with_qwen
 from demo.live.token_overlay import (
     TokenRecord,
     build_token_records,
@@ -25,7 +25,7 @@ from demo.live.token_overlay import (
 )
 from demo.live.token_document import build_document_views
 
-DEFAULT_MODEL = os.environ.get("FLASHTRACE_DEMO_MODEL", "Qwen/Qwen3-0.6B")
+DEFAULT_MODEL = os.environ.get("FLASHTRACE_DEMO_MODEL", "Qwen/Qwen3-4B-Thinking-2507")
 DEFAULT_PROMPT = """Context:
 Paris is the capital of France.
 Berlin is the capital of Germany.
@@ -107,23 +107,13 @@ def _validate_model_and_prompt(model_name: str, prompt: str) -> tuple[str, str]:
     return model_id, prompt_text
 
 
-def _prompt_text_for_document(prompt: str, tokenizer, *, use_chat_template: bool) -> str:
-    if not use_chat_template:
-        return prompt
-    return tokenizer.apply_chat_template(
-        [{"role": "user", "content": prompt}],
-        tokenize=False,
-        add_generation_prompt=True,
-    )
+def _prompt_text_for_document(prompt: str, tokenizer) -> str:
+    return format_chat_prompt(prompt, tokenizer)
 
 
-def _build_prompt_records(prompt: str, tokenizer, *, use_chat_template: bool) -> list[TokenRecord]:
+def _build_prompt_records(prompt: str, tokenizer) -> list[TokenRecord]:
     return build_token_records(
-        text=_prompt_text_for_document(
-            prompt,
-            tokenizer,
-            use_chat_template=use_chat_template,
-        ),
+        text=_prompt_text_for_document(prompt, tokenizer),
         tokenizer=tokenizer,
         section="prompt",
         role="user",
@@ -162,18 +152,13 @@ def run_prompt_document_phase(
     prompt: str,
     device_map: str,
     dtype: str,
-    use_chat_template: bool,
     loader: Callable | None = None,
 ) -> dict[str, Any]:
     model_id, prompt_text = _validate_model_and_prompt(model_name, prompt)
     _model, tokenizer = _load_cached_model(
         model_id, device_map=device_map, dtype=dtype, loader=loader
     )
-    prompt_records = _build_prompt_records(
-        prompt_text,
-        tokenizer,
-        use_chat_template=bool(use_chat_template),
-    )
+    prompt_records = _build_prompt_records(prompt_text, tokenizer)
     return {
         "render_model": build_document_views(phase="prompt", prompt_records=prompt_records),
         "status": f"Prompt tokenized into {len(prompt_records)} tokens.",
@@ -187,7 +172,6 @@ def run_generate_document_phase(
     device_map: str,
     dtype: str,
     max_new_tokens: int,
-    use_chat_template: bool,
     loader: Callable | None = None,
 ) -> dict[str, Any]:
     model_id, prompt_text = _validate_model_and_prompt(model_name, prompt)
@@ -201,11 +185,7 @@ def run_generate_document_phase(
         max_new_tokens=int(max_new_tokens),
     )
     sections = detect_sections(text=output.text, tokenizer=tokenizer)
-    prompt_records = _build_prompt_records(
-        prompt_text,
-        tokenizer,
-        use_chat_template=bool(use_chat_template),
-    )
+    prompt_records = _build_prompt_records(prompt_text, tokenizer)
     generation_records, generated_text = build_token_records_from_ids(
         token_ids=output.token_ids,
         tokenizer=tokenizer,
@@ -251,7 +231,6 @@ def run_trace_document_phase(
     dtype: str,
     chunk_tokens: int,
     sink_chunk_tokens: int,
-    use_chat_template: bool,
     loader: Callable | None = None,
     tracer_cls: type | None = None,
 ) -> dict[str, Any]:
@@ -277,7 +256,7 @@ def run_trace_document_phase(
         tokenizer,
         chunk_tokens=int(chunk_tokens),
         sink_chunk_tokens=int(sink_chunk_tokens),
-        use_chat_template=bool(use_chat_template),
+        use_chat_template=True,
     )
     result = tracer.trace(
         prompt=prompt_text,
@@ -298,4 +277,3 @@ def run_trace_document_phase(
         "trace_json": result.to_dict(),
         "status": status,
     }
-

@@ -29,9 +29,8 @@
 
   function basePayload() {
     return {
-      model: readText("model-input", "Qwen/Qwen3-0.6B"),
+      model: readText("model-input", "Qwen/Qwen3-4B-Thinking-2507"),
       prompt: $("prompt-input")?.value ?? "",
-      chat_template: Boolean($("chat-template-checkbox")?.checked),
       device_map: readText("device-map-input", "auto"),
       dtype: readText("dtype-select", "auto"),
     };
@@ -301,7 +300,6 @@
 
     els.generateButton?.addEventListener("click", generate);
     els.traceButton?.addEventListener("click", trace);
-    $("chat-template-checkbox")?.addEventListener("change", tokenizePrompt);
     const promptInput = $("prompt-input");
     if (promptInput) {
       promptInput.addEventListener("input", tokenizePrompt);

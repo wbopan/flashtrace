@@ -124,7 +124,6 @@ class MultiHopAttnLRPResult:
 
 from .shared_utils import (
     DEFAULT_GENERATE_KWARGS,
-    DEFAULT_PROMPT_TEMPLATE,
     create_sentences,
     create_sentence_masks,
 )
@@ -204,21 +203,35 @@ class LLMAttribution():
         if not self.use_chat_template:
             return prompt
 
-        modified_prompt = DEFAULT_PROMPT_TEMPLATE.format(context = prompt, query = "")
-        formatted_prompt = [{"role": "user", "content": modified_prompt}]
+        formatted_prompt = [{"role": "user", "content": prompt}]
         formatted_prompt = self.tokenizer.apply_chat_template(
             formatted_prompt,
             tokenize=False,
             add_generation_prompt=True,
-            enable_thinking=False
         )
 
         return formatted_prompt
 
+    def _locate_user_prompt_indices(self) -> list[int]:
+        prompt_ids = [int(token_id) for token_id in self.prompt_ids[0].detach().cpu().tolist()]
+        user_prompt_ids = [int(token_id) for token_id in self.user_prompt_ids[0].detach().cpu().tolist()]
+        if not user_prompt_ids:
+            raise ValueError("User prompt token subsequence is empty.")
+
+        window_len = len(user_prompt_ids)
+        max_start = len(prompt_ids) - window_len
+        for start in range(max_start + 1):
+            if prompt_ids[start : start + window_len] == user_prompt_ids:
+                return list(range(start, start + window_len))
+
+        raise ValueError(
+            "User prompt token subsequence was not found in the formatted prompt."
+        )
+
     # Query the model for its generation
     # This internally saves the input and generated token ids for attribution target
     def response(self, prompt) -> str:
-        self.user_prompt = " " + prompt if self.use_chat_template else prompt
+        self.user_prompt = prompt
         self.prompt = self.format_prompt(self.user_prompt)
 
         # these are the ids for the user supplied prompt
@@ -234,13 +247,9 @@ class LLMAttribution():
         self.generation = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = True)
         gen_with_eos = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = False, clean_up_tokenization_spaces = False)
 
-        # we want to find the indices of the formatted prompt that the user prompt occupies
-        # we only want to attribute the user prompt, so we track this for later
-        n, m = len(self.user_prompt_ids[0]), len(self.prompt_ids[0])
-        for i, input_id in enumerate(self.prompt_ids[0]):
-            if input_id == self.user_prompt_ids[0, 0]:
-                self.user_prompt_indices = list(range(i, i + n)) 
-                break
+        # Track the exact user prompt subsequence inside the formatted prompt.
+        m = len(self.prompt_ids[0])
+        self.user_prompt_indices = self._locate_user_prompt_indices()
 
         # make a list of indices which are all prompt tokens 
         # (chat prompt formatting) that are not the user prompt tokens
@@ -265,7 +274,7 @@ class LLMAttribution():
         return target
 
     def target_response(self, prompt, target) -> str:
-        self.user_prompt = " " + prompt if self.use_chat_template else prompt
+        self.user_prompt = prompt
         self.prompt = self.format_prompt(self.user_prompt)
 
         # these are the ids for the user supplied prompt
@@ -283,13 +292,9 @@ class LLMAttribution():
         self.generation = target
         gen_with_eos = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = False, clean_up_tokenization_spaces = False)
 
-        # we want to find which indices of the formatted prompt that the user prompt occupies
-        # we will only want to attribute the user prompt, so we track this for later
-        n, m = len(self.user_prompt_ids[0]), len(self.prompt_ids[0])
-        for i, input_id in enumerate(self.prompt_ids[0]):
-            if input_id == self.user_prompt_ids[0, 0]:
-                self.user_prompt_indices = list(range(i, i + n)) 
-                break
+        # Track the exact user prompt subsequence inside the formatted prompt.
+        m = len(self.prompt_ids[0])
+        self.user_prompt_indices = self._locate_user_prompt_indices()
 
         # make a list of indices which are all prompt tokens 
         # (chat prompt formatting) that are not the user prompt tokens

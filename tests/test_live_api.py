@@ -51,6 +51,7 @@ class FakeTracer:
         self.model = model
         self.tokenizer = tokenizer
         self.kwargs = kwargs
+        assert kwargs["use_chat_template"] is True
 
     def trace(self, **kwargs):
         assert kwargs["prompt"] == "Context: Paris is in France.\nQuestion: Capital?"
@@ -71,10 +72,12 @@ class FakeTracer:
 
 class RecordingTracer:
     last_kwargs: dict | None = None
+    last_init_kwargs: dict | None = None
 
     def __init__(self, model, tokenizer, **kwargs):
         self.model = model
         self.tokenizer = tokenizer
+        RecordingTracer.last_init_kwargs = kwargs
 
     def trace(self, **kwargs):
         RecordingTracer.last_kwargs = kwargs
@@ -102,13 +105,16 @@ def test_tokenize_api_returns_prompt_render_model():
     client = ASGITestClient(create_app(loader=fake_loader))
     response = client.post(
         "/api/tokenize",
-        json={"model": "tiny-qwen2", "prompt": "t10 t20", "chat_template": False},
+        json={"model": "tiny-qwen2", "prompt": "t10 t20"},
     )
 
     assert response.status_code == 200
     body = response.json()
     assert body["render_model"]["phase"] == "prompt"
-    assert body["render_model"]["views"][0]["tokens"][0]["text"] == "t10"
+    tokens = body["render_model"]["views"][0]["tokens"]
+    assert tokens[0]["text"] == "<|im_start|>"
+    assert tokens[0]["kind"] == "template"
+    assert [token["text"] for token in tokens if token["kind"] == "content"] == ["t10", "t20"]
 
 
 def test_generate_api_returns_generated_text_default_span_and_status():
@@ -126,7 +132,6 @@ def test_generate_api_returns_generated_text_default_span_and_status():
             "model": "tiny-qwen2",
             "prompt": "t10 t20 t30 t40",
             "max_new_tokens": 4,
-            "chat_template": False,
             "device_map": "auto",
             "dtype": "auto",
         },
@@ -135,6 +140,7 @@ def test_generate_api_returns_generated_text_default_span_and_status():
     assert response.status_code == 200
     body = response.json()
     assert body["render_model"]["phase"] == "generated"
+    assert body["render_model"]["views"][0]["tokens"][0]["text"] == "<|im_start|>"
     assert isinstance(body["generated_text"], str)
     assert body["target_span"]
     assert "Generated" in body["status"]
@@ -159,7 +165,6 @@ def test_trace_api_returns_traced_render_model_and_inline_json():
             "reasoning_span": "",
             "method": "flashtrace",
             "hops": 1,
-            "chat_template": False,
             "device_map": "auto",
             "dtype": "auto",
             "chunk_tokens": 16,
@@ -195,7 +200,6 @@ def test_trace_service_strips_single_trailing_eos_before_trace():
         dtype="auto",
         chunk_tokens=16,
         sink_chunk_tokens=4,
-        use_chat_template=False,
         loader=fake_loader,
         tracer_cls=FakeTracer,
     )
@@ -215,7 +219,6 @@ def test_trace_service_passes_spans_to_tracer():
         device_map="auto",
         dtype="auto",
         max_new_tokens=4,
-        use_chat_template=False,
         loader=fake_loader,
     )
     service.run_trace_document_phase(
@@ -230,11 +233,11 @@ def test_trace_service_passes_spans_to_tracer():
         dtype="auto",
         chunk_tokens=16,
         sink_chunk_tokens=4,
-        use_chat_template=False,
         loader=fake_loader,
         tracer_cls=RecordingTracer,
     )
 
+    assert RecordingTracer.last_init_kwargs["use_chat_template"] is True
     assert RecordingTracer.last_kwargs["output_span"] == service.parse_optional_span(
         result["target_span"]
     )
@@ -280,7 +283,6 @@ def test_trace_validation_rejects_bad_span(target_span):
             "reasoning_span": "",
             "method": "flashtrace",
             "hops": 1,
-            "chat_template": False,
             "device_map": "auto",
             "dtype": "auto",
             "chunk_tokens": 16,
@@ -321,7 +323,6 @@ def test_inference_executor_serializes_concurrent_requests():
                 json={
                     "model": f"tiny-{index}",
                     "prompt": "t10 t20",
-                    "chat_template": False,
                 },
             )
         )
@@ -343,8 +344,10 @@ def test_run_inference_uses_plain_run_in_executor():
     source = inspect.getsource(server._run_inference)
 
     assert "await loop.run_in_executor(INFERENCE_EXECUTOR, partial(func, **kwargs))" in source
-    assert "Event" not in source
+    assert ".submit(" not in source
+    assert "future.done()" not in source
     assert "asyncio.sleep" not in source
+    assert "Event" not in source
     assert ".cancel()" not in source
 
 
@@ -373,6 +376,18 @@ def test_static_frontend_tokenizes_automatically_and_morphs_buttons():
     assert "updatePhaseButtons(state.phase)" in app_js
     assert "els.generateButton.hidden = phase === \"generated\"" in app_js
     assert "els.traceButton.hidden = phase !== \"generated\"" in app_js
+    assert "chat-template-checkbox" not in index
+    assert "Show chat template" not in index
+    assert "chat_template" not in app_js
+    assert "chat-template-checkbox" not in app_js
+
+
+def test_server_request_models_do_not_expose_chat_template_field():
+    from demo.live.server import GenerateRequest, TokenizeRequest, TraceRequest
+
+    for request_model in (TokenizeRequest, GenerateRequest, TraceRequest):
+        fields = request_model.model_fields if hasattr(request_model, "model_fields") else request_model.__fields__
+        assert "chat_template" not in fields
 
 
 def test_server_script_entrypoint_imports_local_package():

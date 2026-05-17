@@ -115,7 +115,7 @@ def faithfulness_test_skip_tokens(
 
     pad_token_id = llm_evaluator._ensure_pad_token_id()
 
-    user_prompt = " " + prompt
+    user_prompt = prompt
     formatted_prompt = llm_evaluator.format_prompt(user_prompt)
 
     formatted_ids = llm_evaluator.tokenizer(formatted_prompt, return_tensors="pt", add_special_tokens=False).input_ids

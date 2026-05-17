@@ -28,32 +28,56 @@ def make_tiny_qwen2_model_and_tokenizer(
     model = AutoModelForCausalLM.from_config(config, attn_implementation="eager")
     model.eval()
 
-    backend = Tokenizer(models.WordLevel(vocab={f"t{i}": i for i in range(500)}, unk_token="t0"))
+    vocab = {f"t{i}": i for i in range(498)}
+    vocab["<|im_start|>"] = 498
+    vocab["<|im_end|>"] = 499
+    backend = Tokenizer(models.WordLevel(vocab=vocab, unk_token="t0"))
     backend.pre_tokenizer = pre_tokenizers.Whitespace()
     tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend)
     tokenizer.add_special_tokens(
         {
             "eos_token": AddedToken("t1", single_word=True),
             "pad_token": AddedToken("t2", single_word=True),
+            "additional_special_tokens": [
+                AddedToken("<|im_start|>", single_word=False),
+                AddedToken("<|im_end|>", single_word=False),
+            ],
         }
     )
-    tokenizer.chat_template = "{% for m in messages %}{{ m['content'] }}{% endfor %}"
+    tokenizer.chat_template = (
+        "{% for m in messages %}<|im_start|>\n"
+        "{{ m['content'] }}\n"
+        "<|im_end|>\n"
+        "{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>\n{% endif %}"
+    )
     return model, tokenizer
 
 
 def _make_tiny_word_tokenizer(vocab_size: int = 500):
-    backend = Tokenizer(
-        models.WordLevel(vocab={f"t{i}": i for i in range(vocab_size)}, unk_token="t0")
-    )
+    vocab = {f"t{i}": i for i in range(vocab_size - 2)}
+    vocab["<|im_start|>"] = vocab_size - 2
+    vocab["<|im_end|>"] = vocab_size - 1
+    backend = Tokenizer(models.WordLevel(vocab=vocab, unk_token="t0"))
     backend.pre_tokenizer = pre_tokenizers.Whitespace()
     tokenizer = PreTrainedTokenizerFast(tokenizer_object=backend)
     tokenizer.add_special_tokens(
         {
             "eos_token": AddedToken("t1", single_word=True),
             "pad_token": AddedToken("t2", single_word=True),
+            "additional_special_tokens": [
+                AddedToken("<|im_start|>", single_word=False),
+                AddedToken("<|im_end|>", single_word=False),
+            ],
         }
     )
-    tokenizer.chat_template = "{% for m in messages %}{{ m['content'] }}{% endfor %}"
+    tokenizer.chat_template = (
+        "{% for m in messages %}<|im_start|>\n"
+        "{{ m['content'] }}\n"
+        "<|im_end|>\n"
+        "{% endfor %}"
+        "{% if add_generation_prompt %}<|im_start|>\n{% endif %}"
+    )
     return tokenizer
 
 

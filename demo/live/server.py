@@ -34,7 +34,6 @@ INFERENCE_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 class TokenizeRequest(BaseModel):
     model: str = Field(default=service.DEFAULT_MODEL)
     prompt: str
-    chat_template: bool = False
     device_map: str = Field(default_factory=lambda: os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"))
     dtype: str = "auto"
 
@@ -43,7 +42,6 @@ class GenerateRequest(BaseModel):
     model: str = Field(default=service.DEFAULT_MODEL)
     prompt: str
     max_new_tokens: int = 128
-    chat_template: bool = False
     device_map: str = Field(default_factory=lambda: os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"))
     dtype: str = "auto"
 
@@ -56,7 +54,6 @@ class TraceRequest(BaseModel):
     reasoning_span: str = ""
     method: Literal["flashtrace", "ifr-span", "ifr-matrix"] = "flashtrace"
     hops: int = 1
-    chat_template: bool = False
     device_map: str = Field(default_factory=lambda: os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"))
     dtype: str = "auto"
     chunk_tokens: int = 128
@@ -102,7 +99,6 @@ def create_app(
                 prompt=payload.prompt,
                 device_map=payload.device_map,
                 dtype=payload.dtype,
-                use_chat_template=payload.chat_template,
                 loader=request.app.state.loader,
             )
             return {"render_model": result["render_model"]}
@@ -121,7 +117,6 @@ def create_app(
                 device_map=payload.device_map,
                 dtype=payload.dtype,
                 max_new_tokens=payload.max_new_tokens,
-                use_chat_template=payload.chat_template,
                 loader=request.app.state.loader,
             )
         except ValueError as exc:
@@ -145,7 +140,6 @@ def create_app(
                 dtype=payload.dtype,
                 chunk_tokens=payload.chunk_tokens,
                 sink_chunk_tokens=payload.sink_chunk_tokens,
-                use_chat_template=payload.chat_template,
                 loader=request.app.state.loader,
                 tracer_cls=request.app.state.tracer_cls,
             )

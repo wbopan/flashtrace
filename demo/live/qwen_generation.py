@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import torch
 
@@ -11,6 +12,31 @@ class GenerationOutput:
     token_ids: list[int]
 
 
+def _chat_messages(prompt: str) -> list[dict[str, str]]:
+    return [{"role": "user", "content": prompt}]
+
+
+def format_chat_prompt(
+    prompt: str,
+    tokenizer,
+    *,
+    tokenize: bool = False,
+    return_tensors: str | None = None,
+) -> str | Any:
+    if getattr(tokenizer, "chat_template", None) is None:
+        raise ValueError("model has no chat template")
+    try:
+        kwargs: dict[str, Any] = {
+            "add_generation_prompt": True,
+            "tokenize": bool(tokenize),
+        }
+        if return_tensors is not None:
+            kwargs["return_tensors"] = return_tensors
+        return tokenizer.apply_chat_template(_chat_messages(prompt), **kwargs)
+    except ValueError as exc:
+        raise ValueError("model has no chat template") from exc
+
+
 def generate_with_qwen(
     *,
     model,
@@ -18,17 +44,20 @@ def generate_with_qwen(
     prompt: str,
     max_new_tokens: int = 256,
 ) -> GenerationOutput:
-    inputs = tokenizer(prompt, return_tensors="pt")
     device = next(model.parameters()).device
-    input_ids = inputs["input_ids"].to(device)
-    attention_mask = inputs.get("attention_mask")
-    if attention_mask is not None:
-        attention_mask = attention_mask.to(device)
+    input_ids = format_chat_prompt(
+        prompt,
+        tokenizer,
+        tokenize=True,
+        return_tensors="pt",
+    )
+    if not torch.is_tensor(input_ids) and "input_ids" in input_ids:
+        input_ids = input_ids["input_ids"]
+    input_ids = input_ids.to(device)
 
     with torch.inference_mode():
         generated = model.generate(
             input_ids=input_ids,
-            attention_mask=attention_mask,
             max_new_tokens=int(max_new_tokens),
             do_sample=False,
             temperature=None,
