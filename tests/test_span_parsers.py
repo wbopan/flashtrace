@@ -22,6 +22,17 @@ def test_think_answer_extracts_both_spans():
     assert result.parser == "think_answer"
 
 
+def test_reason_answer_extracts_reasoning_span():
+    text = "</think>\n\n<reason>Paris is the capital of France.</reason>\n<answer>Paris</answer>"
+
+    result = run_parser_chain(text)
+
+    assert result.thinking_char_span is not None
+    assert text[result.thinking_char_span[0] : result.thinking_char_span[1]] == "Paris is the capital of France."
+    assert text[result.answer_char_span[0] : result.answer_char_span[1]] == "Paris"
+    assert result.parser == "reason_answer"
+
+
 def test_think_answer_returns_none_without_markers():
     assert parse_think_answer("just some text") is None
 

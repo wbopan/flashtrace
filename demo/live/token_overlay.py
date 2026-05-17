@@ -25,6 +25,8 @@ _CONTROL_MARKERS = {
     "</answer>",
     "<reasoning>",
     "</reasoning>",
+    "<reason>",
+    "</reason>",
 }
 
 

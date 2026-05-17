@@ -24,6 +24,8 @@ def test_classify_chat_template_marker_is_template():
 def test_classify_think_marker_is_control():
     assert classify_token_kind(token_text="<think>", token_id=200, special_ids={200}) == "control"
     assert classify_token_kind(token_text="</answer>", token_id=201, special_ids={201}) == "control"
+    assert classify_token_kind(token_text="<reason>", token_id=202, special_ids={202}) == "control"
+    assert classify_token_kind(token_text="</reason>", token_id=203, special_ids={203}) == "control"
 
 
 def test_classify_regular_word_is_content():
@@ -217,6 +219,19 @@ def test_detect_sections_maps_think_answer_to_token_indices():
     sections = detect_sections(text=text, tokenizer=tokenizer)
 
     assert sections.parser == "think_answer"
+    assert sections.thinking_token_span is not None
+    t_start, t_end = sections.thinking_token_span
+    a_start, a_end = sections.answer_token_span
+    assert t_start <= t_end < a_start <= a_end
+
+
+def test_detect_sections_maps_reason_answer_to_token_indices():
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    text = "</think> <reason> t10 t20 </reason> <answer> t30 t40 </answer>"
+
+    sections = detect_sections(text=text, tokenizer=tokenizer)
+
+    assert sections.parser == "reason_answer"
     assert sections.thinking_token_span is not None
     t_start, t_end = sections.thinking_token_span
     a_start, a_end = sections.answer_token_span

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional
 
 _THINK_RE = re.compile(r"<think>(.*?)</think>", re.DOTALL | re.IGNORECASE)
+_REASON_RE = re.compile(r"<reason>(.*?)</reason>", re.DOTALL | re.IGNORECASE)
 _ANSWER_RE = re.compile(r"<answer>(.*?)</answer>", re.DOTALL | re.IGNORECASE)
 # Matches \boxed{simple content}. Does not match nested braces
 # (e.g., \boxed{\frac{1}{2}}); such inputs fall through to parse_last_paragraph.
@@ -24,13 +25,19 @@ def parse_think_answer(text: str) -> Optional[ParseResult]:
     if not answer_match:
         return None
     think_match = _THINK_RE.search(text)
+    parser = "think_answer"
     thinking_span: Optional[tuple[int, int]] = None
     if think_match is not None:
         thinking_span = think_match.span(1)
+    else:
+        reason_match = _REASON_RE.search(text)
+        if reason_match is not None:
+            thinking_span = reason_match.span(1)
+            parser = "reason_answer"
     return ParseResult(
         thinking_char_span=thinking_span,
         answer_char_span=answer_match.span(1),
-        parser="think_answer",
+        parser=parser,
     )
 
 
