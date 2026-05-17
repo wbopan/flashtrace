@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+
+import pytest
 import torch
 
 from flashtrace.attribution import LLMIFRAttribution
@@ -138,14 +141,38 @@ def test_faithfulness_smoke_eval_runs_on_hybrid_qwen35():
 
     model, tokenizer = make_tiny_qwen35_model_and_tokenizer()
     prompt = "t10 t20 t30 t40 t50 t60 t70 t80"
+    answer = "t90 t100"
 
-    result = evaluate_sample(
-        model, tokenizer, prompt, max_new_tokens=4, n_segments=4, deletion_steps=4
-    )
+    result = evaluate_sample(model, tokenizer, prompt, answer, n_segments=4)
 
     assert result.n_prompt_tokens == 8
-    assert result.n_gen_tokens == 4
-    assert result.flashtrace_auc == result.flashtrace_auc  # finite, no NaN
-    assert result.perturbation_auc == result.perturbation_auc
-    assert 0.0 <= result.flashtrace_auc <= 1.0
-    assert 0.0 <= result.perturbation_auc <= 1.0
+    assert result.n_answer_tokens == 2
+    assert result.flashtrace_corr == result.flashtrace_corr  # finite, no NaN
+    assert result.perturbation_corr == result.perturbation_corr
+    assert -1.0 <= result.flashtrace_corr <= 1.0
+    assert -1.0 <= result.perturbation_corr <= 1.0
+
+
+@pytest.mark.skipif(
+    os.environ.get("FLASHTRACE_QWEN35_REAL") != "1",
+    reason="real-model eval; set FLASHTRACE_QWEN35_REAL=1 to run (downloads ~35GB)",
+)
+def test_qwen35_9b_faithfulness_matches_qwen3_and_beats_baseline():
+    """Goal check: FlashTrace on Qwen3.5-9B is as faithful as on Qwen3-8B and
+    beats the perturbation baseline (Spearman corr. with token leave-one-out
+    importance; higher == more faithful)."""
+    import numpy as np
+
+    from evaluations.qwen35_faithfulness_smoke import DEFAULT_SAMPLES, evaluate_model
+
+    q35 = evaluate_model("Qwen/Qwen3.5-9B", DEFAULT_SAMPLES)
+    q3 = evaluate_model("Qwen/Qwen3-8B", DEFAULT_SAMPLES)
+
+    ft35 = float(np.mean([r.flashtrace_corr for r in q35]))
+    pert35 = float(np.mean([r.perturbation_corr for r in q35]))
+    ft3 = float(np.mean([r.flashtrace_corr for r in q3]))
+
+    # FlashTrace on Qwen3.5 must be at least as faithful as the perturbation baseline.
+    assert ft35 >= pert35 - 1e-6, f"FlashTrace {ft35:.4f} worse than baseline {pert35:.4f}"
+    # ... and close to its faithfulness on the comparable Qwen3-8B model.
+    assert abs(ft35 - ft3) <= 0.15, f"Qwen3.5 corr {ft35:.4f} far from Qwen3-8B {ft3:.4f}"
