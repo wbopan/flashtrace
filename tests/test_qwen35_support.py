@@ -130,3 +130,22 @@ def test_flashtrace_smoke_generate_then_trace_on_hybrid_qwen35():
     assert len(top) == 3
     assert all(item.score == item.score for item in top)  # no NaNs
     assert result.scores  # non-empty attribution
+
+
+def test_faithfulness_smoke_eval_runs_on_hybrid_qwen35():
+    """The faithfulness smoke harness runs end-to-end on a tiny hybrid model."""
+    from evaluations.qwen35_faithfulness_smoke import evaluate_sample
+
+    model, tokenizer = make_tiny_qwen35_model_and_tokenizer()
+    prompt = "t10 t20 t30 t40 t50 t60 t70 t80"
+
+    result = evaluate_sample(
+        model, tokenizer, prompt, max_new_tokens=4, n_segments=4, deletion_steps=4
+    )
+
+    assert result.n_prompt_tokens == 8
+    assert result.n_gen_tokens == 4
+    assert result.flashtrace_auc == result.flashtrace_auc  # finite, no NaN
+    assert result.perturbation_auc == result.perturbation_auc
+    assert 0.0 <= result.flashtrace_auc <= 1.0
+    assert 0.0 <= result.perturbation_auc <= 1.0
