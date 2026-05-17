@@ -1,11 +1,11 @@
 # FlashTrace Live Demo
 
-Gradio demo that traces a generated answer back to the prompt tokens that shaped it.
+FastAPI backend and static frontend for the Generate -> select target span -> Trace flow.
 
 ## Local Run
 
 ```bash
-uv run --extra demo python demo/live/app.py
+uv run --extra demo uvicorn demo.live.server:app --host 127.0.0.1 --port 7860
 ```
 
 Then open:
@@ -14,51 +14,38 @@ Then open:
 http://127.0.0.1:7860
 ```
 
-The default model (`Qwen/Qwen3-0.6B`) downloads on first run.
+The default model (`Qwen/Qwen3-0.6B`) downloads on first use.
 
-## Three-phase flow
-
-1. **Generate** — Click *Generate*. The model produces reasoning + answer with deterministic settings (`do_sample=False`).
-2. **Inspect** — The generated text is parsed (`<think>/<answer>` → `\boxed{}` → last-paragraph) and the resulting answer/reasoning token spans are auto-filled into the span fields. The raw-token table shows every tokenizer token with its kind (content/whitespace/special/template/control).
-3. **Trace** — Click *Trace selected answer*. The selected `output_span` and `reasoning_span` are passed to `FlashTrace.trace(...)` which produces the prompt-side attribution heatmap and JSON export. Override the auto-filled spans manually before tracing if the parser picked the wrong segment.
-
-## Span format
-
-Spans are inclusive generation-token index pairs in `START:END` format. The Generate phase fills these in based on the parser; manual overrides win.
-
-## Use a different model
+## Hot Reload
 
 ```bash
-FLASHTRACE_DEMO_MODEL=Qwen/Qwen3-4B \
-FLASHTRACE_DEMO_DEVICE_MAP=auto \
-uv run --extra demo python demo/live/app.py
+uv run --extra demo uvicorn demo.live.server:app --host 127.0.0.1 --port 7860 --reload
 ```
 
-Any Qwen2/Qwen3/Llama-architecture model works. First run downloads the model; subsequent runs reuse the in-process model cache.
+## API
 
-## Hugging Face Space
+- `POST /api/tokenize` with `{model, prompt, chat_template}` returns a prompt render model.
+- `POST /api/generate` with `{model, prompt, max_new_tokens, chat_template, device_map, dtype}` returns generated text, default spans, status, and a generated render model.
+- `POST /api/trace` with `{model, prompt, generated_text, target_span, reasoning_span, method, hops, chat_template, device_map, dtype, chunk_tokens, sink_chunk_tokens}` returns a traced render model, inline `trace_json`, and status.
 
-Create a Gradio Space and copy these files into the Space repository:
+The server keeps no per-user session. The browser stores prompt, generated text, and selected span, then sends those values with each request.
 
-- `app.py`
-- `requirements.txt`
+## Concurrency
 
-For a GPU Space, set `FLASHTRACE_DEMO_MODEL` to the target model id and choose an instance with enough VRAM for the selected model and prompt length.
+FastAPI endpoints are async, and model work runs through one global `ThreadPoolExecutor(max_workers=1)`. This keeps the event loop responsive while serializing shared PyTorch inference for small multi-user demos.
 
-## Environment variables
+## Environment Variables
 
-- `FLASHTRACE_DEMO_MODEL` — Model id (default `Qwen/Qwen3-0.6B`).
-- `FLASHTRACE_DEMO_OUTPUT_DIR` — JSON trace output dir (default `demo/live/out`).
-- `FLASHTRACE_DEMO_DEVICE_MAP` — `device_map` for `from_pretrained` (default `auto`).
-- `FLASHTRACE_DEMO_MAX_PROMPT_CHARS` — Prompt-length cap (default 4000).
+- `FLASHTRACE_DEMO_MODEL` — model id, default `Qwen/Qwen3-0.6B`.
+- `FLASHTRACE_DEMO_DEVICE_MAP` — model `device_map`, default `auto`.
+- `FLASHTRACE_DEMO_MAX_PROMPT_CHARS` — prompt cap, default `4000`.
+- `FLASHTRACE_DEMO_HOST` — direct `server.py` host, default `127.0.0.1`.
+- `FLASHTRACE_DEMO_PORT` — direct `server.py` port, default `7860`.
 
-## Outputs
+## Direct Script
 
-Each trace request writes a JSON artifact under `out/` next to `app.py` unless `FLASHTRACE_DEMO_OUTPUT_DIR` is set. The UI returns:
+```bash
+uv run --extra demo python demo/live/server.py
+```
 
-- top input tokens ranked by attribution score,
-- generation token indices,
-- standalone HTML heatmap,
-- downloadable JSON trace,
-- detected sections (parser, char/token spans),
-- raw-token inspector with per-token kind and offsets.
+The recommended command is the uvicorn invocation above.

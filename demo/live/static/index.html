@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FlashTrace Live Demo</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="controls" aria-label="FlashTrace controls">
+      <header class="brand">
+        <h1>FlashTrace</h1>
+        <p>Generate with Qwen, select answer tokens, trace attribution.</p>
+      </header>
+
+      <label class="field">
+        <span>Model</span>
+        <input id="model-input" type="text" value="Qwen/Qwen3-0.6B" autocomplete="off">
+      </label>
+
+      <label class="field">
+        <span>Prompt</span>
+        <textarea id="prompt-input" rows="11">Context:
+Paris is the capital of France.
+Berlin is the capital of Germany.
+Madrid is the capital of Spain.
+
+Question: What is the capital of France?</textarea>
+      </label>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Max tokens</span>
+          <input id="max-new-tokens-input" type="number" min="1" max="512" step="1" value="128">
+        </label>
+        <label class="field">
+          <span>Hops</span>
+          <input id="hops-input" type="number" min="1" max="4" step="1" value="1">
+        </label>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Method</span>
+          <select id="method-select">
+            <option value="flashtrace" selected>flashtrace</option>
+            <option value="ifr-span">ifr-span</option>
+            <option value="ifr-matrix">ifr-matrix</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Dtype</span>
+          <select id="dtype-select">
+            <option value="auto" selected>auto</option>
+            <option value="float16">float16</option>
+            <option value="bfloat16">bfloat16</option>
+            <option value="float32">float32</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Device map</span>
+          <input id="device-map-input" type="text" value="auto" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Chunk tokens</span>
+          <input id="chunk-tokens-input" type="number" min="1" step="1" value="128">
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Sink chunk tokens</span>
+        <input id="sink-chunk-tokens-input" type="number" min="1" step="1" value="32">
+      </label>
+
+      <label class="check-row">
+        <input id="chat-template-checkbox" type="checkbox">
+        <span>Show chat template</span>
+      </label>
+
+      <div class="actions">
+        <button id="generate-button" type="button" class="primary">Generate</button>
+        <button id="trace-button" type="button" class="primary" hidden disabled>Trace</button>
+      </div>
+
+      <a id="download-link" class="download-link" hidden>Download trace JSON</a>
+    </aside>
+
+    <section class="workspace" aria-label="Token document">
+      <div id="token-document" class="token-document" aria-live="polite"></div>
+      <p id="status-line" class="status-line">Ready.</p>
+    </section>
+  </main>
+</body>
+</html>

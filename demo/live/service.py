@@ -1,0 +1,301 @@
+from __future__ import annotations
+
+import os
+import sys
+from pathlib import Path
+from typing import Any, Callable
+
+
+def _bootstrap_local_flashtrace() -> None:
+    current = Path(__file__).resolve()
+    for parent in current.parents:
+        if (parent / "pyproject.toml").exists() and (parent / "flashtrace").is_dir():
+            sys.path.insert(0, str(parent))
+            return
+
+
+_bootstrap_local_flashtrace()
+
+from demo.live.qwen_generation import generate_with_qwen
+from demo.live.token_overlay import (
+    TokenRecord,
+    build_token_records,
+    build_token_records_from_ids,
+    detect_sections,
+)
+from demo.live.token_document import build_document_views
+
+DEFAULT_MODEL = os.environ.get("FLASHTRACE_DEMO_MODEL", "Qwen/Qwen3-0.6B")
+DEFAULT_PROMPT = """Context:
+Paris is the capital of France.
+Berlin is the capital of Germany.
+Madrid is the capital of Spain.
+
+Question: What is the capital of France?"""
+MAX_PROMPT_CHARS = int(os.environ.get("FLASHTRACE_DEMO_MAX_PROMPT_CHARS", "4000"))
+
+_MODEL_CACHE: dict[tuple[str, str, str], tuple[object, object]] = {}
+
+
+def clear_model_cache() -> None:
+    _MODEL_CACHE.clear()
+
+
+def parse_optional_span(value: str | None) -> tuple[int, int] | None:
+    text = (value or "").strip()
+    if not text:
+        return None
+    parts = text.split(":")
+    if len(parts) != 2:
+        raise ValueError("Span must use START:END format.")
+    try:
+        start = int(parts[0])
+        end = int(parts[1])
+    except ValueError as exc:
+        raise ValueError("Span bounds must be integers.") from exc
+    if start < 0 or end < start:
+        raise ValueError("Span must satisfy 0 <= START <= END.")
+    return start, end
+
+
+_parse_optional_span = parse_optional_span
+
+
+def _load_cached_model(
+    model_name: str,
+    *,
+    device_map: str,
+    dtype: str,
+    loader: Callable | None = None,
+):
+    if loader is None:
+        from flashtrace import load_model_and_tokenizer
+
+        loader = load_model_and_tokenizer
+    cache_key = (model_name, device_map, dtype)
+    if cache_key not in _MODEL_CACHE:
+        _MODEL_CACHE[cache_key] = loader(model_name, device_map=device_map, dtype=dtype)
+    return _MODEL_CACHE[cache_key]
+
+
+def _format_span(span: tuple[int, int] | None) -> str:
+    if span is None:
+        return ""
+    return f"{span[0]}:{span[1]}"
+
+
+def _clamp_span(span: tuple[int, int] | None, max_index: int) -> tuple[int, int] | None:
+    if span is None or max_index < 0:
+        return None
+    start, end = span
+    start = max(0, min(int(start), int(max_index)))
+    end = max(0, min(int(end), int(max_index)))
+    if end < start:
+        return None
+    return start, end
+
+
+def _validate_model_and_prompt(model_name: str, prompt: str) -> tuple[str, str]:
+    model_id = model_name.strip()
+    prompt_text = prompt.strip()
+    if not model_id:
+        raise ValueError("Model is required.")
+    if not prompt_text:
+        raise ValueError("Prompt is required.")
+    if len(prompt_text) > MAX_PROMPT_CHARS:
+        raise ValueError(f"Prompt must be at most {MAX_PROMPT_CHARS} characters.")
+    return model_id, prompt_text
+
+
+def _prompt_text_for_document(prompt: str, tokenizer, *, use_chat_template: bool) -> str:
+    if not use_chat_template:
+        return prompt
+    return tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}],
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+
+
+def _build_prompt_records(prompt: str, tokenizer, *, use_chat_template: bool) -> list[TokenRecord]:
+    return build_token_records(
+        text=_prompt_text_for_document(
+            prompt,
+            tokenizer,
+            use_chat_template=use_chat_template,
+        ),
+        tokenizer=tokenizer,
+        section="prompt",
+        role="user",
+    )
+
+
+def _strip_single_trailing_eos_text(text: str, tokenizer) -> str:
+    eos = getattr(tokenizer, "eos_token", None)
+    if eos and text.endswith(eos):
+        return text[: -len(eos)]
+    return text
+
+
+def _validate_generation_span(
+    *,
+    span: tuple[int, int],
+    generated_text: str,
+    tokenizer,
+) -> None:
+    records = build_token_records(
+        text=generated_text,
+        tokenizer=tokenizer,
+        section="answer",
+        role="assistant",
+    )
+    max_index = len(records) - 1
+    if max_index < 0:
+        raise ValueError("Generated text has no tokens to trace.")
+    if span[1] > max_index:
+        raise ValueError(f"Span end {span[1]} is outside generated token range 0:{max_index}.")
+
+
+def run_prompt_document_phase(
+    *,
+    model_name: str,
+    prompt: str,
+    device_map: str,
+    dtype: str,
+    use_chat_template: bool,
+    loader: Callable | None = None,
+) -> dict[str, Any]:
+    model_id, prompt_text = _validate_model_and_prompt(model_name, prompt)
+    _model, tokenizer = _load_cached_model(
+        model_id, device_map=device_map, dtype=dtype, loader=loader
+    )
+    prompt_records = _build_prompt_records(
+        prompt_text,
+        tokenizer,
+        use_chat_template=bool(use_chat_template),
+    )
+    return {
+        "render_model": build_document_views(phase="prompt", prompt_records=prompt_records),
+        "status": f"Prompt tokenized into {len(prompt_records)} tokens.",
+    }
+
+
+def run_generate_document_phase(
+    *,
+    model_name: str,
+    prompt: str,
+    device_map: str,
+    dtype: str,
+    max_new_tokens: int,
+    use_chat_template: bool,
+    loader: Callable | None = None,
+) -> dict[str, Any]:
+    model_id, prompt_text = _validate_model_and_prompt(model_name, prompt)
+    model, tokenizer = _load_cached_model(
+        model_id, device_map=device_map, dtype=dtype, loader=loader
+    )
+    output = generate_with_qwen(
+        model=model,
+        tokenizer=tokenizer,
+        prompt=prompt_text,
+        max_new_tokens=int(max_new_tokens),
+    )
+    sections = detect_sections(text=output.text, tokenizer=tokenizer)
+    prompt_records = _build_prompt_records(
+        prompt_text,
+        tokenizer,
+        use_chat_template=bool(use_chat_template),
+    )
+    generation_records, generated_text = build_token_records_from_ids(
+        token_ids=output.token_ids,
+        tokenizer=tokenizer,
+        section="answer",
+        role="assistant",
+    )
+    document = build_document_views(
+        phase="generated",
+        prompt_records=prompt_records,
+        generation_records=generation_records,
+    )
+    target_span = document["target_span"]
+    target_span_tuple = tuple(target_span) if target_span is not None else None
+    max_index = target_span_tuple[1] if target_span_tuple is not None else -1
+    reasoning_span = _clamp_span(sections.thinking_token_span, max_index)
+    status = (
+        f"Generated {len(generation_records)} tokens. "
+        f"Default target span: {_format_span(target_span_tuple) or 'empty'}."
+    )
+    if sections.thinking_token_span is not None and reasoning_span is None:
+        status += " Reasoning span was outside the attributable generation range and was dropped."
+    if target_span_tuple is None:
+        status += " Trace is disabled because there are no selectable generation tokens."
+    return {
+        "render_model": document,
+        "generated_text": generated_text,
+        "target_span": _format_span(target_span_tuple),
+        "reasoning_span": _format_span(reasoning_span),
+        "status": status,
+    }
+
+
+def run_trace_document_phase(
+    *,
+    model_name: str,
+    prompt: str,
+    generated_text: str,
+    target_span: str,
+    reasoning_span: str,
+    method: str,
+    hops: int,
+    device_map: str,
+    dtype: str,
+    chunk_tokens: int,
+    sink_chunk_tokens: int,
+    use_chat_template: bool,
+    loader: Callable | None = None,
+    tracer_cls: type | None = None,
+) -> dict[str, Any]:
+    model_id, prompt_text = _validate_model_and_prompt(model_name, prompt)
+    if not generated_text:
+        raise ValueError("Generate a response before tracing.")
+    output_span = parse_optional_span(target_span)
+    if output_span is None:
+        raise ValueError("Select at least two target endpoints before tracing.")
+    reasoning_span_tuple = parse_optional_span(reasoning_span)
+    if tracer_cls is None:
+        from flashtrace import FlashTrace
+
+        tracer_cls = FlashTrace
+
+    model, tokenizer = _load_cached_model(
+        model_id, device_map=device_map, dtype=dtype, loader=loader
+    )
+    target_text = _strip_single_trailing_eos_text(generated_text, tokenizer)
+    _validate_generation_span(span=output_span, generated_text=target_text, tokenizer=tokenizer)
+    tracer = tracer_cls(
+        model,
+        tokenizer,
+        chunk_tokens=int(chunk_tokens),
+        sink_chunk_tokens=int(sink_chunk_tokens),
+        use_chat_template=bool(use_chat_template),
+    )
+    result = tracer.trace(
+        prompt=prompt_text,
+        target=target_text,
+        output_span=output_span,
+        reasoning_span=reasoning_span_tuple,
+        hops=int(hops),
+        method=method,
+    )
+    document = build_document_views(phase="traced", result=result)
+    view_count = len(document["views"])
+    if view_count == 1:
+        status = f"Trace complete with Aggregate view for {method}."
+    else:
+        status = f"Trace complete with Aggregate plus {view_count - 1} hop views."
+    return {
+        "render_model": document,
+        "trace_json": result.to_dict(),
+        "status": status,
+    }
+

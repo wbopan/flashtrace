@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-import json
-import re
-
 import pytest
 
 from flashtrace import FlashTrace
@@ -10,16 +7,6 @@ from flashtrace.result import TraceResult
 from tests.helpers import make_tiny_qwen2_model_and_tokenizer
 
 from demo.live.token_overlay import build_token_records, build_token_records_from_ids
-
-
-def _extract_model(html: str) -> dict:
-    match = re.search(
-        r"<script[^>]+id=\"flashtrace-token-document-data\"[^>]*>(.*?)</script>",
-        html,
-        flags=re.DOTALL,
-    )
-    assert match is not None
-    return json.loads(match.group(1))
 
 
 def test_build_document_views_defaults_to_selectable_generation_without_eos():
@@ -94,39 +81,6 @@ def test_build_document_views_traced_adds_hop_views_when_scores_exist():
     assert [view["name"] for view in model["views"]] == ["Aggregate", "Hop 1", "Hop 2"]
 
 
-def test_render_document_html_embeds_json_and_target_attributes():
-    from demo.live.token_document import build_document_views, render_document_html
-
-    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
-    prompt_records = build_token_records(
-        text="t10",
-        tokenizer=tokenizer,
-        section="prompt",
-        role="user",
-    )
-    generation_records, _decoded = build_token_records_from_ids(
-        token_ids=[30, tokenizer.eos_token_id],
-        tokenizer=tokenizer,
-        section="answer",
-        role="assistant",
-    )
-    model = build_document_views(
-        phase="generated",
-        prompt_records=prompt_records,
-        generation_records=generation_records,
-    )
-
-    html = render_document_html(model)
-    embedded = _extract_model(html)
-
-    assert embedded["phase"] == "generated"
-    assert embedded["target_span"] == [0, 0]
-    assert 'data-gen-index="0"' in html
-    assert 'data-selectable="true"' in html
-    assert 'class="ft-token' in html
-    assert "ft-token-document__style" in html
-
-
 def test_document_generation_tokens_match_trace_result_modulo_trailing_eos():
     from demo.live.token_document import build_document_views
 
@@ -184,9 +138,41 @@ def test_document_generation_tokens_match_trace_result_modulo_trailing_eos():
     assert document_generation == trace_generation
 
 
-def test_playwright_smoke_selection_bridge_best_effort():
+def test_traced_views_include_server_computed_colors_per_view():
+    from demo.live.token_document import build_document_views
+    from flashtrace.viz import _score_color
+
+    result = TraceResult(
+        prompt_tokens=["t10", "t20"],
+        generation_tokens=["t30"],
+        scores=[0.1, 0.4],
+        per_hop_scores=[[0.8, 0.4]],
+        output_span=(0, 0),
+        method="flashtrace",
+    )
+
+    model = build_document_views(phase="traced", result=result)
+    aggregate_prompt = [
+        token for token in model["views"][0]["tokens"] if token["region"] == "prompt"
+    ]
+    hop_prompt = [
+        token for token in model["views"][1]["tokens"] if token["region"] == "prompt"
+    ]
+
+    assert [token["color"] for token in aggregate_prompt] == [
+        _score_color(0.1, 0.4),
+        _score_color(0.4, 0.4),
+    ]
+    assert [token["color"] for token in hop_prompt] == [
+        _score_color(0.8, 0.8),
+        _score_color(0.4, 0.8),
+    ]
+    assert all(token["color"] is None for token in model["views"][0]["tokens"] if token["region"] == "generation")
+
+
+def test_playwright_smoke_selection_and_tabs_best_effort():
     playwright = pytest.importorskip("playwright.sync_api")
-    from demo.live.token_document import TOKEN_DOCUMENT_JS, build_document_views, render_document_html
+    from demo.live.token_document import build_document_views
 
     _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
     prompt_records = build_token_records(
@@ -201,28 +187,11 @@ def test_playwright_smoke_selection_bridge_best_effort():
         section="answer",
         role="assistant",
     )
-    html = render_document_html(
-        build_document_views(
-            phase="generated",
-            prompt_records=prompt_records,
-            generation_records=generation_records,
-        )
+    generated_model = build_document_views(
+        phase="generated",
+        prompt_records=prompt_records,
+        generation_records=generation_records,
     )
-
-    with playwright.sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page()
-        page.set_content(f"<div id='flashtrace-token-document'>{html}</div>")
-        page.evaluate(f"({TOKEN_DOCUMENT_JS})()")
-        page.locator("[data-gen-index='0']").click()
-        page.locator("[data-gen-index='1']").click()
-        assert page.evaluate("window.flashtraceTokenDocument.readSelection()") == "0:1"
-        browser.close()
-
-
-def test_playwright_smoke_switches_trace_tabs_best_effort():
-    playwright = pytest.importorskip("playwright.sync_api")
-    from demo.live.token_document import TOKEN_DOCUMENT_JS, build_document_views, render_document_html
 
     result = TraceResult(
         prompt_tokens=["t10", "t20"],
@@ -232,13 +201,29 @@ def test_playwright_smoke_switches_trace_tabs_best_effort():
         output_span=(0, 0),
         method="flashtrace",
     )
-    html = render_document_html(build_document_views(phase="traced", result=result))
+    traced_model = build_document_views(phase="traced", result=result)
 
     with playwright.sync_playwright() as p:
         browser = p.chromium.launch()
         page = browser.new_page()
-        page.set_content(f"<div id='flashtrace-token-document'>{html}</div>")
-        page.evaluate(f"({TOKEN_DOCUMENT_JS})()")
+        repo_root = __import__("pathlib").Path(__file__).resolve().parents[1]
+        app_js = (repo_root / "demo" / "live" / "static" / "app.js").read_text(
+            encoding="utf-8"
+        )
+        page.set_content(
+            """
+            <div id="token-document"></div>
+            <button id="generate-button"></button>
+            <button id="trace-button"></button>
+            <a id="download-link"></a>
+            """
+        )
+        page.evaluate(app_js)
+        page.evaluate("model => window.flashtraceTest.renderDocument(model)", generated_model)
+        page.locator("[data-gen-index='0']").click()
+        page.locator("[data-gen-index='1']").click()
+        assert page.evaluate("window.flashtraceTest.getState().targetSpan") == "0:1"
+        page.evaluate("model => window.flashtraceTest.renderDocument(model)", traced_model)
         page.locator(".ft-tab").nth(1).click()
         assert page.locator(".ft-tab.is-active").inner_text() == "Hop 1"
         assert page.locator(".ft-view.is-active").evaluate(
