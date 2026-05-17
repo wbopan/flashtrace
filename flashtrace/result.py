@@ -20,7 +20,10 @@ class TraceResult:
     prompt_tokens: list[str]
     generation_tokens: list[str]
     scores: list[float]
+    generation_scores: list[float] = field(default_factory=list)
     per_hop_scores: list[list[float]] = field(default_factory=list)
+    per_hop_generation_scores: list[list[float]] = field(default_factory=list)
+    per_hop_target_spans: list[tuple[int, int] | None] = field(default_factory=list)
     thinking_ratios: list[float] = field(default_factory=list)
     output_span: tuple[int, int] | None = None
     reasoning_span: tuple[int, int] | None = None
@@ -42,7 +45,14 @@ class TraceResult:
             "prompt_tokens": list(self.prompt_tokens),
             "generation_tokens": list(self.generation_tokens),
             "scores": [float(x) for x in self.scores],
+            "generation_scores": [float(x) for x in self.generation_scores],
             "per_hop_scores": [[float(x) for x in row] for row in self.per_hop_scores],
+            "per_hop_generation_scores": [
+                [float(x) for x in row] for row in self.per_hop_generation_scores
+            ],
+            "per_hop_target_spans": [
+                list(span) if span is not None else None for span in self.per_hop_target_spans
+            ],
             "thinking_ratios": [float(x) for x in self.thinking_ratios],
             "output_span": list(self.output_span) if self.output_span is not None else None,
             "reasoning_span": list(self.reasoning_span) if self.reasoning_span is not None else None,

@@ -35,6 +35,7 @@ def _record_token(
     selectable: bool,
     score: float | None = None,
     color: str | None = None,
+    is_target: bool = False,
 ) -> dict[str, Any]:
     return {
         "i": int(document_index),
@@ -45,6 +46,7 @@ def _record_token(
         "selectable": bool(selectable),
         "score": None if score is None else float(score),
         "color": color,
+        "is_target": bool(is_target),
     }
 
 
@@ -56,6 +58,7 @@ def _text_token(
     gen_index: int | None,
     score: float | None,
     color: str | None,
+    is_target: bool = False,
 ) -> dict[str, Any]:
     return {
         "i": int(document_index),
@@ -66,6 +69,7 @@ def _text_token(
         "selectable": False,
         "score": None if score is None else float(score),
         "color": color,
+        "is_target": bool(is_target),
     }
 
 
@@ -110,9 +114,15 @@ def _build_prompt_generated_view(
                 gen_index=int(record.token_index),
                 selectable=selectable,
                 color=None,
+                is_target=_is_target(int(record.token_index), target_span),
             )
         )
-    return {"name": name, "interactive": bool(interactive), "tokens": tokens}
+    return {
+        "name": name,
+        "interactive": bool(interactive),
+        "target_span": target_span,
+        "tokens": tokens,
+    }
 
 
 def _build_trace_view(
@@ -121,9 +131,13 @@ def _build_trace_view(
     prompt_tokens: Sequence[str],
     generation_tokens: Sequence[str],
     scores: Sequence[float],
+    generation_scores: Sequence[float] | None = None,
+    target_span: list[int] | None = None,
 ) -> dict[str, Any]:
     tokens: list[dict[str, Any]] = []
     max_score = max((abs(float(score)) for score in scores), default=0.0)
+    generation_values = list(generation_scores or [])
+    max_generation_score = max((abs(float(score)) for score in generation_values), default=0.0)
     for index, token in enumerate(prompt_tokens):
         score = float(scores[index]) if index < len(scores) else 0.0
         tokens.append(
@@ -134,20 +148,33 @@ def _build_trace_view(
                 gen_index=None,
                 score=score,
                 color=_score_color(score, max_score),
+                is_target=False,
             )
         )
     for gen_index, token in enumerate(generation_tokens):
+        if gen_index < len(generation_values):
+            generation_score: float | None = float(generation_values[gen_index])
+            generation_color: str | None = _score_color(generation_score, max_generation_score)
+        else:
+            generation_score = None
+            generation_color = None
         tokens.append(
             _text_token(
                 text=token,
                 document_index=len(tokens),
                 region="generation",
                 gen_index=gen_index,
-                score=None,
-                color=None,
+                score=generation_score,
+                color=generation_color,
+                is_target=_is_target(gen_index, target_span),
             )
         )
-    return {"name": name, "interactive": False, "tokens": tokens}
+    return {
+        "name": name,
+        "interactive": False,
+        "target_span": target_span,
+        "tokens": tokens,
+    }
 
 
 def build_document_views(
@@ -169,15 +196,31 @@ def build_document_views(
                 prompt_tokens=result.prompt_tokens,
                 generation_tokens=result.generation_tokens,
                 scores=result.scores,
+                generation_scores=getattr(result, "generation_scores", []),
+                target_span=model_target,
             )
         ]
+        per_hop_target_spans = list(getattr(result, "per_hop_target_spans", []) or [])
+        per_hop_generation_scores = list(getattr(result, "per_hop_generation_scores", []) or [])
         for hop_index, hop_scores in enumerate(result.per_hop_scores or [], start=1):
+            target_for_hop = (
+                _span_to_list(per_hop_target_spans[hop_index - 1])
+                if hop_index - 1 < len(per_hop_target_spans)
+                else model_target
+            )
+            generation_for_hop = (
+                per_hop_generation_scores[hop_index - 1]
+                if hop_index - 1 < len(per_hop_generation_scores)
+                else []
+            )
             views.append(
                 _build_trace_view(
                     name=f"Hop {hop_index}",
                     prompt_tokens=result.prompt_tokens,
                     generation_tokens=result.generation_tokens,
                     scores=hop_scores,
+                    generation_scores=generation_for_hop,
+                    target_span=target_for_hop,
                 )
             )
         return {

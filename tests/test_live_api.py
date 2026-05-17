@@ -7,6 +7,7 @@ import time
 import tomllib
 import os
 import inspect
+import contextlib
 from pathlib import Path
 
 import pytest
@@ -38,10 +39,20 @@ class ASGITestClient:
     def _run(self, method: str, url: str, **kwargs):
         import asyncio
 
+        async def wake_loop():
+            while True:
+                await asyncio.sleep(0.001)
+
         async def request():
-            transport = httpx.ASGITransport(app=self.app)
-            async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
-                return await client.request(method, url, **kwargs)
+            waker = asyncio.create_task(wake_loop())
+            try:
+                transport = httpx.ASGITransport(app=self.app)
+                async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:
+                    return await client.request(method, url, **kwargs)
+            finally:
+                waker.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await waker
 
         return asyncio.run(request())
 

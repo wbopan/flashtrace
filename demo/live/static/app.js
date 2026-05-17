@@ -85,17 +85,39 @@
     return match ? [Number(match[1]), Number(match[2])] : null;
   }
 
-  function isTarget(genIndex) {
-    const span = parseSpan(state.targetSpan);
+  function activeViewIndex(root) {
+    const activeView = root.querySelector(".ft-view.is-active");
+    const index = Number(activeView?.dataset.viewIndex);
+    return Number.isFinite(index) ? index : Number(state.renderModel?.active_view || 0);
+  }
+
+  function activeTargetSpan(root) {
+    if (state.phase === "traced") {
+      const model = state.renderModel || {};
+      const view = (model.views || [])[activeViewIndex(root)] || {};
+      if (Array.isArray(view.target_span) && view.target_span.length === 2) {
+        return view.target_span;
+      }
+      if (Array.isArray(model.target_span) && model.target_span.length === 2) {
+        return model.target_span;
+      }
+      return null;
+    }
+    return parseSpan(state.targetSpan);
+  }
+
+  function isTarget(genIndex, span) {
     return span && genIndex >= span[0] && genIndex <= span[1];
   }
 
   function markSelection(root) {
+    const span = activeTargetSpan(root);
     root.querySelectorAll(".ft-token").forEach((token) => {
       token.classList.remove("is-target", "is-pending");
       const genIndex = Number(token.dataset.genIndex);
       if (!Number.isFinite(genIndex)) return;
-      if (isTarget(genIndex)) {
+      if (state.phase === "traced" && !token.closest(".ft-view.is-active")) return;
+      if (isTarget(genIndex, span)) {
         token.classList.add("is-target");
       }
       if (state.pendingStart !== null && genIndex === state.pendingStart) {
@@ -111,6 +133,7 @@
       `kind-${token.kind}`,
       `region-${token.region}`,
       token.selectable ? "is-selectable" : "",
+      token.is_target ? "is-target" : "",
     ].filter(Boolean).join(" ");
     span.dataset.tokenIndex = String(token.i ?? 0);
     span.dataset.region = String(token.region);
@@ -135,6 +158,7 @@
     root.querySelectorAll(".ft-view").forEach((view) => {
       view.classList.toggle("is-active", Number(view.dataset.viewIndex) === viewIndex);
     });
+    markSelection(root);
   }
 
   function renderTabs(root, model) {

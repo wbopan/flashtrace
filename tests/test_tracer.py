@@ -91,6 +91,83 @@ def test_flashtrace_both_uses_output_hop0_then_all_generation_hops(monkeypatch):
     assert calls[2][0:2] == (4, 6)
     assert result.metadata["ifr"]["sink_span_absolute"] == (6, 6)
     assert result.metadata["ifr"]["all_gen_span_absolute"] == (4, 6)
+    assert result.metadata["ifr"]["per_hop_generation"] == [
+        [0.0, 0.0, 1.0, 0.0],
+        [1.0, 1.0, 1.0, 0.0],
+        [1.0, 1.0, 1.0, 0.0],
+    ]
+    assert len(result.metadata["ifr"]["observation_generation"]) == 4
+
+
+def test_build_result_exposes_generation_scores_and_per_hop_targets():
+    import types
+
+    import torch
+
+    raw = types.SimpleNamespace(
+        prompt_tokens=["p0", "p1"],
+        generation_tokens=["g0", "g1", "g2"],
+        attribution_matrix=torch.zeros((3, 5), dtype=torch.float32),
+        metadata={
+            "ifr": {
+                "observation_projected": {"sum": torch.tensor([0.2, 0.8])},
+                "per_hop_projected": [
+                    torch.tensor([0.1, 0.9]),
+                    torch.tensor([0.3, 0.7]),
+                ],
+                "observation_generation": torch.tensor([0.0, 0.4, 0.6]),
+                "per_hop_generation": [
+                    torch.tensor([0.0, 0.5, 0.0]),
+                    torch.tensor([0.2, 0.3, 0.4]),
+                ],
+                "sink_span_generation": (1, 1),
+                "all_gen_span_generation": (0, 2),
+            }
+        },
+    )
+
+    result = FlashTrace.__new__(FlashTrace)._build_result(
+        raw,
+        method="flashtrace",
+        output_span=(1, 1),
+        reasoning_span=(0, 0),
+    )
+
+    assert result.scores == [0.20000000298023224, 0.800000011920929]
+    assert result.per_hop_scores == [
+        [0.10000000149011612, 0.8999999761581421],
+        [0.30000001192092896, 0.699999988079071],
+    ]
+    assert result.generation_scores == [0.0, 0.4000000059604645, 0.6000000238418579]
+    assert result.per_hop_generation_scores == [
+        [0.0, 0.5, 0.0],
+        [0.20000000298023224, 0.30000001192092896, 0.4000000059604645],
+    ]
+    assert result.per_hop_target_spans == [(1, 1), (0, 2)]
+
+
+def test_build_result_leaves_generation_fields_empty_without_flashtrace_metadata():
+    import types
+
+    import torch
+
+    raw = types.SimpleNamespace(
+        prompt_tokens=["p0", "p1"],
+        generation_tokens=["g0", "g1"],
+        attribution_matrix=torch.ones((2, 4), dtype=torch.float32),
+        metadata={},
+    )
+
+    result = FlashTrace.__new__(FlashTrace)._build_result(
+        raw,
+        method="ifr-span",
+        output_span=(0, 1),
+        reasoning_span=None,
+    )
+
+    assert result.generation_scores == []
+    assert result.per_hop_generation_scores == []
+    assert result.per_hop_target_spans == []
 
 
 def test_flashtrace_trace_returns_public_result():

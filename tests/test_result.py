@@ -8,7 +8,10 @@ def make_result():
         prompt_tokens=[" alpha", " beta", " gamma"],
         generation_tokens=[" answer"],
         scores=[0.2, 0.7, 0.1],
+        generation_scores=[0.6],
         per_hop_scores=[[0.1, 0.4, 0.0], [0.1, 0.3, 0.1]],
+        per_hop_generation_scores=[[0.6], [0.2]],
+        per_hop_target_spans=[(0, 0), (0, 0)],
         thinking_ratios=[0.5, 0.2],
         output_span=(0, 0),
         reasoning_span=(0, 0),
@@ -35,6 +38,9 @@ def test_to_dict_is_json_serializable():
 
     assert payload["method"] == "flashtrace"
     assert payload["top_inputs"][0]["token"] == " beta"
+    assert payload["generation_scores"] == [0.6]
+    assert payload["per_hop_generation_scores"] == [[0.6], [0.2]]
+    assert payload["per_hop_target_spans"] == [[0, 0], [0, 0]]
     json.dumps(payload)
 
 

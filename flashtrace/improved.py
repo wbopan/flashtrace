@@ -1127,7 +1127,22 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
                 continue
             score_array[offset] = eval_vector
 
+        generation_start_abs = int(prompt_len_full)
+        generation_end_abs = int(prompt_len_full) + int(gen_len)
+
+        def _generation_slice(vector: torch.Tensor) -> List[float]:
+            clean = torch.nan_to_num(
+                vector.detach().cpu().to(dtype=torch.float32),
+                nan=0.0,
+                posinf=0.0,
+                neginf=0.0,
+            )
+            return [float(x) for x in clean[generation_start_abs:generation_end_abs].tolist()]
+
         projected_per_hop = [self._project_vector(result.token_importance_total) for result in multi_hop.raw_attributions]
+        per_hop_generation = [
+            _generation_slice(result.token_importance_total) for result in multi_hop.raw_attributions
+        ]
         obs = multi_hop.observation
         observation_projected = {
             "mask": self.extract_user_prompt_attributions(self.prompt_tokens, obs["mask"].view(1, -1))[0],
@@ -1136,6 +1151,7 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
             "avg": self._project_vector(obs["avg"]),
             "per_hop": [self._project_vector(vec) for vec in obs["per_hop"]],
         }
+        observation_generation = _generation_slice(obs["sum"])
 
         meta: Dict[str, Any] = {
             "ifr": {
@@ -1154,7 +1170,9 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
                 "n_hops": int(n_hops),
                 "thinking_ratios": multi_hop.thinking_ratios,
                 "per_hop_projected": projected_per_hop,
+                "per_hop_generation": per_hop_generation,
                 "observation_projected": observation_projected,
+                "observation_generation": observation_generation,
                 "stop_config": self._stop_config().__dict__,
                 "raw": multi_hop,
                 "note": (

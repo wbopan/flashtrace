@@ -56,12 +56,17 @@ def test_build_document_views_traced_uses_aggregate_only_when_hops_absent():
 
     assert [view["name"] for view in model["views"]] == ["Aggregate"]
     assert model["target_span"] == [1, 1]
+    assert model["views"][0]["target_span"] == [1, 1]
     prompt_scores = [
         token["score"]
         for token in model["views"][0]["tokens"]
         if token["region"] == "prompt"
     ]
     assert prompt_scores == [0.25, 0.75]
+    generation = [
+        token for token in model["views"][0]["tokens"] if token["region"] == "generation"
+    ]
+    assert all(token["color"] is None for token in generation)
 
 
 def test_build_document_views_traced_adds_hop_views_when_scores_exist():
@@ -144,9 +149,12 @@ def test_traced_views_include_server_computed_colors_per_view():
 
     result = TraceResult(
         prompt_tokens=["t10", "t20"],
-        generation_tokens=["t30"],
+        generation_tokens=["t30", "t40"],
         scores=[0.1, 0.4],
+        generation_scores=[0.25, 0.5],
         per_hop_scores=[[0.8, 0.4]],
+        per_hop_generation_scores=[[0.1, 0.3]],
+        per_hop_target_spans=[(0, 1)],
         output_span=(0, 0),
         method="flashtrace",
     )
@@ -167,7 +175,50 @@ def test_traced_views_include_server_computed_colors_per_view():
         _score_color(0.8, 0.8),
         _score_color(0.4, 0.8),
     ]
-    assert all(token["color"] is None for token in model["views"][0]["tokens"] if token["region"] == "generation")
+    aggregate_generation = [
+        token for token in model["views"][0]["tokens"] if token["region"] == "generation"
+    ]
+    hop_generation = [
+        token for token in model["views"][1]["tokens"] if token["region"] == "generation"
+    ]
+    assert [token["color"] for token in aggregate_generation] == [
+        _score_color(0.25, 0.5),
+        _score_color(0.5, 0.5),
+    ]
+    assert [token["color"] for token in hop_generation] == [
+        _score_color(0.1, 0.3),
+        _score_color(0.3, 0.3),
+    ]
+
+
+def test_traced_view_targets_are_per_view():
+    from demo.live.token_document import build_document_views
+
+    result = TraceResult(
+        prompt_tokens=["t10"],
+        generation_tokens=["t20", "t30", "t40"],
+        scores=[0.4],
+        generation_scores=[0.0, 0.2, 0.8],
+        per_hop_scores=[[0.5], [0.7]],
+        per_hop_generation_scores=[[0.0, 0.9, 0.0], [0.1, 0.2, 0.3]],
+        per_hop_target_spans=[(1, 1), (0, 2)],
+        output_span=(1, 1),
+        method="flashtrace",
+    )
+
+    model = build_document_views(phase="traced", result=result)
+
+    assert [view["target_span"] for view in model["views"]] == [[1, 1], [1, 1], [0, 2]]
+    target_by_view = []
+    for view in model["views"]:
+        target_by_view.append(
+            [
+                token["gen_index"]
+                for token in view["tokens"]
+                if token["region"] == "generation" and token["is_target"]
+            ]
+        )
+    assert target_by_view == [[1], [1], [0, 1, 2]]
 
 
 def test_playwright_smoke_selection_and_tabs_best_effort():
@@ -195,9 +246,12 @@ def test_playwright_smoke_selection_and_tabs_best_effort():
 
     result = TraceResult(
         prompt_tokens=["t10", "t20"],
-        generation_tokens=["t30"],
+        generation_tokens=["t30", "t40"],
         scores=[0.1, 0.2],
-        per_hop_scores=[[0.8, 0.4]],
+        generation_scores=[0.2, 0.4],
+        per_hop_scores=[[0.8, 0.4], [0.5, 0.7]],
+        per_hop_generation_scores=[[0.3, 0.1], [0.6, 0.2]],
+        per_hop_target_spans=[(0, 0), (0, 1)],
         output_span=(0, 0),
         method="flashtrace",
     )
@@ -224,11 +278,17 @@ def test_playwright_smoke_selection_and_tabs_best_effort():
         page.locator("[data-gen-index='1']").click()
         assert page.evaluate("window.flashtraceTest.getState().targetSpan") == "0:1"
         page.evaluate("model => window.flashtraceTest.renderDocument(model)", traced_model)
-        page.locator(".ft-tab").nth(1).click()
-        assert page.locator(".ft-tab.is-active").inner_text() == "Hop 1"
+        page.locator(".ft-tab").nth(2).click()
+        assert page.locator(".ft-tab.is-active").inner_text() == "Hop 2"
         assert page.locator(".ft-view.is-active").evaluate(
             "node => Array.from(node.querySelectorAll('.region-prompt')).map(t => t.dataset.score)"
-        ) == ["0.80000000", "0.40000000"]
+        ) == ["0.50000000", "0.70000000"]
+        assert page.locator(".ft-view.is-active").evaluate(
+            "node => Array.from(node.querySelectorAll('.region-generation.is-target')).map(t => t.dataset.genIndex)"
+        ) == ["0", "1"]
+        assert page.locator(".ft-view.is-active .region-generation").first.evaluate(
+            "node => node.style.background"
+        )
         browser.close()
 
 

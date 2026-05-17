@@ -17,6 +17,17 @@ def _to_float_list(values: Any) -> list[float]:
     return [float(x) for x in (values or [])]
 
 
+def _to_span(value: Any) -> tuple[int, int] | None:
+    if value is None:
+        return None
+    try:
+        if len(value) != 2:
+            return None
+        return (int(value[0]), int(value[1]))
+    except (TypeError, ValueError):
+        return None
+
+
 class FlashTrace:
     """Public facade for FlashTrace attribution."""
 
@@ -123,6 +134,8 @@ class FlashTrace:
         ifr_meta = metadata.get("ifr") if isinstance(metadata.get("ifr"), dict) else {}
         observation = ifr_meta.get("observation_projected") if isinstance(ifr_meta, dict) else None
         per_hop_projected = ifr_meta.get("per_hop_projected") if isinstance(ifr_meta, dict) else None
+        observation_generation = ifr_meta.get("observation_generation") if isinstance(ifr_meta, dict) else None
+        per_hop_generation = ifr_meta.get("per_hop_generation") if isinstance(ifr_meta, dict) else None
 
         if isinstance(observation, dict) and "sum" in observation:
             vector = _to_float_list(observation["sum"])
@@ -141,12 +154,35 @@ class FlashTrace:
             for hop_vector in per_hop_projected:
                 per_hop_scores.append(_to_float_list(hop_vector)[:prompt_len])
 
+        generation_scores: list[float] = []
+        if observation_generation is not None:
+            generation_scores = _to_float_list(observation_generation)[: len(generation_tokens)]
+
+        per_hop_generation_scores: list[list[float]] = []
+        if per_hop_generation is not None:
+            for index in range(len(per_hop_scores)):
+                hop_vector = per_hop_generation[index] if index < len(per_hop_generation) else []
+                per_hop_generation_scores.append(_to_float_list(hop_vector)[: len(generation_tokens)])
+
+        per_hop_target_spans: list[tuple[int, int] | None] = []
+        if per_hop_scores and isinstance(ifr_meta, dict) and (
+            "sink_span_generation" in ifr_meta or "all_gen_span_generation" in ifr_meta
+        ):
+            sink_target = _to_span(ifr_meta.get("sink_span_generation"))
+            recursive_target = _to_span(ifr_meta.get("all_gen_span_generation"))
+            per_hop_target_spans = [
+                sink_target if index == 0 else recursive_target for index in range(len(per_hop_scores))
+            ]
+
         ratios = ifr_meta.get("thinking_ratios", []) if isinstance(ifr_meta, dict) else []
         return TraceResult(
             prompt_tokens=prompt_tokens,
             generation_tokens=generation_tokens,
             scores=[float(x) for x in scores],
+            generation_scores=generation_scores,
             per_hop_scores=per_hop_scores,
+            per_hop_generation_scores=per_hop_generation_scores,
+            per_hop_target_spans=per_hop_target_spans,
             thinking_ratios=_to_float_list(ratios),
             output_span=output_span,
             reasoning_span=reasoning_span,
