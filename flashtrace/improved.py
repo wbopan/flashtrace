@@ -841,7 +841,8 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
 
     Notes
     -----
-    - Internally, hop0 and subsequent hops aggregate over all_gen_span (= CoT + output).
+    - Hop 0 aggregates over sink_span (= output/answer).
+    - Recursive hops aggregate over all_gen_span (= CoT + output).
     - The EOS token (assumed to be the last generation token) is excluded from all spans.
     - Stop tokens are soft-deleted from hop aggregation weights and observation vectors.
     - Returned attribution matrix follows scheme B (rows filled for sink_span_generation).
@@ -971,22 +972,22 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
 
         hop_count = max(0, int(n_hops))
 
-        # Base hop: aggregate over all_gen_span, excluding stop tokens from the sink weights.
+        # Base hop: aggregate over the selected output span, excluding stop tokens from the sink weights.
         gen_tokens = list(getattr(self, "generation_tokens", []) or [])
-        span_stops = []
-        for gi in range(int(all_gen_start), int(all_gen_end) + 1):
+        sink_stops = []
+        for gi in range(int(span_start), int(span_end) + 1):
             tok = gen_tokens[gi] if 0 <= gi < len(gen_tokens) else ""
-            span_stops.append(is_stop_token(tok))
+            sink_stops.append(is_stop_token(tok))
         base_weights = None
-        if any(span_stops):
+        if any(sink_stops):
             base_weights = torch.as_tensor(
-                [0.0 if st else 1.0 for st in span_stops],
+                [0.0 if st else 1.0 for st in sink_stops],
                 dtype=params.model_dtype,
             )
 
         base_ifr_raw = compute_ifr_sentence_aggregate(
-            sink_start=all_gen_start_abs,
-            sink_end=all_gen_end_abs,
+            sink_start=sink_start_abs,
+            sink_end=sink_end_abs,
             cache=cache,
             attentions=attentions,
             weight_pack=weight_pack,
@@ -1156,7 +1157,10 @@ class LLMIFRAttributionBoth(llm_attr.LLMIFRAttribution):
                 "observation_projected": observation_projected,
                 "stop_config": self._stop_config().__dict__,
                 "raw": multi_hop,
-                "note": "both = stop_words + in_all_gen (scheme B; hops over all_gen_span with EOS excluded).",
+                "note": (
+                    "both = stop_words + in_all_gen (scheme B; hop0 over sink_span; "
+                    "recursive hops over all_gen_span with EOS excluded)."
+                ),
             }
         }
 
