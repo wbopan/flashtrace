@@ -230,3 +230,27 @@ def test_playwright_smoke_selection_and_tabs_best_effort():
             "node => Array.from(node.querySelectorAll('.region-prompt')).map(t => t.dataset.score)"
         ) == ["0.80000000", "0.40000000"]
         browser.close()
+
+
+def test_document_view_uses_record_display_text_for_token_text():
+    from demo.live.token_document import build_document_views
+    from demo.live.token_overlay import TokenRecord
+
+    # token_text is the raw BPE piece; display_text is the faithful source
+    # substring (real whitespace). The render model must show display_text.
+    record = TokenRecord(
+        section="prompt",
+        token_index=0,
+        token_id=5,
+        token_text="Ċ",
+        char_start=0,
+        char_end=1,
+        kind="content",
+        selectable=False,
+        role="user",
+        display_text="\n",
+    )
+
+    model = build_document_views(phase="prompt", prompt_records=[record])
+
+    assert model["views"][0]["tokens"][0]["text"] == "\n"

@@ -78,6 +78,10 @@ class TokenRecord:
     kind: TokenKind
     selectable: bool
     role: str
+    # The faithful source substring for this token (real spaces/newlines),
+    # as opposed to token_text which is the raw vocab piece (e.g. "Ġ"/"Ċ"
+    # byte markers for byte-level BPE). Use this for display.
+    display_text: str = ""
 
 
 def build_token_records(
@@ -117,6 +121,7 @@ def build_token_records(
                 kind=kind,
                 selectable=selectable,
                 role=role,
+                display_text=text[int(start):int(end)],
             )
         )
     return records
@@ -173,6 +178,7 @@ def build_token_records_from_ids(
                 kind=kind,
                 selectable=kind == "content",
                 role=role,
+                display_text=decoded[int(char_start):int(char_end)],
             )
         )
     return records, decoded

@@ -38,7 +38,7 @@ def _record_token(
 ) -> dict[str, Any]:
     return {
         "i": int(document_index),
-        "text": record.token_text,
+        "text": record.display_text or record.token_text,
         "kind": record.kind,
         "region": region,
         "gen_index": gen_index,

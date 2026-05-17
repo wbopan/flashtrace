@@ -80,6 +80,8 @@ def test_build_token_records_uses_tokenizer_offsets():
     assert [r.token_index for r in records] == [0, 1, 2]
     assert records[0].char_start == 0 and records[0].char_end == 3
     assert records[1].char_start == 4 and records[1].char_end == 7
+    assert [r.display_text for r in records] == ["t10", "t20", "t30"]
+    assert all(r.display_text == "t10 t20 t30"[r.char_start:r.char_end] for r in records)
     assert all(r.section == "prompt" for r in records)
     assert all(r.role == "user" for r in records)
     assert all(r.kind == "content" for r in records)
@@ -118,6 +120,8 @@ def test_build_token_records_from_ids_uses_real_ids_and_decoded_offsets():
     assert [r.token_id for r in records] == token_ids
     assert [r.token_text for r in records] == ["t10", "t20", "t1"]
     assert [(r.char_start, r.char_end) for r in records] == [(0, 3), (4, 7), (8, 10)]
+    assert [r.display_text for r in records] == ["t10", "t20", "t1"]
+    assert all(r.display_text == decoded[r.char_start:r.char_end] for r in records)
     assert [r.token_index for r in records] == [0, 1, 2]
     assert records[-1].kind == "special"
     assert records[-1].selectable is False

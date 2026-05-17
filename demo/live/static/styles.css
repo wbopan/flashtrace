@@ -205,6 +205,7 @@ button:disabled {
   border-radius: 4px;
   padding: 2px 3px;
   white-space: pre-wrap;
+  background: #eceff3;
   transition: background 120ms ease, outline-color 120ms ease;
 }
 
