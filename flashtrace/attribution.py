@@ -257,6 +257,12 @@ class LLMAttribution():
     
     # nearly identical to response(), but we do not actually query the model
     # we assume generation = target, and generate all the class variables as done in response()
+    def _strip_single_trailing_eos_text(self, target: str) -> str:
+        eos = getattr(self.tokenizer, "eos_token", None)
+        if eos and target.endswith(eos):
+            return target[: -len(eos)]
+        return target
+
     def target_response(self, prompt, target) -> str:
         self.user_prompt = " " + prompt if self.use_chat_template else prompt
         self.prompt = self.format_prompt(self.user_prompt)
@@ -265,9 +271,14 @@ class LLMAttribution():
         self.user_prompt_ids = self.tokenizer(self.user_prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids
         # this is the tokenization of the chat prompt
         self.prompt_ids = self.tokenizer(self.prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_prompt_tokens]
-        # Tokenize the target generation
-        target_text = target + (self.tokenizer.eos_token or "")
-        self.generation_ids = self.tokenizer(target_text, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_generations]
+        target = self._strip_single_trailing_eos_text(target)
+        # Tokenize the target generation and append EOS by ID so the target text is
+        # never merged with the EOS token by tokenizer pre-tokenization.
+        self.generation_ids = self.tokenizer(target, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_generations]
+        eos_token_id = getattr(self.tokenizer, "eos_token_id", None)
+        if eos_token_id is not None:
+            eos_id = torch.tensor([[int(eos_token_id)]], dtype=self.generation_ids.dtype, device=self.generation_ids.device)
+            self.generation_ids = torch.cat([self.generation_ids, eos_id], dim=1)
         self.generation = target
         gen_with_eos = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = False, clean_up_tokenization_spaces = False)
 

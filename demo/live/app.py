@@ -4,7 +4,7 @@ import os
 import sys
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable
+from typing import Callable
 
 
 def _bootstrap_local_flashtrace() -> None:
@@ -19,13 +19,19 @@ _bootstrap_local_flashtrace()
 
 from demo.live.qwen_generation import generate_with_qwen
 from demo.live.token_overlay import (
-    GenerationSections,
+    TokenRecord,
     build_token_records,
+    build_token_records_from_ids,
     detect_sections,
 )
-
-if TYPE_CHECKING:
-    from flashtrace.result import TraceResult
+from demo.live.token_document import (
+    TOKEN_DOCUMENT_CSS,
+    TOKEN_DOCUMENT_ELEM_ID,
+    TOKEN_DOCUMENT_JS,
+    TRACE_SELECTION_JS,
+    build_document_views,
+    render_document_html,
+)
 
 DEFAULT_MODEL = os.environ.get("FLASHTRACE_DEMO_MODEL", "Qwen/Qwen3-0.6B")
 APP_DIR = Path(__file__).resolve().parent
@@ -35,7 +41,6 @@ Berlin is the capital of Germany.
 Madrid is the capital of Spain.
 
 Question: What is the capital of France?"""
-DEFAULT_TARGET = "Paris"
 DEFAULT_OUTPUT_DIR = Path(os.environ.get("FLASHTRACE_DEMO_OUTPUT_DIR", str(APP_DIR / "out")))
 MAX_PROMPT_CHARS = int(os.environ.get("FLASHTRACE_DEMO_MAX_PROMPT_CHARS", "4000"))
 
@@ -76,174 +81,109 @@ def _load_cached_model(
     return _MODEL_CACHE[cache_key]
 
 
-def _top_rows(result: "TraceResult", top_k: int) -> list[list[object]]:
-    return [[item.index, item.token, round(float(item.score), 6)] for item in result.topk_inputs(top_k)]
-
-
-def _generation_token_text(result: TraceResult) -> str:
-    if not result.generation_tokens:
-        return ""
-    return "\n".join(f"{index}: {token!r}" for index, token in enumerate(result.generation_tokens))
-
-
-def run_trace(
-    *,
-    model_name: str,
-    prompt: str,
-    target: str,
-    output_span: str,
-    reasoning_span: str,
-    method: str,
-    hops: int,
-    top_k: int,
-    device_map: str,
-    dtype: str,
-    chunk_tokens: int,
-    sink_chunk_tokens: int,
-    use_chat_template: bool,
-    loader: Callable | None = None,
-    tracer_cls: type | None = None,
-    work_dir: str | Path = DEFAULT_OUTPUT_DIR,
-) -> tuple[list[list[object]], str, str, str]:
-    model_id = model_name.strip()
-    prompt_text = prompt.strip()
-    target_text = target if target.strip() else None
-    if not model_id:
-        raise ValueError("Model is required.")
-    if not prompt_text:
-        raise ValueError("Prompt is required.")
-    if len(prompt_text) > MAX_PROMPT_CHARS:
-        raise ValueError(f"Prompt must be at most {MAX_PROMPT_CHARS} characters.")
-
-    if tracer_cls is None:
-        from flashtrace import FlashTrace
-
-        tracer_cls = FlashTrace
-    from flashtrace.viz import render_trace_html
-
-    model, tokenizer = _load_cached_model(model_id, device_map=device_map, dtype=dtype, loader=loader)
-    tracer = tracer_cls(
-        model,
-        tokenizer,
-        chunk_tokens=int(chunk_tokens),
-        sink_chunk_tokens=int(sink_chunk_tokens),
-        use_chat_template=bool(use_chat_template),
-    )
-    result = tracer.trace(
-        prompt=prompt_text,
-        target=target_text,
-        output_span=_parse_optional_span(output_span),
-        reasoning_span=_parse_optional_span(reasoning_span),
-        hops=int(hops),
-        method=method,
-    )
-
-    output_dir = Path(work_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    json_path = output_dir / f"flashtrace-{uuid.uuid4().hex}.json"
-    result.to_json(json_path)
-    return _top_rows(result, int(top_k)), _generation_token_text(result), render_trace_html(result), str(json_path)
-
-
-def run_trace_from_ui(
-    model_name: str,
-    prompt: str,
-    target: str,
-    output_span: str,
-    reasoning_span: str,
-    method: str,
-    hops: int,
-    top_k: int,
-    device_map: str,
-    dtype: str,
-    chunk_tokens: int,
-    sink_chunk_tokens: int,
-    use_chat_template: bool,
-    *,
-    loader: Callable | None = None,
-    tracer_cls: type | None = None,
-    work_dir: str | Path = DEFAULT_OUTPUT_DIR,
-) -> tuple[list[list[object]], str, str, str]:
-    return run_trace(
-        model_name=model_name,
-        prompt=prompt,
-        target=target,
-        output_span=output_span,
-        reasoning_span=reasoning_span,
-        method=method,
-        hops=hops,
-        top_k=top_k,
-        device_map=device_map,
-        dtype=dtype,
-        chunk_tokens=chunk_tokens,
-        sink_chunk_tokens=sink_chunk_tokens,
-        use_chat_template=use_chat_template,
-        loader=loader,
-        tracer_cls=tracer_cls,
-        work_dir=work_dir,
-    )
-
-
 def _format_span(span: tuple[int, int] | None) -> str:
     if span is None:
         return ""
     return f"{span[0]}:{span[1]}"
 
 
-def _sections_to_dict(sections: GenerationSections) -> dict[str, object]:
-    return {
-        "generation_text": sections.generation_text,
-        "thinking_char_span": sections.thinking_char_span,
-        "answer_char_span": sections.answer_char_span,
-        "thinking_token_span": sections.thinking_token_span,
-        "answer_token_span": sections.answer_token_span,
-        "parser": sections.parser,
-    }
-
-
-def _raw_token_rows(
-    generation_text: str,
-    tokenizer,
-    sections: GenerationSections,
-) -> list[list[object]]:
-    records = build_token_records(
-        text=generation_text,
-        tokenizer=tokenizer,
-        section="answer",
-        role="assistant",
-    )
-    thinking_span = sections.thinking_token_span
-    answer_span = sections.answer_token_span
-
-    def label_for(idx: int) -> str:
-        if thinking_span is not None and thinking_span[0] <= idx <= thinking_span[1]:
-            return "thinking"
-        if answer_span[0] <= idx <= answer_span[1]:
-            return "answer"
-        return "other"
-
-    return [
-        [
-            f"{label_for(r.token_index)}#{r.token_index}",
-            r.token_id,
-            r.token_text,
-            f"{r.char_start}:{r.char_end}",
-            r.kind,
-            "yes" if r.selectable else "no",
-        ]
-        for r in records
+def _default_generation_span(records: list[TokenRecord]) -> tuple[int, int] | None:
+    selectable = [
+        int(record.token_index)
+        for record in records
+        if record.kind == "content" and record.selectable
     ]
+    if not selectable:
+        return None
+    return min(selectable), max(selectable)
 
 
-def run_generate_phase(
+def _clamp_span(span: tuple[int, int] | None, max_index: int) -> tuple[int, int] | None:
+    if span is None or max_index < 0:
+        return None
+    start, end = span
+    start = max(0, min(int(start), int(max_index)))
+    end = max(0, min(int(end), int(max_index)))
+    if end < start:
+        return None
+    return start, end
+
+
+def _prompt_text_for_document(prompt: str, tokenizer, *, use_chat_template: bool) -> str:
+    if not use_chat_template:
+        return prompt
+    return tokenizer.apply_chat_template(
+        [{"role": "user", "content": prompt}],
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+
+
+def _build_prompt_records(prompt: str, tokenizer, *, use_chat_template: bool) -> list[TokenRecord]:
+    return build_token_records(
+        text=_prompt_text_for_document(
+            prompt,
+            tokenizer,
+            use_chat_template=use_chat_template,
+        ),
+        tokenizer=tokenizer,
+        section="prompt",
+        role="user",
+    )
+
+
+def _strip_single_trailing_eos_text(text: str, tokenizer) -> str:
+    eos = getattr(tokenizer, "eos_token", None)
+    if eos and text.endswith(eos):
+        return text[: -len(eos)]
+    return text
+
+
+def _empty_document_html() -> str:
+    return render_document_html(build_document_views(phase="prompt", prompt_records=[]))
+
+
+def run_prompt_document_phase(
+    *,
+    model_name: str,
+    prompt: str,
+    device_map: str,
+    dtype: str,
+    use_chat_template: bool,
+    loader: Callable | None = None,
+) -> tuple[str, str]:
+    model_id = model_name.strip()
+    prompt_text = prompt.strip()
+    if not model_id:
+        raise ValueError("Model is required.")
+    if not prompt_text:
+        raise ValueError("Prompt is required.")
+    if len(prompt_text) > MAX_PROMPT_CHARS:
+        raise ValueError(f"Prompt must be at most {MAX_PROMPT_CHARS} characters.")
+    _model, tokenizer = _load_cached_model(
+        model_id, device_map=device_map, dtype=dtype, loader=loader
+    )
+    prompt_records = _build_prompt_records(
+        prompt_text,
+        tokenizer,
+        use_chat_template=bool(use_chat_template),
+    )
+    html = render_document_html(
+        build_document_views(phase="prompt", prompt_records=prompt_records)
+    )
+    return html, f"Prompt tokenized into {len(prompt_records)} tokens."
+
+
+def run_generate_document_phase(
     *,
     model_name: str,
     prompt: str,
     device_map: str,
     dtype: str,
     max_new_tokens: int,
+    use_chat_template: bool,
     loader: Callable | None = None,
-) -> tuple[str, dict[str, object], list[list[object]], str, str]:
+) -> tuple[str, str, str, str, str]:
     model_id = model_name.strip()
     prompt_text = prompt.strip()
     if not model_id:
@@ -262,16 +202,105 @@ def run_generate_phase(
         prompt=prompt_text,
         max_new_tokens=int(max_new_tokens),
     )
-
     sections = detect_sections(text=output.text, tokenizer=tokenizer)
-    raw_rows = _raw_token_rows(output.text, tokenizer, sections)
-    return (
-        output.text,
-        _sections_to_dict(sections),
-        raw_rows,
-        _format_span(sections.answer_token_span),
-        _format_span(sections.thinking_token_span),
+    prompt_records = _build_prompt_records(
+        prompt_text,
+        tokenizer,
+        use_chat_template=bool(use_chat_template),
     )
+    generation_records, generated_text = build_token_records_from_ids(
+        token_ids=output.token_ids,
+        tokenizer=tokenizer,
+        section="answer",
+        role="assistant",
+    )
+    document = build_document_views(
+        phase="generated",
+        prompt_records=prompt_records,
+        generation_records=generation_records,
+    )
+    target_span = document["target_span"]
+    target_span_tuple = tuple(target_span) if target_span is not None else None
+    max_index = target_span_tuple[1] if target_span_tuple is not None else -1
+    reasoning_span = _clamp_span(sections.thinking_token_span, max_index)
+    status = (
+        f"Generated {len(generation_records)} tokens. "
+        f"Default target span: {_format_span(target_span_tuple) or 'empty'}."
+    )
+    if sections.thinking_token_span is not None and reasoning_span is None:
+        status += " Reasoning span was outside the attributable generation range and was dropped."
+    if target_span_tuple is None:
+        status += " Trace is disabled because there are no selectable generation tokens."
+    return (
+        render_document_html(document),
+        generated_text,
+        _format_span(target_span_tuple),
+        _format_span(reasoning_span),
+        status,
+    )
+
+
+def run_trace_document_phase(
+    *,
+    model_name: str,
+    prompt: str,
+    generated_text: str,
+    target_span: str,
+    reasoning_span: str,
+    method: str,
+    hops: int,
+    device_map: str,
+    dtype: str,
+    chunk_tokens: int,
+    sink_chunk_tokens: int,
+    use_chat_template: bool,
+    loader: Callable | None = None,
+    tracer_cls: type | None = None,
+    work_dir: str | Path = DEFAULT_OUTPUT_DIR,
+) -> tuple[str, str, str]:
+    model_id = model_name.strip()
+    prompt_text = prompt.strip()
+    if not model_id:
+        raise ValueError("Model is required.")
+    if not prompt_text:
+        raise ValueError("Prompt is required.")
+    if not generated_text:
+        raise ValueError("Generate a response before tracing.")
+    output_span = _parse_optional_span(target_span)
+    if output_span is None:
+        raise ValueError("Select at least two target endpoints before tracing.")
+    if tracer_cls is None:
+        from flashtrace import FlashTrace
+
+        tracer_cls = FlashTrace
+
+    model, tokenizer = _load_cached_model(model_id, device_map=device_map, dtype=dtype, loader=loader)
+    tracer = tracer_cls(
+        model,
+        tokenizer,
+        chunk_tokens=int(chunk_tokens),
+        sink_chunk_tokens=int(sink_chunk_tokens),
+        use_chat_template=bool(use_chat_template),
+    )
+    result = tracer.trace(
+        prompt=prompt_text,
+        target=_strip_single_trailing_eos_text(generated_text, tokenizer),
+        output_span=output_span,
+        reasoning_span=_parse_optional_span(reasoning_span),
+        hops=int(hops),
+        method=method,
+    )
+    output_dir = Path(work_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = output_dir / f"flashtrace-{uuid.uuid4().hex}.json"
+    result.to_json(json_path)
+    document = build_document_views(phase="traced", result=result)
+    view_count = len(document["views"])
+    if view_count == 1:
+        status = f"Trace complete with Aggregate view for {method}."
+    else:
+        status = f"Trace complete with Aggregate plus {view_count - 1} hop views."
+    return render_document_html(document), str(json_path), status
 
 
 def build_demo():
@@ -283,23 +312,21 @@ def build_demo():
             "Generate with Qwen, inspect token spans, then trace selected answer."
         )
 
+        generated_text_state = gr.State("")
+        reasoning_span_state = gr.State("")
+        target_span_input = gr.Textbox(value="", visible=False, label="Selected target span")
+
         with gr.Row():
-            with gr.Column(scale=2):
+            with gr.Column(scale=1):
                 model_name = gr.Textbox(label="Model", value=DEFAULT_MODEL)
                 prompt = gr.Textbox(label="Prompt", value=DEFAULT_PROMPT, lines=10)
-                with gr.Row():
-                    max_new_tokens = gr.Number(label="Max new tokens", value=128, precision=0)
-                    generate_btn = gr.Button("Generate", variant="secondary")
-            with gr.Column(scale=1):
+                max_new_tokens = gr.Number(label="Max new tokens", value=128, precision=0)
                 method = gr.Dropdown(
                     label="Method",
                     choices=["flashtrace", "ifr-span", "ifr-matrix"],
                     value="flashtrace",
                 )
-                output_span = gr.Textbox(label="Output span (auto-filled by Generate)", value="0:0")
-                reasoning_span = gr.Textbox(label="Reasoning span", value="")
                 hops = gr.Slider(label="Hops", minimum=1, maximum=4, step=1, value=1)
-                top_k = gr.Slider(label="Top K", minimum=1, maximum=50, step=1, value=20)
                 device_map = gr.Textbox(
                     label="Device map",
                     value=os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"),
@@ -311,51 +338,162 @@ def build_demo():
                 )
                 chunk_tokens = gr.Number(label="Chunk tokens", value=128, precision=0)
                 sink_chunk_tokens = gr.Number(label="Sink chunk tokens", value=32, precision=0)
-                use_chat_template = gr.Checkbox(label="Use chat template", value=False)
-                submit = gr.Button("Trace selected answer", variant="primary")
+            with gr.Column(scale=2):
+                chat_template_toggle = gr.Checkbox(label="Show chat template", value=False)
+                token_doc = gr.HTML(value=_empty_document_html(), elem_id=TOKEN_DOCUMENT_ELEM_ID)
+                status = gr.Markdown("Ready.")
+                with gr.Row():
+                    generate_btn = gr.Button("Generate", variant="primary")
+                    trace_btn = gr.Button("Trace", variant="secondary", visible=False)
 
-        target = gr.Textbox(label="Generated response (used as trace target)", value=DEFAULT_TARGET, lines=6)
-        sections_state = gr.JSON(label="Detected sections")
-        raw_tokens = gr.Dataframe(
-            headers=["section#idx", "token_id", "token_text", "char_span", "kind", "selectable"],
-            label="Raw tokens",
-        )
-
-        top_table = gr.Dataframe(headers=["Index", "Token", "Score"], label="Top input tokens")
-        generation_tokens = gr.Textbox(label="Generation tokens", lines=8)
-        heatmap = gr.HTML(label="Trace heatmap")
         json_file = gr.File(label="JSON trace")
 
-        generate_btn.click(
-            fn=lambda model_name, prompt, device_map, dtype, max_new_tokens: run_generate_phase(
-                model_name=model_name,
-                prompt=prompt,
-                device_map=device_map,
-                dtype=dtype,
-                max_new_tokens=max_new_tokens,
-            ),
-            inputs=[model_name, prompt, device_map, dtype, max_new_tokens],
-            outputs=[target, sections_state, raw_tokens, output_span, reasoning_span],
+        def on_prompt_preview(model_name, prompt, device_map, dtype, use_chat_template):
+            try:
+                return run_prompt_document_phase(
+                    model_name=model_name,
+                    prompt=prompt,
+                    device_map=device_map,
+                    dtype=dtype,
+                    use_chat_template=use_chat_template,
+                )
+            except Exception as exc:
+                return _empty_document_html(), f"Prompt preview failed: {exc}"
+
+        def on_generate(model_name, prompt, device_map, dtype, max_new_tokens, use_chat_template):
+            try:
+                doc_html, generated_text, target_span, reasoning_span, message = run_generate_document_phase(
+                    model_name=model_name,
+                    prompt=prompt,
+                    device_map=device_map,
+                    dtype=dtype,
+                    max_new_tokens=max_new_tokens,
+                    use_chat_template=use_chat_template,
+                )
+                can_trace = bool(target_span)
+                return (
+                    doc_html,
+                    generated_text,
+                    target_span,
+                    reasoning_span,
+                    gr.update(visible=False),
+                    gr.update(visible=can_trace),
+                    gr.update(interactive=False),
+                    message,
+                    None,
+                )
+            except Exception as exc:
+                return (
+                    _empty_document_html(),
+                    "",
+                    "",
+                    "",
+                    gr.update(visible=True),
+                    gr.update(visible=False),
+                    gr.update(interactive=True),
+                    f"Generate failed: {exc}",
+                    None,
+                )
+
+        def on_trace(
+            target_span,
+            model_name,
+            prompt,
+            generated_text,
+            reasoning_span,
+            method,
+            hops,
+            device_map,
+            dtype,
+            chunk_tokens,
+            sink_chunk_tokens,
+            use_chat_template,
+            current_html,
+        ):
+            try:
+                doc_html, json_path, message = run_trace_document_phase(
+                    model_name=model_name,
+                    prompt=prompt,
+                    generated_text=generated_text,
+                    target_span=target_span,
+                    reasoning_span=reasoning_span,
+                    method=method,
+                    hops=hops,
+                    device_map=device_map,
+                    dtype=dtype,
+                    chunk_tokens=chunk_tokens,
+                    sink_chunk_tokens=sink_chunk_tokens,
+                    use_chat_template=use_chat_template,
+                )
+                return (
+                    doc_html,
+                    json_path,
+                    gr.update(visible=True),
+                    gr.update(visible=False),
+                    gr.update(interactive=False),
+                    message,
+                )
+            except Exception as exc:
+                return (
+                    current_html,
+                    None,
+                    gr.update(visible=False),
+                    gr.update(visible=True),
+                    gr.update(interactive=False),
+                    f"Trace failed: {exc}",
+                )
+
+        chat_template_toggle.change(
+            fn=on_prompt_preview,
+            inputs=[model_name, prompt, device_map, dtype, chat_template_toggle],
+            outputs=[token_doc, status],
+        )
+        prompt.change(
+            fn=on_prompt_preview,
+            inputs=[model_name, prompt, device_map, dtype, chat_template_toggle],
+            outputs=[token_doc, status],
+        )
+        demo.load(
+            fn=on_prompt_preview,
+            inputs=[model_name, prompt, device_map, dtype, chat_template_toggle],
+            outputs=[token_doc, status],
         )
 
-        submit.click(
-            fn=run_trace_from_ui,
+        generate_btn.click(
+            fn=on_generate,
+            inputs=[model_name, prompt, device_map, dtype, max_new_tokens, chat_template_toggle],
+            outputs=[
+                token_doc,
+                generated_text_state,
+                target_span_input,
+                reasoning_span_state,
+                generate_btn,
+                trace_btn,
+                chat_template_toggle,
+                status,
+                json_file,
+            ],
+        )
+
+        trace_btn.click(
+            fn=on_trace,
             inputs=[
+                target_span_input,
                 model_name,
                 prompt,
-                target,
-                output_span,
-                reasoning_span,
+                generated_text_state,
+                reasoning_span_state,
                 method,
                 hops,
-                top_k,
                 device_map,
                 dtype,
                 chunk_tokens,
                 sink_chunk_tokens,
-                use_chat_template,
+                chat_template_toggle,
+                token_doc,
             ],
-            outputs=[top_table, generation_tokens, heatmap, json_file],
+            outputs=[token_doc, json_file, generate_btn, trace_btn, chat_template_toggle, status],
+            js=TRACE_SELECTION_JS,
         )
     return demo
 
@@ -367,4 +505,6 @@ if __name__ == "__main__":
     build_demo().queue(max_size=8).launch(
         server_name=os.environ.get("GRADIO_SERVER_NAME", "127.0.0.1"),
         server_port=int(os.environ.get("GRADIO_SERVER_PORT", "7860")),
+        js=TOKEN_DOCUMENT_JS,
+        css=TOKEN_DOCUMENT_CSS,
     )

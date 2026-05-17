@@ -61,7 +61,7 @@ def test_char_span_skips_zero_length_tokens():
 
 from tests.helpers import make_tiny_qwen2_model_and_tokenizer
 
-from demo.live.token_overlay import TokenRecord, build_token_records
+from demo.live.token_overlay import TokenRecord, build_token_records, build_token_records_from_ids
 
 
 def test_build_token_records_uses_tokenizer_offsets():
@@ -101,6 +101,26 @@ def test_build_token_records_marks_specials_unselectable():
     assert eos_records, "expected an EOS-id token in records"
     assert all(r.kind == "special" and not r.selectable for r in eos_records)
     assert all(r.token_text == "t1" for r in eos_records)
+
+
+def test_build_token_records_from_ids_uses_real_ids_and_decoded_offsets():
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    token_ids = [10, 20, tokenizer.eos_token_id]
+
+    records, decoded = build_token_records_from_ids(
+        token_ids=token_ids,
+        tokenizer=tokenizer,
+        section="answer",
+        role="assistant",
+    )
+
+    assert decoded == "t10 t20 t1"
+    assert [r.token_id for r in records] == token_ids
+    assert [r.token_text for r in records] == ["t10", "t20", "t1"]
+    assert [(r.char_start, r.char_end) for r in records] == [(0, 3), (4, 7), (8, 10)]
+    assert [r.token_index for r in records] == [0, 1, 2]
+    assert records[-1].kind == "special"
+    assert records[-1].selectable is False
 
 
 from demo.live.token_overlay import WordBox, group_into_word_boxes, TokenKind, Section

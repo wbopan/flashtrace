@@ -160,3 +160,18 @@ def test_flashtrace_target_without_eos_token():
 
     assert result.method == "ifr-span"
     assert result.generation_tokens == ["t60", "t70"]
+
+
+def test_flashtrace_target_with_trailing_eos_token_keeps_one_eos():
+    model, tokenizer = make_tiny_qwen2_model_and_tokenizer(n_layers=2, d_model=32, n_heads=4, n_kv_heads=2)
+    tracer = FlashTrace(model, tokenizer, chunk_tokens=16, sink_chunk_tokens=4, recompute_attention=True)
+
+    result = tracer.trace(
+        prompt="t10 t20 t30 t40",
+        target="t60 t70" + tokenizer.eos_token,
+        output_span=(0, 1),
+        method="ifr-span",
+    )
+
+    assert result.method == "ifr-span"
+    assert result.generation_tokens == ["t60", "t70", tokenizer.eos_token]

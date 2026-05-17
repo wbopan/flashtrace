@@ -122,6 +122,62 @@ def build_token_records(
     return records
 
 
+def _decode_token_ids(tokenizer, token_ids: list[int]) -> str:
+    try:
+        return tokenizer.decode(
+            token_ids,
+            skip_special_tokens=False,
+            clean_up_tokenization_spaces=False,
+        )
+    except TypeError:
+        return tokenizer.decode(token_ids, skip_special_tokens=False)
+
+
+def build_token_records_from_ids(
+    *,
+    token_ids: list[int] | tuple[int, ...],
+    tokenizer,
+    section: Section,
+    role: str,
+) -> tuple[list[TokenRecord], str]:
+    """Build token records from model-emitted token IDs without re-tokenizing text."""
+    ids = [int(token_id) for token_id in token_ids]
+    decoded = _decode_token_ids(tokenizer, ids)
+    special_ids = set(getattr(tokenizer, "all_special_ids", []) or [])
+    records: list[TokenRecord] = []
+    for index, token_id in enumerate(ids):
+        current_text = _decode_token_ids(tokenizer, ids[: index + 1])
+        single_text = _decode_token_ids(tokenizer, [token_id])
+        if single_text and current_text.endswith(single_text):
+            char_start = len(current_text) - len(single_text)
+            char_end = len(current_text)
+        else:
+            char_start = records[-1].char_end if records else 0
+            char_end = char_start + len(single_text)
+        token_text = tokenizer.convert_ids_to_tokens(token_id)
+        if isinstance(token_text, bytes):
+            token_text = token_text.decode("utf-8", errors="replace")
+        kind = classify_token_kind(
+            token_text=token_text,
+            token_id=token_id,
+            special_ids=special_ids,
+        )
+        records.append(
+            TokenRecord(
+                section=section,
+                token_index=index,
+                token_id=token_id,
+                token_text=token_text,
+                char_start=int(char_start),
+                char_end=int(char_end),
+                kind=kind,
+                selectable=kind == "content",
+                role=role,
+            )
+        )
+    return records, decoded
+
+
 @dataclass(frozen=True)
 class WordBox:
     box_id: str

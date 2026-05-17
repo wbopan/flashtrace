@@ -44,7 +44,20 @@ class FakeTracer:
         )
 
 
-def test_run_trace_returns_table_html_and_json(tmp_path):
+def _extract_model(html: str) -> dict:
+    import json
+    import re
+
+    match = re.search(
+        r"<script[^>]+id=\"flashtrace-token-document-data\"[^>]*>(.*?)</script>",
+        html,
+        flags=re.DOTALL,
+    )
+    assert match is not None
+    return json.loads(match.group(1))
+
+
+def test_run_trace_document_phase_returns_token_document_and_json(tmp_path):
     module = load_live_app_module()
 
     def fake_loader(model_name, **kwargs):
@@ -52,15 +65,14 @@ def test_run_trace_returns_table_html_and_json(tmp_path):
         assert kwargs["device_map"] == "auto"
         return "model", "tokenizer"
 
-    top_rows, generation_tokens, html, json_path = module.run_trace(
+    html, json_path, status = module.run_trace_document_phase(
         model_name="fake-model",
         prompt="Context: Paris is in France.\nQuestion: Capital?",
-        target="Paris",
-        output_span="0:0",
+        generated_text="Paris",
+        target_span="0:0",
         reasoning_span="",
         method="flashtrace",
         hops=1,
-        top_k=2,
         device_map="auto",
         dtype="auto",
         chunk_tokens=16,
@@ -71,13 +83,8 @@ def test_run_trace_returns_table_html_and_json(tmp_path):
         work_dir=tmp_path,
     )
 
-    assert top_rows == [
-        [1, "Paris", 0.8],
-        [2, "France", 0.4],
-    ]
-    assert generation_tokens == "0: 'Paris'"
-    assert "<html" in html
-    assert "Paris" in html
+    assert _extract_model(html)["phase"] == "traced"
+    assert "Trace complete" in status
     assert Path(json_path).exists()
 
 
@@ -87,19 +94,18 @@ def test_default_model_is_a_real_qwen():
     assert module.DEFAULT_MODEL == "Qwen/Qwen3-0.6B"
 
 
-def test_run_trace_validates_required_prompt(tmp_path):
+def test_run_trace_document_phase_validates_required_prompt(tmp_path):
     module = load_live_app_module()
 
     try:
-        module.run_trace(
+        module.run_trace_document_phase(
             model_name="fake-model",
             prompt="",
-            target="Paris",
-            output_span="0:0",
+            generated_text="Paris",
+            target_span="0:0",
             reasoning_span="",
             method="flashtrace",
             hops=1,
-            top_k=2,
             device_map="auto",
             dtype="auto",
             chunk_tokens=16,
@@ -110,36 +116,35 @@ def test_run_trace_validates_required_prompt(tmp_path):
     except ValueError as exc:
         assert "Prompt is required" in str(exc)
     else:
-        raise AssertionError("run_trace should reject an empty prompt")
+        raise AssertionError("run_trace_document_phase should reject an empty prompt")
 
 
-def test_run_trace_from_ui_adapts_gradio_positional_args(tmp_path):
+def test_run_trace_document_phase_strips_single_trailing_eos_before_trace(tmp_path):
     module = load_live_app_module()
+    _model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
 
     def fake_loader(model_name, **kwargs):
-        return "model", "tokenizer"
+        return "model", tokenizer
 
-    outputs = module.run_trace_from_ui(
-        "fake-model",
-        "Context: Paris is in France.\nQuestion: Capital?",
-        "Paris",
-        "0:0",
-        "",
-        "flashtrace",
-        1,
-        2,
-        "auto",
-        "auto",
-        16,
-        4,
-        False,
+    module.run_trace_document_phase(
+        model_name="fake-model",
+        prompt="Context: Paris is in France.\nQuestion: Capital?",
+        generated_text="Paris" + tokenizer.eos_token,
+        target_span="0:0",
+        reasoning_span="",
+        method="flashtrace",
+        hops=1,
+        device_map="auto",
+        dtype="auto",
+        chunk_tokens=16,
+        sink_chunk_tokens=4,
+        use_chat_template=False,
         loader=fake_loader,
         tracer_cls=FakeTracer,
         work_dir=tmp_path,
     )
 
-    assert outputs[0][0] == [1, "Paris", 0.8]
-    assert Path(outputs[3]).exists()
+    assert Path(tmp_path).exists()
 
 
 def test_example_token_scores_are_ranked_for_display():
@@ -168,6 +173,38 @@ def test_demo_dependency_extra_and_space_requirements_are_declared():
     requirements = (repo_root / "demo" / "live" / "requirements.txt").read_text(encoding="utf-8")
     assert "gradio" in requirements
     assert "flashtrace" in requirements
+
+
+def test_gradio_6_js_bridge_spike_config():
+    import inspect
+
+    import gradio as gr
+
+    assert gr.__version__ == "6.14.0"
+    assert "js" in inspect.signature(gr.Blocks.launch).parameters
+    assert "css" in inspect.signature(gr.Blocks.launch).parameters
+
+    bridge_js = """
+    (value) => {
+      const root = document.querySelector('#spike-doc');
+      return [root ? root.getAttribute('data-selected') : value];
+    }
+    """
+
+    def echo(value):
+        return value
+
+    with gr.Blocks(title="FlashTrace JS Spike") as demo:
+        gr.HTML("<div id='spike-doc' data-selected='0:1'></div>")
+        carrier = gr.Textbox(value="", visible=False)
+        out = gr.Textbox()
+        trace = gr.Button("Trace")
+        trace.click(fn=echo, inputs=[carrier], outputs=[out], js=bridge_js)
+
+    config = demo.get_config_file()
+    deps_with_js = [dep for dep in config["dependencies"] if dep.get("js")]
+    assert len(deps_with_js) == 1
+    assert "data-selected" in deps_with_js[0]["js"]
 
 
 def test_live_app_script_entrypoint_imports_local_package():
@@ -207,55 +244,82 @@ class RecordingTracer:
         )
 
 
-def test_generate_phase_returns_text_sections_and_spans():
+def test_run_prompt_document_phase_renders_prompt_tokens():
+    module = load_live_app_module()
+    _model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+
+    def fake_loader(model_name, **kwargs):
+        return "model", tokenizer
+
+    html, status = module.run_prompt_document_phase(
+        model_name="tiny-qwen2",
+        prompt="t10 t20",
+        device_map="auto",
+        dtype="auto",
+        use_chat_template=False,
+        loader=fake_loader,
+    )
+    model = _extract_model(html)
+
+    assert status == "Prompt tokenized into 2 tokens."
+    assert [token["text"] for token in model["views"][0]["tokens"]] == ["t10", "t20"]
+
+
+def test_run_prompt_document_phase_chat_template_renders_template_tokens():
+    module = load_live_app_module()
+    _model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    tokenizer.add_special_tokens(
+        {"additional_special_tokens": ["<|im_start|>", "<|im_end|>", "<|assistant|>"]}
+    )
+    tokenizer.chat_template = (
+        "{% for m in messages %}<|im_start|>{{ m['role'] }}\n"
+        "{{ m['content'] }}<|im_end|>\n{% endfor %}"
+        "{% if add_generation_prompt %}<|assistant|>{% endif %}"
+    )
+
+    def fake_loader(model_name, **kwargs):
+        return "model", tokenizer
+
+    html, _status = module.run_prompt_document_phase(
+        model_name="tiny-qwen2",
+        prompt="t10",
+        device_map="auto",
+        dtype="auto",
+        use_chat_template=True,
+        loader=fake_loader,
+    )
+    tokens = _extract_model(html)["views"][0]["tokens"]
+
+    assert any(token["text"] == "<|im_start|>" and token["kind"] == "template" for token in tokens)
+    assert any(token["text"] == "<|im_end|>" and token["kind"] == "template" for token in tokens)
+    assert any(token["text"] == "<|assistant|>" and token["kind"] == "template" for token in tokens)
+
+
+def test_full_token_document_pipeline_generate_then_trace(tmp_path):
     module = load_live_app_module()
     model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
 
     def fake_loader(model_name, **kwargs):
         return model, tokenizer
 
-    text, sections, raw_rows, output_span_text, reasoning_span_text = module.run_generate_phase(
+    doc_html, text, output_span_text, reasoning_span_text, _status = module.run_generate_document_phase(
         model_name="tiny-qwen2",
         prompt="t10 t20 t30 t40",
         device_map="auto",
         dtype="auto",
         max_new_tokens=8,
+        use_chat_template=False,
         loader=fake_loader,
     )
 
-    assert isinstance(text, str) and text
-    assert set(sections) >= {"parser", "answer_token_span", "thinking_token_span"}
-    assert sections["parser"]
-    assert isinstance(output_span_text, str)
-    assert isinstance(reasoning_span_text, str)
-    assert raw_rows
-
-
-def test_full_pipeline_generate_then_trace(tmp_path):
-    module = load_live_app_module()
-    model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
-
-    def fake_loader(model_name, **kwargs):
-        return model, tokenizer
-
-    text, _sections, _raw, output_span_text, reasoning_span_text = module.run_generate_phase(
+    html, json_path, _status = module.run_trace_document_phase(
         model_name="tiny-qwen2",
         prompt="t10 t20 t30 t40",
-        device_map="auto",
-        dtype="auto",
-        max_new_tokens=8,
-        loader=fake_loader,
-    )
-
-    top_rows, _generation_tokens, html, json_path = module.run_trace(
-        model_name="tiny-qwen2",
-        prompt="t10 t20 t30 t40",
-        target=text,
-        output_span=output_span_text,
+        generated_text=text,
+        target_span=output_span_text,
         reasoning_span=reasoning_span_text,
         method="flashtrace",
         hops=1,
-        top_k=3,
         device_map="auto",
         dtype="auto",
         chunk_tokens=16,
@@ -266,8 +330,22 @@ def test_full_pipeline_generate_then_trace(tmp_path):
         work_dir=tmp_path,
     )
 
+    assert _extract_model(doc_html)["phase"] == "generated"
     assert RecordingTracer.last_kwargs["output_span"] == module._parse_optional_span(output_span_text)
     assert RecordingTracer.last_kwargs["reasoning_span"] == module._parse_optional_span(reasoning_span_text)
-    assert top_rows
-    assert "<html" in html
+    assert _extract_model(html)["phase"] == "traced"
     assert Path(json_path).exists()
+
+
+def test_build_demo_wires_prompt_load_and_change_events():
+    module = load_live_app_module()
+    demo = module.build_demo()
+    config = demo.get_config_file()
+    targets = [
+        target
+        for dependency in config["dependencies"]
+        for target in dependency.get("targets", [])
+    ]
+
+    assert any(event == "load" for _component, event in targets)
+    assert any(event == "change" for _component, event in targets)
