@@ -14,9 +14,11 @@ Then open:
 http://127.0.0.1:7860
 ```
 
+The default model (`Qwen/Qwen3-0.6B`) downloads on first run.
+
 ## Three-phase flow
 
-1. **Generate** — Click *Generate*. The model produces reasoning + answer with deterministic settings (`do_sample=False`). The smoke model (`demo/paris-smoke`) returns a canned `<think>/<answer>` response without loading any weights.
+1. **Generate** — Click *Generate*. The model produces reasoning + answer with deterministic settings (`do_sample=False`).
 2. **Inspect** — The generated text is parsed (`<think>/<answer>` → `\boxed{}` → last-paragraph) and the resulting answer/reasoning token spans are auto-filled into the span fields. The raw-token table shows every tokenizer token with its kind (content/whitespace/special/template/control).
 3. **Trace** — Click *Trace selected answer*. The selected `output_span` and `reasoning_span` are passed to `FlashTrace.trace(...)` which produces the prompt-side attribution heatmap and JSON export. Override the auto-filled spans manually before tracing if the parser picked the wrong segment.
 
@@ -24,15 +26,15 @@ http://127.0.0.1:7860
 
 Spans are inclusive generation-token index pairs in `START:END` format. The Generate phase fills these in based on the parser; manual overrides win.
 
-## Switch to a real Qwen model
+## Use a different model
 
 ```bash
-FLASHTRACE_DEMO_MODEL=Qwen/Qwen2.5-0.5B-Instruct \
+FLASHTRACE_DEMO_MODEL=Qwen/Qwen3-4B \
 FLASHTRACE_DEMO_DEVICE_MAP=auto \
 uv run --extra demo python demo/live/app.py
 ```
 
-First run downloads the model. Subsequent runs reuse the in-process model cache.
+Any Qwen2/Qwen3/Llama-architecture model works. First run downloads the model; subsequent runs reuse the in-process model cache.
 
 ## Hugging Face Space
 
@@ -45,7 +47,7 @@ For a GPU Space, set `FLASHTRACE_DEMO_MODEL` to the target model id and choose a
 
 ## Environment variables
 
-- `FLASHTRACE_DEMO_MODEL` — Model id (default `demo/paris-smoke`).
+- `FLASHTRACE_DEMO_MODEL` — Model id (default `Qwen/Qwen3-0.6B`).
 - `FLASHTRACE_DEMO_OUTPUT_DIR` — JSON trace output dir (default `demo/live/out`).
 - `FLASHTRACE_DEMO_DEVICE_MAP` — `device_map` for `from_pretrained` (default `auto`).
 - `FLASHTRACE_DEMO_MAX_PROMPT_CHARS` — Prompt-length cap (default 4000).

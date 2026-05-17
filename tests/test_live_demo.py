@@ -8,6 +8,7 @@ import tomllib
 from pathlib import Path
 
 from flashtrace.result import TokenScore, TraceResult
+from tests.helpers import make_tiny_qwen2_model_and_tokenizer
 
 
 def load_live_app_module():
@@ -80,36 +81,10 @@ def test_run_trace_returns_table_html_and_json(tmp_path):
     assert Path(json_path).exists()
 
 
-def test_paris_smoke_trace_ranks_context_paris_first(tmp_path):
+def test_default_model_is_a_real_qwen():
     module = load_live_app_module()
 
-    top_rows, generation_tokens, html, json_path = module.run_trace(
-        model_name="demo/paris-smoke",
-        prompt="Context: Paris is the capital of France. Berlin is the capital of Germany. Madrid is the capital of Spain. Question: What is the capital of France?",
-        target="Paris",
-        output_span="0:0",
-        reasoning_span="",
-        method="flashtrace",
-        hops=1,
-        top_k=3,
-        device_map="auto",
-        dtype="auto",
-        chunk_tokens=16,
-        sink_chunk_tokens=4,
-        use_chat_template=False,
-        work_dir=tmp_path,
-    )
-
-    assert top_rows[0][1:] == ["Paris", 1.0]
-    assert generation_tokens == "0: 'Paris'"
-    assert "Paris" in html
-    assert Path(json_path).exists()
-
-
-def test_default_model_uses_fast_paris_smoke_demo():
-    module = load_live_app_module()
-
-    assert module.DEFAULT_MODEL == "demo/paris-smoke"
+    assert module.DEFAULT_MODEL == "Qwen/Qwen3-0.6B"
 
 
 def test_run_trace_validates_required_prompt(tmp_path):
@@ -213,41 +188,68 @@ def test_live_app_script_entrypoint_imports_local_package():
     assert "FlashTrace live demo dry run OK" in result.stdout
 
 
-def test_generate_phase_smoke_returns_text_and_sections(tmp_path):
+class RecordingTracer:
+    last_kwargs: dict | None = None
+
+    def __init__(self, model, tokenizer, **kwargs):
+        self.model = model
+        self.tokenizer = tokenizer
+
+    def trace(self, **kwargs):
+        RecordingTracer.last_kwargs = kwargs
+        return TraceResult(
+            prompt_tokens=["a", "b", "c"],
+            generation_tokens=["x"],
+            scores=[0.1, 0.5, 0.3],
+            output_span=kwargs.get("output_span"),
+            reasoning_span=kwargs.get("reasoning_span"),
+            method=kwargs.get("method", "flashtrace"),
+        )
+
+
+def test_generate_phase_returns_text_sections_and_spans():
     module = load_live_app_module()
+    model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+
+    def fake_loader(model_name, **kwargs):
+        return model, tokenizer
 
     text, sections, raw_rows, output_span_text, reasoning_span_text = module.run_generate_phase(
-        model_name="demo/paris-smoke",
-        prompt="What is the capital of France?",
+        model_name="tiny-qwen2",
+        prompt="t10 t20 t30 t40",
         device_map="auto",
         dtype="auto",
-        max_new_tokens=64,
+        max_new_tokens=8,
+        loader=fake_loader,
     )
 
-    assert "<answer>" in text and "Paris" in text
-    assert sections["parser"] == "think_answer"
-    assert ":" in output_span_text
-    assert ":" in reasoning_span_text
-    assert any("answer" in row[0] or "thinking" in row[0] for row in raw_rows)
+    assert isinstance(text, str) and text
+    assert set(sections) >= {"parser", "answer_token_span", "thinking_token_span"}
+    assert sections["parser"]
+    assert isinstance(output_span_text, str)
+    assert isinstance(reasoning_span_text, str)
+    assert raw_rows
 
 
-def test_full_pipeline_smoke_traces_paris(tmp_path):
+def test_full_pipeline_generate_then_trace(tmp_path):
     module = load_live_app_module()
+    model, tokenizer = make_tiny_qwen2_model_and_tokenizer()
 
-    text, sections, _raw, output_span_text, reasoning_span_text = module.run_generate_phase(
-        model_name="demo/paris-smoke",
-        prompt="Context:\nParis is the capital of France.\nQuestion: What is the capital of France?",
+    def fake_loader(model_name, **kwargs):
+        return model, tokenizer
+
+    text, _sections, _raw, output_span_text, reasoning_span_text = module.run_generate_phase(
+        model_name="tiny-qwen2",
+        prompt="t10 t20 t30 t40",
         device_map="auto",
         dtype="auto",
-        max_new_tokens=64,
+        max_new_tokens=8,
+        loader=fake_loader,
     )
 
-    assert sections["parser"] == "think_answer"
-    assert "Paris" in text
-
-    top_rows, _generation_tokens, _html, json_path = module.run_trace(
-        model_name="demo/paris-smoke",
-        prompt="Context:\nParis is the capital of France.\nQuestion: What is the capital of France?",
+    top_rows, _generation_tokens, html, json_path = module.run_trace(
+        model_name="tiny-qwen2",
+        prompt="t10 t20 t30 t40",
         target=text,
         output_span=output_span_text,
         reasoning_span=reasoning_span_text,
@@ -259,9 +261,13 @@ def test_full_pipeline_smoke_traces_paris(tmp_path):
         chunk_tokens=16,
         sink_chunk_tokens=4,
         use_chat_template=False,
+        loader=fake_loader,
+        tracer_cls=RecordingTracer,
         work_dir=tmp_path,
     )
 
-    assert top_rows[0][1] == "Paris"
-    assert top_rows[0][2] == 1.0
+    assert RecordingTracer.last_kwargs["output_span"] == module._parse_optional_span(output_span_text)
+    assert RecordingTracer.last_kwargs["reasoning_span"] == module._parse_optional_span(reasoning_span_text)
+    assert top_rows
+    assert "<html" in html
     assert Path(json_path).exists()
