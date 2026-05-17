@@ -69,15 +69,22 @@ def make_tiny_qwen35_model_and_tokenizer(
     linear_head_dim: int = 16,
     full_attention_interval: int = 4,
     max_pos: int = 256,
+    seed: int = 0,
 ):
     """Build a tiny Qwen3.5 text-only causal LM with a hybrid layer stack.
 
     The layer pattern follows the real model: ``(full_attention_interval - 1)``
     Gated-DeltaNet linear-attention layers followed by one full-attention layer,
     repeated. With the defaults this yields 6 linear + 2 full attention layers.
+
+    ``seed`` makes the random weight initialisation reproducible across runs.
     """
 
+    import torch
+
     from transformers.models.qwen3_5 import Qwen3_5ForCausalLM, Qwen3_5TextConfig
+
+    torch.manual_seed(seed)
 
     config = Qwen3_5TextConfig(
         vocab_size=500,

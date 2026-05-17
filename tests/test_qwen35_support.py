@@ -91,7 +91,9 @@ def test_ifr_all_positions_runs_on_hybrid_qwen35():
 
     matrix = result.attribution_matrix
     assert matrix.ndim == 2
-    assert matrix.shape[0] == 2  # one row per generation token
+    # One attribution row per generation token (target tokens + appended EOS).
+    assert matrix.shape[0] == len(result.generation_tokens)
+    assert matrix.shape[0] >= 1
     assert torch.isfinite(matrix).all()
     assert (matrix >= 0).all()
 
