@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import torch
 
+from flashtrace.attribution import LLMIFRAttribution
 from flashtrace.core import extract_model_metadata
 from flashtrace.qwen35 import gated_deltanet_effective_attention
 from tests.helpers import make_tiny_qwen35_model_and_tokenizer
@@ -76,3 +77,16 @@ def test_gated_deltanet_effective_attention_is_causal():
     # No attention mass on future tokens (strictly upper triangle is zero).
     upper = torch.triu(attn, diagonal=1)
     assert torch.allclose(upper, torch.zeros_like(upper), atol=1e-5)
+
+
+def test_ifr_all_positions_runs_on_hybrid_qwen35():
+    model, tokenizer = make_tiny_qwen35_model_and_tokenizer()
+    attr = LLMIFRAttribution(model, tokenizer)
+
+    result = attr.calculate_ifr_for_all_positions("t10 t20 t30 t40", "t50 t60")
+
+    matrix = result.attribution_matrix
+    assert matrix.ndim == 2
+    assert matrix.shape[0] == 2  # one row per generation token
+    assert torch.isfinite(matrix).all()
+    assert (matrix >= 0).all()

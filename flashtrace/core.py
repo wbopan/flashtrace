@@ -172,8 +172,21 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
 def build_weight_pack(metadata: ModelMetadata, model_dtype: torch.dtype) -> List[Dict[str, torch.Tensor | nn.Module]]:
     """Collect per-layer tensors/modules required for IFR."""
 
+    specs = metadata.layer_specs or [LayerSpec("full", 0, 0, 0, 1)] * len(metadata.layers)
     weight_pack: List[Dict[str, torch.Tensor | nn.Module]] = []
-    for layer in metadata.layers:
+    for layer, spec in zip(metadata.layers, specs):
+        if spec.kind == "linear":
+            # Linear-attention (Gated-DeltaNet) layers have no q/k/v/o_proj;
+            # their IFR inputs are supplied separately via layer_inputs.
+            weight_pack.append(
+                {
+                    "kind": "linear",
+                    "in_ln": layer.input_layernorm,
+                    "post_attn_ln": layer.post_attention_layernorm,
+                    "mlp": layer.mlp,
+                }
+            )
+            continue
         attn = layer.self_attn
         pack: Dict[str, torch.Tensor | nn.Module] = {
             "v_w": attn.v_proj.weight.detach().to(dtype=model_dtype),
@@ -304,6 +317,8 @@ class IFRParameters:
     model_dtype: torch.dtype
     chunk_tokens: int
     sink_chunk_tokens: int
+    # Precomputed per-layer IFR inputs for hybrid stacks (None = legacy path).
+    layer_inputs: Optional[Sequence["LayerAttnInput"]] = None
 
 
 @dataclass
@@ -436,6 +451,81 @@ def proximity(a: torch.Tensor, x: torch.Tensor) -> torch.Tensor:
     return torch.clamp(-l1_norm(a - x) + l1_norm(x), min=0.0)
 
 
+@dataclass
+class LayerAttnInput:
+    """Precomputed per-layer IFR inputs for hybrid (or any) decoder stacks.
+
+    Supplying these lets the IFR core treat every layer uniformly regardless of
+    its attention mechanism: ``attn`` is the token-mixing matrix, ``V_q`` the
+    per-token per-head value vectors, ``O_blocks`` the output projection.
+    """
+
+    attn: torch.Tensor  # [n_heads, S, S]
+    V_q: torch.Tensor  # [T, n_heads, head_dim]
+    O_blocks: torch.Tensor  # [n_heads, head_dim, d_model]
+
+
+def _resolve_layer_attn_vo(
+    li: int,
+    *,
+    cache: Dict[str, List[Optional[torch.Tensor]]],
+    attentions: Optional[Sequence[torch.Tensor]],
+    weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
+    params: "IFRParameters",
+    rotary_emb: Optional[nn.Module],
+    layer_inputs: Optional[Sequence["LayerAttnInput"]],
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Return ``(attn, V_q, O_blocks)`` for layer ``li`` on the layer's device.
+
+    With ``layer_inputs`` supplied (hybrid path) the precomputed tensors are
+    used directly; otherwise the legacy weight-based computation runs, which is
+    numerically identical to the pre-refactor inline code.
+    """
+
+    x_prev = cache["pre_attn_resid"][li][0]
+    device = x_prev.device
+    model_dtype = params.model_dtype
+
+    if layer_inputs is not None:
+        inp = layer_inputs[li]
+        attn_li = inp.attn.to(device=device, dtype=model_dtype, non_blocking=True)
+        V_q = inp.V_q.to(device=device, dtype=model_dtype, non_blocking=True)
+        O_blocks = inp.O_blocks.to(device=device, dtype=model_dtype, non_blocking=True)
+        return attn_li, V_q, O_blocks
+
+    if attentions is not None:
+        attn_li = attentions[li][0]
+        if attn_li.device != device or attn_li.dtype != model_dtype:
+            attn_li = attn_li.to(device=device, dtype=model_dtype, non_blocking=True)
+    else:
+        assert rotary_emb is not None, "rotary_emb is required when attentions is None"
+        attn_li = recompute_layer_attention(x_prev, weight_pack[li], rotary_emb, params)
+
+    v_w = weight_pack[li]["v_w"].to(device, non_blocking=True)
+    o_w = weight_pack[li]["o_w"].to(device, non_blocking=True)
+    in_ln_mod = weight_pack[li]["in_ln"]
+
+    s_prev = linearize_norm(in_ln_mod, x_prev.unsqueeze(0)).squeeze(0)
+    x_prev_lin = x_prev.float() * s_prev
+    V_all = torch.matmul(x_prev_lin.to(model_dtype), v_w.T)
+    V_kv = V_all.view(params.sequence_length, params.n_kv_heads, params.head_dim).contiguous()
+    V_q = V_kv.repeat_interleave(params.group_size, dim=1)
+    O_blocks = (
+        o_w.view(params.d_model, params.n_heads_q, params.head_dim).permute(1, 2, 0).contiguous()
+    )
+    return attn_li, V_q, O_blocks
+
+
+def _max_layer_heads(
+    params: "IFRParameters", layer_inputs: Optional[Sequence["LayerAttnInput"]]
+) -> int:
+    """Width of the per-head accumulators (max head count across layers)."""
+
+    if layer_inputs is not None:
+        return max(int(inp.V_q.shape[1]) for inp in layer_inputs)
+    return params.n_heads_q
+
+
 @torch.no_grad()
 def compute_ifr_for_position(
     focus_idx: int,
@@ -493,16 +583,13 @@ def compute_ifr_sentence_aggregate(
     assert 0 <= sink_start <= sink_end < params.sequence_length, "Invalid sink span."
     sink_end_exclusive = sink_end + 1
 
+    layer_inputs = params.layer_inputs
     n_layers = params.n_layers
-    n_heads_q = params.n_heads_q
-    n_kv_heads = params.n_kv_heads
-    group_size = params.group_size
-    head_dim = params.head_dim
     T = params.sequence_length
     model_dtype = params.model_dtype
 
     per_layer: List[IFRLayerResult] = []
-    head_total_cpu = torch.zeros(n_heads_q, dtype=torch.float32)
+    head_total_cpu = torch.zeros(_max_layer_heads(params, layer_inputs), dtype=torch.float32)
     token_total_cpu = torch.zeros(T, dtype=torch.float32)
     ffn_per_layer = torch.zeros(n_layers, dtype=torch.float32)
     resid_ffn_per_layer = torch.zeros(n_layers, dtype=torch.float32)
@@ -533,17 +620,16 @@ def compute_ifr_sentence_aggregate(
         if mlp_out.device != layer_device:
             mlp_out = mlp_out.to(layer_device, non_blocking=True)
 
-        if attentions is not None:
-            attn_li = attentions[li][0]
-            if attn_li.device != layer_device or attn_li.dtype != model_dtype:
-                attn_li = attn_li.to(device=layer_device, dtype=model_dtype, non_blocking=True)
-        else:
-            assert rotary_emb is not None, "rotary_emb is required when attentions is None"
-            attn_li = recompute_layer_attention(x_prev, weight_pack[li], rotary_emb, params)
-
-        v_w = weight_pack[li]["v_w"].to(device=layer_device, non_blocking=True)
-        o_w = weight_pack[li]["o_w"].to(device=layer_device, non_blocking=True)
-        in_ln_mod = weight_pack[li]["in_ln"]
+        attn_li, V_q, O_blocks = _resolve_layer_attn_vo(
+            li,
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            rotary_emb=rotary_emb,
+            layer_inputs=layer_inputs,
+        )
+        n_heads_q = int(V_q.shape[1])
 
         if sink_weights is not None:
             w = sink_weights.to(layer_device).to(model_dtype)
@@ -568,13 +654,6 @@ def compute_ifr_sentence_aggregate(
             y_resid_S = x_prev[sink_start:sink_end_exclusive].to(torch.float32).sum(dim=0)
         xS_l1 = xS.abs().sum()
         resid_attn_prox_S = torch.clamp(xS_l1 - (y_resid_S - xS).abs().sum(), min=0.0)
-
-        s_prev = linearize_norm(in_ln_mod, x_prev.unsqueeze(0)).squeeze(0)
-        x_prev_lin = x_prev.float() * s_prev
-        V_all = torch.matmul(x_prev_lin.to(model_dtype), v_w.T)
-        V_kv = V_all.view(T, n_kv_heads, head_dim).contiguous()
-        V_q = V_kv.repeat_interleave(group_size, dim=1)
-        O_blocks = o_w.view(params.d_model, n_heads_q, head_dim).permute(1, 2, 0).contiguous()
 
         P = sink_end_exclusive - sink_start
         alpha_slice = attn_li[:, sink_start:sink_end_exclusive, :J_max]
@@ -635,7 +714,7 @@ def compute_ifr_sentence_aggregate(
             )
         )
         token_total_cpu += e_attn_tokens_full
-        head_total_cpu += head_importance_S
+        head_total_cpu[:n_heads_q] += head_importance_S
         ffn_per_layer[li] = e_ffn_S
         resid_ffn_per_layer[li] = e_resid_ffn_S
 
@@ -762,11 +841,8 @@ def compute_ifr_for_all_positions(
 ) -> IFRAllPositions:
     """Compute IFR importances for every sink position in the selected range."""
 
+    layer_inputs = params.layer_inputs
     n_layers = params.n_layers
-    n_heads_q = params.n_heads_q
-    n_kv_heads = params.n_kv_heads
-    group_size = params.group_size
-    head_dim = params.head_dim
     T = params.sequence_length
     model_dtype = params.model_dtype
     chunk_tokens = params.chunk_tokens
@@ -777,8 +853,9 @@ def compute_ifr_for_all_positions(
     assert 0 <= attn_start <= attn_end < T, "Invalid sink_range."
     S = attn_end - attn_start + 1
 
+    max_heads = _max_layer_heads(params, layer_inputs)
     token_total = torch.zeros((S, T), dtype=torch.float32)
-    head_total = torch.zeros((S, n_heads_q), dtype=torch.float32)
+    head_total = torch.zeros((S, max_heads), dtype=torch.float32)
     resid_attn_total = torch.zeros((S,), dtype=torch.float32)
     per_layer_results: Optional[List[List[IFRLayerResult]]] = [list() for _ in range(S)] if return_layerwise else None
 
@@ -806,24 +883,16 @@ def compute_ifr_for_all_positions(
         if mlp_out.device != layer_device:
             mlp_out = mlp_out.to(layer_device, non_blocking=True)
 
-        if attentions is not None:
-            attn_li = attentions[li][0]
-            if attn_li.device != layer_device or attn_li.dtype != model_dtype:
-                attn_li = attn_li.to(device=layer_device, dtype=model_dtype, non_blocking=True)
-        else:
-            assert rotary_emb is not None, "rotary_emb is required when attentions is None"
-            attn_li = recompute_layer_attention(x_prev, weight_pack[li], rotary_emb, params)
-
-        v_w = weight_pack[li]["v_w"].to(layer_device, non_blocking=True)
-        o_w = weight_pack[li]["o_w"].to(layer_device, non_blocking=True)
-        in_ln_mod = weight_pack[li]["in_ln"]
-
-        s_prev = linearize_norm(in_ln_mod, x_prev.unsqueeze(0)).squeeze(0)
-        x_prev_lin = x_prev.float() * s_prev
-        V_all = torch.matmul(x_prev_lin.to(model_dtype), v_w.T)
-        V_kv = V_all.view(T, n_kv_heads, head_dim).contiguous()
-        V_q = V_kv.repeat_interleave(group_size, dim=1)
-        O_blocks = o_w.view(params.d_model, n_heads_q, head_dim).permute(1, 2, 0).contiguous()
+        attn_li, V_q, O_blocks = _resolve_layer_attn_vo(
+            li,
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            rotary_emb=rotary_emb,
+            layer_inputs=layer_inputs,
+        )
+        n_heads_q = int(V_q.shape[1])
 
         xA_l1_vec = x_mid.float().abs().sum(dim=-1)
         resid_diff_l1_vec = (x_prev.float() - x_mid.float()).abs().sum(dim=-1)
@@ -868,7 +937,7 @@ def compute_ifr_for_all_positions(
             s0 = i0 - attn_start
             s1 = i1 - attn_start
             token_total[s0:s1, :] += e_tokens_chunk
-            head_total[s0:s1, :] += e_heads_chunk
+            head_total[s0:s1, :n_heads_q] += e_heads_chunk
             resid_attn_total[s0:s1] += (resid_prox_vec[i0:i1] / denom).to(torch.float32).cpu()
 
             if return_layerwise and per_layer_results is not None:

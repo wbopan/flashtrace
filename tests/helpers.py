@@ -95,7 +95,8 @@ def make_tiny_qwen35_model_and_tokenizer(
         max_position_embeddings=max_pos,
         full_attention_interval=full_attention_interval,
     )
-    model = Qwen3_5ForCausalLM(config)
+    # FlashTrace needs softmax attention weights from full-attention layers.
+    model = Qwen3_5ForCausalLM._from_config(config, attn_implementation="eager")
     model.eval()
 
     tokenizer = _make_tiny_word_tokenizer(vocab_size=500)

@@ -57,6 +57,7 @@ from .core import (
     compute_multi_hop_ifr,
     extract_model_metadata,
 )
+from .qwen35 import build_layer_inputs, is_hybrid_stack
 
 
 @dataclass
@@ -994,6 +995,10 @@ class LLMIFRAttribution(LLMAttribution):
         recompute_attention: bool = False,
     ) -> Tuple[Dict[str, List[Optional[torch.Tensor]]], Optional[Sequence[torch.Tensor]], ModelMetadata, List[Dict[str, torch.Tensor | nn.Module]]]:
         metadata = extract_model_metadata(self.model)
+        hybrid = is_hybrid_stack(metadata)
+        # Hybrid stacks (Qwen3.5) have linear-attention layers that expose no
+        # softmax weights to recompute; they always use stored attention.
+        capture_attentions = hybrid or not recompute_attention
         cache, hooks = attach_hooks(metadata.layers, self._model_dtype)
 
         try:
@@ -1001,7 +1006,7 @@ class LLMIFRAttribution(LLMAttribution):
                 input_ids=input_ids,
                 attention_mask=attention_mask,
                 use_cache=False,
-                output_attentions=not recompute_attention,
+                output_attentions=capture_attentions,
                 output_hidden_states=False,
                 return_dict=True,
             )
@@ -1012,8 +1017,16 @@ class LLMIFRAttribution(LLMAttribution):
                 except Exception:
                     pass
 
-        attentions = None if recompute_attention else outputs.attentions
+        attentions = outputs.attentions if capture_attentions else None
         weight_pack = build_weight_pack(metadata, self._model_dtype)
+
+        if hybrid:
+            self._hybrid_layer_inputs = build_layer_inputs(
+                metadata, cache, attentions, self._model_dtype
+            )
+        else:
+            self._hybrid_layer_inputs = None
+
         return cache, attentions, metadata, weight_pack
 
     def _build_ifr_params(self, metadata: ModelMetadata, sequence_length: int) -> IFRParameters:
@@ -1028,6 +1041,7 @@ class LLMIFRAttribution(LLMAttribution):
             model_dtype=self._model_dtype,
             chunk_tokens=self.chunk_tokens,
             sink_chunk_tokens=self.sink_chunk_tokens,
+            layer_inputs=getattr(self, "_hybrid_layer_inputs", None),
         )
 
     def _finalize_result(self, score_array: torch.Tensor, metadata: Optional[Dict[str, Any]] = None) -> LLMAttributionResult:
