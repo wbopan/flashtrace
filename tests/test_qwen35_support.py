@@ -5,6 +5,7 @@ import torch
 from flashtrace.attribution import LLMIFRAttribution
 from flashtrace.core import extract_model_metadata
 from flashtrace.qwen35 import gated_deltanet_effective_attention
+from flashtrace.tracer import FlashTrace
 from tests.helpers import make_tiny_qwen35_model_and_tokenizer
 
 
@@ -90,3 +91,42 @@ def test_ifr_all_positions_runs_on_hybrid_qwen35():
     assert matrix.shape[0] == 2  # one row per generation token
     assert torch.isfinite(matrix).all()
     assert (matrix >= 0).all()
+
+
+def test_flashtrace_method_runs_on_hybrid_qwen35():
+    model, tokenizer = make_tiny_qwen35_model_and_tokenizer()
+    tracer = FlashTrace(model, tokenizer)
+
+    result = tracer.trace(
+        prompt="t10 t20 t30 t40",
+        target="t50 t60",
+        output_span=(0, 0),
+        method="flashtrace",
+        hops=1,
+    )
+
+    assert len(result.scores) == len(result.prompt_tokens)
+    assert len(result.prompt_tokens) > 0
+    assert all(isinstance(s, float) for s in result.scores)
+    assert all(s == s for s in result.scores)  # no NaNs
+
+
+def test_flashtrace_smoke_generate_then_trace_on_hybrid_qwen35():
+    """End-to-end smoke test: generate with Qwen3.5, then trace the answer."""
+    model, tokenizer = make_tiny_qwen35_model_and_tokenizer()
+
+    import torch as _torch
+
+    prompt = "t10 t20 t30 t40 t50"
+    input_ids = tokenizer(prompt, return_tensors="pt")["input_ids"]
+    with _torch.inference_mode():
+        generated = model.generate(input_ids=input_ids, max_new_tokens=4, do_sample=False)
+    target = tokenizer.decode(generated[0, input_ids.shape[1] :], skip_special_tokens=False)
+
+    tracer = FlashTrace(model, tokenizer)
+    result = tracer.trace(prompt=prompt, target=target, output_span=(0, 0), method="flashtrace")
+
+    top = result.topk_inputs(3)
+    assert len(top) == 3
+    assert all(item.score == item.score for item in top)  # no NaNs
+    assert result.scores  # non-empty attribution
