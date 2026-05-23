@@ -397,6 +397,29 @@ def test_static_frontend_tokenizes_automatically_and_morphs_buttons():
     assert "chat-template-checkbox" not in app_js
 
 
+def test_static_frontend_wires_gallery_and_save():
+    repo_root = Path(__file__).resolve().parents[1]
+    index = (repo_root / "demo" / "live" / "static" / "index.html").read_text(
+        encoding="utf-8"
+    )
+    app_js = (repo_root / "demo" / "live" / "static" / "app.js").read_text(
+        encoding="utf-8"
+    )
+
+    assert "gallery-button" in index
+    assert "save-button" in index
+    assert "gallery-drawer" in index
+    assert "gallery-list" in index
+    assert "gallery-title-input" in index
+
+    assert "/api/gallery" in app_js
+    assert "function openGallery" in app_js
+    assert "function loadSample" in app_js
+    assert "function confirmSave" in app_js
+    # Save button only shows in the traced phase.
+    assert 'state.phase !== "traced"' in app_js
+
+
 def test_server_request_models_do_not_expose_chat_template_field():
     from demo.live.server import GenerateRequest, TokenizeRequest, TraceRequest
 

@@ -3,7 +3,7 @@
 
   const state = {
     phase: "prompt",
-    pendingStart: null,
+    dragAnchor: null,
     targetSpan: "",
     generatedText: "",
     reasoningSpan: "",
@@ -31,8 +31,6 @@
     return {
       model: readText("model-input", "Qwen/Qwen3-4B-Thinking-2507"),
       prompt: $("prompt-input")?.value ?? "",
-      device_map: readText("device-map-input", "auto"),
-      dtype: readText("dtype-select", "auto"),
     };
   }
 
@@ -50,16 +48,20 @@
     }
   }
 
-  function updatePhaseButtons(phase) {
+  function updatePhaseButtons() {
+    // Generate and Trace are always available regardless of phase.
     if (els.generateButton) {
-      els.generateButton.hidden = phase === "generated";
+      els.generateButton.hidden = false;
       els.generateButton.disabled = false;
       els.generateButton.textContent = "Generate";
     }
     if (els.traceButton) {
-      els.traceButton.hidden = phase !== "generated";
-      els.traceButton.disabled = !state.targetSpan;
+      els.traceButton.hidden = false;
+      els.traceButton.disabled = false;
       els.traceButton.textContent = "Trace";
+    }
+    if (els.saveButton) {
+      els.saveButton.hidden = state.phase !== "traced";
     }
   }
 
@@ -92,9 +94,14 @@
   }
 
   function activeTargetSpan(root) {
+    const model = state.renderModel || {};
+    const view = (model.views || [])[activeViewIndex(root)] || {};
+    // Interactive views (prompt/generated document, or the traced-phase
+    // "Select target" tab) reflect the live, user-editable selection.
+    if (view.interactive) {
+      return parseSpan(state.targetSpan);
+    }
     if (state.phase === "traced") {
-      const model = state.renderModel || {};
-      const view = (model.views || [])[activeViewIndex(root)] || {};
       if (Array.isArray(view.target_span) && view.target_span.length === 2) {
         return view.target_span;
       }
@@ -113,17 +120,40 @@
   function markSelection(root) {
     const span = activeTargetSpan(root);
     root.querySelectorAll(".ft-token").forEach((token) => {
-      token.classList.remove("is-target", "is-pending");
+      token.classList.remove("is-target");
       const genIndex = Number(token.dataset.genIndex);
       if (!Number.isFinite(genIndex)) return;
       if (state.phase === "traced" && !token.closest(".ft-view.is-active")) return;
       if (isTarget(genIndex, span)) {
         token.classList.add("is-target");
       }
-      if (state.pendingStart !== null && genIndex === state.pendingStart) {
-        token.classList.add("is-pending");
-      }
     });
+  }
+
+  function buildLegend(view, phase) {
+    if (phase === "prompt") return null;
+    const legend = document.createElement("div");
+    legend.className = "ft-legend";
+    const addItem = (kind, label) => {
+      const item = document.createElement("div");
+      item.className = "ft-legend-item";
+      const swatch = document.createElement("span");
+      swatch.className = `ft-legend-swatch ft-legend-swatch-${kind}`;
+      if (kind === "target") swatch.textContent = "Aa";
+      const text = document.createElement("span");
+      text.className = "ft-legend-label";
+      text.textContent = label;
+      item.append(swatch, text);
+      legend.appendChild(item);
+    };
+    if (view.interactive) {
+      addItem("target", "Target — drag to select");
+    } else {
+      addItem("input", "Input attribution");
+      addItem("output", "Output attribution");
+      addItem("target", "Target span");
+    }
+    return legend;
   }
 
   function makeToken(token) {
@@ -185,8 +215,8 @@
     } else if (state.phase !== "traced") {
       state.targetSpan = "";
     }
-    state.pendingStart = null;
-    updatePhaseButtons(state.phase);
+    state.dragAnchor = null;
+    updatePhaseButtons();
 
     const host = els.tokenDocument || $("token-document");
     if (!host) return;
@@ -211,28 +241,50 @@
       section.dataset.viewIndex = String(index);
       const stream = document.createElement("div");
       stream.className = "ft-token-stream";
+      const legend = buildLegend(view, state.phase);
+      if (legend) stream.appendChild(legend);
       (view.tokens || []).forEach((token) => stream.appendChild(makeToken(token)));
       section.appendChild(stream);
       root.appendChild(section);
     });
 
-    root.addEventListener("click", (event) => {
-      const token = event.target.closest(".ft-token[data-selectable='true']");
-      if (!token || !root.contains(token)) return;
+    const tokenGenIndex = (node) => {
+      const token = node && node.closest
+        ? node.closest(".ft-token[data-selectable='true']")
+        : null;
+      if (!token || !root.contains(token)) return null;
       const genIndex = Number(token.dataset.genIndex);
-      if (!Number.isFinite(genIndex)) return;
-      if (state.pendingStart === null) {
-        state.pendingStart = genIndex;
-        markSelection(root);
-        return;
-      }
-      const start = Math.min(state.pendingStart, genIndex);
-      const end = Math.max(state.pendingStart, genIndex);
+      return Number.isFinite(genIndex) ? genIndex : null;
+    };
+
+    const applyDrag = (genIndex) => {
+      if (state.dragAnchor === null || genIndex === null) return;
+      const start = Math.min(state.dragAnchor, genIndex);
+      const end = Math.max(state.dragAnchor, genIndex);
       state.targetSpan = `${start}:${end}`;
-      state.pendingStart = null;
       markSelection(root);
-      setStatus(`Selected target span ${state.targetSpan}.`);
-      if (els.traceButton) els.traceButton.disabled = false;
+    };
+
+    root.addEventListener("mousedown", (event) => {
+      const genIndex = tokenGenIndex(event.target);
+      if (genIndex === null) return;
+      // Suppress native text selection so dragging marks a target span.
+      event.preventDefault();
+      state.dragAnchor = genIndex;
+      applyDrag(genIndex);
+      const finishDrag = (upEvent) => {
+        applyDrag(tokenGenIndex(upEvent.target));
+        state.dragAnchor = null;
+        if (state.targetSpan) {
+          setStatus(`Selected target span ${state.targetSpan}.`);
+        }
+      };
+      document.addEventListener("mouseup", finishDrag, { once: true });
+    });
+
+    root.addEventListener("mouseover", (event) => {
+      if (state.dragAnchor === null) return;
+      applyDrag(tokenGenIndex(event.target));
     });
 
     host.appendChild(root);
@@ -249,6 +301,140 @@
     els.downloadLink.href = state.downloadUrl;
     els.downloadLink.download = "flashtrace-trace.json";
     els.downloadLink.hidden = false;
+  }
+
+  function defaultTitle() {
+    const prompt = $("prompt-input")?.value || "";
+    const lines = prompt.split("\n").map((line) => line.trim()).filter(Boolean);
+    const question = [...lines].reverse().find((line) => line.endsWith("?"));
+    return (question || lines[0] || "Untitled").slice(0, 80);
+  }
+
+  function galleryCard(sample) {
+    const card = document.createElement("div");
+    card.className = "gallery-card";
+    card.dataset.id = sample.id;
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "gallery-card-delete";
+    del.textContent = "×";
+    del.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteSample(sample.id);
+    });
+    const title = document.createElement("div");
+    title.className = "gallery-card-title";
+    title.textContent = sample.title || "(untitled)";
+    const meta = document.createElement("div");
+    meta.className = "gallery-card-meta";
+    meta.textContent = `${sample.model} · ${sample.method} · ${sample.hops} hop`;
+    const preview = document.createElement("div");
+    preview.className = "gallery-card-preview";
+    preview.textContent = sample.prompt_preview || "";
+    card.append(del, title, meta, preview);
+    card.addEventListener("click", () => loadSample(sample.id));
+    return card;
+  }
+
+  function renderGalleryList(samples) {
+    const list = els.galleryList;
+    if (!list) return;
+    list.textContent = "";
+    if (!samples.length) {
+      const empty = document.createElement("p");
+      empty.className = "gallery-empty";
+      empty.textContent = "No saved samples yet.";
+      list.appendChild(empty);
+      return;
+    }
+    samples.forEach((sample) => list.appendChild(galleryCard(sample)));
+  }
+
+  async function loadGalleryList() {
+    try {
+      const response = await fetch("/api/gallery");
+      const body = await response.json();
+      renderGalleryList(body.samples || []);
+    } catch (error) {
+      setStatus(error.message);
+    }
+  }
+
+  function openGallery() {
+    if (els.galleryDrawer) els.galleryDrawer.hidden = false;
+    loadGalleryList();
+  }
+
+  function closeGallery() {
+    if (els.galleryDrawer) els.galleryDrawer.hidden = true;
+    if (els.gallerySaveForm) els.gallerySaveForm.hidden = true;
+  }
+
+  function openSaveForm() {
+    openGallery();
+    if (els.gallerySaveForm) els.gallerySaveForm.hidden = false;
+    if (els.galleryTitleInput) {
+      els.galleryTitleInput.value = defaultTitle();
+      els.galleryTitleInput.focus();
+    }
+  }
+
+  async function confirmSave() {
+    if (state.phase !== "traced" || !state.renderModel || !state.traceJson) {
+      setStatus("Trace something before saving.");
+      return;
+    }
+    const title = (els.galleryTitleInput?.value || "").trim() || defaultTitle();
+    try {
+      await postJSON("/api/gallery", {
+        title,
+        model: readText("model-input", "Qwen/Qwen3-4B-Thinking-2507"),
+        method: readText("method-select", "flashtrace"),
+        hops: readNumber("hops-input", 1),
+        prompt: $("prompt-input")?.value ?? "",
+        generated_text: state.generatedText,
+        target_span: state.targetSpan,
+        reasoning_span: state.reasoningSpan,
+        render_model: state.renderModel,
+        trace_json: state.traceJson,
+      });
+      if (els.gallerySaveForm) els.gallerySaveForm.hidden = true;
+      setStatus("Saved to gallery.");
+      loadGalleryList();
+    } catch (error) {
+      setStatus(error.message);
+    }
+  }
+
+  async function loadSample(id) {
+    try {
+      const response = await fetch(`/api/gallery/${id}`);
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Failed to load sample.");
+      const sample = body.sample;
+      if ($("model-input")) $("model-input").value = sample.model || "";
+      if ($("prompt-input")) $("prompt-input").value = sample.prompt || "";
+      if ($("method-select")) $("method-select").value = sample.method || "flashtrace";
+      if ($("hops-input")) $("hops-input").value = String(sample.hops ?? 1);
+      state.generatedText = sample.generated_text || "";
+      state.reasoningSpan = sample.reasoning_span || "";
+      state.traceJson = sample.trace_json || null;
+      renderDocument(sample.render_model);
+      if (sample.trace_json) updateDownload(sample.trace_json);
+      closeGallery();
+      setStatus(`Loaded "${sample.title}".`);
+    } catch (error) {
+      setStatus(error.message);
+    }
+  }
+
+  async function deleteSample(id) {
+    try {
+      await fetch(`/api/gallery/${id}`, { method: "DELETE" });
+      loadGalleryList();
+    } catch (error) {
+      setStatus(error.message);
+    }
   }
 
   async function tokenizePrompt() {
@@ -269,11 +455,10 @@
   async function generate() {
     setBusy(els.generateButton, true, "Generate");
     setStatus("Generating...");
-    if (els.traceButton) els.traceButton.disabled = true;
     try {
       const body = await postJSON("/api/generate", {
         ...basePayload(),
-        max_new_tokens: readNumber("max-new-tokens-input", 128),
+        max_new_tokens: readNumber("max-new-tokens-input", 8096),
       });
       state.generatedText = body.generated_text || "";
       state.targetSpan = body.target_span || "";
@@ -281,7 +466,6 @@
       state.traceJson = null;
       if (els.downloadLink) els.downloadLink.hidden = true;
       renderDocument(body.render_model);
-      if (els.traceButton) els.traceButton.disabled = !state.targetSpan;
       setStatus(body.status || "Generated.");
     } catch (error) {
       setStatus(error.message);
@@ -301,8 +485,6 @@
         reasoning_span: state.reasoningSpan,
         method: readText("method-select", "flashtrace"),
         hops: readNumber("hops-input", 1),
-        chunk_tokens: readNumber("chunk-tokens-input", 128),
-        sink_chunk_tokens: readNumber("sink-chunk-tokens-input", 32),
       });
       state.traceJson = body.trace_json;
       renderDocument(body.render_model);
@@ -321,9 +503,23 @@
     els.generateButton = $("generate-button");
     els.traceButton = $("trace-button");
     els.downloadLink = $("download-link");
+    els.galleryButton = $("gallery-button");
+    els.saveButton = $("save-button");
+    els.galleryDrawer = $("gallery-drawer");
+    els.galleryList = $("gallery-list");
+    els.gallerySaveForm = $("gallery-save-form");
+    els.galleryTitleInput = $("gallery-title-input");
 
     els.generateButton?.addEventListener("click", generate);
     els.traceButton?.addEventListener("click", trace);
+    els.galleryButton?.addEventListener("click", openGallery);
+    els.saveButton?.addEventListener("click", openSaveForm);
+    $("gallery-close")?.addEventListener("click", closeGallery);
+    $("gallery-overlay")?.addEventListener("click", closeGallery);
+    $("gallery-save-confirm")?.addEventListener("click", confirmSave);
+    $("gallery-save-cancel")?.addEventListener("click", () => {
+      if (els.gallerySaveForm) els.gallerySaveForm.hidden = true;
+    });
     const promptInput = $("prompt-input");
     if (promptInput) {
       promptInput.addEventListener("input", tokenizePrompt);
@@ -337,6 +533,8 @@
 
   window.flashtraceTest = {
     renderDocument,
+    renderGalleryList,
+    loadSample,
     getState: () => ({ ...state }),
     setState: (patch) => Object.assign(state, patch || {}),
   };

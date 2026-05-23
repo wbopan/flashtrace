@@ -33,7 +33,7 @@ Question: What is the capital of France?</textarea>
       <div class="grid-2">
         <label class="field">
           <span>Max tokens</span>
-          <input id="max-new-tokens-input" type="number" min="1" max="512" step="1" value="128">
+          <input id="max-new-tokens-input" type="number" min="1" max="8096" step="1" value="8096">
         </label>
         <label class="field">
           <span>Hops</span>
@@ -41,45 +41,20 @@ Question: What is the capital of France?</textarea>
         </label>
       </div>
 
-      <div class="grid-2">
-        <label class="field">
-          <span>Method</span>
-          <select id="method-select">
-            <option value="flashtrace" selected>flashtrace</option>
-            <option value="ifr-span">ifr-span</option>
-            <option value="ifr-matrix">ifr-matrix</option>
-          </select>
-        </label>
-        <label class="field">
-          <span>Dtype</span>
-          <select id="dtype-select">
-            <option value="auto" selected>auto</option>
-            <option value="float16">float16</option>
-            <option value="bfloat16">bfloat16</option>
-            <option value="float32">float32</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="grid-2">
-        <label class="field">
-          <span>Device map</span>
-          <input id="device-map-input" type="text" value="auto" autocomplete="off">
-        </label>
-        <label class="field">
-          <span>Chunk tokens</span>
-          <input id="chunk-tokens-input" type="number" min="1" step="1" value="128">
-        </label>
-      </div>
-
       <label class="field">
-        <span>Sink chunk tokens</span>
-        <input id="sink-chunk-tokens-input" type="number" min="1" step="1" value="32">
+        <span>Method</span>
+        <select id="method-select">
+          <option value="flashtrace" selected>flashtrace</option>
+          <option value="ifr-span">ifr-span</option>
+          <option value="ifr-matrix">ifr-matrix</option>
+        </select>
       </label>
 
       <div class="actions">
         <button id="generate-button" type="button" class="primary">Generate</button>
-        <button id="trace-button" type="button" class="primary" hidden disabled>Trace</button>
+        <button id="trace-button" type="button" class="primary">Trace</button>
+        <button id="gallery-button" type="button">Gallery</button>
+        <button id="save-button" type="button" hidden>Save to gallery</button>
       </div>
 
       <a id="download-link" class="download-link" hidden>Download trace JSON</a>
@@ -90,5 +65,23 @@ Question: What is the capital of France?</textarea>
       <p id="status-line" class="status-line">Ready.</p>
     </section>
   </main>
+
+  <div id="gallery-drawer" class="gallery-drawer" hidden aria-label="Gallery">
+    <div id="gallery-overlay" class="gallery-overlay"></div>
+    <aside class="gallery-panel">
+      <header class="gallery-header">
+        <h2>Gallery</h2>
+        <button id="gallery-close" type="button" class="gallery-close" aria-label="Close">&times;</button>
+      </header>
+      <div id="gallery-save-form" class="gallery-save-form" hidden>
+        <input id="gallery-title-input" type="text" placeholder="Sample title" autocomplete="off">
+        <div class="gallery-save-actions">
+          <button id="gallery-save-confirm" type="button" class="primary">Save</button>
+          <button id="gallery-save-cancel" type="button">Cancel</button>
+        </div>
+      </div>
+      <div id="gallery-list" class="gallery-list"></div>
+    </aside>
+  </div>
 </body>
 </html>
