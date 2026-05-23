@@ -24,10 +24,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 from pydantic import BaseModel, Field
 
-from demo.live import service
+from demo.live import gallery, service
 
 APP_DIR = Path(__file__).resolve().parent
 STATIC_DIR = APP_DIR / "static"
+DEFAULT_GALLERY_DIR = APP_DIR / "gallery_store"
 INFERENCE_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 
 
@@ -41,7 +42,7 @@ class TokenizeRequest(BaseModel):
 class GenerateRequest(BaseModel):
     model: str = Field(default=service.DEFAULT_MODEL)
     prompt: str
-    max_new_tokens: int = 128
+    max_new_tokens: int = 8096
     device_map: str = Field(default_factory=lambda: os.environ.get("FLASHTRACE_DEMO_DEVICE_MAP", "auto"))
     dtype: str = "auto"
 
@@ -60,6 +61,19 @@ class TraceRequest(BaseModel):
     sink_chunk_tokens: int = 32
 
 
+class GallerySaveRequest(BaseModel):
+    title: str
+    model: str
+    method: str
+    hops: int
+    prompt: str
+    generated_text: str
+    target_span: str
+    reasoning_span: str = ""
+    render_model: dict[str, Any]
+    trace_json: dict[str, Any]
+
+
 async def _run_inference(func: Callable[..., dict[str, Any]], **kwargs) -> dict[str, Any]:
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(INFERENCE_EXECUTOR, partial(func, **kwargs))
@@ -73,10 +87,15 @@ def create_app(
     *,
     loader: Callable | None = None,
     tracer_cls: type | None = None,
+    gallery_dir: Path | None = None,
 ) -> FastAPI:
     app = FastAPI(title="FlashTrace Live Demo")
     app.state.loader = loader
     app.state.tracer_cls = tracer_cls
+    env_dir = os.environ.get("FLASHTRACE_DEMO_GALLERY_DIR")
+    app.state.gallery_dir = Path(
+        gallery_dir if gallery_dir is not None else (env_dir or DEFAULT_GALLERY_DIR)
+    )
 
     @app.get("/")
     async def root() -> HTMLResponse:
@@ -147,6 +166,35 @@ def create_app(
             return _error(400, exc)
         except Exception as exc:
             return _error(500, exc)
+
+    @app.get("/api/gallery")
+    async def gallery_list(request: Request):
+        return {"samples": gallery.list_samples(request.app.state.gallery_dir)}
+
+    @app.post("/api/gallery")
+    async def gallery_save(payload: GallerySaveRequest, request: Request):
+        try:
+            summary = gallery.save_sample(
+                request.app.state.gallery_dir, payload.model_dump()
+            )
+            return {"sample": summary}
+        except ValueError as exc:
+            return _error(400, exc)
+
+    @app.get("/api/gallery/{sample_id}")
+    async def gallery_get(sample_id: str, request: Request):
+        try:
+            return {"sample": gallery.load_sample(request.app.state.gallery_dir, sample_id)}
+        except (KeyError, ValueError):
+            return _error(404, ValueError("Sample not found."))
+
+    @app.delete("/api/gallery/{sample_id}")
+    async def gallery_delete(sample_id: str, request: Request):
+        try:
+            gallery.delete_sample(request.app.state.gallery_dir, sample_id)
+            return {"ok": True}
+        except (KeyError, ValueError):
+            return _error(404, ValueError("Sample not found."))
 
     return app
 

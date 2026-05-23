@@ -36,6 +36,9 @@ class ASGITestClient:
     def post(self, url: str, *, json: dict):
         return self._run("POST", url, json=json)
 
+    def delete(self, url: str):
+        return self._run("DELETE", url)
+
     def _run(self, method: str, url: str, **kwargs):
         import asyncio
 
@@ -384,9 +387,10 @@ def test_static_frontend_tokenizes_automatically_and_morphs_buttons():
     assert "tokenize-button" not in index
     assert "promptInput.addEventListener(\"input\", tokenizePrompt)" in app_js
     assert "promptInput.addEventListener(\"change\", tokenizePrompt)" in app_js
-    assert "updatePhaseButtons(state.phase)" in app_js
-    assert "els.generateButton.hidden = phase === \"generated\"" in app_js
-    assert "els.traceButton.hidden = phase !== \"generated\"" in app_js
+    assert "updatePhaseButtons()" in app_js
+    # Generate and Trace are always available regardless of phase.
+    assert "els.generateButton.hidden = false" in app_js
+    assert "els.traceButton.hidden = false" in app_js
     assert "chat-template-checkbox" not in index
     assert "Show chat template" not in index
     assert "chat_template" not in app_js
@@ -437,6 +441,69 @@ def test_demo_dependency_extra_and_space_requirements_are_declared():
     assert "httpx" in requirements
     assert "gradio" not in requirements
     assert "flashtrace" in requirements
+
+
+def _gallery_record():
+    return {
+        "title": "Capital of France",
+        "model": "tiny-qwen2",
+        "method": "flashtrace",
+        "hops": 1,
+        "prompt": "Question: capital of France?",
+        "generated_text": "Paris",
+        "target_span": "0:0",
+        "reasoning_span": "",
+        "render_model": {"phase": "traced", "views": [], "active_view": 0},
+        "trace_json": {"method": "flashtrace"},
+    }
+
+
+def test_gallery_save_list_load_delete_roundtrip(tmp_path):
+    from demo.live.server import create_app
+
+    client = ASGITestClient(create_app(gallery_dir=tmp_path))
+
+    save = client.post("/api/gallery", json=_gallery_record())
+    assert save.status_code == 200
+    sample_id = save.json()["sample"]["id"]
+    assert sample_id
+    assert "render_model" not in save.json()["sample"]
+
+    listing = client.get("/api/gallery")
+    assert listing.status_code == 200
+    assert [item["id"] for item in listing.json()["samples"]] == [sample_id]
+
+    full = client.get(f"/api/gallery/{sample_id}")
+    assert full.status_code == 200
+    assert full.json()["sample"]["render_model"] == {
+        "phase": "traced",
+        "views": [],
+        "active_view": 0,
+    }
+
+    deleted = client.delete(f"/api/gallery/{sample_id}")
+    assert deleted.status_code == 200
+    assert client.get("/api/gallery").json()["samples"] == []
+
+
+def test_gallery_get_missing_returns_404(tmp_path):
+    from demo.live.server import create_app
+
+    client = ASGITestClient(create_app(gallery_dir=tmp_path))
+    response = client.get("/api/gallery/nonexistent")
+    assert response.status_code == 404
+    assert response.json()["error"]
+
+
+def test_gallery_save_missing_field_returns_400(tmp_path):
+    from demo.live.server import create_app
+
+    client = ASGITestClient(create_app(gallery_dir=tmp_path))
+    bad = _gallery_record()
+    del bad["render_model"]
+    response = client.post("/api/gallery", json=bad)
+    # Pydantic rejects the missing required field with a 422.
+    assert response.status_code == 422
 
 
 def test_example_token_scores_are_ranked_for_display():
