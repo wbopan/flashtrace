@@ -196,6 +196,7 @@ def run_generate_document_phase(
         phase="generated",
         prompt_records=prompt_records,
         generation_records=generation_records,
+        answer_token_span=sections.answer_token_span,
     )
     target_span = document["target_span"]
     target_span_tuple = tuple(target_span) if target_span is not None else None
@@ -266,12 +267,28 @@ def run_trace_document_phase(
         hops=int(hops),
         method=method,
     )
-    document = build_document_views(phase="traced", result=result)
-    view_count = len(document["views"])
-    if view_count == 1:
-        status = f"Trace complete with Aggregate view for {method}."
+    prompt_records = _build_prompt_records(prompt_text, tokenizer)
+    generation_records = build_token_records(
+        text=target_text,
+        tokenizer=tokenizer,
+        section="answer",
+        role="assistant",
+    )
+    document = build_document_views(
+        phase="traced",
+        result=result,
+        prompt_records=prompt_records,
+        generation_records=generation_records,
+    )
+    # Views are [Select target, Hop 1..N, Aggregate].
+    hop_count = max(0, len(document["views"]) - 2)
+    if hop_count:
+        status = (
+            f"Trace complete with Select target, {hop_count} hop view(s), "
+            f"and Aggregate for {method}."
+        )
     else:
-        status = f"Trace complete with Aggregate plus {view_count - 1} hop views."
+        status = f"Trace complete with Select target and Aggregate views for {method}."
     return {
         "render_model": document,
         "trace_json": result.to_dict(),
