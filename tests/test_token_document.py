@@ -54,17 +54,19 @@ def test_build_document_views_traced_uses_aggregate_only_when_hops_absent():
 
     model = build_document_views(phase="traced", result=result)
 
-    assert [view["name"] for view in model["views"]] == ["Aggregate"]
+    assert [view["name"] for view in model["views"]] == ["Select target", "Aggregate"]
     assert model["target_span"] == [1, 1]
-    assert model["views"][0]["target_span"] == [1, 1]
+    aggregate = model["views"][-1]
+    assert aggregate["name"] == "Aggregate"
+    assert aggregate["target_span"] == [1, 1]
     prompt_scores = [
         token["score"]
-        for token in model["views"][0]["tokens"]
+        for token in aggregate["tokens"]
         if token["region"] == "prompt"
     ]
     assert prompt_scores == [0.25, 0.75]
     generation = [
-        token for token in model["views"][0]["tokens"] if token["region"] == "generation"
+        token for token in aggregate["tokens"] if token["region"] == "generation"
     ]
     assert all(token["color"] is None for token in generation)
 
@@ -83,7 +85,12 @@ def test_build_document_views_traced_adds_hop_views_when_scores_exist():
 
     model = build_document_views(phase="traced", result=result)
 
-    assert [view["name"] for view in model["views"]] == ["Aggregate", "Hop 1", "Hop 2"]
+    assert [view["name"] for view in model["views"]] == [
+        "Select target",
+        "Hop 1",
+        "Hop 2",
+        "Aggregate",
+    ]
 
 
 def test_document_generation_tokens_match_trace_result_modulo_trailing_eos():
@@ -144,7 +151,7 @@ def test_document_generation_tokens_match_trace_result_modulo_trailing_eos():
 
 
 def test_traced_views_include_server_computed_colors_per_view():
-    from demo.live.token_document import build_document_views
+    from demo.live.token_document import _generation_color, build_document_views
     from flashtrace.viz import _score_color
 
     result = TraceResult(
@@ -160,11 +167,14 @@ def test_traced_views_include_server_computed_colors_per_view():
     )
 
     model = build_document_views(phase="traced", result=result)
+    # Views are [Select target, Hop 1, Aggregate]; Aggregate is the last tab.
+    aggregate_view = model["views"][-1]
+    hop_view = model["views"][1]
     aggregate_prompt = [
-        token for token in model["views"][0]["tokens"] if token["region"] == "prompt"
+        token for token in aggregate_view["tokens"] if token["region"] == "prompt"
     ]
     hop_prompt = [
-        token for token in model["views"][1]["tokens"] if token["region"] == "prompt"
+        token for token in hop_view["tokens"] if token["region"] == "prompt"
     ]
 
     assert [token["color"] for token in aggregate_prompt] == [
@@ -176,18 +186,18 @@ def test_traced_views_include_server_computed_colors_per_view():
         _score_color(0.4, 0.8),
     ]
     aggregate_generation = [
-        token for token in model["views"][0]["tokens"] if token["region"] == "generation"
+        token for token in aggregate_view["tokens"] if token["region"] == "generation"
     ]
     hop_generation = [
-        token for token in model["views"][1]["tokens"] if token["region"] == "generation"
+        token for token in hop_view["tokens"] if token["region"] == "generation"
     ]
     assert [token["color"] for token in aggregate_generation] == [
-        _score_color(0.25, 0.5),
-        _score_color(0.5, 0.5),
+        _generation_color(0.25, 0.5),
+        _generation_color(0.5, 0.5),
     ]
     assert [token["color"] for token in hop_generation] == [
-        _score_color(0.1, 0.3),
-        _score_color(0.3, 0.3),
+        _generation_color(0.1, 0.3),
+        _generation_color(0.3, 0.3),
     ]
 
 
@@ -208,7 +218,14 @@ def test_traced_view_targets_are_per_view():
 
     model = build_document_views(phase="traced", result=result)
 
-    assert [view["target_span"] for view in model["views"]] == [[1, 1], [1, 1], [0, 2]]
+    # Views are [Select target, Hop 1, Hop 2, Aggregate]. Select target and
+    # Aggregate use the document-wide output span; hops use their own targets.
+    assert [view["target_span"] for view in model["views"]] == [
+        [1, 1],
+        [1, 1],
+        [0, 2],
+        [1, 1],
+    ]
     target_by_view = []
     for view in model["views"]:
         target_by_view.append(
@@ -218,7 +235,8 @@ def test_traced_view_targets_are_per_view():
                 if token["region"] == "generation" and token["is_target"]
             ]
         )
-    assert target_by_view == [[1], [1], [0, 1, 2]]
+    # The Select target view has no token records here, so it has no tokens.
+    assert target_by_view == [[], [1], [0, 1, 2], [1]]
 
 
 def test_playwright_smoke_selection_and_tabs_best_effort():
@@ -274,8 +292,11 @@ def test_playwright_smoke_selection_and_tabs_best_effort():
         )
         page.evaluate(app_js)
         page.evaluate("model => window.flashtraceTest.renderDocument(model)", generated_model)
-        page.locator("[data-gen-index='0']").click()
-        page.locator("[data-gen-index='1']").click()
+        # Target selection is a drag: press on the start token, release on the end.
+        page.locator("[data-gen-index='0']").hover()
+        page.mouse.down()
+        page.locator("[data-gen-index='1']").hover()
+        page.mouse.up()
         assert page.evaluate("window.flashtraceTest.getState().targetSpan") == "0:1"
         page.evaluate("model => window.flashtraceTest.renderDocument(model)", traced_model)
         page.locator(".ft-tab").nth(2).click()
@@ -290,6 +311,37 @@ def test_playwright_smoke_selection_and_tabs_best_effort():
             "node => node.style.background"
         )
         browser.close()
+
+
+def test_build_document_views_traced_defaults_active_view_to_aggregate():
+    from demo.live.token_document import build_document_views
+
+    result = TraceResult(
+        prompt_tokens=["t10", "t20"],
+        generation_tokens=["t30"],
+        scores=[0.2, 0.4],
+        per_hop_scores=[[0.1, 0.9], [0.3, 0.7]],
+        output_span=(0, 0),
+        method="flashtrace",
+    )
+
+    model = build_document_views(phase="traced", result=result)
+
+    # Views: [Select target, Hop 1, Hop 2, Aggregate]; default tab is Aggregate.
+    assert model["active_view"] == len(model["views"]) - 1
+    assert model["views"][model["active_view"]]["name"] == "Aggregate"
+
+
+def test_build_document_views_non_traced_defaults_active_view_to_zero():
+    from demo.live.token_document import build_document_views
+    from demo.live.token_overlay import build_token_records
+
+    _, tokenizer = make_tiny_qwen2_model_and_tokenizer()
+    prompt_records = build_token_records(
+        text="t10 t20", tokenizer=tokenizer, section="prompt", role="user"
+    )
+    model = build_document_views(phase="prompt", prompt_records=prompt_records)
+    assert model["active_view"] == 0
 
 
 def test_document_view_uses_record_display_text_for_token_text():

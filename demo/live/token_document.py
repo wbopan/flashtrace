@@ -12,6 +12,24 @@ Region = Literal["prompt", "generation"]
 TOKEN_DOCUMENT_ELEM_ID = "flashtrace-token-document"
 
 
+def _generation_color(score: float, max_score: float) -> str:
+    """Blue-toned gradient for generation-side attribution weights.
+
+    Mirrors ``flashtrace.viz._score_color`` (which is warm/orange and used for
+    the prompt region) but renders the generation region in blue so the two
+    sides are visually distinct. Normalisation is per-view (caller passes the
+    view's own max-abs score).
+    """
+    if max_score <= 0.0:
+        return "rgba(245,245,245,0.75)"
+    ratio = min(1.0, abs(float(score)) / (max_score + 1e-12))
+    red = int(226 - 158 * ratio)
+    green = int(240 - 86 * ratio)
+    blue = 255
+    alpha = 0.22 + 0.58 * ratio
+    return f"rgba({red},{green},{blue},{alpha:.3f})"
+
+
 def _span_to_list(span: tuple[int, int] | list[int] | None) -> list[int] | None:
     if span is None:
         return None
@@ -73,7 +91,18 @@ def _text_token(
     }
 
 
-def _default_target_span(generation_records: Sequence[TokenRecord]) -> list[int] | None:
+def _default_target_span(
+    generation_records: Sequence[TokenRecord],
+    *,
+    answer_span: tuple[int, int] | list[int] | None = None,
+) -> list[int] | None:
+    """Pick the default target span over selectable generation content tokens.
+
+    When ``answer_span`` is given (the answer-section token span — i.e. content
+    after ``</think>`` and before ``<|im_end|>``), the default is restricted to
+    the selectable content tokens inside it. Otherwise it spans every selectable
+    content token.
+    """
     selectable = [
         int(record.token_index)
         for record in generation_records
@@ -81,6 +110,11 @@ def _default_target_span(generation_records: Sequence[TokenRecord]) -> list[int]
     ]
     if not selectable:
         return None
+    if answer_span is not None and len(answer_span) == 2:
+        low, high = int(answer_span[0]), int(answer_span[1])
+        restricted = [index for index in selectable if low <= index <= high]
+        if restricted:
+            return [min(restricted), max(restricted)]
     return [min(selectable), max(selectable)]
 
 
@@ -154,7 +188,9 @@ def _build_trace_view(
     for gen_index, token in enumerate(generation_tokens):
         if gen_index < len(generation_values):
             generation_score: float | None = float(generation_values[gen_index])
-            generation_color: str | None = _score_color(generation_score, max_generation_score)
+            generation_color: str | None = _generation_color(
+                generation_score, max_generation_score
+            )
         else:
             generation_score = None
             generation_color = None
@@ -184,24 +220,24 @@ def build_document_views(
     generation_records: Sequence[TokenRecord] | None = None,
     result: Any | None = None,
     target_span: tuple[int, int] | list[int] | None = None,
-    active_view: int = 0,
+    answer_token_span: tuple[int, int] | list[int] | None = None,
+    active_view: int | None = None,
 ) -> dict[str, Any]:
     if phase == "traced":
         if result is None:
             raise ValueError("result is required for traced phase")
         model_target = _span_to_list(result.output_span)
-        views = [
-            _build_trace_view(
-                name="Aggregate",
-                prompt_tokens=result.prompt_tokens,
-                generation_tokens=result.generation_tokens,
-                scores=result.scores,
-                generation_scores=getattr(result, "generation_scores", []),
-                target_span=model_target,
-            )
-        ]
+        aggregate_view = _build_trace_view(
+            name="Aggregate",
+            prompt_tokens=result.prompt_tokens,
+            generation_tokens=result.generation_tokens,
+            scores=result.scores,
+            generation_scores=getattr(result, "generation_scores", []),
+            target_span=model_target,
+        )
         per_hop_target_spans = list(getattr(result, "per_hop_target_spans", []) or [])
         per_hop_generation_scores = list(getattr(result, "per_hop_generation_scores", []) or [])
+        hop_views: list[dict[str, Any]] = []
         for hop_index, hop_scores in enumerate(result.per_hop_scores or [], start=1):
             target_for_hop = (
                 _span_to_list(per_hop_target_spans[hop_index - 1])
@@ -213,7 +249,7 @@ def build_document_views(
                 if hop_index - 1 < len(per_hop_generation_scores)
                 else []
             )
-            views.append(
+            hop_views.append(
                 _build_trace_view(
                     name=f"Hop {hop_index}",
                     prompt_tokens=result.prompt_tokens,
@@ -223,9 +259,21 @@ def build_document_views(
                     target_span=target_for_hop,
                 )
             )
+        # The "Select target" tab re-uses the interactive prompt/generation view
+        # so the user can pick a fresh span and trace again. It is the default
+        # (left-most) tab; "Aggregate" sits at the far right after the hops.
+        select_view = _build_prompt_generated_view(
+            name="Select target",
+            prompt_records=list(prompt_records or []),
+            generation_records=list(generation_records or []),
+            interactive=True,
+            target_span=model_target,
+        )
+        views = [select_view, *hop_views, aggregate_view]
+        resolved_active = int(active_view) if active_view is not None else len(views) - 1
         return {
             "phase": phase,
-            "active_view": int(active_view),
+            "active_view": resolved_active,
             "views": views,
             "target_span": model_target,
         }
@@ -234,11 +282,11 @@ def build_document_views(
     generation = list(generation_records or [])
     model_target = _span_to_list(target_span)
     if phase == "generated" and model_target is None:
-        model_target = _default_target_span(generation)
+        model_target = _default_target_span(generation, answer_span=answer_token_span)
     interactive = phase == "generated" and model_target is not None
     return {
         "phase": phase,
-        "active_view": int(active_view),
+        "active_view": int(active_view) if active_view is not None else 0,
         "views": [
             _build_prompt_generated_view(
                 name="Document",
