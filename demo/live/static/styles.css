@@ -379,6 +379,10 @@ button:disabled {
   border-radius: 8px;
 }
 
+.gallery-save-form[hidden] {
+  display: none;
+}
+
 .gallery-save-form input {
   padding: 8px;
   border: 1px solid #cfd6e2;
