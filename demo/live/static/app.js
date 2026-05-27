@@ -128,6 +128,7 @@
         token.classList.add("is-target");
       }
     });
+    updateTargetPreview(root);
   }
 
   function buildLegend(view, phase) {
@@ -180,35 +181,49 @@
     return `rgba(${r},${g},255,${(0.22 + 0.58 * ratio).toFixed(3)})`;
   }
 
-  function sectionMaxes(section) {
-    if (section.__maxes) return section.__maxes;
-    let prompt = 0;
-    let gen = 0;
+  // Colour scale: "linear" uses |score| / max; "log" uses a per-region log
+  // min–max so long-tailed weights spread out and the small ones stay visible.
+  let scaleMode = "log";
+
+  function sectionStats(section) {
+    if (section.__stats) return section.__stats;
+    const blank = () => ({ max: 0, sum: 0, lmin: Infinity, lmax: -Infinity });
+    const stats = { prompt: blank(), gen: blank() };
     section.querySelectorAll(".ft-token[data-score]").forEach((tok) => {
-      const score = Math.abs(Number(tok.dataset.score));
-      if (!Number.isFinite(score)) return;
-      if (tok.dataset.region === "generation") gen = Math.max(gen, score);
-      else prompt = Math.max(prompt, score);
+      const s = Math.abs(Number(tok.dataset.score));
+      if (!Number.isFinite(s) || s <= 0) return;
+      const r = tok.dataset.region === "generation" ? stats.gen : stats.prompt;
+      r.sum += s;
+      if (s > r.max) r.max = s;
+      const l = Math.log(s);
+      if (l < r.lmin) r.lmin = l;
+      if (l > r.lmax) r.lmax = l;
     });
-    section.__maxes = { prompt, gen };
-    return section.__maxes;
+    section.__stats = stats;
+    return stats;
   }
 
-  function tokenNorm(tok, maxes) {
+  function tokenNorm(tok, stats) {
     const score = Number(tok.dataset.score);
     if (!Number.isFinite(score)) return null;
-    const max = tok.dataset.region === "generation" ? maxes.gen : maxes.prompt;
-    if (!(max > 0)) return null;
-    return Math.abs(score) / max;
+    const s = Math.abs(score);
+    if (!(s > 0)) return 0;
+    const r = tok.dataset.region === "generation" ? stats.gen : stats.prompt;
+    if (scaleMode === "log") {
+      if (!(r.lmax > r.lmin)) return 1;
+      return clamp((Math.log(s) - r.lmin) / (r.lmax - r.lmin), 0, 1);
+    }
+    if (!(r.max > 0)) return null;
+    return s / r.max;
   }
 
   // Snapshot the scored tokens of a section so the bloom animation can repaint
   // each frame without re-querying the DOM.
   function collectScored(section) {
-    const maxes = sectionMaxes(section);
+    const stats = sectionStats(section);
     const out = [];
     section.querySelectorAll(".ft-token[data-score]").forEach((el) => {
-      out.push({ el, region: el.dataset.region, norm: tokenNorm(el, maxes) });
+      out.push({ el, region: el.dataset.region, norm: tokenNorm(el, stats) });
     });
     return out;
   }
@@ -247,12 +262,13 @@
     const tip = ensureTooltip();
     const score = Number(tok.dataset.score);
     const section = tok.closest(".ft-view");
-    const maxes = section ? sectionMaxes(section) : { prompt: 0, gen: 0 };
-    const norm = section ? tokenNorm(tok, maxes) : null;
-    const pct = norm === null ? "—" : `${(norm * 100).toFixed(1)}%`;
+    const stats = section ? sectionStats(section) : null;
+    const region = tok.dataset.region === "generation" ? "gen" : "prompt";
+    const sum = stats ? stats[region].sum : 0;
+    const pct = sum > 0 ? `${((Math.abs(score) / sum) * 100).toFixed(1)}%` : "—";
     tip.innerHTML =
       `<span class="ft-tooltip-score">${score.toPrecision(4)}</span>` +
-      `<span class="ft-tooltip-meta">weight ${pct} of max</span>`;
+      `<span class="ft-tooltip-meta">${pct} of sum</span>`;
     tip.hidden = false;
   }
 
@@ -288,10 +304,10 @@
   const HIST_BINS = 44;
 
   function histogramData(section) {
-    const maxes = sectionMaxes(section);
+    const stats = sectionStats(section);
     const counts = new Array(HIST_BINS).fill(0);
     section.querySelectorAll(".ft-token[data-score]").forEach((tok) => {
-      const norm = tokenNorm(tok, maxes);
+      const norm = tokenNorm(tok, stats);
       if (norm === null) return;
       counts[Math.min(HIST_BINS - 1, Math.floor(norm * HIST_BINS))] += 1;
     });
@@ -340,13 +356,8 @@
     }
   }
 
-  // Bloom: open the cut-off window (hi: 0 -> 1, lo pinned at 0) over 10s. The
-  // sweep advances by token *rank*, not by value or mass — at progress p the
-  // window covers the first p of tokens ordered by ascending weight (i.e. hi
-  // follows the empirical quantile of normalised weights). With a long tail the
-  // many small-weight tokens are dense at the low end (slow start) and the few
-  // large ones are sparse near 1 (fast finish), instead of stalling on the one
-  // token that hoards most of the mass.
+  // Bloom: linearly open the cut-off window (hi: 0 -> 1, lo pinned at 0) over 5s
+  // so attribution colour fades in at a constant rate when a tab/result shows.
   function animateCutoff(root) {
     cancelCutoffAnim(root);
     const section = root.querySelector(".ft-view.is-active");
@@ -361,22 +372,6 @@
       if (els) renderHistogram(els.hist, histData);
     };
 
-    // Normalised weights sorted ascending; hi is their empirical quantile.
-    const norms = entries
-      .filter((e) => e.norm !== null)
-      .map((e) => e.norm)
-      .sort((a, b) => a - b);
-    const n = norms.length;
-    const hiForProgress = (t) => {
-      if (!n) return t;
-      const x = t * n; // expected number of tokens covered
-      if (x <= 0) return 0;
-      if (x >= n) return norms[n - 1];
-      const i = Math.floor(x);
-      const lower = i > 0 ? norms[i - 1] : 0;
-      return lower + (x - i) * (norms[i] - lower);
-    };
-
     const reduce =
       window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
@@ -384,11 +379,11 @@
       frame();
       return;
     }
-    const duration = 10000;
+    const duration = 5000;
     const start = performance.now();
     const step = (now) => {
       const t = Math.min(1, (now - start) / duration);
-      cutoff.hi = Math.max(0.001, Math.min(1, hiForProgress(t)));
+      cutoff.hi = Math.max(0.001, t);
       frame();
       if (t < 1) {
         root.__cutoffAnim = requestAnimationFrame(step);
@@ -409,6 +404,10 @@
     const wrap = document.createElement("div");
     wrap.className = "ft-cutoff";
     wrap.innerHTML =
+      '<div class="ft-scale" role="group" aria-label="Weight scale">' +
+      '<button type="button" class="ft-scale-btn" data-scale="linear">Linear</button>' +
+      '<button type="button" class="ft-scale-btn" data-scale="log">Log</button>' +
+      "</div>" +
       '<span class="ft-cutoff-label">Cut-off</span>' +
       '<div class="ft-cutoff-track">' +
       '<canvas class="ft-cutoff-hist"></canvas>' +
@@ -436,6 +435,22 @@
       }
     };
 
+    const scaleBtns = wrap.querySelectorAll(".ft-scale-btn");
+    const syncScaleBtns = () =>
+      scaleBtns.forEach((btn) =>
+        btn.classList.toggle("is-active", btn.dataset.scale === scaleMode)
+      );
+    syncScaleBtns();
+    scaleBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (scaleMode === btn.dataset.scale) return;
+        scaleMode = btn.dataset.scale;
+        syncScaleBtns();
+        cancelCutoffAnim(root);
+        refresh();
+      });
+    });
+
     lo.addEventListener("input", () => {
       cancelCutoffAnim(root);
       cutoff.lo = Math.min(Number(lo.value), cutoff.hi - 0.01);
@@ -454,6 +469,53 @@
     const section = root.querySelector(".ft-view.is-active");
     const hasScores = !!section && !!section.querySelector(".ft-token[data-score]");
     wrap.hidden = !hasScores;
+  }
+
+  // Legend for the active view, rendered into the header (not floated in-stream).
+  function updateLegend(root) {
+    const host = root.__legendHost;
+    if (!host) return;
+    host.textContent = "";
+    const model = state.renderModel || {};
+    const view = (model.views || [])[activeViewIndex(root)] || {};
+    const legend = buildLegend(view, state.phase);
+    if (legend) host.appendChild(legend);
+  }
+
+  // Target preview: surface the target span's text in the header so the user
+  // does not have to scroll to the end of the response to see what is traced.
+  function updateTargetPreview(root) {
+    const el = root.__previewEl;
+    if (!el) return;
+    const section = root.querySelector(".ft-view.is-active");
+    const targets = section
+      ? [...section.querySelectorAll(".ft-token.is-target")].map((t) => t.textContent).join("")
+      : "";
+    let text = targets.replace(/\s+/g, " ").trim();
+    if (!text) {
+      el.hidden = true;
+      syncToolbarRows(root);
+      return;
+    }
+    const MAX = 90;
+    // The target usually sits at the end of the answer, so keep the tail.
+    if (text.length > MAX) text = "…" + text.slice(-MAX);
+    el.hidden = false;
+    el.innerHTML =
+      '<span class="ft-target-label">Target</span><span class="ft-target-text"></span>';
+    el.querySelector(".ft-target-text").textContent = text;
+    syncToolbarRows(root);
+  }
+
+  // Collapse the second header row when it has neither a preview nor a slider.
+  function syncToolbarRows(root) {
+    const host = root.__cutoffHost;
+    const preview = root.__previewEl;
+    const row = host && host.closest(".ft-toolbar-row");
+    if (!row) return;
+    const hasCutoff = !!host && host.children.length > 0;
+    const hasPreview = !!preview && !preview.hidden;
+    row.hidden = !hasCutoff && !hasPreview;
   }
 
   function makeToken(token) {
@@ -488,6 +550,7 @@
     root.querySelectorAll(".ft-view").forEach((view) => {
       view.classList.toggle("is-active", Number(view.dataset.viewIndex) === viewIndex);
     });
+    updateLegend(root);
     markSelection(root);
     syncCutoffVisibility(root);
     animateCutoff(root);
@@ -506,7 +569,7 @@
       button.addEventListener("click", () => activateView(root, index));
       tabs.appendChild(button);
     });
-    root.querySelector(".ft-token-toolbar").appendChild(tabs);
+    (root.__tabsHost || root.querySelector(".ft-token-toolbar")).appendChild(tabs);
   }
 
   function renderDocument(model) {
@@ -530,11 +593,37 @@
 
     const toolbar = document.createElement("div");
     toolbar.className = "ft-token-toolbar";
+
+    // Row 1: phase chip + view tabs (left), legend (right).
+    const topRow = document.createElement("div");
+    topRow.className = "ft-toolbar-row";
     const phase = document.createElement("div");
     phase.className = "ft-phase";
     phase.textContent = state.phase;
-    toolbar.appendChild(phase);
+    const tabsHost = document.createElement("div");
+    tabsHost.className = "ft-tabs-host";
+    const legendHost = document.createElement("div");
+    legendHost.className = "ft-legend-host";
+    topRow.append(phase, tabsHost, legendHost);
+
+    // Row 2: target preview (left), cut-off range selector (right).
+    const bottomRow = document.createElement("div");
+    bottomRow.className = "ft-toolbar-row ft-toolbar-row-sub";
+    const previewEl = document.createElement("div");
+    previewEl.className = "ft-target-preview";
+    previewEl.hidden = true;
+    const cutoffHost = document.createElement("div");
+    cutoffHost.className = "ft-cutoff-host";
+    bottomRow.append(previewEl, cutoffHost);
+
+    toolbar.append(topRow, bottomRow);
     root.appendChild(toolbar);
+
+    root.__tabsHost = tabsHost;
+    root.__legendHost = legendHost;
+    root.__previewEl = previewEl;
+    root.__cutoffHost = cutoffHost;
+
     renderTabs(root, model);
 
     (model.views || []).forEach((view, index) => {
@@ -543,12 +632,12 @@
       section.dataset.viewIndex = String(index);
       const stream = document.createElement("div");
       stream.className = "ft-token-stream";
-      const legend = buildLegend(view, state.phase);
-      if (legend) stream.appendChild(legend);
       (view.tokens || []).forEach((token) => stream.appendChild(makeToken(token)));
       section.appendChild(stream);
       root.appendChild(section);
     });
+
+    updateLegend(root);
 
     const tokenGenIndex = (node) => {
       const token = node && node.closest
@@ -600,6 +689,7 @@
       syncCutoffVisibility(root);
       animateCutoff(root);
     }
+    syncToolbarRows(root);
   }
 
   function updateDownload(traceJson) {
@@ -797,10 +887,27 @@
       promptInput.addEventListener("change", tokenizePrompt);
     }
 
-    loadGalleryList();
-    if (promptInput) {
-      tokenizePrompt();
+    startup(promptInput);
+  }
+
+  // On first paint, load the featured example so visitors land on a complete
+  // trace instead of an empty prompt. Fall back to tokenizing the textarea if
+  // the example is unavailable.
+  const DEFAULT_SAMPLE_ID = "preset-default-hotpotqa";
+
+  async function startup(promptInput) {
+    await loadGalleryList();
+    try {
+      const response = await fetch(`/api/gallery/${DEFAULT_SAMPLE_ID}`);
+      if (response.ok) {
+        await loadSample(DEFAULT_SAMPLE_ID);
+        if (els.gallerySelect) els.gallerySelect.value = DEFAULT_SAMPLE_ID;
+        return;
+      }
+    } catch (error) {
+      /* fall through to tokenizing the default prompt */
     }
+    if (promptInput) tokenizePrompt();
   }
 
   window.flashtraceTest = {

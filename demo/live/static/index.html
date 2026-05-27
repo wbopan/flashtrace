@@ -43,12 +43,8 @@
 
       <label class="field">
         <span>Prompt</span>
-        <textarea id="prompt-input" rows="11">Context:
-Paris is the capital of France.
-Berlin is the capital of Germany.
-Madrid is the capital of Spain.
-
-Question: What is the capital of France?</textarea>
+        <textarea id="prompt-input" rows="11">Melanie Richards Griffith (born August 9, 1957) is an American film, stage, and television actress, and film producer.She began her career in the 1970s, appearing in several independent thriller films before achieving mainstream success in the mid-1980s.Born in New York City to actress Tippi Hedren and advertising executive Peter Griffith, she was raised mainly in Los Angeles, where she graduated from the Hollywood Professional School at age sixteen.In 1975, a then seventeen-year-old Griffith appeared opposite Gene Hackman in Arthur Penn's film noir "Night Moves".She later rose to prominence for her role portraying a pornographic actress in Brian De Palma's thriller "Body Double" (1984), which earned her a National Society of Film Critics Award for Best Supporting Actress.Griffith's subsequent performance in the comedy "Something Wild" (1986) garnered critical acclaim before she was cast in 1988's "Working Girl", which earned her a nomination for the Academy Award for Best Actress and won her a Golden Globe.The 1990s saw Griffith in a series of roles which received varying critical reception: she received Golden Globe nominations for her performances in "Buffalo Girls" (1995), and as Marion Davies in "RKO 281" (1999), while also earning a Golden Raspberry Award for Worst Actress for her performances in "Shining Through" (1992), as well as receiving nominations for "Crazy in Alabama" (1999) and John Waters' cult film "Cecil B. Demented" (2000).Other credits include John Schlesinger's "Pacific Heights" (1990), "Milk Money" (1994), the neo-noir film "Mulholland Falls" (1996), as Charlotte Haze in Adrian Lyne's "Lolita" (1997), and "Another Day in Paradise" (1998).She later starred as Barbara Marx in "The Night We Called It a Day" (2003), and spent the majority of the 2000s appearing on such television series as "Nip/TuckRaising Hope", and "Hawaii Five-0".After acting on stage in London, in 2003 she made her Broadway debut in a revival of the musical "Chicago", receiving celebratory reviews.In the 2010s, Griffith returned to film, starring opposite then-husband Antonio Banderas in the science fiction film "Autómata" (2014) and as an acting coach in James Franco's "The Disaster Artist" (2017). Dakota Mayi Johnson (born October 4, 1989) is an American actress and model.The daughter of actors Don Johnson and Melanie Griffith, she made her film debut at age ten with a minor appearance in "Crazy in Alabama" (1999), a dark comedy film starring her mother.Johnson was discouraged from pursuing acting further until she completed high school, after which she began auditioning for roles in Los Angeles.She was cast in a minor part in "The Social Network" (2010), and subsequently had supporting roles in the comedy "21 Jump Street", the independent comedy "Goats", and the romantic comedy "The Five-Year Engagement" (all 2012).In 2015, Johnson had her first starring role as Anastasia Steele in the "Fifty Shades" film series (2015–18).For her performance in the series, she received a BAFTA Rising Star Award nomination in 2016.Following "Fifty Shades", Johnson appeared in the biographical crime film "Black Mass" (2015) and Luca Guadagnino's drama "A Bigger Splash" (2015).She reunited with Guadagnino, portraying the lead role in "Suspiria" (2018), a supernatural horror film based on the 1977 film by Dario Argento.That same year, she appeared in an ensemble cast in the thriller film "Bad Times at the El Royale" (2018).In 2019, Johnson had a starring role in the psychological horror film "Wounds" and the comedy-drama film "The Peanut Butter Falcon".
+Who is the maternal grandmother of Dakota Johnson?</textarea>
       </label>
 
       <label class="field">
@@ -84,6 +80,7 @@ Question: What is the capital of France?</textarea>
           <button id="trace-button" type="button" class="primary accent">Trace</button>
         </div>
         <button id="save-button" type="button" class="ghost" hidden>Save current trace to samples</button>
+        <button id="show-code-button" type="button" class="ghost">&lt;/&gt; Show code</button>
       </div>
 
       <div id="gallery-save-form" class="gallery-save-form" hidden>
@@ -102,6 +99,113 @@ Question: What is the capital of France?</textarea>
       <p id="status-line" class="status-line">Ready.</p>
     </section>
   </main>
+
+  <div id="code-modal" class="code-modal" hidden>
+    <div class="code-overlay" id="code-overlay"></div>
+    <div class="code-dialog glass" role="dialog" aria-modal="true" aria-label="Minimal code">
+      <header class="code-header">
+        <div class="code-title">
+          <h2>Minimal code</h2>
+          <span class="code-lang">trace.py</span>
+        </div>
+        <button id="code-close" type="button" class="code-close" aria-label="Close">&times;</button>
+      </header>
+      <pre class="code-block"><code id="code-content" class="language-python"></code></pre>
+      <footer class="code-footer">
+        <span class="code-hint">Reproduces the current model · prompt · method · target span.</span>
+        <button id="code-copy" type="button" class="primary">Copy</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.10.0/highlight.min.js"></script>
+  <script>
+    // "Show code" — self-contained; builds a runnable FlashTrace snippet from the
+    // current control values. Reads the live target span from app.js's test hook.
+    (() => {
+      const btn = document.getElementById("show-code-button");
+      const modal = document.getElementById("code-modal");
+      const overlay = document.getElementById("code-overlay");
+      const closeBtn = document.getElementById("code-close");
+      const copyBtn = document.getElementById("code-copy");
+      const codeEl = document.getElementById("code-content");
+      if (!btn || !modal) return;
+
+      const triple = (s) =>
+        '"""' + String(s).replace(/\\/g, "\\\\").replace(/"""/g, '\\"\\"\\"') + '"""';
+
+      function buildSnippet() {
+        const model = (document.getElementById("model-input")?.value || "Qwen/Qwen3-4B-Thinking-2507").trim();
+        const prompt = document.getElementById("prompt-input")?.value || "";
+        const method = document.getElementById("method-select")?.value || "flashtrace";
+        const hops = Number(document.getElementById("hops-input")?.value) || 1;
+        const maxNew = Number(document.getElementById("max-new-tokens-input")?.value) || 8096;
+        let span = "(0, 0)";
+        try {
+          const m = /^(\d+):(\d+)$/.exec(window.flashtraceTest?.getState?.().targetSpan || "");
+          if (m) span = `(${m[1]}, ${m[2]})`;
+        } catch (_e) {}
+        return [
+          "from flashtrace import FlashTrace, load_model_and_tokenizer",
+          "",
+          `MODEL = ${JSON.stringify(model)}`,
+          `PROMPT = ${triple(prompt)}`,
+          "",
+          "# 1. Load the model (eager attention lets FlashTrace read attention weights)",
+          'model, tokenizer = load_model_and_tokenizer(MODEL, device_map="auto", dtype="auto")',
+          "",
+          "# 2. Generate an answer using the chat template",
+          'messages = [{"role": "user", "content": PROMPT}]',
+          "input_ids = tokenizer.apply_chat_template(",
+          '    messages, add_generation_prompt=True, return_tensors="pt"',
+          ").to(model.device)",
+          `generated = model.generate(input_ids, max_new_tokens=${maxNew})`,
+          "answer = tokenizer.decode(generated[0, input_ids.shape[1]:], skip_special_tokens=True)",
+          "",
+          "# 3. Trace which prompt tokens drove a span of the answer",
+          "#    output_span = (start, end) token range inside `answer`",
+          "tracer = FlashTrace(model, tokenizer, use_chat_template=True)",
+          "result = tracer.trace(",
+          "    prompt=PROMPT,",
+          "    target=answer,",
+          `    output_span=${span},`,
+          `    method=${JSON.stringify(method)},`,
+          `    hops=${hops},`,
+          ")",
+          "",
+          "# 4. Inspect the most influential prompt tokens",
+          "for item in result.topk_inputs(10):",
+          '    print(f"{item.score:+.4f}\\t{item.token!r}")',
+        ].join("\n");
+      }
+
+      const open = () => {
+        const code = buildSnippet();
+        if (window.hljs) {
+          codeEl.innerHTML = window.hljs.highlight(code, { language: "python" }).value;
+        } else {
+          codeEl.textContent = code;
+        }
+        modal.hidden = false;
+      };
+      const close = () => {
+        modal.hidden = true;
+      };
+      btn.addEventListener("click", open);
+      closeBtn.addEventListener("click", close);
+      overlay.addEventListener("click", close);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !modal.hidden) close();
+      });
+      copyBtn.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(codeEl.textContent);
+          copyBtn.textContent = "Copied!";
+          setTimeout(() => (copyBtn.textContent = "Copy"), 1500);
+        } catch (_e) {}
+      });
+    })();
+  </script>
 
   <script type="module">
     // Motion (motion.dev) — progressive enhancement. The UI is fully usable
