@@ -156,6 +156,306 @@
     return legend;
   }
 
+  // ---- Attribution weight visualisation (tooltip + cut-off slider) ----
+  // Cut-off is a normalised [lo, hi] window shared across trace views; tokens
+  // are recoloured client-side so long-tail outliers (e.g. "?") can be clipped.
+  const cutoff = { lo: 0, hi: 1 };
+  const EMPTY_COLOR = "rgba(245,245,245,0.75)";
+
+  function clamp(value, low, high) {
+    return Math.max(low, Math.min(high, value));
+  }
+
+  // Mirror flashtrace.viz._score_color (prompt, warm) and
+  // token_document._generation_color (generation, blue).
+  function warmColor(ratio) {
+    const g = Math.round(246 - 105 * ratio);
+    const b = Math.round(226 - 170 * ratio);
+    return `rgba(255,${g},${b},${(0.22 + 0.58 * ratio).toFixed(3)})`;
+  }
+
+  function blueColor(ratio) {
+    const r = Math.round(226 - 158 * ratio);
+    const g = Math.round(240 - 86 * ratio);
+    return `rgba(${r},${g},255,${(0.22 + 0.58 * ratio).toFixed(3)})`;
+  }
+
+  function sectionMaxes(section) {
+    if (section.__maxes) return section.__maxes;
+    let prompt = 0;
+    let gen = 0;
+    section.querySelectorAll(".ft-token[data-score]").forEach((tok) => {
+      const score = Math.abs(Number(tok.dataset.score));
+      if (!Number.isFinite(score)) return;
+      if (tok.dataset.region === "generation") gen = Math.max(gen, score);
+      else prompt = Math.max(prompt, score);
+    });
+    section.__maxes = { prompt, gen };
+    return section.__maxes;
+  }
+
+  function tokenNorm(tok, maxes) {
+    const score = Number(tok.dataset.score);
+    if (!Number.isFinite(score)) return null;
+    const max = tok.dataset.region === "generation" ? maxes.gen : maxes.prompt;
+    if (!(max > 0)) return null;
+    return Math.abs(score) / max;
+  }
+
+  // Snapshot the scored tokens of a section so the bloom animation can repaint
+  // each frame without re-querying the DOM.
+  function collectScored(section) {
+    const maxes = sectionMaxes(section);
+    const out = [];
+    section.querySelectorAll(".ft-token[data-score]").forEach((el) => {
+      out.push({ el, region: el.dataset.region, norm: tokenNorm(el, maxes) });
+    });
+    return out;
+  }
+
+  function paint(entries) {
+    const span = Math.max(1e-9, cutoff.hi - cutoff.lo);
+    entries.forEach((entry) => {
+      if (entry.norm === null) {
+        entry.el.style.background = EMPTY_COLOR;
+        return;
+      }
+      const ratio = clamp((entry.norm - cutoff.lo) / span, 0, 1);
+      entry.el.style.background =
+        entry.region === "generation" ? blueColor(ratio) : warmColor(ratio);
+    });
+  }
+
+  function recolorSection(section) {
+    if (section) paint(collectScored(section));
+  }
+
+  // ---- Hover tooltip ----
+  let tooltipEl = null;
+
+  function ensureTooltip() {
+    if (!tooltipEl) {
+      tooltipEl = document.createElement("div");
+      tooltipEl.className = "ft-tooltip";
+      tooltipEl.hidden = true;
+      document.body.appendChild(tooltipEl);
+    }
+    return tooltipEl;
+  }
+
+  function showTooltip(tok) {
+    const tip = ensureTooltip();
+    const score = Number(tok.dataset.score);
+    const section = tok.closest(".ft-view");
+    const maxes = section ? sectionMaxes(section) : { prompt: 0, gen: 0 };
+    const norm = section ? tokenNorm(tok, maxes) : null;
+    const pct = norm === null ? "—" : `${(norm * 100).toFixed(1)}%`;
+    tip.innerHTML =
+      `<span class="ft-tooltip-score">${score.toPrecision(4)}</span>` +
+      `<span class="ft-tooltip-meta">weight ${pct} of max</span>`;
+    tip.hidden = false;
+  }
+
+  function moveTooltip(event) {
+    if (!tooltipEl || tooltipEl.hidden) return;
+    const pad = 14;
+    let x = event.clientX + pad;
+    let y = event.clientY + pad;
+    const rect = tooltipEl.getBoundingClientRect();
+    if (x + rect.width > window.innerWidth) x = event.clientX - rect.width - pad;
+    if (y + rect.height > window.innerHeight) y = event.clientY - rect.height - pad;
+    tooltipEl.style.left = `${x}px`;
+    tooltipEl.style.top = `${y}px`;
+  }
+
+  function hideTooltip() {
+    if (tooltipEl) tooltipEl.hidden = true;
+  }
+
+  function bindTooltip(root) {
+    root.addEventListener("mouseover", (event) => {
+      const tok = event.target.closest?.(".ft-token[data-score]");
+      if (tok) showTooltip(tok);
+    });
+    root.addEventListener("mousemove", moveTooltip);
+    root.addEventListener("mouseout", (event) => {
+      const to = event.relatedTarget;
+      if (!to || !to.closest?.(".ft-token[data-score]")) hideTooltip();
+    });
+  }
+
+  // ---- Cut-off slider with weight-distribution histogram ----
+  const HIST_BINS = 44;
+
+  function histogramData(section) {
+    const maxes = sectionMaxes(section);
+    const counts = new Array(HIST_BINS).fill(0);
+    section.querySelectorAll(".ft-token[data-score]").forEach((tok) => {
+      const norm = tokenNorm(tok, maxes);
+      if (norm === null) return;
+      counts[Math.min(HIST_BINS - 1, Math.floor(norm * HIST_BINS))] += 1;
+    });
+    let peak = 1;
+    counts.forEach((c) => {
+      peak = Math.max(peak, Math.sqrt(c));
+    });
+    return { counts, peak };
+  }
+
+  function renderHistogram(canvas, data) {
+    const width = canvas.clientWidth || 220;
+    const height = canvas.clientHeight || 38;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    const { counts, peak } = data;
+    const barW = width / HIST_BINS;
+    for (let i = 0; i < HIST_BINS; i += 1) {
+      if (!counts[i]) continue;
+      const h = (Math.sqrt(counts[i]) / peak) * (height - 2);
+      const center = (i + 0.5) / HIST_BINS;
+      const inRange = center >= cutoff.lo && center <= cutoff.hi;
+      ctx.fillStyle = inRange ? "rgba(14,148,164,0.55)" : "rgba(20,60,80,0.18)";
+      ctx.fillRect(i * barW + 0.5, height - h, Math.max(1, barW - 1), h);
+    }
+  }
+
+  function setCutoffUI(root) {
+    const e = root.__cutoffEls;
+    if (!e) return;
+    e.fill.style.left = `${cutoff.lo * 100}%`;
+    e.fill.style.width = `${(cutoff.hi - cutoff.lo) * 100}%`;
+    e.lo.value = String(cutoff.lo);
+    e.hi.value = String(cutoff.hi);
+    e.readout.textContent = `${Math.round(cutoff.lo * 100)}–${Math.round(cutoff.hi * 100)}%`;
+  }
+
+  function cancelCutoffAnim(root) {
+    if (root.__cutoffAnim) {
+      cancelAnimationFrame(root.__cutoffAnim);
+      root.__cutoffAnim = null;
+    }
+  }
+
+  // Bloom: open the cut-off window (hi: 0 -> 1, lo pinned at 0) over 10s. The
+  // sweep advances by token *rank*, not by value or mass — at progress p the
+  // window covers the first p of tokens ordered by ascending weight (i.e. hi
+  // follows the empirical quantile of normalised weights). With a long tail the
+  // many small-weight tokens are dense at the low end (slow start) and the few
+  // large ones are sparse near 1 (fast finish), instead of stalling on the one
+  // token that hoards most of the mass.
+  function animateCutoff(root) {
+    cancelCutoffAnim(root);
+    const section = root.querySelector(".ft-view.is-active");
+    if (!section || !section.querySelector(".ft-token[data-score]")) return;
+    const entries = collectScored(section);
+    const histData = histogramData(section);
+    const els = root.__cutoffEls;
+    cutoff.lo = 0;
+    const frame = () => {
+      setCutoffUI(root);
+      paint(entries);
+      if (els) renderHistogram(els.hist, histData);
+    };
+
+    // Normalised weights sorted ascending; hi is their empirical quantile.
+    const norms = entries
+      .filter((e) => e.norm !== null)
+      .map((e) => e.norm)
+      .sort((a, b) => a - b);
+    const n = norms.length;
+    const hiForProgress = (t) => {
+      if (!n) return t;
+      const x = t * n; // expected number of tokens covered
+      if (x <= 0) return 0;
+      if (x >= n) return norms[n - 1];
+      const i = Math.floor(x);
+      const lower = i > 0 ? norms[i - 1] : 0;
+      return lower + (x - i) * (norms[i] - lower);
+    };
+
+    const reduce =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      cutoff.hi = 1;
+      frame();
+      return;
+    }
+    const duration = 10000;
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      cutoff.hi = Math.max(0.001, Math.min(1, hiForProgress(t)));
+      frame();
+      if (t < 1) {
+        root.__cutoffAnim = requestAnimationFrame(step);
+      } else {
+        cutoff.hi = 1;
+        frame();
+        root.__cutoffAnim = null;
+      }
+    };
+    cutoff.hi = 0.001;
+    frame();
+    root.__cutoffAnim = requestAnimationFrame(step);
+  }
+
+  function buildCutoff(root) {
+    const host = root.__cutoffHost || root.querySelector(".ft-token-toolbar");
+    if (!host) return;
+    const wrap = document.createElement("div");
+    wrap.className = "ft-cutoff";
+    wrap.innerHTML =
+      '<span class="ft-cutoff-label">Cut-off</span>' +
+      '<div class="ft-cutoff-track">' +
+      '<canvas class="ft-cutoff-hist"></canvas>' +
+      '<div class="ft-cutoff-fill"></div>' +
+      '<input type="range" class="ft-cutoff-lo" min="0" max="1" step="0.005" value="0">' +
+      '<input type="range" class="ft-cutoff-hi" min="0" max="1" step="0.005" value="1">' +
+      "</div>" +
+      '<span class="ft-cutoff-readout">0–100%</span>';
+    host.appendChild(wrap);
+
+    const lo = wrap.querySelector(".ft-cutoff-lo");
+    const hi = wrap.querySelector(".ft-cutoff-hi");
+    const fill = wrap.querySelector(".ft-cutoff-fill");
+    const hist = wrap.querySelector(".ft-cutoff-hist");
+    const readout = wrap.querySelector(".ft-cutoff-readout");
+    root.__cutoffEls = { lo, hi, fill, hist, readout };
+    root.__cutoffWrap = wrap;
+
+    const refresh = () => {
+      setCutoffUI(root);
+      const section = root.querySelector(".ft-view.is-active");
+      if (section) {
+        renderHistogram(hist, histogramData(section));
+        recolorSection(section);
+      }
+    };
+
+    lo.addEventListener("input", () => {
+      cancelCutoffAnim(root);
+      cutoff.lo = Math.min(Number(lo.value), cutoff.hi - 0.01);
+      refresh();
+    });
+    hi.addEventListener("input", () => {
+      cancelCutoffAnim(root);
+      cutoff.hi = Math.max(Number(hi.value), cutoff.lo + 0.01);
+      refresh();
+    });
+  }
+
+  function syncCutoffVisibility(root) {
+    const wrap = root.__cutoffWrap;
+    if (!wrap) return;
+    const section = root.querySelector(".ft-view.is-active");
+    const hasScores = !!section && !!section.querySelector(".ft-token[data-score]");
+    wrap.hidden = !hasScores;
+  }
+
   function makeToken(token) {
     const span = document.createElement("span");
     span.className = [
@@ -189,6 +489,8 @@
       view.classList.toggle("is-active", Number(view.dataset.viewIndex) === viewIndex);
     });
     markSelection(root);
+    syncCutoffVisibility(root);
+    animateCutoff(root);
   }
 
   function renderTabs(root, model) {
@@ -287,8 +589,17 @@
       applyDrag(tokenGenIndex(event.target));
     });
 
+    bindTooltip(root);
+    hideTooltip();
+
     host.appendChild(root);
     markSelection(root);
+
+    if (state.phase === "traced") {
+      buildCutoff(root);
+      syncCutoffVisibility(root);
+      animateCutoff(root);
+    }
   }
 
   function updateDownload(traceJson) {
@@ -310,68 +621,39 @@
     return (question || lines[0] || "Untitled").slice(0, 80);
   }
 
-  function galleryCard(sample) {
-    const card = document.createElement("div");
-    card.className = "gallery-card";
-    card.dataset.id = sample.id;
-    const del = document.createElement("button");
-    del.type = "button";
-    del.className = "gallery-card-delete";
-    del.textContent = "×";
-    del.addEventListener("click", (event) => {
-      event.stopPropagation();
-      deleteSample(sample.id);
+  function renderGalleryOptions(samples) {
+    const select = els.gallerySelect;
+    if (!select) return;
+    const current = select.value;
+    select.textContent = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = samples.length ? "Load a saved sample…" : "No saved samples yet";
+    select.appendChild(placeholder);
+    samples.forEach((sample) => {
+      const option = document.createElement("option");
+      option.value = sample.id;
+      const title = sample.title || "(untitled)";
+      option.textContent = `${title} · ${sample.method} · ${sample.hops} hop`;
+      select.appendChild(option);
     });
-    const title = document.createElement("div");
-    title.className = "gallery-card-title";
-    title.textContent = sample.title || "(untitled)";
-    const meta = document.createElement("div");
-    meta.className = "gallery-card-meta";
-    meta.textContent = `${sample.model} · ${sample.method} · ${sample.hops} hop`;
-    const preview = document.createElement("div");
-    preview.className = "gallery-card-preview";
-    preview.textContent = sample.prompt_preview || "";
-    card.append(del, title, meta, preview);
-    card.addEventListener("click", () => loadSample(sample.id));
-    return card;
-  }
-
-  function renderGalleryList(samples) {
-    const list = els.galleryList;
-    if (!list) return;
-    list.textContent = "";
-    if (!samples.length) {
-      const empty = document.createElement("p");
-      empty.className = "gallery-empty";
-      empty.textContent = "No saved samples yet.";
-      list.appendChild(empty);
-      return;
+    select.disabled = !samples.length;
+    if (current && Array.from(select.options).some((o) => o.value === current)) {
+      select.value = current;
     }
-    samples.forEach((sample) => list.appendChild(galleryCard(sample)));
   }
 
   async function loadGalleryList() {
     try {
       const response = await fetch("/api/gallery");
       const body = await response.json();
-      renderGalleryList(body.samples || []);
+      renderGalleryOptions(body.samples || []);
     } catch (error) {
       setStatus(error.message);
     }
   }
 
-  function openGallery() {
-    if (els.galleryDrawer) els.galleryDrawer.hidden = false;
-    loadGalleryList();
-  }
-
-  function closeGallery() {
-    if (els.galleryDrawer) els.galleryDrawer.hidden = true;
-    if (els.gallerySaveForm) els.gallerySaveForm.hidden = true;
-  }
-
   function openSaveForm() {
-    openGallery();
     if (els.gallerySaveForm) els.gallerySaveForm.hidden = false;
     if (els.galleryTitleInput) {
       els.galleryTitleInput.value = defaultTitle();
@@ -399,7 +681,7 @@
         trace_json: state.traceJson,
       });
       if (els.gallerySaveForm) els.gallerySaveForm.hidden = true;
-      setStatus("Saved to gallery.");
+      setStatus("Saved to samples.");
       loadGalleryList();
     } catch (error) {
       setStatus(error.message);
@@ -421,17 +703,7 @@
       state.traceJson = sample.trace_json || null;
       renderDocument(sample.render_model);
       if (sample.trace_json) updateDownload(sample.trace_json);
-      closeGallery();
       setStatus(`Loaded "${sample.title}".`);
-    } catch (error) {
-      setStatus(error.message);
-    }
-  }
-
-  async function deleteSample(id) {
-    try {
-      await fetch(`/api/gallery/${id}`, { method: "DELETE" });
-      loadGalleryList();
     } catch (error) {
       setStatus(error.message);
     }
@@ -503,19 +775,18 @@
     els.generateButton = $("generate-button");
     els.traceButton = $("trace-button");
     els.downloadLink = $("download-link");
-    els.galleryButton = $("gallery-button");
+    els.gallerySelect = $("gallery-select");
     els.saveButton = $("save-button");
-    els.galleryDrawer = $("gallery-drawer");
-    els.galleryList = $("gallery-list");
     els.gallerySaveForm = $("gallery-save-form");
     els.galleryTitleInput = $("gallery-title-input");
 
     els.generateButton?.addEventListener("click", generate);
     els.traceButton?.addEventListener("click", trace);
-    els.galleryButton?.addEventListener("click", openGallery);
     els.saveButton?.addEventListener("click", openSaveForm);
-    $("gallery-close")?.addEventListener("click", closeGallery);
-    $("gallery-overlay")?.addEventListener("click", closeGallery);
+    els.gallerySelect?.addEventListener("change", (event) => {
+      const id = event.target.value;
+      if (id) loadSample(id);
+    });
     $("gallery-save-confirm")?.addEventListener("click", confirmSave);
     $("gallery-save-cancel")?.addEventListener("click", () => {
       if (els.gallerySaveForm) els.gallerySaveForm.hidden = true;
@@ -526,6 +797,7 @@
       promptInput.addEventListener("change", tokenizePrompt);
     }
 
+    loadGalleryList();
     if (promptInput) {
       tokenizePrompt();
     }
@@ -533,7 +805,7 @@
 
   window.flashtraceTest = {
     renderDocument,
-    renderGalleryList,
+    renderGalleryOptions,
     loadSample,
     getState: () => ({ ...state }),
     setState: (patch) => Object.assign(state, patch || {}),

@@ -62,14 +62,19 @@ def load_sample(gallery_dir: Path, sample_id: str) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def save_sample(gallery_dir: Path, record: dict[str, Any]) -> dict[str, Any]:
+def save_sample(
+    gallery_dir: Path, record: dict[str, Any], sample_id: str | None = None
+) -> dict[str, Any]:
     missing = [field for field in _REQUIRED_FIELDS if field not in record]
     if missing:
         raise ValueError(f"Missing fields: {', '.join(missing)}.")
     directory = Path(gallery_dir)
     directory.mkdir(parents=True, exist_ok=True)
     now = datetime.now(timezone.utc)
-    sample_id = f"{now.strftime('%Y%m%dT%H%M%S')}-{secrets.token_hex(4)}"
+    if sample_id is not None:
+        sample_id = _validate_id(sample_id)
+    else:
+        sample_id = f"{now.strftime('%Y%m%dT%H%M%S')}-{secrets.token_hex(4)}"
     stored = dict(record)
     stored["id"] = sample_id
     stored["created_at"] = now.isoformat()

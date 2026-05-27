@@ -25,7 +25,8 @@ repomix-output.xml
 trace.json
 trace.html
 demo/live/out/
-demo/live/gallery_store/
+demo/live/gallery_store/*
+!demo/live/gallery_store/preset-*.json
 *.trace.json
 *.trace.html
 exp/**/output/

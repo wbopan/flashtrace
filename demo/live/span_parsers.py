@@ -11,6 +11,19 @@ _ANSWER_RE = re.compile(r"<answer>(.*?)</answer>", re.DOTALL | re.IGNORECASE)
 # (e.g., \boxed{\frac{1}{2}}); such inputs fall through to parse_last_paragraph.
 _BOXED_RE = re.compile(r"\\boxed\{([^{}]*)\}")
 _SENT_END_RE = re.compile(r"[.!?](?=\s|$)")
+_THINK_CLOSE_RE = re.compile(r"</think\s*>", re.IGNORECASE)
+# A trailing meta block the model sometimes appends after the answer, e.g.
+# "*Note: ...*" or "Note: ...". Such blocks are commentary, not the answer.
+_NOTE_BLOCK_RE = re.compile(r"^[*_>\s]*note\b", re.IGNORECASE)
+# Conversational sign-offs reasoning models append after the answer, e.g.
+# "I've memorized this for your quiz!" or "Hope this helps! 😊". These are not
+# the answer either, so they should not capture the target span.
+_CLOSER_RE = re.compile(
+    r"\b(i['’]ve memorized|let me know|ready to (?:test|quiz|be quizzed)"
+    r"|feel free to|hope (?:this|that|it) helps|happy to help)\b",
+    re.IGNORECASE,
+)
+_TEMPLATE_TAIL_RE = re.compile(r"(?:<\|im_end\|>|<\|endoftext\|>)+\s*$")
 
 
 @dataclass(frozen=True)
@@ -62,6 +75,58 @@ def parse_boxed_answer(text: str) -> Optional[ParseResult]:
     )
 
 
+def _block_spans(text: str, base: int = 0) -> list[tuple[int, int]]:
+    """Char spans of blank-line-separated, non-empty blocks (trailing ws trimmed)."""
+    spans: list[tuple[int, int]] = []
+    for match in re.finditer(r"\S.*?(?=\n[ \t]*\n|\Z)", text, re.DOTALL):
+        block = text[match.start():match.end()]
+        end = match.start() + len(block.rstrip())
+        spans.append((base + match.start(), base + end))
+    return spans
+
+
+def parse_think_terminated(text: str) -> Optional[ParseResult]:
+    """Qwen-style output: reasoning, a closing </think>, then the final answer.
+
+    Thinking is everything before the last </think>; the answer is the final
+    non-note block after it, with any trailing chat-template marker dropped so
+    the target lands on the answer rather than an appended "*Note: ...*" aside.
+    """
+    closes = list(_THINK_CLOSE_RE.finditer(text))
+    if not closes:
+        return None
+    close = closes[-1]
+
+    pre = text[: close.start()]
+    pre_stripped = pre.strip()
+    thinking_span: Optional[tuple[int, int]] = None
+    if pre_stripped:
+        start = pre.find(pre_stripped)
+        thinking_span = (start, start + len(pre_stripped))
+
+    region = text[close.end():]
+    region = _TEMPLATE_TAIL_RE.sub("", region)
+    blocks = _block_spans(region, base=close.end())
+    if not blocks:
+        return None
+    # Drop trailing commentary blocks ("Note: ..." or a chatty sign-off) so the
+    # answer block remains the target.
+    def _is_meta(block: str) -> bool:
+        return bool(_NOTE_BLOCK_RE.match(block) or _CLOSER_RE.search(block))
+
+    while len(blocks) > 1 and _is_meta(text[blocks[-1][0]:blocks[-1][1]]):
+        blocks.pop()
+    answer_start, answer_end = blocks[-1]
+    answer_text = _TEMPLATE_TAIL_RE.sub("", text[answer_start:answer_end])
+    answer_end = answer_start + len(answer_text)
+
+    return ParseResult(
+        thinking_char_span=thinking_span,
+        answer_char_span=(answer_start, answer_end),
+        parser="think_terminated",
+    )
+
+
 def parse_last_paragraph(text: str) -> Optional[ParseResult]:
     if not text.strip():
         return None
@@ -99,6 +164,7 @@ def parse_last_paragraph(text: str) -> Optional[ParseResult]:
 _PARSER_CHAIN: list[Callable[[str], Optional[ParseResult]]] = [
     parse_think_answer,
     parse_boxed_answer,
+    parse_think_terminated,
     parse_last_paragraph,
 ]
 

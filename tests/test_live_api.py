@@ -406,14 +406,12 @@ def test_static_frontend_wires_gallery_and_save():
         encoding="utf-8"
     )
 
-    assert "gallery-button" in index
     assert "save-button" in index
-    assert "gallery-drawer" in index
-    assert "gallery-list" in index
+    assert "gallery-select" in index
     assert "gallery-title-input" in index
 
     assert "/api/gallery" in app_js
-    assert "function openGallery" in app_js
+    assert "function renderGalleryOptions" in app_js
     assert "function loadSample" in app_js
     assert "function confirmSave" in app_js
     # Save button only shows in the traced phase.

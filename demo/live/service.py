@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import gc
 import os
 import sys
+import time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -34,11 +36,83 @@ Madrid is the capital of Spain.
 Question: What is the capital of France?"""
 MAX_PROMPT_CHARS = int(os.environ.get("FLASHTRACE_DEMO_MAX_PROMPT_CHARS", "4000"))
 
+# Model objects live on the GPU and are evicted when idle; tokenizers are
+# CPU-only and stay cached so the prompt view keeps working without the model.
+# All model load / inference / unload paths are funneled through the demo's
+# single-worker executor, which serializes them — so no extra lock is needed.
 _MODEL_CACHE: dict[tuple[str, str, str], tuple[object, object]] = {}
+_TOKENIZER_CACHE: dict[str, object] = {}
+_loaded_model_key: tuple[str, str, str] | None = None
+_last_active_at: float | None = None
+
+
+def _touch_active() -> None:
+    global _last_active_at
+    _last_active_at = time.monotonic()
+
+
+def _free_cuda_memory() -> None:
+    gc.collect()
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:
+        pass
 
 
 def clear_model_cache() -> None:
+    """Drop every cached model and tokenizer and free GPU memory."""
+    global _loaded_model_key, _last_active_at
     _MODEL_CACHE.clear()
+    _TOKENIZER_CACHE.clear()
+    _loaded_model_key = None
+    _last_active_at = None
+    _free_cuda_memory()
+
+
+def unload_model() -> bool:
+    """Evict the loaded model from GPU memory; keep tokenizers cached.
+
+    Returns True if a model was actually resident and got unloaded.
+    """
+    global _loaded_model_key, _last_active_at
+    had_model = bool(_MODEL_CACHE)
+    _MODEL_CACHE.clear()
+    _loaded_model_key = None
+    _last_active_at = None
+    if had_model:
+        _free_cuda_memory()
+    return had_model
+
+
+def is_model_loaded() -> bool:
+    return bool(_MODEL_CACHE)
+
+
+def should_unload(idle_timeout: float) -> bool:
+    """Whether an idle model has exceeded the unload timeout."""
+    if idle_timeout <= 0 or not _MODEL_CACHE or _last_active_at is None:
+        return False
+    return (time.monotonic() - _last_active_at) >= idle_timeout
+
+
+def model_status(idle_timeout: float | None = None) -> dict[str, Any]:
+    loaded = bool(_MODEL_CACHE)
+    idle_seconds = None
+    seconds_until_unload = None
+    if loaded and _last_active_at is not None:
+        idle_seconds = max(0.0, time.monotonic() - _last_active_at)
+        if idle_timeout is not None and idle_timeout > 0:
+            seconds_until_unload = max(0.0, idle_timeout - idle_seconds)
+    return {
+        "loaded": loaded,
+        "model": _loaded_model_key[0] if _loaded_model_key else None,
+        "idle_seconds": idle_seconds,
+        "idle_timeout": idle_timeout,
+        "seconds_until_unload": seconds_until_unload,
+    }
 
 
 def parse_optional_span(value: str | None) -> tuple[int, int] | None:
@@ -73,9 +147,39 @@ def _load_cached_model(
 
         loader = load_model_and_tokenizer
     cache_key = (model_name, device_map, dtype)
+    global _loaded_model_key
     if cache_key not in _MODEL_CACHE:
         _MODEL_CACHE[cache_key] = loader(model_name, device_map=device_map, dtype=dtype)
+        _loaded_model_key = cache_key
+        # The model loader also yields a tokenizer; reuse it for prompt views.
+        _TOKENIZER_CACHE.setdefault(model_name, _MODEL_CACHE[cache_key][1])
+    _touch_active()
     return _MODEL_CACHE[cache_key]
+
+
+def _load_cached_tokenizer(
+    model_name: str,
+    *,
+    device_map: str,
+    dtype: str,
+    tokenizer_loader: Callable | None = None,
+    loader: Callable | None = None,
+):
+    """Load just the tokenizer (CPU only) so prompt tokenization never touches
+    the GPU. Falls back to the injected model ``loader`` for tests/back-compat.
+    """
+    if model_name in _TOKENIZER_CACHE:
+        return _TOKENIZER_CACHE[model_name]
+    if tokenizer_loader is not None:
+        tokenizer = tokenizer_loader(model_name)
+    elif loader is not None:
+        _model, tokenizer = loader(model_name, device_map=device_map, dtype=dtype)
+    else:
+        from transformers import AutoTokenizer
+
+        tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    _TOKENIZER_CACHE[model_name] = tokenizer
+    return tokenizer
 
 
 def _format_span(span: tuple[int, int] | None) -> str:
@@ -153,10 +257,17 @@ def run_prompt_document_phase(
     device_map: str,
     dtype: str,
     loader: Callable | None = None,
+    tokenizer_loader: Callable | None = None,
 ) -> dict[str, Any]:
     model_id, prompt_text = _validate_model_and_prompt(model_name, prompt)
-    _model, tokenizer = _load_cached_model(
-        model_id, device_map=device_map, dtype=dtype, loader=loader
+    # Tokenization only needs the tokenizer, so browsing the prompt view never
+    # pulls the model onto the GPU (keeps it cold until Generate/Trace).
+    tokenizer = _load_cached_tokenizer(
+        model_id,
+        device_map=device_map,
+        dtype=dtype,
+        tokenizer_loader=tokenizer_loader,
+        loader=loader,
     )
     prompt_records = _build_prompt_records(prompt_text, tokenizer)
     return {
@@ -210,6 +321,7 @@ def run_generate_document_phase(
         status += " Reasoning span was outside the attributable generation range and was dropped."
     if target_span_tuple is None:
         status += " Trace is disabled because there are no selectable generation tokens."
+    _touch_active()
     return {
         "render_model": document,
         "generated_text": generated_text,
@@ -289,6 +401,7 @@ def run_trace_document_phase(
         )
     else:
         status = f"Trace complete with Select target and Aggregate views for {method}."
+    _touch_active()
     return {
         "render_model": document,
         "trace_json": result.to_dict(),

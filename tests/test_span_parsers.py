@@ -7,6 +7,7 @@ from demo.live.span_parsers import (
     parse_boxed_answer,
     parse_last_paragraph,
     parse_think_answer,
+    parse_think_terminated,
     run_parser_chain,
 )
 
@@ -117,6 +118,56 @@ def test_run_parser_chain_raises_on_empty_input():
 
     with pytest.raises(ValueError, match="No parser produced"):
         run_parser_chain("   \n\n  ")
+
+
+def test_think_terminated_targets_answer_after_think_close():
+    text = "long reasoning here.</think>\n\n**Answer: Martha Coolidge**.<|im_end|>"
+
+    result = parse_think_terminated(text)
+
+    assert result is not None
+    assert result.parser == "think_terminated"
+    # answer span lands on the answer, with the template marker stripped
+    assert text[result.answer_char_span[0] : result.answer_char_span[1]] == "**Answer: Martha Coolidge**."
+    assert result.thinking_char_span is not None
+    assert text[result.thinking_char_span[0] : result.thinking_char_span[1]] == "long reasoning here."
+
+
+def test_think_terminated_drops_trailing_note_block():
+    # The model appends a "*Note: ...*" aside after the answer; the target must
+    # land on the answer block, not the note.
+    text = (
+        "reasoning</think>\n\n"
+        "Thus, the answer is **Ringo Starr**.\n\n"
+        "*Note: this giallo background is irrelevant to the answer.*"
+    )
+
+    result = run_parser_chain(text)
+
+    assert result.parser == "think_terminated"
+    assert text[result.answer_char_span[0] : result.answer_char_span[1]] == "Thus, the answer is **Ringo Starr**."
+
+
+def test_think_terminated_drops_trailing_conversational_closer():
+    # Reasoning models often append a chatty sign-off after the answer.
+    text = (
+        "reasoning</think>\n\n"
+        "The answer is **Paris**.\n\n"
+        "I've memorized this for your quiz! Let me know when you're ready. 😊"
+    )
+
+    result = run_parser_chain(text)
+
+    assert result.parser == "think_terminated"
+    assert text[result.answer_char_span[0] : result.answer_char_span[1]] == "The answer is **Paris**."
+
+
+def test_think_terminated_takes_priority_over_last_paragraph():
+    # Without </think> this would be last_paragraph; with it, think_terminated wins.
+    text = "step one\nstep two</think>\n\nFinal: Paris."
+    result = run_parser_chain(text)
+    assert result.parser == "think_terminated"
+    assert text[result.answer_char_span[0] : result.answer_char_span[1]] == "Final: Paris."
 
 
 def test_boxed_at_start_has_no_thinking_span():

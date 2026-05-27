@@ -4,15 +4,36 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FlashTrace Live Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="icon" type="image/png" href="/static/flashtrace-logo.png">
   <link rel="stylesheet" href="/static/styles.css">
   <script src="/static/app.js" defer></script>
 </head>
 <body>
+  <div class="bg-mesh" aria-hidden="true">
+    <span class="blob blob-teal"></span>
+    <span class="blob blob-orange"></span>
+    <span class="blob blob-ink"></span>
+    <span class="grain"></span>
+  </div>
+
   <main class="app-shell">
-    <aside class="controls" aria-label="FlashTrace controls">
+    <aside class="controls glass" aria-label="FlashTrace controls" data-reveal>
       <header class="brand">
-        <h1>FlashTrace</h1>
-        <p>Generate with Qwen, select answer tokens, trace attribution.</p>
+        <div class="brand-mark">
+          <img class="brand-logo" src="/static/flashtrace-logo.png" alt="FlashTrace logo" width="52" height="52">
+          <div class="brand-titles">
+            <h1>FlashTrace</h1>
+            <span class="brand-kicker">Live attribution playground</span>
+          </div>
+        </div>
+        <p class="brand-desc">
+          Generate text with a Qwen model, drag to select any answer span,
+          and trace exactly which prompt &amp; reasoning tokens drove it &mdash;
+          fast, faithful token-level attribution in your browser.
+        </p>
       </header>
 
       <label class="field">
@@ -28,6 +49,13 @@ Berlin is the capital of Germany.
 Madrid is the capital of Spain.
 
 Question: What is the capital of France?</textarea>
+      </label>
+
+      <label class="field">
+        <span>Saved samples</span>
+        <select id="gallery-select" aria-label="Load a saved sample">
+          <option value="">Load a saved sample…</option>
+        </select>
       </label>
 
       <div class="grid-2">
@@ -51,37 +79,69 @@ Question: What is the capital of France?</textarea>
       </label>
 
       <div class="actions">
-        <button id="generate-button" type="button" class="primary">Generate</button>
-        <button id="trace-button" type="button" class="primary">Trace</button>
-        <button id="gallery-button" type="button">Gallery</button>
-        <button id="save-button" type="button" hidden>Save to gallery</button>
+        <div class="actions-row">
+          <button id="generate-button" type="button" class="primary">Generate</button>
+          <button id="trace-button" type="button" class="primary accent">Trace</button>
+        </div>
+        <button id="save-button" type="button" class="ghost" hidden>Save current trace to samples</button>
       </div>
 
-      <a id="download-link" class="download-link" hidden>Download trace JSON</a>
+      <div id="gallery-save-form" class="gallery-save-form" hidden>
+        <input id="gallery-title-input" type="text" placeholder="Sample title" autocomplete="off">
+        <div class="gallery-save-actions">
+          <button id="gallery-save-confirm" type="button" class="primary">Save</button>
+          <button id="gallery-save-cancel" type="button" class="ghost">Cancel</button>
+        </div>
+      </div>
+
+      <a id="download-link" class="download-link" hidden>↓ Download trace JSON</a>
     </aside>
 
-    <section class="workspace" aria-label="Token document">
+    <section class="workspace glass" aria-label="Token document" data-reveal>
       <div id="token-document" class="token-document" aria-live="polite"></div>
       <p id="status-line" class="status-line">Ready.</p>
     </section>
   </main>
 
-  <div id="gallery-drawer" class="gallery-drawer" hidden aria-label="Gallery">
-    <div id="gallery-overlay" class="gallery-overlay"></div>
-    <aside class="gallery-panel">
-      <header class="gallery-header">
-        <h2>Gallery</h2>
-        <button id="gallery-close" type="button" class="gallery-close" aria-label="Close">&times;</button>
-      </header>
-      <div id="gallery-save-form" class="gallery-save-form" hidden>
-        <input id="gallery-title-input" type="text" placeholder="Sample title" autocomplete="off">
-        <div class="gallery-save-actions">
-          <button id="gallery-save-confirm" type="button" class="primary">Save</button>
-          <button id="gallery-save-cancel" type="button">Cancel</button>
-        </div>
-      </div>
-      <div id="gallery-list" class="gallery-list"></div>
-    </aside>
-  </div>
+  <script type="module">
+    // Motion (motion.dev) — progressive enhancement. The UI is fully usable
+    // without it; if the CDN is unreachable we silently fall back to CSS.
+    try {
+      const { animate, stagger } = await import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm");
+
+      // Staggered entrance for the two glass panels.
+      animate(
+        "[data-reveal]",
+        { opacity: [0, 1], transform: ["translateY(24px) scale(0.985)", "translateY(0) scale(1)"] },
+        { duration: 0.7, delay: stagger(0.12), easing: [0.22, 1, 0.36, 1] }
+      );
+
+      // Cascade the controls' children for a lively first paint.
+      animate(
+        ".controls > * ",
+        { opacity: [0, 1], transform: ["translateY(10px)", "translateY(0)"] },
+        { duration: 0.5, delay: stagger(0.05, { start: 0.25 }), easing: "ease-out" }
+      );
+
+      // Spring press feedback on every button.
+      document.querySelectorAll("button").forEach((btn) => {
+        btn.addEventListener("pointerdown", () =>
+          animate(btn, { transform: "scale(0.95)" }, { duration: 0.12 }));
+        const release = () =>
+          animate(btn, { transform: "scale(1)" }, { type: "spring", stiffness: 420, damping: 18 });
+        btn.addEventListener("pointerup", release);
+        btn.addEventListener("pointerleave", release);
+      });
+
+      // Gentle idle float on the logo.
+      animate(
+        ".brand-logo",
+        { transform: ["translateY(0)", "translateY(-5px)", "translateY(0)"] },
+        { duration: 4.5, repeat: Infinity, easing: "ease-in-out" }
+      );
+    } catch (err) {
+      document.querySelectorAll("[data-reveal]").forEach((el) => (el.style.opacity = "1"));
+    }
+  </script>
 </body>
 </html>
