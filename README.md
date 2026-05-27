@@ -5,11 +5,11 @@
 <h1 align="center">FlashTrace</h1>
 
 <p align="center">
-  <em>ICML 2026 Spotlight · Fast token attribution for reasoning language models.</em>
+  <em>ICML 2026 Oral · Fast token attribution for reasoning language models.</em>
 </p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2602.01914"><img alt="ICML 2026 Spotlight" src="https://img.shields.io/badge/ICML%202026-Spotlight-00A3A3.svg?style=flat-square"></a>
+  <a href="https://arxiv.org/abs/2602.01914"><img alt="ICML 2026 Oral" src="https://img.shields.io/badge/ICML%202026-Oral-00A3A3.svg?style=flat-square"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="PyPI" src="https://img.shields.io/pypi/v/flashtrace.svg?style=flat-square&logo=pypi&logoColor=white&label=PyPI"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/flashtrace.svg?style=flat-square&logo=python&logoColor=white"></a>
   <a href="https://github.com/wbopan/flashtrace/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square"></a>
