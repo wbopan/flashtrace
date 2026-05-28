@@ -21,8 +21,10 @@
 FlashTrace traces generated answers back to the prompt tokens that shaped them. Use it from Python or the command line, export JSON traces, and render standalone HTML heatmaps for inspection and sharing.
 
 <p align="center">
-  <a href="https://flashtrace.wenbo.io"><b>🔮 Live Demo</b></a>
-  &nbsp;·&nbsp;
+  <a href="https://flashtrace.wenbo.io"><img alt="Try the live demo" src="https://img.shields.io/badge/%E2%96%B6%20Try%20the%20Live%20Demo-flashtrace.wenbo.io-00C853?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=0B5"></a>
+</p>
+
+<p align="center">
   <a href="https://arxiv.org/abs/2602.01914">📄 Paper</a>
   &nbsp;·&nbsp;
   <a href="#quickstart">🚀 Quickstart</a>
