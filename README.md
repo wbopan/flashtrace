@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="https://flashtrace.wenbo.io"><img alt="Live Demo" src="https://img.shields.io/badge/%E2%96%B6%20Live%20Demo-flashtrace.wenbo.io-00C853.svg?style=flat-square&logo=cloudflare&logoColor=white"></a>
   <a href="https://arxiv.org/abs/2602.01914"><img alt="ICML 2026 Oral" src="https://img.shields.io/badge/ICML%202026-Oral-00A3A3.svg?style=flat-square"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="PyPI" src="https://img.shields.io/pypi/v/flashtrace.svg?style=flat-square&logo=pypi&logoColor=white&label=PyPI"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/flashtrace.svg?style=flat-square&logo=python&logoColor=white"></a>
@@ -19,7 +20,14 @@
 
 FlashTrace traces generated answers back to the prompt tokens that shaped them. Use it from Python or the command line, export JSON traces, and render standalone HTML heatmaps for inspection and sharing.
 
+> [!TIP]
+> ### ▶ Try the Live Playground — **[flashtrace.wenbo.io](https://flashtrace.wenbo.io)**
+> Generate with a Qwen model, drag to select any answer span, and watch the token-level
+> attribution heatmap light up in real time — right in your browser, no install required.
+
 <p align="center">
+  <a href="https://flashtrace.wenbo.io"><b>🔮 Live Demo</b></a>
+  &nbsp;·&nbsp;
   <a href="https://arxiv.org/abs/2602.01914">📄 Paper</a>
   &nbsp;·&nbsp;
   <a href="#quickstart">🚀 Quickstart</a>
