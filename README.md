@@ -20,11 +20,6 @@
 
 FlashTrace traces generated answers back to the prompt tokens that shaped them. Use it from Python or the command line, export JSON traces, and render standalone HTML heatmaps for inspection and sharing.
 
-> [!TIP]
-> ### ▶ Try the Live Playground — **[flashtrace.wenbo.io](https://flashtrace.wenbo.io)**
-> Generate with a Qwen model, drag to select any answer span, and watch the token-level
-> attribution heatmap light up in real time — right in your browser, no install required.
-
 <p align="center">
   <a href="https://flashtrace.wenbo.io"><b>🔮 Live Demo</b></a>
   &nbsp;·&nbsp;
