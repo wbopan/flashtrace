@@ -9,7 +9,6 @@
 </p>
 
 <p align="center">
-  <a href="https://flashtrace.wenbo.io"><img alt="Live Demo" src="https://img.shields.io/badge/%E2%96%B6%20Live%20Demo-flashtrace.wenbo.io-00C853.svg?style=flat-square&logo=cloudflare&logoColor=white"></a>
   <a href="https://arxiv.org/abs/2602.01914"><img alt="ICML 2026 Oral" src="https://img.shields.io/badge/ICML%202026-Oral-00A3A3.svg?style=flat-square"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="PyPI" src="https://img.shields.io/pypi/v/flashtrace.svg?style=flat-square&logo=pypi&logoColor=white&label=PyPI"></a>
   <a href="https://pypi.org/project/flashtrace/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/flashtrace.svg?style=flat-square&logo=python&logoColor=white"></a>
@@ -21,7 +20,7 @@
 FlashTrace traces generated answers back to the prompt tokens that shaped them. Use it from Python or the command line, export JSON traces, and render standalone HTML heatmaps for inspection and sharing.
 
 <p align="center">
-  <a href="https://flashtrace.wenbo.io"><img alt="Try the live demo" src="https://img.shields.io/badge/%E2%96%B6%20Try%20the%20Live%20Demo-flashtrace.wenbo.io-00C853?style=for-the-badge&logo=cloudflare&logoColor=white&labelColor=0B5"></a>
+  <a href="https://flashtrace.wenbo.io"><img alt="Try the live demo" src="https://img.shields.io/badge/%E2%96%B6%20Try%20the%20Live%20Demo-flashtrace.wenbo.io-00C853?style=for-the-badge&labelColor=0B5"></a>
 </p>
 
 <p align="center">
