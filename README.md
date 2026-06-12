@@ -5,7 +5,8 @@
 <h1 align="center">FlashTrace</h1>
 
 <p align="center">
-  <em>ICML 2026 Oral · Fast token attribution for reasoning language models.</em>
+  <em>ICML 2026 Oral · Fast token attribution for reasoning language models.</em><br>
+  <a href="https://www.wenbo.io">Wenbo Pan</a> et al. · <a href="https://flashtrace.wenbo.io">Live demo</a>
 </p>
 
 <p align="center">
