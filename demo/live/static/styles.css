@@ -124,7 +124,7 @@ button, input, select, textarea { font: inherit; }
   grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
   gap: 22px;
   align-items: start;
-  max-width: 1500px;
+  max-width: 2100px;
   margin: 0 auto;
   padding: 26px;
   min-height: 100vh;
@@ -444,8 +444,8 @@ button:disabled { cursor: default; opacity: 0.5; box-shadow: none; transform: no
   border-radius: 5px;
 }
 
-.ft-legend-swatch-input { background: linear-gradient(to right, rgba(255, 246, 226, 0.9), rgba(255, 141, 56, 0.95)); }
-.ft-legend-swatch-output { background: linear-gradient(to right, rgba(226, 240, 255, 0.9), rgba(68, 154, 255, 0.95)); }
+.ft-legend-swatch-input { background: linear-gradient(to right, rgba(226, 240, 255, 0.9), rgba(68, 154, 255, 0.95)); }
+.ft-legend-swatch-output { background: linear-gradient(to right, rgba(255, 240, 240, 0.9), rgba(255, 68, 68, 0.95)); }
 
 .ft-legend-swatch-target {
   width: auto;

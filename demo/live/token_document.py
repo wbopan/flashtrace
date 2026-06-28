@@ -4,7 +4,6 @@ from collections.abc import Sequence
 from typing import Any, Literal
 
 from demo.live.token_overlay import TokenRecord
-from flashtrace.viz import _score_color
 
 Phase = Literal["prompt", "generated", "traced"]
 Region = Literal["prompt", "generation"]
@@ -12,13 +11,10 @@ Region = Literal["prompt", "generation"]
 TOKEN_DOCUMENT_ELEM_ID = "flashtrace-token-document"
 
 
-def _generation_color(score: float, max_score: float) -> str:
-    """Blue-toned gradient for generation-side attribution weights.
+def _input_color(score: float, max_score: float) -> str:
+    """Blue-toned gradient for prompt-side (input) attribution weights.
 
-    Mirrors ``flashtrace.viz._score_color`` (which is warm/orange and used for
-    the prompt region) but renders the generation region in blue so the two
-    sides are visually distinct. Normalisation is per-view (caller passes the
-    view's own max-abs score).
+    Normalisation is per-view (caller passes the view's own max-abs score).
     """
     if max_score <= 0.0:
         return "rgba(245,245,245,0.75)"
@@ -26,6 +22,23 @@ def _generation_color(score: float, max_score: float) -> str:
     red = int(226 - 158 * ratio)
     green = int(240 - 86 * ratio)
     blue = 255
+    alpha = 0.22 + 0.58 * ratio
+    return f"rgba({red},{green},{blue},{alpha:.3f})"
+
+
+def _generation_color(score: float, max_score: float) -> str:
+    """Red-toned gradient for generation-side (output) attribution weights.
+
+    Rendered in red so the output region is visually distinct from the blue
+    input region. Normalisation is per-view (caller passes the view's own
+    max-abs score).
+    """
+    if max_score <= 0.0:
+        return "rgba(245,245,245,0.75)"
+    ratio = min(1.0, abs(float(score)) / (max_score + 1e-12))
+    red = 255
+    green = int(240 - 172 * ratio)
+    blue = int(240 - 172 * ratio)
     alpha = 0.22 + 0.58 * ratio
     return f"rgba({red},{green},{blue},{alpha:.3f})"
 
@@ -181,7 +194,7 @@ def _build_trace_view(
                 region="prompt",
                 gen_index=None,
                 score=score,
-                color=_score_color(score, max_score),
+                color=_input_color(score, max_score),
                 is_target=False,
             )
         )

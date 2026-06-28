@@ -167,18 +167,18 @@
     return Math.max(low, Math.min(high, value));
   }
 
-  // Mirror flashtrace.viz._score_color (prompt, warm) and
-  // token_document._generation_color (generation, blue).
-  function warmColor(ratio) {
-    const g = Math.round(246 - 105 * ratio);
-    const b = Math.round(226 - 170 * ratio);
-    return `rgba(255,${g},${b},${(0.22 + 0.58 * ratio).toFixed(3)})`;
-  }
-
+  // Mirror token_document._input_color (prompt, blue) and
+  // token_document._output_color (generation, red).
   function blueColor(ratio) {
     const r = Math.round(226 - 158 * ratio);
     const g = Math.round(240 - 86 * ratio);
     return `rgba(${r},${g},255,${(0.22 + 0.58 * ratio).toFixed(3)})`;
+  }
+
+  function redColor(ratio) {
+    const g = Math.round(240 - 172 * ratio);
+    const b = Math.round(240 - 172 * ratio);
+    return `rgba(255,${g},${b},${(0.22 + 0.58 * ratio).toFixed(3)})`;
   }
 
   // Colour scale: "linear" uses |score| / max; "log" uses a per-region log
@@ -237,7 +237,7 @@
       }
       const ratio = clamp((entry.norm - cutoff.lo) / span, 0, 1);
       entry.el.style.background =
-        entry.region === "generation" ? blueColor(ratio) : warmColor(ratio);
+        entry.region === "generation" ? redColor(ratio) : blueColor(ratio);
     });
   }
 
