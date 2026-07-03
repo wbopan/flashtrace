@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e8f1f3">
   <title>FlashTrace Live Demo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
   <link rel="icon" type="image/png" href="/static/flashtrace-logo.png">
-  <link rel="stylesheet" href="/static/styles.css?v=20260628">
-  <script src="/static/app.js?v=20260628" defer></script>
+  <link rel="stylesheet" href="/static/styles.css?v=20260703">
+  <script src="/static/app.js?v=20260703" defer></script>
 </head>
 <body>
   <div class="bg-mesh" aria-hidden="true">
@@ -42,6 +43,18 @@
       </header>
 
       <label class="field">
+        <span>Saved samples</span>
+        <select id="gallery-select" aria-label="Load a saved sample">
+          <option value="">Load a saved sample…</option>
+        </select>
+      </label>
+
+      <button id="controls-toggle" type="button" class="ghost controls-toggle" aria-expanded="false" aria-controls="controls-form">
+        Prompt &amp; settings <span class="controls-toggle-arrow" aria-hidden="true">▾</span>
+      </button>
+
+      <div id="controls-form" class="controls-form">
+      <label class="field">
         <span>Model</span>
         <input id="model-input" type="text" value="Qwen/Qwen3-4B-Thinking-2507" autocomplete="off">
       </label>
@@ -50,13 +63,6 @@
         <span>Prompt</span>
         <textarea id="prompt-input" rows="11">Melanie Richards Griffith (born August 9, 1957) is an American film, stage, and television actress, and film producer.She began her career in the 1970s, appearing in several independent thriller films before achieving mainstream success in the mid-1980s.Born in New York City to actress Tippi Hedren and advertising executive Peter Griffith, she was raised mainly in Los Angeles, where she graduated from the Hollywood Professional School at age sixteen.In 1975, a then seventeen-year-old Griffith appeared opposite Gene Hackman in Arthur Penn's film noir "Night Moves".She later rose to prominence for her role portraying a pornographic actress in Brian De Palma's thriller "Body Double" (1984), which earned her a National Society of Film Critics Award for Best Supporting Actress.Griffith's subsequent performance in the comedy "Something Wild" (1986) garnered critical acclaim before she was cast in 1988's "Working Girl", which earned her a nomination for the Academy Award for Best Actress and won her a Golden Globe.The 1990s saw Griffith in a series of roles which received varying critical reception: she received Golden Globe nominations for her performances in "Buffalo Girls" (1995), and as Marion Davies in "RKO 281" (1999), while also earning a Golden Raspberry Award for Worst Actress for her performances in "Shining Through" (1992), as well as receiving nominations for "Crazy in Alabama" (1999) and John Waters' cult film "Cecil B. Demented" (2000).Other credits include John Schlesinger's "Pacific Heights" (1990), "Milk Money" (1994), the neo-noir film "Mulholland Falls" (1996), as Charlotte Haze in Adrian Lyne's "Lolita" (1997), and "Another Day in Paradise" (1998).She later starred as Barbara Marx in "The Night We Called It a Day" (2003), and spent the majority of the 2000s appearing on such television series as "Nip/TuckRaising Hope", and "Hawaii Five-0".After acting on stage in London, in 2003 she made her Broadway debut in a revival of the musical "Chicago", receiving celebratory reviews.In the 2010s, Griffith returned to film, starring opposite then-husband Antonio Banderas in the science fiction film "Autómata" (2014) and as an acting coach in James Franco's "The Disaster Artist" (2017). Dakota Mayi Johnson (born October 4, 1989) is an American actress and model.The daughter of actors Don Johnson and Melanie Griffith, she made her film debut at age ten with a minor appearance in "Crazy in Alabama" (1999), a dark comedy film starring her mother.Johnson was discouraged from pursuing acting further until she completed high school, after which she began auditioning for roles in Los Angeles.She was cast in a minor part in "The Social Network" (2010), and subsequently had supporting roles in the comedy "21 Jump Street", the independent comedy "Goats", and the romantic comedy "The Five-Year Engagement" (all 2012).In 2015, Johnson had her first starring role as Anastasia Steele in the "Fifty Shades" film series (2015–18).For her performance in the series, she received a BAFTA Rising Star Award nomination in 2016.Following "Fifty Shades", Johnson appeared in the biographical crime film "Black Mass" (2015) and Luca Guadagnino's drama "A Bigger Splash" (2015).She reunited with Guadagnino, portraying the lead role in "Suspiria" (2018), a supernatural horror film based on the 1977 film by Dario Argento.That same year, she appeared in an ensemble cast in the thriller film "Bad Times at the El Royale" (2018).In 2019, Johnson had a starring role in the psychological horror film "Wounds" and the comedy-drama film "The Peanut Butter Falcon".
 Who is the maternal grandmother of Dakota Johnson?</textarea>
-      </label>
-
-      <label class="field">
-        <span>Saved samples</span>
-        <select id="gallery-select" aria-label="Load a saved sample">
-          <option value="">Load a saved sample…</option>
-        </select>
       </label>
 
       <div class="grid-2">
@@ -78,6 +84,7 @@ Who is the maternal grandmother of Dakota Johnson?</textarea>
           <option value="ifr-matrix">ifr-matrix</option>
         </select>
       </label>
+      </div>
 
       <div class="actions">
         <div class="actions-row">

@@ -4,6 +4,7 @@
   const state = {
     phase: "prompt",
     dragAnchor: null,
+    tapAnchor: null,
     targetSpan: "",
     generatedText: "",
     reasoningSpan: "",
@@ -148,7 +149,9 @@
       legend.appendChild(item);
     };
     if (view.interactive) {
-      addItem("target", "Target — drag to select");
+      const coarse =
+        window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      addItem("target", coarse ? "Target — tap first & last token" : "Target — drag to select");
     } else {
       addItem("input", "Input attribution");
       addItem("output", "Output attribution");
@@ -297,6 +300,16 @@
     root.addEventListener("mouseout", (event) => {
       const to = event.relatedTarget;
       if (!to || !to.closest?.(".ft-token[data-score]")) hideTooltip();
+    });
+    // Touch: tap a scored token to inspect its weight, tap elsewhere to dismiss.
+    root.addEventListener("click", (event) => {
+      const tok = event.target.closest?.(".ft-token[data-score]");
+      if (tok) {
+        showTooltip(tok);
+        moveTooltip(event);
+      } else {
+        hideTooltip();
+      }
     });
   }
 
@@ -581,6 +594,7 @@
       state.targetSpan = "";
     }
     state.dragAnchor = null;
+    state.tapAnchor = null;
     updatePhaseButtons();
 
     const host = els.tokenDocument || $("token-document");
@@ -656,11 +670,33 @@
       markSelection(root);
     };
 
-    root.addEventListener("mousedown", (event) => {
+    // Mouse: drag across tokens to select a span (as before, via pointer events).
+    // Touch/pen: dragging must stay free for scrolling, so selection is
+    // tap-based instead — tap the first token, then tap the last one.
+    const applyTap = (genIndex) => {
+      if (genIndex === null) return;
+      if (state.tapAnchor === null) {
+        state.tapAnchor = genIndex;
+        state.targetSpan = `${genIndex}:${genIndex}`;
+        markSelection(root);
+        setStatus("Start of target set — tap the last token of the span.");
+        return;
+      }
+      const start = Math.min(state.tapAnchor, genIndex);
+      const end = Math.max(state.tapAnchor, genIndex);
+      state.tapAnchor = null;
+      state.targetSpan = `${start}:${end}`;
+      markSelection(root);
+      setStatus(`Selected target span ${state.targetSpan}.`);
+    };
+
+    root.addEventListener("pointerdown", (event) => {
       const genIndex = tokenGenIndex(event.target);
       if (genIndex === null) return;
+      if (event.pointerType !== "mouse") return; // touch selects on pointerup taps
       // Suppress native text selection so dragging marks a target span.
       event.preventDefault();
+      state.tapAnchor = null;
       state.dragAnchor = genIndex;
       applyDrag(genIndex);
       const finishDrag = (upEvent) => {
@@ -670,12 +706,17 @@
           setStatus(`Selected target span ${state.targetSpan}.`);
         }
       };
-      document.addEventListener("mouseup", finishDrag, { once: true });
+      document.addEventListener("pointerup", finishDrag, { once: true });
     });
 
-    root.addEventListener("mouseover", (event) => {
+    root.addEventListener("pointerover", (event) => {
       if (state.dragAnchor === null) return;
       applyDrag(tokenGenIndex(event.target));
+    });
+
+    root.addEventListener("pointerup", (event) => {
+      if (event.pointerType === "mouse") return;
+      applyTap(tokenGenIndex(event.target));
     });
 
     bindTooltip(root);
@@ -885,6 +926,17 @@
     if (promptInput) {
       promptInput.addEventListener("input", tokenizePrompt);
       promptInput.addEventListener("change", tokenizePrompt);
+    }
+
+    // Mobile-only collapse for the prompt/settings form (CSS hides the
+    // toggle on wide screens, where the form is always visible).
+    const controlsToggle = $("controls-toggle");
+    const controlsForm = $("controls-form");
+    if (controlsToggle && controlsForm) {
+      controlsToggle.addEventListener("click", () => {
+        const open = controlsForm.classList.toggle("is-open");
+        controlsToggle.setAttribute("aria-expanded", String(open));
+      });
     }
 
     startup(promptInput);

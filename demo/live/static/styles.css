@@ -187,6 +187,23 @@ button, input, select, textarea { font: inherit; }
   line-height: 1.55;
 }
 
+/* ---------- Collapsible form (mobile) ---------- */
+.controls-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.controls-toggle { display: none; }
+
+.controls-toggle-arrow {
+  display: inline-block;
+  margin-left: 6px;
+  transition: transform 200ms ease;
+}
+
+.controls-toggle[aria-expanded="true"] .controls-toggle-arrow { transform: rotate(180deg); }
+
 /* ---------- Fields ---------- */
 .field { display: grid; gap: 7px; }
 
@@ -700,10 +717,95 @@ button:disabled { cursor: default; opacity: 0.5; box-shadow: none; transform: no
   font-weight: 500;
 }
 
+/* ---------- Mobile & narrow screens ---------- */
 @media (max-width: 880px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .controls { position: static; max-height: none; }
-  .workspace { height: auto; min-height: 420px; overflow: visible; }
+  .app-shell {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .controls {
+    position: static;
+    max-height: none;
+    padding: 18px;
+    gap: 13px;
+  }
+
+  .workspace {
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding: 16px;
+  }
+
+  /* Token stream scrolls internally so the page itself stays short.
+     The desktop layout sizes it via the workspace's fixed height; with
+     height:auto here it needs an explicit viewport-relative height. */
+  .ft-token-stream {
+    flex: none; /* desktop's flex:1 has basis 0, which would override the height */
+    height: 64vh;
+    height: 64dvh;
+    padding: 13px;
+    line-height: 2;
+  }
+
+  .brand-mark { gap: 11px; }
+  .brand-logo { width: 44px; height: 44px; border-radius: 12px; }
+  .brand h1 { font-size: 25px; }
+  .brand-desc { font-size: 13px; }
+
+  /* Collapse the bulky form behind a toggle; samples + actions stay visible. */
+  .controls-toggle {
+    display: block;
+    text-align: left;
+    padding: 0 16px;
+  }
+
+  .controls-form { display: none; }
+  .controls-form.is-open { display: flex; }
+
+  .field textarea { min-height: 120px; max-height: 200px; }
+
+  /* 16px inputs stop iOS Safari from auto-zooming on focus. */
+  .field input,
+  .field select,
+  .field textarea,
+  .gallery-save-form input {
+    font-size: 16px;
+  }
+
+  /* Toolbar: let rows breathe and stop pinning hosts to the right edge. */
+  .ft-toolbar-row { gap: 8px; row-gap: 10px; }
+  .ft-legend-host, .ft-cutoff-host { margin-left: 0; width: 100%; }
+  .ft-legend { flex-wrap: wrap; gap: 9px; row-gap: 5px; }
+  .ft-target-preview { max-width: 100%; }
+
+  .ft-cutoff { width: 100%; flex-wrap: wrap; }
+  .ft-cutoff-track { width: auto; flex: 1 1 130px; min-width: 120px; }
+
+  .status-line { font-size: 12px; padding: 8px 14px; }
+
+  /* Code modal: use nearly the whole screen. */
+  .code-modal { padding: 10px; }
+  .code-dialog { max-height: 94vh; max-height: 94dvh; padding: 14px; }
+  .code-block { padding: 13px 14px; }
+  .code-block code { font-size: 11.5px; }
+  .code-hint { display: none; }
+
+  /* Cheaper compositing on small-screen GPUs. */
+  .glass {
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+  }
+  .blob { animation: none; filter: blur(70px); }
+  .blob-ink { display: none; }
+}
+
+/* Bigger touch targets for the cut-off slider thumbs. */
+@media (pointer: coarse) {
+  .ft-cutoff-track input[type="range"]::-webkit-slider-thumb { width: 22px; }
+  .ft-cutoff-track input[type="range"]::-moz-range-thumb { width: 22px; }
 }
 
 /* ---------- Inline save form ---------- */
