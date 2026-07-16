@@ -9,17 +9,19 @@ Evaluates only:
 - FlashTrace: ifr_multi_hop_both
   - sink = full output (excluding appended EOS)
 
-Outputs only row-level faithfulness scores (RISE, MAS). No sample-level traces.
+Legacy samples still produce the original row-level faithfulness CSV. Multi-turn
+trajectory samples additionally produce token- and turn-level attribution
+traces so the agent history can be audited directly.
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
 import time
-from dataclasses import dataclass
 from itertools import islice
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -47,35 +49,9 @@ if str(REPO_ROOT) not in sys.path:
 import ft_ifr_improve
 import llm_attr
 import llm_attr_eval
+from exp.exp4.trajectory_utils import AiderExample, TrajectorySegment, load_aider
 
 utils.logging.set_verbosity_error()
-
-
-@dataclass(frozen=True)
-class AiderExample:
-    prompt: str
-    target: str
-    metadata: Dict[str, Any]
-
-
-def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
-    rows: List[Dict[str, Any]] = []
-    with path.open("r", encoding="utf-8") as f:
-        for line in f:
-            if not line.strip():
-                continue
-            rows.append(json.loads(line))
-    return rows
-
-
-def load_aider(path: Path) -> List[AiderExample]:
-    rows = _read_jsonl(path)
-    examples: List[AiderExample] = []
-    for row in rows:
-        prompt = str(row.get("input") or "")
-        target = str(row.get("output") or "")
-        examples.append(AiderExample(prompt=prompt, target=target, metadata={"length": row.get("length")}))
-    return examples
 
 
 def _token_span_full_output(tokenizer, target: str) -> List[int]:
@@ -195,6 +171,7 @@ def _faithfulness_test_with_user_prompt_indices(
     generation: str,
     *,
     user_prompt_indices: List[int],
+    keep_prompt_token_indices: Optional[Sequence[int]] = None,
     k: int = 20,
 ) -> Tuple[float, float, float]:
     def auc(arr: np.ndarray) -> float:
@@ -202,23 +179,30 @@ def _faithfulness_test_with_user_prompt_indices(
 
     pad_token_id = llm_evaluator._ensure_pad_token_id()
 
-    user_prompt = " " + prompt
-    formatted_prompt = llm_evaluator.format_prompt(user_prompt)
-    formatted_ids = llm_evaluator.tokenizer(formatted_prompt, return_tensors="pt", add_special_tokens=False).input_ids
+    # ``prompt`` is already the exact attribution prompt. For schema-v2 rows it
+    # is a Qwen chat-template-rendered multi-turn history; for legacy rows it is
+    # the original raw prompt. Re-tokenize that exact string so perturbation
+    # positions stay aligned with the attributor's user_prompt_indices.
+    formatted_ids = llm_evaluator.tokenizer(prompt, return_tensors="pt", add_special_tokens=False).input_ids
 
     prompt_ids = formatted_ids.to(llm_evaluator.device)
     prompt_ids_perturbed = prompt_ids.clone()
     generation_ids = llm_evaluator.tokenizer(
-        generation + llm_evaluator.tokenizer.eos_token,
+        generation,
         return_tensors="pt",
         add_special_tokens=False,
     ).input_ids.to(llm_evaluator.device)
+    eos_token_id = getattr(llm_evaluator.tokenizer, "eos_token_id", None)
+    if eos_token_id is not None:
+        eos_id = torch.tensor(
+            [[int(eos_token_id)]],
+            dtype=generation_ids.dtype,
+            device=generation_ids.device,
+        )
+        generation_ids = torch.cat([generation_ids, eos_id], dim=1)
 
     attr_cpu = attribution.detach().cpu()
     w = attr_cpu.sum(0)
-    sorted_attr_indices = torch.argsort(w, descending=True)
-    attr_sum = float(w.sum().item())
-
     P = int(w.numel())
     if len(user_prompt_indices) != P:
         raise ValueError(
@@ -231,10 +215,38 @@ def _faithfulness_test_with_user_prompt_indices(
     if max(user_prompt_indices) >= int(prompt_ids_perturbed.shape[1]):
         raise ValueError("user_prompt_indices contains an out-of-bounds index for formatted prompt ids.")
 
+    if keep_prompt_token_indices is None:
+        keep = list(range(P))
+    else:
+        keep = sorted(
+            {
+                int(index)
+                for index in keep_prompt_token_indices
+                if 0 <= int(index) < P
+            }
+        )
+    K = len(keep)
+    if K == 0:
+        score = (
+            llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids)
+            .sum()
+            .cpu()
+            .detach()
+            .item()
+        )
+        singleton = np.asarray([score], dtype=np.float64)
+        return auc(singleton), auc(singleton), auc(singleton)
+
+    keep_tensor = torch.as_tensor(keep, dtype=torch.long)
+    w_keep = w.index_select(0, keep_tensor)
+    sorted_local = torch.argsort(w_keep, descending=True)
+    sorted_attr_indices = keep_tensor.index_select(0, sorted_local)
+    attr_sum = float(w_keep.sum().item())
+
     steps = int(k) if k is not None else 0
     if steps <= 0:
         steps = 1
-    steps = min(steps, P)
+    steps = min(steps, K)
 
     scores = np.zeros(steps + 1, dtype=np.float64)
     density = np.zeros(steps + 1, dtype=np.float64)
@@ -247,8 +259,8 @@ def _faithfulness_test_with_user_prompt_indices(
     if attr_sum <= 0:
         density = np.linspace(1.0, 0.0, steps + 1)
 
-    base = P // steps
-    remainder = P % steps
+    base = K // steps
+    remainder = K % steps
     start = 0
     for step in range(steps):
         size = base + (1 if step < remainder else 0)
@@ -295,17 +307,6 @@ def _row_faithfulness_scores(
     keep_prompt_token_indices: Optional[Sequence[int]] = None,
     k: int = 20,
 ) -> Tuple[float, float]:
-    if keep_prompt_token_indices is not None:
-        rise, mas, _ = ft_ifr_improve.faithfulness_test_skip_tokens(
-            llm_evaluator,
-            attribution_prompt,
-            prompt,
-            generation,
-            keep_prompt_token_indices=keep_prompt_token_indices,
-            user_prompt_indices=user_prompt_indices,
-            k=int(k),
-        )
-        return float(rise), float(mas)
     if user_prompt_indices is not None:
         rise, mas, _ = _faithfulness_test_with_user_prompt_indices(
             llm_evaluator,
@@ -313,12 +314,127 @@ def _row_faithfulness_scores(
             prompt,
             generation,
             user_prompt_indices=user_prompt_indices,
+            keep_prompt_token_indices=keep_prompt_token_indices,
             k=int(k),
         )
         return float(rise), float(mas)
 
     rise, mas, _ = llm_evaluator.faithfulness_test(attribution_prompt, prompt, generation, k=int(k))
     return float(rise), float(mas)
+
+
+def _clean_prompt_vector(vector: torch.Tensor, prompt_len: int) -> torch.Tensor:
+    clean = torch.nan_to_num(
+        torch.as_tensor(vector).detach().cpu().to(dtype=torch.float32).reshape(-1),
+        nan=0.0,
+        posinf=0.0,
+        neginf=0.0,
+    ).clamp(min=0.0)
+    if int(clean.numel()) < int(prompt_len):
+        raise ValueError(
+            f"Attribution vector is shorter than the prompt: {int(clean.numel())} < {int(prompt_len)}."
+        )
+    return clean[: int(prompt_len)]
+
+
+def _segment_attribution_summary(
+    *,
+    tokenizer: Any,
+    prompt: str,
+    segments: Sequence[TrajectorySegment],
+    prompt_vector: torch.Tensor,
+) -> Tuple[List[Dict[str, Any]], float, float]:
+    total_mass = float(prompt_vector.sum().item())
+    covered_indices: set[int] = set()
+    summaries: List[Dict[str, Any]] = []
+    for segment in segments:
+        token_span = _char_span_to_token_span(tokenizer, prompt, segment.char_span)
+        if token_span is None:
+            indices: List[int] = []
+            mass = 0.0
+        else:
+            start, end = int(token_span[0]), int(token_span[1])
+            indices = list(range(start, end + 1))
+            if end >= int(prompt_vector.numel()):
+                raise ValueError(
+                    f"Trajectory segment token span {token_span} exceeds prompt length {int(prompt_vector.numel())}."
+                )
+            mass = float(prompt_vector[start : end + 1].sum().item())
+            covered_indices.update(indices)
+        summaries.append(
+            {
+                "message_index": int(segment.message_index),
+                "role": segment.role,
+                "kind": segment.kind,
+                "turn": int(segment.turn),
+                "char_span": [int(segment.char_span[0]), int(segment.char_span[1])],
+                "token_span": list(token_span) if token_span is not None else None,
+                "mass": mass,
+                "fraction": mass / total_mass if total_mass > 0 else 0.0,
+            }
+        )
+
+    assigned_mass = (
+        float(prompt_vector[sorted(covered_indices)].sum().item()) if covered_indices else 0.0
+    )
+    unassigned_mass = max(0.0, total_mass - assigned_mass)
+    return summaries, unassigned_mass, total_mass
+
+
+def _trajectory_trace_record(
+    *,
+    example_idx: int,
+    example: AiderExample,
+    method: str,
+    sink: str,
+    tokenizer: Any,
+    attribution_result: Any,
+    row_vector: torch.Tensor,
+) -> Dict[str, Any]:
+    prompt_len = int(len(attribution_result.prompt_tokens))
+    prompt_vector = _clean_prompt_vector(row_vector, prompt_len)
+    segments, unassigned_mass, total_mass = _segment_attribution_summary(
+        tokenizer=tokenizer,
+        prompt=example.prompt,
+        segments=example.segments,
+        prompt_vector=prompt_vector,
+    )
+
+    per_hop: List[Dict[str, Any]] = []
+    ifr_meta = ((getattr(attribution_result, "metadata", None) or {}).get("ifr") or {})
+    for hop_index, vector in enumerate(ifr_meta.get("per_hop_projected") or []):
+        hop_prompt_vector = _clean_prompt_vector(torch.as_tensor(vector), prompt_len)
+        hop_segments, hop_unassigned, hop_total = _segment_attribution_summary(
+            tokenizer=tokenizer,
+            prompt=example.prompt,
+            segments=example.segments,
+            prompt_vector=hop_prompt_vector,
+        )
+        per_hop.append(
+            {
+                "hop": int(hop_index),
+                "segments": hop_segments,
+                "unassigned_mass": hop_unassigned,
+                "unassigned_fraction": hop_unassigned / hop_total if hop_total > 0 else 0.0,
+            }
+        )
+
+    return {
+        "example_index": int(example_idx),
+        "example_id": str(example.metadata.get("example_id", example_idx)),
+        "schema_version": int(example.metadata.get("schema_version", 2)),
+        "method": method,
+        "sink": sink,
+        "prompt_sha256": hashlib.sha256(example.prompt.encode("utf-8")).hexdigest(),
+        "target_sha256": hashlib.sha256(example.target.encode("utf-8")).hexdigest(),
+        "prompt_tokens": list(attribution_result.prompt_tokens),
+        "target_tokens": list(attribution_result.generation_tokens),
+        "prompt_token_attribution": [float(value) for value in prompt_vector.tolist()],
+        "segments": segments,
+        "unassigned_mass": unassigned_mass,
+        "unassigned_fraction": unassigned_mass / total_mass if total_mass > 0 else 0.0,
+        "per_hop": per_hop,
+    }
 
 
 def _model_tag(args) -> str:
@@ -344,6 +460,12 @@ def main() -> None:
     parser.add_argument("--sink_chunk_tokens", type=int, default=32)
     parser.add_argument("--n_hops", type=int, default=3)
     parser.add_argument("--k", type=int, default=20, help="Perturbation steps for MAS/RISE.")
+    parser.add_argument(
+        "--save_trajectory_traces",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Save token-level and per-turn JSONL traces for schema-v2 multi-turn samples.",
+    )
     args = parser.parse_args()
 
     data_path = Path(args.data_path)
@@ -353,7 +475,9 @@ def main() -> None:
     model, tokenizer = load_model_and_tokenizer(args)
     llm_evaluator = llm_attr_eval.LLMAttributionEvaluator(model, tokenizer)
 
-    examples = load_aider(data_path)
+    examples = load_aider(data_path, tokenizer=tokenizer)
+    if not examples:
+        raise SystemExit(f"No Aider examples loaded from {data_path}")
     total = min(len(examples), int(args.num_examples))
     iterator = islice(examples, total)
 
@@ -377,6 +501,7 @@ def main() -> None:
     }
     skipped: Dict[Tuple[str, str], int] = {k: 0 for k in results}
     sample_times: Dict[Tuple[str, str], List[float]] = {k: [] for k in results}
+    trajectory_records: List[Dict[str, Any]] = []
 
     for example_idx, ex in enumerate(iterator):
         prompt = ex.prompt
@@ -405,8 +530,26 @@ def main() -> None:
             for sink_name, span in (("last_line", last_line_span), ("last_token", last_token_span)):
                 key = ("ifr_all_positions", sink_name)
                 try:
-                    t_faith = time.perf_counter()
                     row = attr_all.get_all_token_attrs(list(span))[1]
+                    if bool(args.save_trajectory_traces) and ex.is_multiturn:
+                        try:
+                            trajectory_records.append(
+                                _trajectory_trace_record(
+                                    example_idx=example_idx,
+                                    example=ex,
+                                    method="ifr_all_positions",
+                                    sink=sink_name,
+                                    tokenizer=tokenizer,
+                                    attribution_result=attr_all,
+                                    row_vector=row,
+                                )
+                            )
+                        except Exception as trace_exc:
+                            print(
+                                f"[warn] trajectory trace failed for ifr_all_positions/{sink_name} "
+                                f"ex={example_idx}: {trace_exc}"
+                            )
+                    t_faith = time.perf_counter()
                     rise, mas = _row_faithfulness_scores(
                         llm_evaluator=llm_evaluator,
                         attribution_prompt=row[:, :prompt_len_all],
@@ -436,8 +579,26 @@ def main() -> None:
             prompt_len_ft = int(len(attr_ft.prompt_tokens))
             keep_prompt_token_indices = ft_ifr_improve.keep_token_indices(list(attr_ft.prompt_tokens))
 
-            t_faith = time.perf_counter()
             row_full = attr_ft.get_all_token_attrs(full_span)[1]
+            if bool(args.save_trajectory_traces) and ex.is_multiturn:
+                try:
+                    trajectory_records.append(
+                        _trajectory_trace_record(
+                            example_idx=example_idx,
+                            example=ex,
+                            method="ifr_multi_hop_both",
+                            sink="full_output",
+                            tokenizer=tokenizer,
+                            attribution_result=attr_ft,
+                            row_vector=row_full,
+                        )
+                    )
+                except Exception as trace_exc:
+                    print(
+                        f"[warn] trajectory trace failed for ifr_multi_hop_both/full_output "
+                        f"ex={example_idx}: {trace_exc}"
+                    )
+            t_faith = time.perf_counter()
             rise, mas = _row_faithfulness_scores(
                 llm_evaluator=llm_evaluator,
                 attribution_prompt=row_full[:, :prompt_len_ft],
@@ -481,6 +642,12 @@ def main() -> None:
             )
 
     print(f"[done] wrote {out_path}")
+    if bool(args.save_trajectory_traces) and any(example.is_multiturn for example in examples[:total]):
+        trace_path = out_dir / f"trajectory_attribution_{total}_examples.jsonl"
+        with trace_path.open("w", encoding="utf-8") as handle:
+            for record in trajectory_records:
+                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+        print(f"[done] wrote {trace_path} ({len(trajectory_records)} method/sink records)")
 
 
 if __name__ == "__main__":

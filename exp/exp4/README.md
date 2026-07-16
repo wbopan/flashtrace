@@ -1,85 +1,150 @@
-# FlashTrace 实验 4（Aider 归因忠实度 / row-only）
+# FlashTrace 实验 4：Aider 多轮智能体轨迹归因
 
-本目录提供 Aider 数据集上的 token-level 归因忠实度评测工具，**只输出 row 部分的 RISE/MAS**，不保存样本级 trace。
-
-评测范围（固定）：
-- 数据集：`exp/exp4/data/aider.jsonl`
-- 方法：
-  - `ifr_all_positions`
-  - `ifr_multi_hop_both`（FlashTrace）
-- 指标：`RISE`、`MAS`（row attribution only）
+本目录把 ICML 版本的单轮 Aider 代码生成实验升级为多轮 repair trajectory benchmark，同时保留旧数据和旧结果格式的兼容性。
 
 主要文件：
-- `run_exp.py`：归因 + 忠实度评测，输出到 `exp/exp4/output/`
 
----
+- `sample_and_filter.py`：通过 OpenAI 兼容 API 构造多轮轨迹，并用 judge 过滤最终答案。
+- `trajectory_utils.py`：多轮 schema、校验、Qwen chat-template 渲染和 legacy 兼容层。
+- `run_exp.py`：IFR/FlashTrace 归因、RISE/MAS，以及逐 token/逐 turn 轨迹归因输出。
 
-## 数据格式
+## 1. Benchmark 构造
 
-`exp/exp4/data/aider.jsonl` 每行一个 JSON，对应一个样本：
-- `input`：prompt（直接作为 user prompt 内容）
-- `output`：target（直接作为模型生成文本；脚本会内部追加 EOS 做打分）
-- `length`：数据自带字段（脚本不依赖，仅透传到 metadata）
+### 输入种子
 
-说明：Aider 的 `output` 形如：
-1) 第一行 `xxx.py`
-2) 第二行 opening fence ``` 
-3) 中间为代码
-4) 最后一行为 closing fence ``` 
+种子沿用原 `exp4` 格式，每行一个 JSON：
 
----
+```json
+{"input": "用户指令与代码 stub", "output": "参考代码编辑", "length": 123}
+```
 
-## 归因与 sink 选择
+默认路径为 `exp/exp4/data/aider.jsonl`。其中 `output` 只提供给 feedback/judge 模型，不会直接放进生成模型的上下文。
 
-脚本对每个样本都将 `input` 作为 `prompt`，将 `output` 作为 `target`（不做重新生成），并在归因结果上选择不同的 sink（`indices_to_explain=[start_tok,end_tok]`，均基于 `tokenizer(target, add_special_tokens=False)` 的 token span；不含 EOS）。
+### 多轮协议
 
-### `ifr_all_positions`（输出两个 sink）
+默认生成两次 assistant 编辑：
 
-- `last_line`：取 `output` 中 **closing fence 之前最后一个“非空且非 ```”行**，并将该行的字符 span 映射到 token span；若无法解析则回退为 `full_output`。
-- `last_token`：取 `last_line` 的最后一个 token（单点 span `[end,end]`）。
+1. generator 根据 Aider 任务生成首轮 `draft_edit`；
+2. judge 对照参考输出，生成不泄露参考代码的、类似单测失败信息的反馈；
+3. 反馈作为新的 user turn 送回 generator，生成 `revised_edit`；
+4. judge 对最终编辑做 True/False 判定，仅保留 True 轨迹。
 
-注意：脚本会对同一个样本只计算一次 `ifr_all_positions` 的归因矩阵，然后分别在两个 sink 上取 row attribution 并计算忠实度。
+`--assistant_turns N` 可扩展为更多轮，每个中间 assistant turn 后都会插入一轮 feedback。该实现不执行模型生成的代码；反馈和最终正确性均为 LLM judge 判定，这是相对于 Aider 原始可执行测试 harness 的明确限制。
 
-### `ifr_multi_hop_both`（FlashTrace，只输出一个 sink）
+### 输出 schema
 
-- `full_output`：用完整 `output` 作为 sink（token span `[0, n_tok-1]`）。
-- 忠实度扰动侧会沿用 exp2 的协议：对 prompt-side 会跳过 stop tokens（由 `ft_ifr_improve.py` 的 stop-token 配置决定）。
+`aider_multiturn.jsonl` 每行结构如下：
 
----
+```json
+{
+  "schema_version": 2,
+  "benchmark": "aider_multiturn",
+  "id": "sample-id",
+  "messages": [
+    {"role": "system", "content": "...", "kind": "agent_instruction"},
+    {"role": "user", "content": "...", "kind": "task"},
+    {"role": "assistant", "content": "...", "kind": "draft_edit"},
+    {"role": "user", "content": "...", "kind": "test_feedback"},
+    {"role": "assistant", "content": "...", "kind": "revised_edit"}
+  ],
+  "metadata": {
+    "generator_model": "qwen3-235b-a22b-2507",
+    "judge_model": "deepseek-v3-1-terminus",
+    "assistant_turns": 2,
+    "judge_response": "True"
+  }
+}
+```
 
-## 指标输出（row-only）
+数据本身不固化任何 tokenizer 特殊 token。归因运行时，`trajectory_utils.load_aider` 使用目标 Qwen3 tokenizer 的官方 chat template 渲染 `messages[:-1]`，并把最后一个 assistant message 作为 attribution target。因此同一条轨迹可由不同 Qwen3 checkpoint 评测。
 
-输出 CSV 仅包含 row attribution 的 `RISE/MAS` 聚合统计：
-- `Method,Sink,Row_RISE_Mean,Row_RISE_Std,Row_MAS_Mean,Row_MAS_Std,Used,Skipped,Avg_Sample_Time_s`
+### 采样命令
 
-输出路径：
-- `exp/exp4/output/faithfulness/aider/<model_tag>/row_only_<N>_examples.csv`
+```bash
+export FLASHTRACE_API_KEY=...
 
-其中 `<model_tag>` 优先取 `--model`，否则取 `--model_path` 的目录名。
+python exp/exp4/sample_and_filter.py \
+  --seed_path exp/exp4/data/aider.jsonl \
+  --out exp/exp4/data/aider_multiturn.jsonl \
+  --max_examples 100 \
+  --assistant_turns 2 \
+  --api_base http://localhost:4000/v1 \
+  --generator_model qwen3-235b-a22b-2507 \
+  --judge_model deepseek-v3-1-terminus
+```
 
----
+API key 的读取顺序为 `--api_key`、`FLASHTRACE_API_KEY`、`OPENAI_API_KEY`。脚本支持 HTTP 429 `Retry-After`、普通请求错误重试、请求节流和端点 cache 参数；行为与 `exp2/sample_and_filter.py` 一致。
 
-## 使用说明
+## 2. 轨迹归因
 
-推荐从 repo root 运行（保证相对路径可用）：
+### Attribution 切片
+
+对于 schema-v2 轨迹：
+
+- prompt：最终 assistant turn 之前的完整 system/user/assistant 历史，使用目标 tokenizer 的官方 chat template；
+- target：最终 assistant turn 的代码编辑；
+- prompt segments：每个历史 message content 的字符 span，并通过 offset mapping 转成 token span；
+- sink：保持原 `exp4` 协议。
+
+方法和 sink：
+
+- `ifr_all_positions / last_line`：最终编辑中最后一个非空、非 fence 代码行；
+- `ifr_all_positions / last_token`：上述代码行的最后一个 token；
+- `ifr_multi_hop_both / full_output`：完整最终编辑，排除框架追加的 EOS。
+
+忠实度扰动直接复用归因阶段的精确 prompt 和 `user_prompt_indices`。这对多轮 chat template 很重要，可避免把 attribution token 位置错误地应用到另一层 prompt wrapper。
+
+### 运行命令
 
 ```bash
 python exp/exp4/run_exp.py \
-  --data_path exp/exp4/data/aider.jsonl \
+  --data_path exp/exp4/data/aider_multiturn.jsonl \
   --output_root exp/exp4/output \
   --model qwen-8B \
   --model_path /opt/share/models/Qwen/Qwen3-8B/ \
   --cuda 2,3,4,5,6,7 \
   --num_examples 100 \
-  --n_hops 1 \
-  --k 20
+  --n_hops 3 \
+  --k 20 \
+  --save_trajectory_traces
 ```
 
-常用参数：
-- `--model_path` / `--model`：本地模型路径或 HF repo id（至少提供其一）
-- `--tokenizer_path`：可选；不提供则默认复用模型路径/id
-- `--cuda`：支持 `0`（单卡）或 `0,1,2`（多卡，内部会设置 `CUDA_VISIBLE_DEVICES` 并用 `device_map=auto`）
-- `--num_examples`：评测前 N 条（按文件顺序；`--seed` 预留，当前不做随机抽样）
-- `--n_hops`：FlashTrace（`ifr_multi_hop_both`）的 hop 数
-- `--k`：MAS/RISE 的扰动步数
-- `--chunk_tokens` / `--sink_chunk_tokens`：IFR 计算的 chunk 参数（一般保持默认）
+`--no-save_trajectory_traces` 可关闭样本级轨迹输出。旧 `{input, output}` 数据仍可直接传入 `run_exp.py`，并保持 legacy raw prompt 行为。
+
+### 输出
+
+聚合忠实度 CSV：
+
+```text
+exp/exp4/output/faithfulness/aider/<model_tag>/row_only_<N>_examples.csv
+```
+
+列为：
+
+```text
+Method,Sink,Row_RISE_Mean,Row_RISE_Std,Row_MAS_Mean,Row_MAS_Std,Used,Skipped,Avg_Sample_Time_s
+```
+
+多轮轨迹 attribution JSONL：
+
+```text
+exp/exp4/output/faithfulness/aider/<model_tag>/trajectory_attribution_<N>_examples.jsonl
+```
+
+每个成功的 `method/sink/sample` 记录包含：
+
+- `prompt_tokens`、`target_tokens`；
+- `prompt_token_attribution`；
+- 每个历史 message 的 role/kind/turn、char span、token span、mass 和归一化 fraction；
+- chat template 结构 token 的 `unassigned_mass`；
+- FlashTrace 每一 hop 的逐 turn attribution mass。
+
+## 3. 本地验证
+
+不需要 API key 的测试：
+
+```bash
+pytest -q tests/test_exp4_multiturn.py
+```
+
+测试覆盖 legacy/new schema、官方 chat-template 渲染、多轮生成编排、judge 过滤，以及随机初始化 tiny Qwen3 上的一次真实 `ifr_multi_hop_both` 轨迹归因前向计算。
