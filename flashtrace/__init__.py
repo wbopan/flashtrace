@@ -1,7 +1,13 @@
 """FlashTrace: efficient multi-token attribution for reasoning LLMs."""
 
-from .model_io import load_model_and_tokenizer
+from .model_io import load_model_and_tokenizer, load_vlm_and_processor
 from .result import TokenScore, TraceResult
 from .tracer import FlashTrace
 
-__all__ = ["FlashTrace", "TraceResult", "TokenScore", "load_model_and_tokenizer"]
+__all__ = [
+    "FlashTrace",
+    "TraceResult",
+    "TokenScore",
+    "load_model_and_tokenizer",
+    "load_vlm_and_processor",
+]

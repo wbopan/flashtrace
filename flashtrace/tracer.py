@@ -36,14 +36,21 @@ class FlashTrace:
         model,
         tokenizer,
         *,
+        processor=None,
         chunk_tokens: int = 128,
         sink_chunk_tokens: int = 32,
         recompute_attention: bool = False,
         generate_kwargs: dict[str, Any] | None = None,
         use_chat_template: bool = False,
     ) -> None:
+        if processor is None and hasattr(tokenizer, "tokenizer") and hasattr(
+            tokenizer, "apply_chat_template"
+        ):
+            processor = tokenizer
+            tokenizer = processor.tokenizer
         self.model = model
         self.tokenizer = tokenizer
+        self.processor = processor
         self.chunk_tokens = int(chunk_tokens)
         self.sink_chunk_tokens = int(sink_chunk_tokens)
         self.recompute_attention = bool(recompute_attention)
@@ -60,6 +67,7 @@ class FlashTrace:
         hops: int = 1,
         method: TraceMethod = "flashtrace",
         renorm_threshold: float | None = None,
+        images: Any = None,
     ) -> TraceResult:
         if method == "flashtrace":
             engine = LLMIFRAttributionBoth(
@@ -70,6 +78,8 @@ class FlashTrace:
                 sink_chunk_tokens=self.sink_chunk_tokens,
                 recompute_attention=self.recompute_attention,
                 use_chat_template=self.use_chat_template,
+                processor=self.processor,
+                images=images,
             )
             raw = engine.calculate_ifr_multi_hop_both(
                 prompt,
@@ -88,6 +98,8 @@ class FlashTrace:
                 sink_chunk_tokens=self.sink_chunk_tokens,
                 recompute_attention=self.recompute_attention,
                 use_chat_template=self.use_chat_template,
+                processor=self.processor,
+                images=images,
             )
             raw = engine.calculate_ifr_span(
                 prompt,
@@ -104,6 +116,8 @@ class FlashTrace:
                 sink_chunk_tokens=self.sink_chunk_tokens,
                 recompute_attention=self.recompute_attention,
                 use_chat_template=self.use_chat_template,
+                processor=self.processor,
+                images=images,
             )
             raw = engine.calculate_ifr_for_all_positions_output_only(
                 prompt,

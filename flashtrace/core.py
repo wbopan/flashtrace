@@ -104,7 +104,14 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
             "Expected a causal LM with `model` attribute exposing the decoder stack."
         )
 
-    decoder = model.model
+    model_body = model.model
+    # Text-only causal LMs expose decoder layers directly on ``model`` while
+    # Qwen vision-language wrappers keep the same decoder under
+    # ``model.language_model``.  IFR only attributes through that language
+    # stack. The wrapper inserts primary and DeepStack vision features at
+    # image-token positions; hooks on this decoder capture the resulting layer
+    # inputs.
+    decoder = getattr(model_body, "language_model", model_body)
     if not hasattr(decoder, "layers"):
         raise AttributeError("Decoder does not expose `layers`; IFR assumes a layer list.")
 
@@ -113,13 +120,15 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
     if n_layers == 0:
         raise ValueError("Decoder contains no layers; cannot run IFR.")
 
-    d_model = getattr(model.config, "hidden_size", None)
+    config = getattr(model.config, "text_config", model.config)
+
+    d_model = getattr(config, "hidden_size", None)
     if d_model is None:
         raise AttributeError("Model config is missing `hidden_size`, required for IFR.")
 
     try:
-        n_heads_q = model.config.num_attention_heads
-        n_kv_heads = model.config.num_key_value_heads
+        n_heads_q = config.num_attention_heads
+        n_kv_heads = config.num_key_value_heads
     except AttributeError:
         first_attn = layers[0].self_attn
         n_heads_q = getattr(first_attn, "num_heads")
@@ -129,7 +138,7 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
     if n_heads_q % n_kv_heads != 0:
         raise ValueError("IFR assumes grouped-query attention with integer group size.")
 
-    head_dim = getattr(model.config, "head_dim", None)
+    head_dim = getattr(config, "head_dim", None)
     if head_dim is None:
         first_attn = layers[0].self_attn
         head_dim = getattr(first_attn, "head_dim", None)
@@ -146,7 +155,7 @@ def extract_model_metadata(model: nn.Module) -> ModelMetadata:
     layer_specs = tuple(
         _build_layer_spec(
             layer,
-            model.config,
+            config,
             idx,
             full_n_heads_q=n_heads_q,
             full_n_kv_heads=n_kv_heads,

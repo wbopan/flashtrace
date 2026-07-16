@@ -36,6 +36,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+vlm = [
+    "torchvision>=0.20",
+]
 baselines = [
     "bert-score>=0.3.13",
     "evaluate>=0.4.6",

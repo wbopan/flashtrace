@@ -107,6 +107,72 @@ rank  index  token      score
 
 `FlashTrace(..., use_chat_template=True)` formats prompts with the tokenizer chat template for chat-tuned models.
 
+### Vision-language models
+
+Install the processor dependency and load Qwen3-VL with eager attention:
+
+```bash
+pip install -e '.[vlm]'
+```
+
+```python
+from PIL import Image
+from flashtrace import FlashTrace, load_vlm_and_processor
+
+model, processor = load_vlm_and_processor(
+    "Qwen/Qwen3-VL-8B-Instruct",
+    device_map="auto",
+    dtype="bfloat16",
+)
+tracer = FlashTrace(model, processor, chunk_tokens=128, sink_chunk_tokens=32)
+
+trace = tracer.trace(
+    prompt="What is shown in this image?",
+    images=Image.open("example.jpg").convert("RGB"),
+    target="A red car.",
+    output_span=(0, 3),
+    method="ifr-span",
+)
+```
+
+For VLM traces, `trace.prompt_tokens` and `trace.scores` contain the visual
+patch tokens followed by the user text tokens in original sequence order.
+`trace.metadata["multimodal"]` records the absolute and projected visual-token
+spans, the processor grid, the post-merge visual grid, and the spatial merge
+size. Multiple images may be passed as a list.
+
+Qwen3-VL and Qwen2.5-VL always use model-produced stored attention, even when
+`recompute_attention=True`, because their multimodal RoPE layouts are not
+compatible with FlashTrace's 1-D RoPE recomputation path. Multimodal prompts
+always use the processor's official chat template so that visual placeholders
+and M-RoPE token types stay aligned.
+
+Run the reproducible end-to-end smoke test with:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 uv run --extra vlm \
+  python -m evaluations.qwen3_vl_smoke \
+  --model Qwen/Qwen3-VL-8B-Instruct --max-new-tokens 4
+```
+
+Replace the model ID with `Qwen/Qwen3-VL-8B-Thinking` to validate the Thinking
+checkpoint through the same path.
+
+For a visually checkable spatial-grounding example, generate a four-quadrant
+image and trace the final answer through the model's short reasoning:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 uv run --extra vlm \
+  python -m evaluations.qwen3_vl_quadrant_example --strict
+```
+
+The upper-left quadrant contains a red circle; the other quadrants contain a
+blue square, green triangle, and yellow star. The script prints the generated
+`Reasoning:` and `Final answer:` lines, aggregates attribution over all four
+quadrants, and writes the input plus visual-token heatmap under
+`/tmp/flashtrace-qwen3-vl-quadrant/`. A successful strict run requires both the
+answer and the dominant attribution quadrant to match the upper-left evidence.
+
 ## Command Line
 
 Create prompt and target files:
@@ -194,6 +260,8 @@ Validated model families for the first public release:
 
 - Qwen2
 - Qwen3
+- Qwen3-VL (Instruct and Thinking)
+- Qwen2.5-VL
 - Llama
 
 ## Python API
@@ -201,7 +269,12 @@ Validated model families for the first public release:
 The public package exports:
 
 ```python
-from flashtrace import FlashTrace, TraceResult, load_model_and_tokenizer
+from flashtrace import (
+    FlashTrace,
+    TraceResult,
+    load_model_and_tokenizer,
+    load_vlm_and_processor,
+)
 ```
 
 `FlashTrace.trace(...)` accepts:
@@ -213,6 +286,7 @@ from flashtrace import FlashTrace, TraceResult, load_model_and_tokenizer
 - `hops: int`
 - `method: "flashtrace" | "ifr-span" | "ifr-matrix"`
 - `renorm_threshold: float | None`
+- `images: image | list[image] | None`
 
 `TraceResult` includes:
 

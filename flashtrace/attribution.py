@@ -58,6 +58,7 @@ from .core import (
     extract_model_metadata,
 )
 from .qwen35 import build_layer_inputs, is_hybrid_stack
+from .vlm import contiguous_spans, is_vision_language_model, multimodal_messages, normalize_images
 
 
 @dataclass
@@ -141,10 +142,19 @@ class LLMAttribution():
         generate_kwargs: Optional[Dict[str, Any]] = None,
         *,
         use_chat_template: bool = False,
+        processor: Any = None,
+        images: Any = None,
     ) -> None:
-        
+        if processor is None and hasattr(tokenizer, "tokenizer") and hasattr(
+            tokenizer, "apply_chat_template"
+        ):
+            processor = tokenizer
+            tokenizer = processor.tokenizer
+
         self.model = model
         self.tokenizer = tokenizer
+        self.processor = processor
+        self.images = images
         self.device = model.device
 
         self.generate_kwargs = generate_kwargs or DEFAULT_GENERATE_KWARGS
@@ -159,10 +169,14 @@ class LLMAttribution():
         self.user_prompt_ids = None
         self.user_prompt_tokens = None
         self.user_prompt_indices = None
+        self.prompt_feature_indices = None
+        self.attribution_prompt_tokens = None
+        self.visual_token_indices = []
 
         self.generation = None
         self.generation_ids = None
         self.generation_tokens = None
+        self._prompt_model_inputs: Dict[str, Any] = {}
 
         self.model.eval()
     
@@ -182,11 +196,17 @@ class LLMAttribution():
 
         return text_tokens
 
-    def extract_user_prompt_attributions(self, input, attribution) -> list[str]:   
-        # Extract all attributions to be kept (gen -> user prompt and gen -> gen attributions)
-        user_prompt_attr_idx = torch.tensor(self.user_prompt_indices)
-        gen_attr_idx = torch.arange(len(input), attribution.shape[1])
-        all_keep_idx = torch.cat((user_prompt_attr_idx, gen_attr_idx), dim = 0)
+    def extract_user_prompt_attributions(self, input, attribution) -> torch.Tensor:
+        # Keep user text plus visual placeholder positions, followed by all
+        # generated positions. Text-only behavior is unchanged.
+        prompt_indices = self.prompt_feature_indices or self.user_prompt_indices
+        prompt_attr_idx = torch.tensor(
+            prompt_indices, dtype=torch.long, device=attribution.device
+        )
+        gen_attr_idx = torch.arange(
+            len(input), attribution.shape[1], dtype=torch.long, device=attribution.device
+        )
+        all_keep_idx = torch.cat((prompt_attr_idx, gen_attr_idx), dim=0)
 
         return attribution[:, all_keep_idx]
     
@@ -228,40 +248,178 @@ class LLMAttribution():
             "User prompt token subsequence was not found in the formatted prompt."
         )
 
+    def _prepare_prompt_inputs(self, prompt: str) -> None:
+        """Create text or multimodal prompt tensors and retain model extras."""
+
+        self.user_prompt = prompt
+        self.user_prompt_ids = self.tokenizer(
+            self.user_prompt, return_tensors="pt", add_special_tokens=False
+        ).to(self.device).input_ids
+
+        image_list = normalize_images(self.images)
+        if image_list:
+            if self.processor is None:
+                raise ValueError(
+                    "images require a multimodal processor; pass AutoProcessor to "
+                    "FlashTrace or use load_vlm_and_processor()."
+                )
+            messages = multimodal_messages(self.user_prompt, image_list)
+            self.prompt = self.processor.apply_chat_template(
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+            model_inputs = self.processor.apply_chat_template(
+                messages,
+                tokenize=True,
+                add_generation_prompt=True,
+                return_dict=True,
+                return_tensors="pt",
+            )
+            if hasattr(model_inputs, "to"):
+                model_inputs = model_inputs.to(self.device)
+            self._prompt_model_inputs = dict(model_inputs)
+            self.prompt_ids = self._prompt_model_inputs["input_ids"]
+            self._prompt_model_inputs.setdefault(
+                "attention_mask", torch.ones_like(self.prompt_ids)
+            )
+            return
+
+        self.prompt = self.format_prompt(self.user_prompt)
+        self.prompt_ids = self.tokenizer(
+            self.prompt, return_tensors="pt", add_special_tokens=False
+        ).to(self.device).input_ids
+        self._prompt_model_inputs = {
+            "input_ids": self.prompt_ids,
+            "attention_mask": torch.ones_like(self.prompt_ids),
+        }
+
+    def _token_labels_from_ids(self, token_ids: torch.Tensor) -> list[str]:
+        ids = [int(token_id) for token_id in token_ids.detach().cpu().tolist()]
+        labels = self.tokenizer.convert_ids_to_tokens(ids)
+        if isinstance(labels, str):
+            labels = [labels]
+        return [str(label) for label in labels]
+
+    def _finish_prompt_bookkeeping(self) -> None:
+        """Align public token labels with actual language-model positions."""
+
+        prompt_len = int(self.prompt_ids.shape[1])
+        self.user_prompt_indices = self._locate_user_prompt_indices()
+        user_prompt_index_set = set(self.user_prompt_indices)
+        self.chat_prompt_indices = [
+            idx for idx in range(prompt_len) if idx not in user_prompt_index_set
+        ]
+
+        prompt_ids = [int(token_id) for token_id in self.prompt_ids[0].detach().cpu().tolist()]
+        config = getattr(self.model, "config", None)
+        visual_token_ids = {
+            int(token_id)
+            for token_id in (
+                getattr(config, "image_token_id", None),
+                getattr(config, "video_token_id", None),
+            )
+            if token_id is not None
+        }
+        self.visual_token_indices = [
+            idx for idx, token_id in enumerate(prompt_ids) if token_id in visual_token_ids
+        ]
+        self.prompt_feature_indices = sorted(
+            set(self.user_prompt_indices).union(self.visual_token_indices)
+        )
+
+        self.user_prompt_tokens = self.decode_text_into_tokens(self.user_prompt)
+        if self.visual_token_indices:
+            self.prompt_tokens = self._token_labels_from_ids(self.prompt_ids[0])
+            user_labels = dict(zip(self.user_prompt_indices, self.user_prompt_tokens))
+            self.attribution_prompt_tokens = [
+                user_labels.get(idx, self.prompt_tokens[idx])
+                for idx in self.prompt_feature_indices
+            ]
+        else:
+            self.prompt_tokens = self.decode_text_into_tokens(self.prompt)
+            self.attribution_prompt_tokens = list(self.user_prompt_tokens)
+
+    def _forward_inputs(
+        self, input_ids: torch.Tensor, attention_mask: torch.Tensor
+    ) -> Dict[str, Any]:
+        """Reuse processor-produced visual tensors for the full trace sequence."""
+
+        inputs = {
+            key: value
+            for key, value in self._prompt_model_inputs.items()
+            if key not in {"input_ids", "attention_mask"}
+        }
+        mm_token_type_ids = inputs.get("mm_token_type_ids")
+        if torch.is_tensor(mm_token_type_ids) and mm_token_type_ids.shape[-1] != input_ids.shape[-1]:
+            if mm_token_type_ids.shape[-1] > input_ids.shape[-1]:
+                raise ValueError("mm_token_type_ids is longer than the attribution sequence.")
+            inputs["mm_token_type_ids"] = F.pad(
+                mm_token_type_ids,
+                (0, input_ids.shape[-1] - mm_token_type_ids.shape[-1]),
+                value=0,
+            )
+        inputs["input_ids"] = input_ids
+        inputs["attention_mask"] = attention_mask
+        return inputs
+
+    def _multimodal_metadata(self) -> Optional[Dict[str, Any]]:
+        if not self.visual_token_indices:
+            return None
+
+        projected_by_absolute = {
+            absolute: projected
+            for projected, absolute in enumerate(self.prompt_feature_indices)
+        }
+        projected_visual_indices = [
+            projected_by_absolute[index] for index in self.visual_token_indices
+        ]
+        image_grid_thw = self._prompt_model_inputs.get("image_grid_thw")
+        grids = (
+            image_grid_thw.detach().cpu().tolist()
+            if torch.is_tensor(image_grid_thw)
+            else image_grid_thw
+        )
+        vision_config = getattr(getattr(self.model, "config", None), "vision_config", None)
+        spatial_merge_size = int(getattr(vision_config, "spatial_merge_size", 1))
+        visual_grids = None
+        if grids is not None:
+            visual_grids = [
+                [int(t), int(h) // spatial_merge_size, int(w) // spatial_merge_size]
+                for t, h, w in grids
+            ]
+        return {
+            "num_images": len(normalize_images(self.images)),
+            "image_grid_thw": grids,
+            "spatial_merge_size": spatial_merge_size,
+            "visual_grid_thw": visual_grids,
+            "prompt_feature_indices_absolute": list(self.prompt_feature_indices),
+            "visual_token_indices_absolute": list(self.visual_token_indices),
+            "visual_token_spans_absolute": contiguous_spans(self.visual_token_indices),
+            "visual_token_indices_prompt": projected_visual_indices,
+            "visual_token_spans_prompt": contiguous_spans(projected_visual_indices),
+            "attention_mode": "stored",
+        }
+
     # Query the model for its generation
     # This internally saves the input and generated token ids for attribution target
     def response(self, prompt) -> str:
-        self.user_prompt = prompt
-        self.prompt = self.format_prompt(self.user_prompt)
-
-        # these are the ids for the user supplied prompt
-        self.user_prompt_ids = self.tokenizer(self.user_prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids
-        # this is the tokenization of the chat prompt
-        self.prompt_ids = self.tokenizer(self.prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids
+        self._prepare_prompt_inputs(prompt)
 
         with torch.no_grad():
-            outputs = self.model.generate(self.prompt_ids, **self.generate_kwargs) # [1, num_prompt_tokens + num_generations]
+            outputs = self.model.generate(
+                **self._prompt_model_inputs, **self.generate_kwargs
+            )  # [1, num_prompt_tokens + num_generations]
+        if hasattr(outputs, "sequences"):
+            outputs = outputs.sequences
 
         # Get only the generated tokens (excluding the prompt)
         self.generation_ids = outputs[:, self.prompt_ids.shape[1]:] # [1, num_generations]
         self.generation = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = True)
         gen_with_eos = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = False, clean_up_tokenization_spaces = False)
 
-        # Track the exact user prompt subsequence inside the formatted prompt.
-        m = len(self.prompt_ids[0])
-        self.user_prompt_indices = self._locate_user_prompt_indices()
-
-        # make a list of indices which are all prompt tokens 
-        # (chat prompt formatting) that are not the user prompt tokens
-        self.chat_prompt_indices = [idx for idx in range(0, m) if idx < self.user_prompt_indices[0] or idx > self.user_prompt_indices[-1]]
-
-        # get the full prompt, user prompt, and generation as tokenized words
-        self.prompt_tokens = self.decode_text_into_tokens(self.prompt)
-        # print(self.prompt_tokens)
-        self.user_prompt_tokens = self.decode_text_into_tokens(self.user_prompt)
-        # print(self.user_prompt_tokens)
+        self._finish_prompt_bookkeeping()
         self.generation_tokens = self.decode_text_into_tokens(gen_with_eos)
-        # print(self.generation_tokens)
     
         return self.generation
     
@@ -274,13 +432,7 @@ class LLMAttribution():
         return target
 
     def target_response(self, prompt, target) -> str:
-        self.user_prompt = prompt
-        self.prompt = self.format_prompt(self.user_prompt)
-
-        # these are the ids for the user supplied prompt
-        self.user_prompt_ids = self.tokenizer(self.user_prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids
-        # this is the tokenization of the chat prompt
-        self.prompt_ids = self.tokenizer(self.prompt, return_tensors="pt", add_special_tokens = False).to(self.device).input_ids # [1, num_prompt_tokens]
+        self._prepare_prompt_inputs(prompt)
         target = self._strip_single_trailing_eos_text(target)
         # Tokenize the target generation and append EOS by ID so the target text is
         # never merged with the EOS token by tokenizer pre-tokenization.
@@ -292,17 +444,7 @@ class LLMAttribution():
         self.generation = target
         gen_with_eos = self.tokenizer.decode(self.generation_ids[0], skip_special_tokens = False, clean_up_tokenization_spaces = False)
 
-        # Track the exact user prompt subsequence inside the formatted prompt.
-        m = len(self.prompt_ids[0])
-        self.user_prompt_indices = self._locate_user_prompt_indices()
-
-        # make a list of indices which are all prompt tokens 
-        # (chat prompt formatting) that are not the user prompt tokens
-        self.chat_prompt_indices = [idx for idx in range(0, m) if idx < self.user_prompt_indices[0] or idx > self.user_prompt_indices[-1]]
-
-        # get the full prompt, user prompt, and generation as tokenized words
-        self.prompt_tokens = self.decode_text_into_tokens(self.prompt)
-        self.user_prompt_tokens = self.decode_text_into_tokens(self.user_prompt)
+        self._finish_prompt_bookkeeping()
         self.generation_tokens = self.decode_text_into_tokens(gen_with_eos)
 
         return self.generation
@@ -980,8 +1122,17 @@ class LLMIFRAttribution(LLMAttribution):
         show_progress: bool = True,
         recompute_attention: bool = False,
         use_chat_template: bool = False,
+        processor: Any = None,
+        images: Any = None,
     ) -> None:
-        super().__init__(model, tokenizer, generate_kwargs, use_chat_template=use_chat_template)
+        super().__init__(
+            model,
+            tokenizer,
+            generate_kwargs,
+            use_chat_template=use_chat_template,
+            processor=processor,
+            images=images,
+        )
         self.chunk_tokens = int(chunk_tokens)
         self.sink_chunk_tokens = int(sink_chunk_tokens)
         self.renorm_threshold_default = float(renorm_threshold_default)
@@ -1012,15 +1163,17 @@ class LLMIFRAttribution(LLMAttribution):
     ) -> Tuple[Dict[str, List[Optional[torch.Tensor]]], Optional[Sequence[torch.Tensor]], ModelMetadata, List[Dict[str, torch.Tensor | nn.Module]]]:
         metadata = extract_model_metadata(self.model)
         hybrid = is_hybrid_stack(metadata)
+        multimodal = is_vision_language_model(self.model)
         # Hybrid stacks (Qwen3.5) have linear-attention layers that expose no
-        # softmax weights to recompute; they always use stored attention.
-        capture_attentions = hybrid or not recompute_attention
+        # softmax weights to recompute. Vision-language models use M-RoPE, so
+        # they also always use the attention produced by the model itself.
+        capture_attentions = hybrid or multimodal or not recompute_attention
         cache, hooks = attach_hooks(metadata.layers, self._model_dtype)
 
         try:
+            forward_inputs = self._forward_inputs(input_ids, attention_mask)
             outputs = self.model(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
+                **forward_inputs,
                 use_cache=False,
                 output_attentions=capture_attentions,
                 output_hidden_states=False,
@@ -1066,15 +1219,20 @@ class LLMIFRAttribution(LLMAttribution):
         score_array = score_array.detach().cpu()
 
         score_array = self.extract_user_prompt_attributions(self.prompt_tokens, score_array)
-        all_tokens = self.user_prompt_tokens + self.generation_tokens
+        prompt_tokens = self.attribution_prompt_tokens or self.user_prompt_tokens
+        all_tokens = prompt_tokens + self.generation_tokens
+        result_metadata = dict(metadata or {})
+        multimodal_metadata = self._multimodal_metadata()
+        if multimodal_metadata is not None:
+            result_metadata["multimodal"] = multimodal_metadata
 
         return LLMAttributionResult(
             self.tokenizer,
             score_array,
-            self.user_prompt_tokens,
+            prompt_tokens,
             self.generation_tokens,
             all_tokens=all_tokens,
-            metadata=metadata,
+            metadata=result_metadata,
         )
 
     def _project_vector(self, vector: torch.Tensor) -> torch.Tensor:
