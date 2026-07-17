@@ -22,6 +22,11 @@ from .lrp_rules import stop_gradient, divide_gradient, identity_rule_implicit
 
 # Model configuration for different architectures
 MODEL_CONFIGS = {
+    "qwen3_vl": {
+        "modeling_module": "transformers.models.qwen3_vl.modeling_qwen3_vl",
+        "rms_norm_class": "Qwen3VLTextRMSNorm",
+        "mlp_class": "Qwen3VLTextMLP",
+    },
     "qwen3": {
         "modeling_module": "transformers.models.qwen3.modeling_qwen3",
         "rms_norm_class": "Qwen3RMSNorm",
@@ -182,11 +187,10 @@ def apply_lrp_patches(model, model_type: str = "qwen3") -> LRPPatchState:
 
     # Patch attention functions
     if hasattr(modeling_module, 'ALL_ATTENTION_FUNCTIONS'):
-        state.original_attention_functions[model_type] = dict(modeling_module.ALL_ATTENTION_FUNCTIONS)
-        new_attention_functions = {}
-        for key, fn in modeling_module.ALL_ATTENTION_FUNCTIONS.items():
-            new_attention_functions[key] = wrap_attention_forward(fn)
-        modeling_module.ALL_ATTENTION_FUNCTIONS = new_attention_functions
+        attention_interface = modeling_module.ALL_ATTENTION_FUNCTIONS
+        state.original_attention_functions[model_type] = dict(attention_interface)
+        for key, fn in list(attention_interface.items()):
+            attention_interface[key] = wrap_attention_forward(fn)
 
     if hasattr(modeling_module, 'eager_attention_forward'):
         state.original_eager_attention[model_type] = modeling_module.eager_attention_forward
@@ -234,7 +238,9 @@ def remove_lrp_patches(state: LRPPatchState, model_type: str = "qwen3"):
 
     # Restore attention functions
     if model_type in state.original_attention_functions:
-        modeling_module.ALL_ATTENTION_FUNCTIONS = state.original_attention_functions[model_type]
+        attention_interface = modeling_module.ALL_ATTENTION_FUNCTIONS
+        for key, fn in state.original_attention_functions[model_type].items():
+            attention_interface[key] = fn
 
     if model_type in state.original_eager_attention:
         modeling_module.eager_attention_forward = state.original_eager_attention[model_type]
@@ -296,7 +302,9 @@ def detect_model_type(model) -> str:
     """
     model_class_name = model.__class__.__name__.lower()
 
-    if 'qwen3' in model_class_name:
+    if 'qwen3vl' in model_class_name or 'qwen3_vl' in model_class_name:
+        return 'qwen3_vl'
+    elif 'qwen3' in model_class_name:
         return 'qwen3'
     elif 'qwen2' in model_class_name:
         return 'qwen2'
@@ -306,7 +314,9 @@ def detect_model_type(model) -> str:
     # Check config if available
     if hasattr(model, 'config'):
         config_name = getattr(model.config, 'model_type', '').lower()
-        if 'qwen3' in config_name:
+        if 'qwen3_vl' in config_name or 'qwen3vl' in config_name:
+            return 'qwen3_vl'
+        elif 'qwen3' in config_name:
             return 'qwen3'
         elif 'qwen2' in config_name:
             return 'qwen2'

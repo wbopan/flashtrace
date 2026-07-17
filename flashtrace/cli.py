@@ -35,7 +35,11 @@ def build_parser() -> argparse.ArgumentParser:
     trace.add_argument("--output-span", help="Inclusive generation-token span START:END.")
     trace.add_argument("--reasoning-span", help="Inclusive generation-token span START:END.")
     trace.add_argument("--hops", type=int, default=1)
-    trace.add_argument("--method", default="flashtrace", choices=["flashtrace", "ifr-span", "ifr-matrix"])
+    trace.add_argument(
+        "--method",
+        default="flashtrace",
+        choices=["flashtrace", "ifr-span", "ifr-tokenwise", "ifr-matrix"],
+    )
     trace.add_argument("--html", help="Write standalone HTML heatmap.")
     trace.add_argument("--json", help="Write JSON trace.")
     trace.add_argument("--device-map", default="auto")

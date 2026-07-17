@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "frozen_on": "2026-07-16",
+  "models": {
+    "primary": [
+      "Qwen/Qwen3-VL-8B-Instruct",
+      "Qwen/Qwen3-VL-8B-Thinking"
+    ],
+    "generalization": [
+      "Qwen/Qwen2.5-VL-7B-Instruct"
+    ]
+  },
+  "sample_budget": {
+    "pilot_per_dataset": 32,
+    "main_per_primary_dataset": 500,
+    "generalization_per_primary_dataset": 200,
+    "diagnostic_gqa": 300,
+    "diagnostic_repope": 200,
+    "seed": 17,
+    "bootstrap_resamples": 10000
+  },
+  "benchmarks": [
+    {
+      "id": "coco_captions_grounded",
+      "tier": "primary",
+      "task": "open_ended_image_captioning",
+      "target_spans": ["full_caption", "matched_noun_phrase"],
+      "evidence": "COCO instance masks and bounding boxes matched to generated noun phrases",
+      "metrics": [
+        "insertion_auc",
+        "deletion_auc",
+        "pointing_game_box",
+        "pointing_game_mask",
+        "energy_in_mask",
+        "evidence_recall_at_10pct",
+        "runtime_seconds",
+        "peak_vram_gb"
+      ]
+    },
+    {
+      "id": "wiki_visa_single_oracle",
+      "tier": "primary",
+      "task": "visual_document_question_answering",
+      "target_spans": ["answer", "reasoning_prefix", "reasoning_plus_answer"],
+      "evidence": "Human Natural Questions answers aligned to evidence boxes in historical Wikipedia screenshots",
+      "strata": ["first_page_passage", "later_page_passage", "non_passage"],
+      "metrics": [
+        "insertion_auc",
+        "deletion_auc",
+        "pointing_game_box",
+        "energy_in_box",
+        "evidence_recall_at_10pct",
+        "image_text_reasoning_mass",
+        "runtime_seconds",
+        "peak_vram_gb"
+      ]
+    },
+    {
+      "id": "gqa_balanced_grounded",
+      "tier": "diagnostic",
+      "task": "compositional_visual_reasoning",
+      "target_spans": ["answer", "reasoning_prefix", "reasoning_plus_answer"],
+      "evidence": "GQA visual pointers and functional-program object ids joined to scene-graph boxes; treated as derived rather than human attribution ground truth",
+      "metrics": [
+        "insertion_auc",
+        "deletion_auc",
+        "pointing_game_box",
+        "energy_in_evidence_boxes",
+        "evidence_recall_at_10pct"
+      ]
+    },
+    {
+      "id": "repope",
+      "tier": "diagnostic",
+      "task": "object_hallucination",
+      "target_spans": ["hallucinated_object_span", "reasoning_plus_answer"],
+      "evidence": "COCO object annotations and RePOPE hallucination labels",
+      "metrics": [
+        "insertion_auc",
+        "deletion_auc",
+        "average_minimal_correction_region",
+        "correction_success_rate_at_10pct"
+      ]
+    }
+  ],
+  "baselines": [
+    {
+      "id": "random",
+      "tier": "sanity",
+      "status": "implement_in_shared_evaluator"
+    },
+    {
+      "id": "center_prior",
+      "tier": "sanity",
+      "status": "implement_in_shared_evaluator"
+    },
+    {
+      "id": "attention_rollout",
+      "tier": "fast",
+      "status": "implement_against_shared_qwen_adapter"
+    },
+    {
+      "id": "grad_cam_or_grad_attention",
+      "tier": "fast",
+      "status": "implement_against_shared_qwen_adapter"
+    },
+    {
+      "id": "tam",
+      "tier": "primary",
+      "status": "official_qwen2_code_requires_qwen3_port"
+    },
+    {
+      "id": "igospp_gnc",
+      "tier": "primary",
+      "status": "official_qwen2_5_code_requires_qwen3_port"
+    },
+    {
+      "id": "eagle_early_stop",
+      "tier": "primary",
+      "status": "official_qwen2_5_code_and_model_agnostic_objective_require_qwen3_adapter"
+    },
+    {
+      "id": "cc_shap",
+      "tier": "diagnostic",
+      "status": "optional_modality_balance_only"
+    }
+  ],
+  "shared_protocol": {
+    "frozen_target": true,
+    "target_score": "teacher_forced_sum_log_probability",
+    "target_token_counts": [1, 8, 32, 128],
+    "target_span_policy": "Use the same frozen generated token indices for every method. Answer spans are uncapped up to 32 tokens; Thinking traces additionally report prefixes at 8, 32, and 128 tokens.",
+    "visual_units": "same SLICO 64-region partition for perturbation baselines; native visual-token grid additionally reported for white-box methods",
+    "insertion_baseline": "Gaussian-blurred image",
+    "deletion_replacement": "Gaussian-blurred image",
+    "curve_fractions": [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+    "localization_subset": "correct and causally image-dependent samples",
+    "faithfulness_subset": "all samples with stable frozen generations",
+    "uncertainty": "paired sample-level bootstrap 95pct confidence intervals"
+  }
+}

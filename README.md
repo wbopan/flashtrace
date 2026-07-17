@@ -204,7 +204,7 @@ Useful flags:
 - `--target`: UTF-8 target text file
 - `--output-span`: inclusive `START:END` indices over generated tokens
 - `--reasoning-span`: inclusive `START:END` indices for a reasoning segment
-- `--method`: `flashtrace`, `ifr-span`, or `ifr-matrix`
+- `--method`: `flashtrace`, `ifr-span`, `ifr-tokenwise`, or `ifr-matrix`
 - `--recompute-attention`: lower-memory attention recomputation path
 - `--use-chat-template`: format prompts with the tokenizer chat template
 - `--device-map`: Transformers device map, default `auto`
@@ -284,7 +284,7 @@ from flashtrace import (
 - `output_span: tuple[int, int] | None`
 - `reasoning_span: tuple[int, int] | None`
 - `hops: int`
-- `method: "flashtrace" | "ifr-span" | "ifr-matrix"`
+- `method: "flashtrace" | "ifr-span" | "ifr-tokenwise" | "ifr-matrix"`
 - `renorm_threshold: float | None`
 - `images: image | list[image] | None`
 

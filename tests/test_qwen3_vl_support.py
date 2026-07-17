@@ -2,8 +2,15 @@ from __future__ import annotations
 
 import torch
 
+from evaluations.multimodal.visual_baselines import (
+    attention_rollout,
+    grad_attention,
+    qwen3_vl_attnlrp,
+    visual_integrated_gradients,
+)
 from flashtrace import FlashTrace
 from flashtrace.core import extract_model_metadata
+from flashtrace.lrp_patches import detect_model_type
 from tests.helpers import (
     make_tiny_qwen25_vl_model_and_processor,
     make_tiny_qwen3_vl_model_and_processor,
@@ -85,6 +92,29 @@ def test_qwen3_vl_generation_and_trace_smoke():
     assert result.metadata["multimodal"]["attention_mode"] == "stored"
 
 
+def test_qwen3_vl_ifr_tokenwise_alias_uses_the_output_matrix():
+    model, processor = make_tiny_qwen3_vl_model_and_processor(seed=2)
+    tracer = FlashTrace(
+        model,
+        processor,
+        chunk_tokens=16,
+        sink_chunk_tokens=4,
+    )
+
+    result = tracer.trace(
+        prompt="t20 t21",
+        images=torch.zeros(3, 4, 4),
+        target="t30 t31",
+        output_span=(0, 1),
+        method="ifr-tokenwise",
+    )
+
+    assert result.method == "ifr-tokenwise"
+    assert result.prompt_tokens == ["<|image_pad|>", "t20", "t21"]
+    assert len(result.scores) == 3
+    assert torch.isfinite(torch.tensor(result.scores)).all()
+
+
 def test_qwen25_vl_fallback_trace_smoke():
     model, processor = make_tiny_qwen25_vl_model_and_processor()
     tracer = FlashTrace(
@@ -106,3 +136,51 @@ def test_qwen25_vl_fallback_trace_smoke():
     assert result.prompt_tokens == ["<|image_pad|>", "t20", "t21"]
     assert result.metadata["multimodal"]["visual_grid_thw"] == [[1, 1, 1]]
     assert result.metadata["multimodal"]["attention_mode"] == "stored"
+
+
+def test_qwen3_vl_frozen_visual_baselines_return_native_grids():
+    from transformers.models.qwen3_vl import modeling_qwen3_vl
+
+    model, processor = make_tiny_qwen3_vl_model_and_processor(
+        seed=3,
+        raw_grid_size=4,
+    )
+    original_rms_forward = modeling_qwen3_vl.Qwen3VLTextRMSNorm.forward
+    original_eager_attention = modeling_qwen3_vl.eager_attention_forward
+    attention_interface = modeling_qwen3_vl.ALL_ATTENTION_FUNCTIONS
+    messages = [
+        {
+            "role": "user",
+            "content": [
+                {"type": "image", "image": torch.zeros(3, 8, 8)},
+                {"type": "text", "text": "t20 t21"},
+            ],
+        }
+    ]
+
+    outputs = [
+        attention_rollout(model, processor, messages, "t30 t31"),
+        grad_attention(model, processor, messages, "t30 t31"),
+        visual_integrated_gradients(
+            model,
+            processor,
+            messages,
+            "t30 t31",
+            steps=5,
+        ),
+        qwen3_vl_attnlrp(model, processor, messages, "t30 t31"),
+    ]
+
+    assert detect_model_type(model) == "qwen3_vl"
+    assert modeling_qwen3_vl.Qwen3VLTextRMSNorm.forward is original_rms_forward
+    assert modeling_qwen3_vl.eager_attention_forward is original_eager_attention
+    assert modeling_qwen3_vl.ALL_ATTENTION_FUNCTIONS is attention_interface
+    assert (
+        outputs[1].metadata["objective_value"]
+        == outputs[3].metadata["objective_value"]
+    )
+    for output in outputs:
+        grid = torch.tensor(output.grid)
+        assert grid.shape == (2, 2)
+        assert torch.isfinite(grid).all()
+        assert output.metadata["attributed_tokens"] == 2

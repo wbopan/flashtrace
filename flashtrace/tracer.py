@@ -8,7 +8,7 @@ from .attribution import LLMAttributionResult, LLMIFRAttribution
 from .improved import LLMIFRAttributionBoth
 from .result import TraceResult
 
-TraceMethod = Literal["flashtrace", "ifr-span", "ifr-matrix"]
+TraceMethod = Literal["flashtrace", "ifr-span", "ifr-tokenwise", "ifr-matrix"]
 
 
 def _to_float_list(values: Any) -> list[float]:
@@ -107,7 +107,7 @@ class FlashTrace:
                 span=output_span,
                 renorm_threshold=renorm_threshold,
             )
-        elif method == "ifr-matrix":
+        elif method in {"ifr-tokenwise", "ifr-matrix"}:
             engine = LLMIFRAttribution(
                 self.model,
                 self.tokenizer,

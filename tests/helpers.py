@@ -138,8 +138,9 @@ def make_tiny_qwen35_model_and_tokenizer(
 class _TinyQwen3VLProcessor:
     """Processor-shaped fixture that emits a valid one-image Qwen3-VL batch."""
 
-    def __init__(self, tokenizer):
+    def __init__(self, tokenizer, *, raw_grid_size: int = 2):
         self.tokenizer = tokenizer
+        self.raw_grid_size = raw_grid_size
 
     def apply_chat_template(
         self,
@@ -150,16 +151,23 @@ class _TinyQwen3VLProcessor:
         return_dict=False,
         return_tensors=None,
     ):
-        text = next(
-            item["text"]
-            for item in messages[0]["content"]
-            if item.get("type") == "text"
+        structured_content = next(
+            message["content"]
+            for message in messages
+            if isinstance(message.get("content"), list)
+        )
+        text = next(item["text"] for item in structured_content if item.get("type") == "text")
+        image = next(
+            item["image"] for item in structured_content if item.get("type") == "image"
         )
         user_ids = self.tokenizer(
             text, add_special_tokens=False, return_tensors="pt"
         ).input_ids[0]
-        # One merged visual token: grid 1x2x2 with spatial_merge_size=2.
-        prefix = torch.tensor([58, 60, 61, 62], dtype=torch.long)
+        visual_tokens = (self.raw_grid_size // 2) ** 2
+        prefix = torch.tensor(
+            [58, 60, *([61] * visual_tokens), 62],
+            dtype=torch.long,
+        )
         suffix = torch.tensor([59, 58], dtype=torch.long)
         input_ids = torch.cat([prefix, user_ids, suffix]).unsqueeze(0)
         if not tokenize:
@@ -169,19 +177,39 @@ class _TinyQwen3VLProcessor:
 
         mm_token_type_ids = torch.zeros_like(input_ids)
         mm_token_type_ids[input_ids == 61] = 1
+        patch_count = self.raw_grid_size**2
+        image_mean = (
+            float(image.detach().float().mean())
+            if isinstance(image, torch.Tensor)
+            else 0.0
+        )
+        pixel_values = torch.linspace(
+            -1.0,
+            1.0,
+            patch_count * 12,
+            dtype=torch.float32,
+        ).reshape(patch_count, 12)
+        pixel_values = pixel_values + image_mean
         return BatchFeature(
             data={
                 "input_ids": input_ids,
                 "attention_mask": torch.ones_like(input_ids),
                 "mm_token_type_ids": mm_token_type_ids,
-                "pixel_values": torch.randn(4, 12),
-                "image_grid_thw": torch.tensor([[1, 2, 2]], dtype=torch.long),
+                "pixel_values": pixel_values,
+                "image_grid_thw": torch.tensor(
+                    [[1, self.raw_grid_size, self.raw_grid_size]],
+                    dtype=torch.long,
+                ),
             },
             tensor_type="pt",
         )
 
 
-def make_tiny_qwen3_vl_model_and_processor(*, seed: int = 0):
+def make_tiny_qwen3_vl_model_and_processor(
+    *,
+    seed: int = 0,
+    raw_grid_size: int = 2,
+):
     """Build a tiny eager-attention Qwen3-VL model plus processor fixture."""
 
     import torch
@@ -255,7 +283,7 @@ def make_tiny_qwen3_vl_model_and_processor(*, seed: int = 0):
             ],
         }
     )
-    return model, _TinyQwen3VLProcessor(tokenizer)
+    return model, _TinyQwen3VLProcessor(tokenizer, raw_grid_size=raw_grid_size)
 
 
 def make_tiny_qwen25_vl_model_and_processor(*, seed: int = 0):
