@@ -1,0 +1,21 @@
+[project]
+name = "flashtrace-agentdojo-eval"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "agentdojo==0.1.35",
+    "flashtrace",
+]
+
+[tool.uv.sources]
+flashtrace = { path = "../.." }
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.11",
+]

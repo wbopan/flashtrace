@@ -35,3 +35,4 @@ exp/**/out-*/
 *.npz
 .DS_Store
 repomix-output.xml
+paper/

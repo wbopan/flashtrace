@@ -1,0 +1,82 @@
+[
+  {
+    "sample_id": "clevr-complex-000766",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-000766.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-001565",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-001565.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-001655",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-001655.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-006526",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-006526.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-026290",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-026290.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-027709",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-027709.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-035213",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-035213.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-042704",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-042704.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-046258",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-046258.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-047163",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-047163.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-054603",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-054603.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-057968",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-057968.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-067887",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-067887.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-074218",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-074218.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-074560",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-074560.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-075044",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-075044.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-088066",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-088066.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-092958",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-092958.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-093708",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-093708.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-097886",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_comparisons/clevr-complex-097886.jpg"
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "dataset_manifest": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10.dataset.jsonl",
+  "model_output": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10.model.jsonl",
+  "attribution_dir": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10_attribution",
+  "model": "Qwen/Qwen3-VL-8B-Thinking",
+  "revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b",
+  "target_span": "output_only",
+  "response_frozen": true,
+  "teacher_forced": true,
+  "steps": 5,
+  "target_regions": 36,
+  "comparison_protocol": "common_paired_successful_subset",
+  "common_sample_ids": [
+    "vizwiz-lf-001",
+    "vizwiz-lf-048",
+    "vizwiz-lf-171",
+    "vizwiz-lf-207",
+    "vizwiz-lf-252",
+    "vizwiz-lf-397",
+    "vizwiz-lf-425",
+    "vizwiz-lf-497",
+    "vizwiz-lf-554"
+  ],
+  "common_samples": 9,
+  "successful_samples_by_method": {
+    "random": 9,
+    "center": 9,
+    "visual-ig": 9,
+    "attnlrp": 9,
+    "flashtrace": 9
+  },
+  "metric_direction": {
+    "deletion_auc": "lower_is_better",
+    "insertion_auc": "higher_is_better",
+    "visual_rise": "lower_is_better",
+    "visual_mas": "lower_is_better",
+    "visual_rise_plus_ap": "lower_is_better"
+  },
+  "methods": {
+    "random": {
+      "common_samples": 9,
+      "deletion_auc": 0.46201255752702636,
+      "insertion_auc": 0.4897336956923368,
+      "visual_rise": 0.46201255752702636,
+      "visual_mas": 0.571326982914345,
+      "visual_rise_plus_ap": 0.6426225035697776,
+      "deletion_endpoint_delta": 0.3015490625467565,
+      "insertion_endpoint_delta": 0.3015490625467565,
+      "mean_seconds": 4.15370180292262,
+      "degenerate_deletion_curves": 0,
+      "degenerate_insertion_curves": 0
+    },
+    "center": {
+      "common_samples": 9,
+      "deletion_auc": 0.3777486893056228,
+      "insertion_auc": 0.7035455781453904,
+      "visual_rise": 0.3777486893056228,
+      "visual_mas": 0.512926206271649,
+      "visual_rise_plus_ap": 0.6116572722744035,
+      "deletion_endpoint_delta": 0.3015490625467565,
+      "insertion_endpoint_delta": 0.3015490625467565,
+      "mean_seconds": 4.117105428543356,
+      "degenerate_deletion_curves": 0,
+      "degenerate_insertion_curves": 0
+    },
+    "visual-ig": {
+      "common_samples": 9,
+      "deletion_auc": 0.43575661345950156,
+      "insertion_auc": 0.49945691214445403,
+      "visual_rise": 0.43575661345950156,
+      "visual_mas": 0.5503302933276033,
+      "visual_rise_plus_ap": 0.7273667938207921,
+      "deletion_endpoint_delta": 0.3015490625467565,
+      "insertion_endpoint_delta": 0.3015490625467565,
+      "mean_seconds": 4.12427713877211,
+      "degenerate_deletion_curves": 0,
+      "degenerate_insertion_curves": 0
+    },
+    "attnlrp": {
+      "common_samples": 9,
+      "deletion_auc": 0.3458463384372237,
+      "insertion_auc": 0.5624886093207243,
+      "visual_rise": 0.34584633843722373,
+      "visual_mas": 0.4770023932207018,
+      "visual_rise_plus_ap": 0.5667535739257931,
+      "deletion_endpoint_delta": 0.3015490625467565,
+      "insertion_endpoint_delta": 0.3015490625467565,
+      "mean_seconds": 4.131382715267439,
+      "degenerate_deletion_curves": 0,
+      "degenerate_insertion_curves": 0
+    },
+    "flashtrace": {
+      "common_samples": 9,
+      "deletion_auc": 0.31825410118101194,
+      "insertion_auc": 0.5972276737797542,
+      "visual_rise": 0.31825410118101194,
+      "visual_mas": 0.440075132639516,
+      "visual_rise_plus_ap": 0.5251449715093318,
+      "deletion_endpoint_delta": 0.3015490625467565,
+      "insertion_endpoint_delta": 0.3015490625467565,
+      "mean_seconds": 4.1292579777331815,
+      "degenerate_deletion_curves": 0,
+      "degenerate_insertion_curves": 0
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "dataset_manifest": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10.dataset.jsonl",
+  "model_output": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10.model.jsonl",
+  "generation_evaluation": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10.generation_eval.jsonl",
+  "model": "Qwen/Qwen3-VL-8B-Thinking",
+  "revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b",
+  "eligible_samples": 9,
+  "comparison_protocol": "common_paired_successful_subset",
+  "common_sample_ids": [
+    "vizwiz-lf-001",
+    "vizwiz-lf-048",
+    "vizwiz-lf-171",
+    "vizwiz-lf-207",
+    "vizwiz-lf-252",
+    "vizwiz-lf-397",
+    "vizwiz-lf-425",
+    "vizwiz-lf-497",
+    "vizwiz-lf-554"
+  ],
+  "common_samples": 9,
+  "requested_methods": [
+    "random",
+    "center",
+    "visual-ig",
+    "attnlrp",
+    "flashtrace"
+  ],
+  "successful_samples_by_method": {
+    "random": 9,
+    "center": 9,
+    "visual-ig": 9,
+    "attnlrp": 9,
+    "flashtrace": 9
+  },
+  "methods": {
+    "random": {
+      "common_samples": 9,
+      "localization_samples": 0,
+      "pointing_game": null,
+      "energy_in_mask": null,
+      "evidence_rank_auc": null,
+      "top_evidence_iou": null,
+      "recovery_at_1pct": null,
+      "recovery_at_5pct": null,
+      "recovery_at_10pct": null,
+      "recovery_at_20pct": null,
+      "mean_seconds": 0.000338300545182493,
+      "mean_peak_vram_gb": 0.0
+    },
+    "center": {
+      "common_samples": 9,
+      "localization_samples": 0,
+      "pointing_game": null,
+      "energy_in_mask": null,
+      "evidence_rank_auc": null,
+      "top_evidence_iou": null,
+      "recovery_at_1pct": null,
+      "recovery_at_5pct": null,
+      "recovery_at_10pct": null,
+      "recovery_at_20pct": null,
+      "mean_seconds": 0.0003095262994368871,
+      "mean_peak_vram_gb": 0.0
+    },
+    "visual-ig": {
+      "common_samples": 9,
+      "localization_samples": 0,
+      "pointing_game": null,
+      "energy_in_mask": null,
+      "evidence_rank_auc": null,
+      "top_evidence_iou": null,
+      "recovery_at_1pct": null,
+      "recovery_at_5pct": null,
+      "recovery_at_10pct": null,
+      "recovery_at_20pct": null,
+      "mean_seconds": 10.412879942398932,
+      "mean_peak_vram_gb": 4.080370585123698
+    },
+    "attnlrp": {
+      "common_samples": 9,
+      "localization_samples": 0,
+      "pointing_game": null,
+      "energy_in_mask": null,
+      "evidence_rank_auc": null,
+      "top_evidence_iou": null,
+      "recovery_at_1pct": null,
+      "recovery_at_5pct": null,
+      "recovery_at_10pct": null,
+      "recovery_at_20pct": null,
+      "mean_seconds": 0.6139702737952272,
+      "mean_peak_vram_gb": 17.81490988201565
+    },
+    "flashtrace": {
+      "common_samples": 9,
+      "localization_samples": 0,
+      "pointing_game": null,
+      "energy_in_mask": null,
+      "evidence_rank_auc": null,
+      "top_evidence_iou": null,
+      "recovery_at_1pct": null,
+      "recovery_at_5pct": null,
+      "recovery_at_10pct": null,
+      "recovery_at_20pct": null,
+      "mean_seconds": 0.6895289509039786,
+      "mean_peak_vram_gb": 4.703649626837836
+    }
+  },
+  "spatial_resampling": "nearest_patch",
+  "spatial_metric_unit": "visual_patch",
+  "cutoff_tie_policy": "expected_uniform"
+}

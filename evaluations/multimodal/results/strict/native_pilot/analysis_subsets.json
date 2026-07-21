@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "wiki_visa": {
+    "semantic_image_dependent_localization_ids": [
+      "wiki-visa-1449",
+      "wiki-visa-2114",
+      "wiki-visa-2171",
+      "wiki-visa-2870"
+    ],
+    "strict_exact_gate_ids": [
+      "wiki-visa-1449",
+      "wiki-visa-2870"
+    ]
+  },
+  "vistaqa": {
+    "semantic_correct_localization_ids": [
+      "vistaqa-0656",
+      "vistaqa-0753"
+    ],
+    "complete_native_evidence_ids": [
+      "vistaqa-0656"
+    ],
+    "partial_reasoning_evidence_ids": [
+      "vistaqa-0753"
+    ]
+  },
+  "vizwiz_lf": {
+    "frozen_response_faithfulness_ids": [
+      "vizwiz-lf-001",
+      "vizwiz-lf-048",
+      "vizwiz-lf-171",
+      "vizwiz-lf-207",
+      "vizwiz-lf-252",
+      "vizwiz-lf-397",
+      "vizwiz-lf-425",
+      "vizwiz-lf-497",
+      "vizwiz-lf-554"
+    ],
+    "full_human_reasoning_localizability_gate_ids": [
+      "vizwiz-lf-425"
+    ]
+  }
+}

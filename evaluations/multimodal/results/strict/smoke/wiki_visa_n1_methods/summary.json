@@ -1,0 +1,95 @@
+{
+  "schema_version": 2,
+  "dataset_manifest": "evaluations/multimodal/results/strict/wiki_visa_seed17_n20.dataset.jsonl",
+  "model_output": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1.model.jsonl",
+  "generation_evaluation": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1.generation_eval.jsonl",
+  "model": "Qwen/Qwen3-VL-8B-Thinking",
+  "revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b",
+  "eligible_samples": 1,
+  "comparison_protocol": "common_paired_successful_subset",
+  "common_sample_ids": [
+    "wiki-visa-0027"
+  ],
+  "common_samples": 1,
+  "requested_methods": [
+    "random",
+    "center",
+    "ifr-span",
+    "attention-rollout",
+    "flashtrace"
+  ],
+  "successful_samples_by_method": {
+    "random": 1,
+    "center": 1,
+    "ifr-span": 1,
+    "attention-rollout": 1,
+    "flashtrace": 1
+  },
+  "methods": {
+    "random": {
+      "common_samples": 1,
+      "pointing_game": 0.0,
+      "energy_in_mask": 0.09278190735770533,
+      "evidence_rank_auc": 0.47740004478035497,
+      "top_evidence_iou": 0.033932135728542916,
+      "recovery_at_1pct": 0.005791505791505791,
+      "recovery_at_5pct": 0.02895752895752896,
+      "recovery_at_10pct": 0.07271557271557272,
+      "recovery_at_20pct": 0.1402831402831403,
+      "mean_seconds": 0.031350999139249325,
+      "mean_peak_vram_gb": 0.0
+    },
+    "center": {
+      "common_samples": 1,
+      "pointing_game": 0.0,
+      "energy_in_mask": 0.03770575354107159,
+      "evidence_rank_auc": 0.3930638614724926,
+      "top_evidence_iou": 0.0,
+      "recovery_at_1pct": 0.0,
+      "recovery_at_5pct": 0.0,
+      "recovery_at_10pct": 0.0,
+      "recovery_at_20pct": 0.02252252252252252,
+      "mean_seconds": 0.007164909504354,
+      "mean_peak_vram_gb": 0.0
+    },
+    "ifr-span": {
+      "common_samples": 1,
+      "pointing_game": 1.0,
+      "energy_in_mask": 0.2319231484294324,
+      "evidence_rank_auc": 0.7799718126757911,
+      "top_evidence_iou": 0.11959654178674352,
+      "recovery_at_1pct": 0.04633204633204633,
+      "recovery_at_5pct": 0.10553410553410554,
+      "recovery_at_10pct": 0.22972972972972974,
+      "recovery_at_20pct": 0.5463320463320464,
+      "mean_seconds": 1.1766554117202759,
+      "mean_peak_vram_gb": 4.449891090393066
+    },
+    "attention-rollout": {
+      "common_samples": 1,
+      "pointing_game": 0.0,
+      "energy_in_mask": 0.09106280642740829,
+      "evidence_rank_auc": 0.7948113367196307,
+      "top_evidence_iou": 0.056783407004420264,
+      "recovery_at_1pct": 0.0,
+      "recovery_at_5pct": 0.0006435006435006435,
+      "recovery_at_10pct": 0.12290862290862291,
+      "recovery_at_20pct": 0.4749034749034749,
+      "mean_seconds": 0.47241500578820705,
+      "mean_peak_vram_gb": 3.7016334533691406
+    },
+    "flashtrace": {
+      "common_samples": 1,
+      "pointing_game": 1.0,
+      "energy_in_mask": 0.2444454572580994,
+      "evidence_rank_auc": 0.7821753359177499,
+      "top_evidence_iou": 0.14601769911504425,
+      "recovery_at_1pct": 0.046975546975546977,
+      "recovery_at_5pct": 0.12355212355212356,
+      "recovery_at_10pct": 0.2722007722007722,
+      "recovery_at_20pct": 0.5540540540540541,
+      "mean_seconds": 0.8302392056211829,
+      "mean_peak_vram_gb": 4.417818546295166
+    }
+  }
+}

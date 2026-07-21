@@ -44,6 +44,11 @@ baselines = [
     "evaluate>=0.4.6",
     "sentence-transformers>=4.1.0",
 ]
+tam = [
+    "opencv-python-headless>=4.10",
+    "pymupdf>=1.24",
+    "scipy>=1.14",
+]
 eval = [
     "datasets>=2.21",
     "evaluate>=0.4.6",

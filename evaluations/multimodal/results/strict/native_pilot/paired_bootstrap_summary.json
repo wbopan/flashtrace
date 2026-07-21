@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "draws": 50000,
+  "seed": 17,
+  "delta_convention": "positive_favors_flashtrace",
+  "wiki_visa_semantic_image_dependent_n4": {
+    "flashtrace_vs_attnlrp": {
+      "recovery_at_5pct": {
+        "mean_delta": 0.1132060763,
+        "ci95": [-0.0729166667, 0.2993288192],
+        "wins_ties_losses": [2, 0, 2]
+      },
+      "recovery_at_20pct": {
+        "mean_delta": 0.1656744264,
+        "ci95": [0.0580357143, 0.2733131385],
+        "wins_ties_losses": [4, 0, 0]
+      },
+      "energy_in_mask": {
+        "mean_delta": -0.1406663363,
+        "ci95": [-0.2186312154, -0.0879049628],
+        "wins_ties_losses": [0, 0, 4]
+      },
+      "evidence_rank_auc": {
+        "mean_delta": 0.1859959321,
+        "ci95": [0.1181819194, 0.2324844681],
+        "wins_ties_losses": [4, 0, 0]
+      }
+    }
+  },
+  "vizwiz_lf_frozen_response_n9": {
+    "flashtrace_vs_attnlrp": {
+      "deletion_auc": {
+        "mean_favorable_delta": 0.0275922373,
+        "ci95": [-0.0202532910, 0.0877768783],
+        "wins_ties_losses": [3, 2, 4]
+      },
+      "insertion_auc": {
+        "mean_favorable_delta": 0.0347390645,
+        "ci95": [-0.0472053633, 0.1251716983],
+        "wins_ties_losses": [3, 1, 5]
+      },
+      "visual_mas": {
+        "mean_favorable_delta": 0.0369272606,
+        "ci95": [-0.0552078986, 0.1550478826],
+        "wins_ties_losses": [3, 1, 5]
+      }
+    }
+  }
+}

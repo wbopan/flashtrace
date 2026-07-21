@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "dataset_manifest": "evaluations/multimodal/results/strict/clevr_xai_complex_seed17_n20.dataset.jsonl",
+  "model_output": "evaluations/multimodal/results/strict/smoke/clevr_xai_complex_n1.model.jsonl",
+  "generation_evaluation": "evaluations/multimodal/results/strict/smoke/clevr_xai_complex_n1.generation_eval.jsonl",
+  "model": "Qwen/Qwen3-VL-8B-Thinking",
+  "revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b",
+  "eligible_samples": 1,
+  "comparison_protocol": "common_paired_successful_subset",
+  "common_sample_ids": [
+    "clevr-complex-000766"
+  ],
+  "common_samples": 1,
+  "requested_methods": [
+    "tam"
+  ],
+  "successful_samples_by_method": {
+    "tam": 1
+  },
+  "methods": {
+    "tam": {
+      "common_samples": 1,
+      "pointing_game": 0.0,
+      "energy_in_mask": 0.12732865437944335,
+      "evidence_rank_auc": 0.644869931472536,
+      "top_evidence_iou": 0.06156111929307806,
+      "recovery_at_1pct": 0.0,
+      "recovery_at_5pct": 0.017203107658157604,
+      "recovery_at_10pct": 0.10876803551609324,
+      "recovery_at_20pct": 0.22641509433962265,
+      "mean_seconds": 2.0268567949533463,
+      "mean_peak_vram_gb": 0.44759368896484375
+    }
+  }
+}

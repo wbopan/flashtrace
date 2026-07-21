@@ -1,5 +1,134 @@
 # Multimodal evaluation smoke test
 
+## Strict Wiki-VISA / CLEVR-XAI protocol
+
+The paper-facing protocol keeps three artifacts separate:
+
+1. `*.dataset.jsonl` contains only `I_IMAGE`, `I_QUESTION`, and evaluation
+   metadata (`REFERENCE_OUTPUT`, boxes/masks, and optional functional program).
+2. `*.model.jsonl` contains the model's own `THINKING`, whole `OUTPUT`, their
+   inclusive token spans, and exact model/template identity. It contains no
+   reference answer or dataset rationale.
+3. `*.generation_eval.jsonl` joins the two by `sample_id` and records output
+   correctness, repeated-greedy stability, exact generated/teacher-forced token
+   identity, and the output-only log-probability drop under image blur.
+4. `*.ablation.model.jsonl` separately stores deterministic generations on a
+   globally blurred image and a uniform-gray image. The revised strict
+   evaluation records only whether these ablations reproduce the original
+   whole `OUTPUT`; ablation text never enters the primary model record.
+
+Functional programs, human rationales, and GPT rationales are evaluation
+metadata only and are never supplied to the model. The primary attribution
+sink is always `OUTPUT_SPAN`. Primary `flashtrace` preserves the paper's
+cumulative definition: direct `OUTPUT -> IMAGE` attribution is added to the
+exact `OUTPUT -> THINKING -> IMAGE` recursive attribution, with each recursive
+hop scaled by the cumulative fraction of attribution mass entering the
+reasoning span. The public facade's broader THINKING+OUTPUT recursive span is
+reported separately as
+`flashtrace-all-gen`; it is an ablation, not the primary method. All methods
+teacher-force the same complete frozen response.
+
+A strict sample must satisfy all of the following: whole-output correctness;
+two identical greedy generations; exact equality between generated token IDs
+and decode/re-encoded teacher-forcing IDs; a positive output-only log-probability
+drop under global blur; and failure of at least one deterministic blur/gray
+ablation generation to reproduce the original whole output. No rationale or
+functional program supplied by a dataset is accepted as `THINKING`.
+
+The complete official data currently verified on disk is:
+
+- Wiki-VISA official `test`: seven parquet shards and 3,000 rows;
+- CLEVR-XAI v1.0 complex: 100,000 questions, 10,000 images, and all four
+  official complex evidence-mask variants.
+
+`strict_datasets.py` creates deterministic candidate manifests, and
+`select_strict_subset.py` materializes the balanced strict-eligible subset only
+after generation and ablation auditing. CLEVR is balanced across count,
+existence, integer comparison, attribute comparison, and attribute query,
+requires at least 12 functional-program steps, and uses a different image per
+selected question. Its primary ground truth is Unique First-nonempty; Unique
+and Union are sensitivity analyses. Wiki-VISA is balanced across first-page
+passage, later-page passage, and non-passage, and preserves the native
+980x3920 screenshots and absolute `xyxy` evidence boxes.
+Formal Wiki-VISA runs use `max_pixels=2,007,040`; the earlier 1MP setting was
+rejected after a controlled OCR resolution check.
+
+The completed strict pilot, including final scores, paired bootstrap intervals,
+frozen-response faithfulness, and two independent full visual audits, is in
+[`results/strict/final/RESULTS.md`](results/strict/final/RESULTS.md). The final
+paper-facing directories contain `wiki_visa_n18_2mp_methods_v2` and
+`clevr_xai_complex_strict_n20_methods_v2`. The older
+`clevr_xai_complex_n20_methods` run predates the strict generation-ablation
+gate and exact-THINKING bridge fix; it is diagnostic history and must not be
+used in paper tables.
+
+The later native-dataset fit check for Wiki-VISA, VISTAQA, and VizWiz-LF is in
+[`results/strict/native_pilot/RESULTS.md`](results/strict/native_pilot/RESULTS.md).
+It uses whole-patch tie-aware metrics and the same cumulative
+direct-plus-weighted-hops FlashTrace definition as the paper.
+
+```bash
+python -m evaluations.multimodal.verify_strict_data \
+  --output evaluations/multimodal/results/strict/data_integrity.json
+
+python -m evaluations.multimodal.strict_datasets \
+  --dataset clevr-xai-complex \
+  --output evaluations/multimodal/results/strict/clevr_xai_complex_seed17_n20.dataset.jsonl
+
+python -m evaluations.multimodal.strict_datasets \
+  --dataset wiki-visa \
+  --output evaluations/multimodal/results/strict/wiki_visa_seed17_n20.dataset.jsonl
+```
+
+Generate real Qwen3-VL-Thinking records before attribution:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -m evaluations.multimodal.strict_generation \
+  --dataset-manifest evaluations/multimodal/results/strict/clevr_xai_complex_seed17_n20.dataset.jsonl \
+  --model-output evaluations/multimodal/results/strict/clevr_xai_complex.model.jsonl \
+  --evaluation-output evaluations/multimodal/results/strict/clevr_xai_complex.generation_eval.jsonl \
+  --model Qwen/Qwen3-VL-8B-Thinking
+```
+
+Then verify that the answer generation actually depends on visual input. This
+command writes ablation model outputs separately and produces the revised
+evaluation file used by subset selection:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -m evaluations.multimodal.strict_ablation_audit \
+  --dataset-manifest <candidate.dataset.jsonl> \
+  --model-output <candidate.model.jsonl> \
+  --generation-evaluation <candidate.generation_eval.jsonl> \
+  --ablation-model-output <candidate.ablation.model.jsonl> \
+  --revised-evaluation-output <candidate.strict.generation_eval.jsonl>
+```
+
+Run FlashTrace and baselines only after the one-sample generation and
+attribution smoke test succeeds:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python -m evaluations.multimodal.strict_attribution \
+  --dataset-manifest evaluations/multimodal/results/strict/clevr_xai_complex_seed17_n20.dataset.jsonl \
+  --model-output evaluations/multimodal/results/strict/clevr_xai_complex.model.jsonl \
+  --generation-evaluation evaluations/multimodal/results/strict/clevr_xai_complex.generation_eval.jsonl \
+  --output-dir evaluations/multimodal/results/strict/clevr_xai_complex_methods
+```
+
+The comparison table uses the intersection of successful sample IDs across
+every requested method. Primary localization metrics are Recovery at 1%, 5%,
+10%, and 20%, energy in evidence, pointing game, evidence-vs-background rank
+AUC, and top-evidence-area IoU. CLEVR's Unique First-nonempty mask is the
+official primary view and Union is reported as a reasoning-chain sensitivity
+view. Spatial scoring operates on complete visual patches: native GT pixels
+are assigned to their containing patch, and a cutoff-score tie receives its
+expected credit under a uniform tie break. Heatmaps are expanded with nearest
+neighbors for display only; bilinear smoothing and partial-patch top-q
+selection are not used for metrics. `strict_visual_faithfulness.py`
+additionally uses a common approximately
+64-cell image partition for blur deletion/insertion. It fixes the complete
+THINKING+OUTPUT token sequence and accumulates only OUTPUT_SPAN log probability
+at every perturbation step.
+
 This module puts VQA-X and A-OKVQA behind one protocol:
 
 ```text

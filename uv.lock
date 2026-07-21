@@ -853,6 +853,12 @@ eval = [
     { name = "datasets" },
     { name = "evaluate" },
 ]
+tam = [
+    { name = "opencv-python-headless" },
+    { name = "pymupdf" },
+    { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "scipy", version = "1.16.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
 vlm = [
     { name = "torchvision" },
 ]
@@ -874,7 +880,10 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.6" },
     { name = "networkx", specifier = ">=3.3" },
     { name = "numpy", specifier = ">=2.0" },
+    { name = "opencv-python-headless", marker = "extra == 'tam'", specifier = ">=4.10" },
+    { name = "pymupdf", marker = "extra == 'tam'", specifier = ">=1.24" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
+    { name = "scipy", marker = "extra == 'tam'", specifier = ">=1.14" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "sentence-transformers", marker = "extra == 'baselines'", specifier = ">=4.1.0" },
     { name = "spacy", specifier = ">=3.8" },
@@ -885,7 +894,7 @@ requires-dist = [
     { name = "uvicorn", extras = ["standard"], marker = "extra == 'demo'", specifier = ">=0.34" },
     { name = "wordfreq", specifier = ">=3.1.1" },
 ]
-provides-extras = ["vlm", "baselines", "eval", "dev", "demo"]
+provides-extras = ["vlm", "baselines", "tam", "eval", "dev", "demo"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8.0" }]
@@ -2233,6 +2242,26 @@ wheels = [
 ]
 
 [[package]]
+name = "opencv-python-headless"
+version = "5.0.0.93"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/1d/99/76b7c80252aa83c1af16393454aafd125a0287101afe8deb0a6821af0e30/opencv_python_headless-5.0.0.93.tar.gz", hash = "sha256:b82f9831daab90b725c7c1ee1b36cb5732c367096ac76d119e64e14eb70d5f3c", size = 81817738, upload-time = "2026-07-02T07:01:06.039Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/53/7c/8c8097891c509d98cd128493835c95631c80be6a8f37ed9d25716c2e16f1/opencv_python_headless-5.0.0.93-cp37-abi3-macosx_13_0_arm64.whl", hash = "sha256:030ca5e0837a2963ab36ef896baa9767eb8d2b83353fb28af5a521e40dd8756f", size = 48322581, upload-time = "2026-07-02T05:50:34.207Z" },
+    { url = "https://files.pythonhosted.org/packages/90/8c/eab2ad388c3cbab2a350c10c2ef19ce6bd099240afc31789032c996bab52/opencv_python_headless-5.0.0.93-cp37-abi3-macosx_14_0_x86_64.whl", hash = "sha256:1e55af3abfb462eeeabe5c775f12bdb36216d8a93a3583d69e6bd6e1d6ba7d00", size = 34782894, upload-time = "2026-07-02T05:51:39.856Z" },
+    { url = "https://files.pythonhosted.org/packages/ec/78/afca939f40ffe2b2380bfa86f812b2f7d4acc5a27b27dc41b49cad7ce7b4/opencv_python_headless-5.0.0.93-cp37-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:10818d91510e05c04568ae12b5cd120779c70c01bf897b001a6221fe430df80f", size = 36521085, upload-time = "2026-07-02T06:55:24.429Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/97/8170e9819764c47e436c130d3ff6cfb73b58f923eae9d3a03d8982b04aec/opencv_python_headless-5.0.0.93-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:09a872a157c1376ab922a69bbf22f9a95bcc7b658a9d8b436a60212b02b2eeb4", size = 56563598, upload-time = "2026-07-02T06:55:47.355Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/98/1a28a7101e31801042b3098871a74b76c61581d328ef40774ff4edb53a56/opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:840bd717c21e5c11cadadc022a823315ea417f961213d06b4df010e019eb16f4", size = 39648433, upload-time = "2026-07-02T06:56:04.255Z" },
+    { url = "https://files.pythonhosted.org/packages/9b/21/f6ef335f6e65724aa78b8d792b48d40a48c381715f1e62f5a5049e09d07e/opencv_python_headless-5.0.0.93-cp37-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ed709fdf9aa0bd1f2ed8549e71d19449b03a675bb581eb292285f6861953be37", size = 61204038, upload-time = "2026-07-02T06:56:41.823Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/8f/b8756467ea991449a293797f6b3fa80fcfdd29598a0a60d1cd5715b96e61/opencv_python_headless-5.0.0.93-cp37-abi3-win32.whl", hash = "sha256:c6bcd96b185975ea240d22cfdb15a1f6d080cc95264cfbe2621f21bb144d89b9", size = 35411237, upload-time = "2026-07-02T05:50:12.901Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/88/763b967f7efd7226b82c9fae16d560cba049b1f0c036647e65c610fd636e/opencv_python_headless-5.0.0.93-cp37-abi3-win_amd64.whl", hash = "sha256:829717b6a95554f273e49e357cee3b3a2a26b6f4842fbc1bed2b45bdd8f87e0e", size = 43825962, upload-time = "2026-07-02T05:50:09.627Z" },
+]
+
+[[package]]
 name = "packaging"
 version = "25.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2783,6 +2812,23 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b0140bde72ea885a803b82086995367bf2037de0159d924/pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887", size = 4968631, upload-time = "2025-06-21T13:39:12.283Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/21/705964c7812476f378728bdf590ca4b771ec72385c533964653c68e86bdc/pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b", size = 1225217, upload-time = "2025-06-21T13:39:07.939Z" },
+]
+
+[[package]]
+name = "pymupdf"
+version = "1.28.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/8e/e9/6d6c5d6c0a3551bffd47681a6240caf941727f195b45593cf20ab36f018f/pymupdf-1.28.0.tar.gz", hash = "sha256:e53f3567403a92da15caa9e7ae0164327fff48817e9f40175367fb9de524258d", size = 87637751, upload-time = "2026-06-29T09:08:47.547Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c8/b7/88043e38cc7529de070f0c9bd267fa258035cca0b4ad5260536b994594a7/pymupdf-1.28.0-cp310-abi3-macosx_10_15_x86_64.whl", hash = "sha256:892b89ba88e8f98b53133b62877a9dc9b5e7dc6a4aeb837b612db56a8d2e03ac", size = 24597385, upload-time = "2026-06-29T09:03:30.608Z" },
+    { url = "https://files.pythonhosted.org/packages/33/f4/23775bbda0781b61fc398cc75079a2b0e64696d8fcf93271748883e9627e/pymupdf-1.28.0-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:4d692dcf44d3566ae96bc6f6346c6ad432274a29ba617bf7a9fe18009e24adb4", size = 23828292, upload-time = "2026-06-29T09:03:46.129Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/f5/bf75fc7a415722f8b33662054f82d88520c0cbfd4c36d0e08aeaec605e49/pymupdf-1.28.0-cp310-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:47a5c29ed4eb0744de9c4e37bb49b1259b18d4d75fcc8a7c130f7c9fa15956f6", size = 25045507, upload-time = "2026-06-29T09:04:03.86Z" },
+    { url = "https://files.pythonhosted.org/packages/58/69/5d12c9f1f2d76f28383d6110a069c79fbfced5a4f97bb1ee6e8354f52bb7/pymupdf-1.28.0-cp310-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:44f0973f5e5edbaec95bc34b64e71d1959d4ee90b1328de1b4f4f5b4fa78673f", size = 25716599, upload-time = "2026-06-29T09:04:19.367Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/b4/ec0e017bc42857cc86bd651441dbc41cc18be48d4698ecd27aac491e0c9a/pymupdf-1.28.0-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:4d61ec323a706e153a12e262e51febfb43eeaa20977785ace135d18d48bcdc83", size = 25940489, upload-time = "2026-06-29T09:04:36.624Z" },
+    { url = "https://files.pythonhosted.org/packages/06/86/f831fef09013f33b3c9c09fb3923f2ff53e1e437f6ace14b8ae46392f558/pymupdf-1.28.0-cp310-abi3-win32.whl", hash = "sha256:caea2b3b67347fd79e5d15ed7929b0e886aac594ea228073b6d39de0078189da", size = 18489703, upload-time = "2026-06-29T20:50:30.599Z" },
+    { url = "https://files.pythonhosted.org/packages/2e/5d/1a03f53eb0449900469335fcfc742ca28e3ba159b7d650e0921d50b8b308/pymupdf-1.28.0-cp310-abi3-win_amd64.whl", hash = "sha256:e01e90fd86abfeb37ceb921eddb951f988a11d45ff6ce6b7664f2039849068ec", size = 19773102, upload-time = "2026-06-29T09:04:49.773Z" },
+    { url = "https://files.pythonhosted.org/packages/72/f6/1e52ce243ca792254f6223b4017c5667194c146ce9b88baf37bc5eb3d1c9/pymupdf-1.28.0-cp313-abi3-pyemscripten_2025_0_wasm32.whl", hash = "sha256:74c6d00ba2a9aad3a635db73b07c15db462b480741d831a34a75a56535ebc22b", size = 18357011, upload-time = "2026-06-29T20:50:50.353Z" },
+    { url = "https://files.pythonhosted.org/packages/62/b1/46b5b3d8ef3cc71114667cf10c4d8b33f39af97253af32e9a0986775b638/pymupdf-1.28.0-cp314-cp314t-manylinux_2_28_x86_64.whl", hash = "sha256:b3e1399c7a64c6914239116a369efcdaac4cfb9e838bde2656d7accc4a85c72d", size = 25753599, upload-time = "2026-06-29T09:05:09.398Z" },
 ]
 
 [[package]]

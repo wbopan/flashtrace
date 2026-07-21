@@ -1,0 +1,35 @@
+{
+  "schema_version": 2,
+  "dataset_manifest": "evaluations/multimodal/results/strict/final/wiki_visa_n18_2mp.dataset.jsonl",
+  "model_output": "evaluations/multimodal/results/strict/final/wiki_visa_n18_2mp.model.jsonl",
+  "generation_evaluation": "evaluations/multimodal/results/strict/final/wiki_visa_n18_2mp.generation_eval.jsonl",
+  "model": "Qwen/Qwen3-VL-8B-Thinking",
+  "revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b",
+  "eligible_samples": 1,
+  "comparison_protocol": "common_paired_successful_subset",
+  "common_sample_ids": [
+    "wiki-visa-0027"
+  ],
+  "common_samples": 1,
+  "requested_methods": [
+    "grad-attention"
+  ],
+  "successful_samples_by_method": {
+    "grad-attention": 1
+  },
+  "methods": {
+    "grad-attention": {
+      "common_samples": 1,
+      "pointing_game": 0.0,
+      "energy_in_mask": 0.1235765583722879,
+      "evidence_rank_auc": 0.6972288900980742,
+      "top_evidence_iou": 0.07246376811594203,
+      "recovery_at_1pct": 0.010939510939510939,
+      "recovery_at_5pct": 0.06563706563706563,
+      "recovery_at_10pct": 0.14157014157014158,
+      "recovery_at_20pct": 0.3416988416988417,
+      "mean_seconds": 3.078962057828903,
+      "mean_peak_vram_gb": 50.54560470581055
+    }
+  }
+}

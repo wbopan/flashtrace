@@ -1,0 +1,76 @@
+{
+  "wiki_visa": {
+    "source": "MrLight/wiki-visa",
+    "split": "test",
+    "expected_rows": 3000,
+    "rows": 3000,
+    "shards": [
+      {
+        "path": "data/wiki_visa/test_parquet/0000.parquet",
+        "bytes": 453613894,
+        "expected_bytes": 453613894,
+        "rows": 429
+      },
+      {
+        "path": "data/wiki_visa/test_parquet/0001.parquet",
+        "bytes": 459393975,
+        "expected_bytes": 459393975,
+        "rows": 429
+      },
+      {
+        "path": "data/wiki_visa/test_parquet/0002.parquet",
+        "bytes": 517280056,
+        "expected_bytes": 517280056,
+        "rows": 429
+      },
+      {
+        "path": "data/wiki_visa/test_parquet/0003.parquet",
+        "bytes": 539081857,
+        "expected_bytes": 539081857,
+        "rows": 429
+      },
+      {
+        "path": "data/wiki_visa/test_parquet/0004.parquet",
+        "bytes": 513087252,
+        "expected_bytes": 513087252,
+        "rows": 428
+      },
+      {
+        "path": "data/wiki_visa/test_parquet/0005.parquet",
+        "bytes": 462467571,
+        "expected_bytes": 462467571,
+        "rows": 428
+      },
+      {
+        "path": "data/wiki_visa/test_parquet/0006.parquet",
+        "bytes": 464238259,
+        "expected_bytes": 464238259,
+        "rows": 428
+      }
+    ]
+  },
+  "clevr_xai": {
+    "release": "v1.0",
+    "complex_questions": 100000,
+    "images": 10000,
+    "object_masks": 10000,
+    "ground_truth_counts": {
+      "ground_truth_complex_questions_unique": 89873,
+      "ground_truth_complex_questions_unique_firstnonempty": 99786,
+      "ground_truth_complex_questions_union": 99786,
+      "ground_truth_complex_questions_all_objects": 100000
+    },
+    "archives": [
+      {
+        "path": "data/clevr_xai/raw/CLEVR-XAI_v1.0.zip",
+        "bytes": 495004324,
+        "sha256": "9a3d21fb4583a0c56622289c5934fa407a49dae3032dc95bb236e5d445c3699d"
+      },
+      {
+        "path": "data/clevr_xai/raw/CLEVR-XAI_v1.0_images_masks.zip",
+        "bytes": 1932482168,
+        "sha256": "d87e98a2f61c541a0a49fa7ba02a9021ce5e2c9726608143065685dc1a061b89"
+      }
+    ]
+  }
+}

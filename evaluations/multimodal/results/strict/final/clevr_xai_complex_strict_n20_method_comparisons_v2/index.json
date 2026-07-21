@@ -1,0 +1,82 @@
+[
+  {
+    "sample_id": "clevr-complex-000766",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-000766.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-001655",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-001655.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-006526",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-006526.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-009323",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-009323.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-026290",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-026290.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-035213",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-035213.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-037346",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-037346.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-039688",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-039688.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-042704",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-042704.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-046258",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-046258.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-047163",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-047163.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-054603",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-054603.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-057968",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-057968.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-074218",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-074218.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-074560",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-074560.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-075044",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-075044.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-092010",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-092010.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-092799",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-092799.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-092958",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-092958.jpg"
+  },
+  {
+    "sample_id": "clevr-complex-093708",
+    "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_method_comparisons_v2/clevr-complex-093708.jpg"
+  }
+]

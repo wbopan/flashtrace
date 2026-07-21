@@ -221,6 +221,15 @@ def _rollout_rows(
             for attention, gradient in zip(attentions, gradients)
         ]
 
+    return _rollout_from_layer_maps(layer_maps, rows=rows, identity=identity)
+
+
+def _rollout_from_layer_maps(
+    layer_maps: list[torch.Tensor],
+    *,
+    rows: torch.Tensor,
+    identity: torch.Tensor,
+) -> torch.Tensor:
     for layer_map in reversed(layer_maps):
         layer_map = layer_map.to(rows.device)
         transition = layer_map + identity
@@ -284,28 +293,133 @@ def grad_attention(
         model, processor, messages, target, output_span=output_span
     )
     model.zero_grad(set_to_none=True)
-    outputs = model(
-        **_forward_kwargs(prepared),
-        use_cache=False,
-        output_attentions=True,
-        return_dict=True,
-    )
-    attentions = tuple(outputs.attentions or ())
-    if not attentions:
-        raise RuntimeError(
-            "The model returned no attentions; load it with attn_implementation='eager'"
+    full_ids = prepared.inputs["input_ids"]
+    attention_mask = prepared.inputs["attention_mask"]
+    image_grid = prepared.inputs["image_grid_thw"]
+    mm_token_types = prepared.inputs.get("mm_token_type_ids")
+    # Decoder Grad×Attention needs fused visual-token attentions, not the
+    # quadratic internal attention maps of the 2MP vision encoder. Compute the
+    # image features once without gradients, then attribute the text decoder.
+    with torch.no_grad():
+        text_embeds = model.get_input_embeddings()(full_ids)
+        image_outputs = model.model.get_image_features(
+            prepared.inputs["pixel_values"],
+            image_grid,
+            return_dict=True,
         )
-    for attention in attentions:
-        attention.retain_grad()
-    objective = _selected_logits(outputs.logits, prepared).sum()
-    objective.backward()
-    gradients = tuple(attention.grad for attention in attentions)
-    if any(gradient is None for gradient in gradients):
-        raise RuntimeError("Could not retain gradients for all decoder attentions")
-    rows = _rollout_rows(
-        attentions,
-        prepared,
-        gradients=tuple(gradient for gradient in gradients if gradient is not None),
+        image_embeds = torch.cat(image_outputs.pooler_output, dim=0).to(
+            text_embeds.device, text_embeds.dtype
+        )
+        image_mask, _ = model.model.get_placeholder_mask(
+            full_ids,
+            inputs_embeds=text_embeds,
+            image_features=image_embeds,
+        )
+        fused_embeds = text_embeds.masked_scatter(image_mask, image_embeds)
+        visual_mask = image_mask[..., 0]
+        position_ids = model.model.compute_3d_position_ids(
+            input_ids=full_ids,
+            image_grid_thw=image_grid,
+            video_grid_thw=None,
+            inputs_embeds=fused_embeds,
+            attention_mask=attention_mask,
+            past_key_values=None,
+            mm_token_type_ids=mm_token_types,
+        )
+        deepstack_features = [
+            feature.detach() for feature in image_outputs.deepstack_features
+        ]
+    del image_outputs, image_embeds, text_embeds
+
+    checkpointing_was_enabled = bool(
+        getattr(model, "is_gradient_checkpointing", False)
+    )
+    training_was_enabled = bool(model.training)
+    if not checkpointing_was_enabled:
+        model.gradient_checkpointing_enable(
+            gradient_checkpointing_kwargs={"use_reentrant": False}
+        )
+    # Checkpointing is active only in training mode. Qwen3-VL has no active
+    # dropout in this configuration, so the frozen response remains unchanged.
+    model.train()
+    hooks = []
+    try:
+        decoder_outputs = model.model.language_model(
+            input_ids=None,
+            inputs_embeds=fused_embeds.detach(),
+            position_ids=position_ids,
+            attention_mask=attention_mask,
+            use_cache=False,
+            output_attentions=True,
+            visual_pos_masks=visual_mask,
+            deepstack_visual_embeds=deepstack_features,
+            return_dict=True,
+        )
+        attentions = tuple(decoder_outputs.attentions or ())
+        if not attentions:
+            raise RuntimeError(
+                "The model returned no attentions; load it with "
+                "attn_implementation='eager'"
+            )
+        layer_maps: list[torch.Tensor | None] = [None] * len(attentions)
+        for index, attention in enumerate(attentions):
+            def capture(
+                gradient: torch.Tensor, *, layer_index: int = index
+            ) -> torch.Tensor:
+                # A full retained gradient for every head/layer exceeds 72 GB
+                # on 2MP document inputs. Reduce Grad×Attention over heads in
+                # the hook, then let the transient full gradient be freed.
+                layer_maps[layer_index] = (
+                    (attentions[layer_index].detach().float() * gradient.float())
+                    .clamp_min(0)
+                    .mean(dim=1)[0]
+                    .cpu()
+                )
+                return gradient
+
+            hooks.append(attention.register_hook(capture))
+        # Project only the predictor rows. Materializing vocab logits for every
+        # document token costs more than 1 GB on long Wiki-VISA responses and
+        # does not contribute to the output-only objective.
+        predictor_positions = prepared.predictor_positions.to(
+            decoder_outputs.last_hidden_state.device
+        )
+        selected_hidden = decoder_outputs.last_hidden_state[
+            0, predictor_positions
+        ]
+        selected_logits = model.lm_head(selected_hidden)
+        selected_ids = prepared.target_token_ids[
+            prepared.target_offsets
+        ].to(selected_logits.device)
+        objective = selected_logits[
+            torch.arange(selected_logits.shape[0], device=selected_logits.device),
+            selected_ids,
+        ].sum()
+        objective.backward()
+    finally:
+        for hook in hooks:
+            hook.remove()
+        if not checkpointing_was_enabled:
+            model.gradient_checkpointing_disable()
+        if not training_was_enabled:
+            model.eval()
+    if any(layer_map is None for layer_map in layer_maps):
+        raise RuntimeError("Could not capture gradients for all decoder attentions")
+    sequence_length = int(prepared.inputs["input_ids"].shape[1])
+    rows = torch.eye(
+        sequence_length,
+        device=attentions[0].device,
+        dtype=torch.float32,
+    )[prepared.predictor_positions.to(attentions[0].device)]
+    identity = torch.eye(
+        sequence_length,
+        device=attentions[0].device,
+        dtype=torch.float32,
+    )
+    rows = _rollout_from_layer_maps(
+        [layer_map for layer_map in layer_maps if layer_map is not None],
+        rows=rows,
+        identity=identity,
     )
     visual_scores = rows[:, prepared.visual_indices.to(rows.device)].mean(dim=0)
     model.zero_grad(set_to_none=True)
@@ -313,6 +427,7 @@ def grad_attention(
         grid=_grid_from_visual_scores(visual_scores, prepared),
         metadata={
             "formula": "positive (gradient * attention), mean heads, residual rollout",
+            "scope": "Qwen3-VL text decoder over fused visual tokens",
             "objective": "sum of frozen target-token logits",
             "objective_value": float(objective.detach().float().cpu()),
             "layers": len(attentions),
@@ -366,23 +481,40 @@ def visual_integrated_gradients(
     accumulated = torch.zeros_like(actual, dtype=torch.float32)
     endpoint_scores: list[float] = []
 
-    for step_index, alpha in enumerate(
-        torch.linspace(0.0, 1.0, steps, device=actual.device)
-    ):
-        pixels = (baseline + alpha * delta).detach().requires_grad_(True)
-        inputs = _forward_kwargs(prepared)
-        inputs["pixel_values"] = pixels
-        outputs = model(
-            **inputs,
-            use_cache=False,
-            return_dict=True,
+    checkpointing_was_enabled = bool(
+        getattr(model, "is_gradient_checkpointing", False)
+    )
+    training_was_enabled = bool(model.training)
+    if not checkpointing_was_enabled:
+        model.gradient_checkpointing_enable(
+            gradient_checkpointing_kwargs={"use_reentrant": False}
         )
-        objective = _selected_mean_logprob(outputs.logits, prepared)
-        gradient = torch.autograd.grad(objective, pixels)[0]
-        weight = 0.5 if step_index in {0, steps - 1} else 1.0
-        accumulated += weight * gradient.detach().float()
-        if step_index in {0, steps - 1}:
-            endpoint_scores.append(float(objective.detach().cpu()))
+    # Transformers activates decoder checkpointing in training mode. Qwen3-VL
+    # has no active dropout in this configuration, and the response is frozen.
+    model.train()
+    try:
+        for step_index, alpha in enumerate(
+            torch.linspace(0.0, 1.0, steps, device=actual.device)
+        ):
+            pixels = (baseline + alpha * delta).detach().requires_grad_(True)
+            inputs = _forward_kwargs(prepared)
+            inputs["pixel_values"] = pixels
+            outputs = model(
+                **inputs,
+                use_cache=False,
+                return_dict=True,
+            )
+            objective = _selected_mean_logprob(outputs.logits, prepared)
+            gradient = torch.autograd.grad(objective, pixels)[0]
+            weight = 0.5 if step_index in {0, steps - 1} else 1.0
+            accumulated += weight * gradient.detach().float()
+            if step_index in {0, steps - 1}:
+                endpoint_scores.append(float(objective.detach().cpu()))
+    finally:
+        if not checkpointing_was_enabled:
+            model.gradient_checkpointing_disable()
+        if not training_was_enabled:
+            model.eval()
 
     mean_gradient = accumulated / float(steps - 1)
     attribution = delta.float() * mean_gradient
