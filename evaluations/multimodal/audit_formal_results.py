@@ -3222,12 +3222,21 @@ def audit_formal(root: Path) -> dict[str, Any]:
                 " ".join(fragment.split()) in normalized_main
                 for fragment in (
                     EXPECTED_REVISION,
-                    "2,007,040 pixels",
                     "whole visual patches",
                     "64 image regions",
                     "10 deletion/insertion steps",
                     "complete funnel",
-                    r"\input{generated/visual_results_discussion}",
+                )
+            )
+            and (
+                "2,007,040 pixels" in normalized_main
+                or "2{,}007{,}040 pixels" in normalized_main
+            )
+            and (
+                r"\input{generated/visual_results_discussion}" in normalized_main
+                or (
+                    "Visual LOO obtains the best mean" in normalized_main
+                    and "same eight methods" in normalized_main
                 )
             )
             and (
@@ -3291,30 +3300,39 @@ def audit_formal(root: Path) -> dict[str, Any]:
             "all-generation",
         ),
         "visual_faithfulness_rows.tex": (
+            "Random",
+            "Center prior",
+            "Visual LOO",
             "Visual IG",
             "AttnLRP",
             r"\flashtrace{} (exact",
+            "IFR-span",
+            "all-generation",
         ),
         "visual_appendix_results.tex": (
             "tab:visual_gate_funnels",
             "tab:visual_wiki_localization_supplemental",
+            "tab:visual_wiki_primary_deltas",
             "tab:visual_spatial_resolution",
             "tab:visual_wiki_strata",
             "tab:visual_faithfulness_full",
+            "tab:visual_faithfulness_deltas",
             "tab:visual_vizwiz_fully_correct",
+            "tab:visual_vizwiz_fully_correct_deltas",
             "tab:visual_recursion_geometry",
             "tab:visual_geometry_bias",
             "tab:visual_gt_centroid_bias",
             "tab:visual_recursion_buckets",
             "tab:visual_observed_compute",
-            r"\paragraph{Independent protocol audit.}",
+            r"\paragraph{Owner-approved protocol audit.}",
         ),
         "visual_results_discussion.tex": (
             "separates concentration from coverage",
-            "practical VizWiz-LF learned-method panel",
+            "On Wiki-VISA frozen-response faithfulness",
+            "complete VizWiz-LF faithfulness panel",
             "Against Center prior",
-            "Visual LOO remains in the full appendix",
-            "do not claim an across-metric winner",
+            "Visual LOO obtained",
+            "no across-metric winner is claimed",
         ),
     }
     for name, fragments in generated_requirements.items():
@@ -3346,12 +3364,8 @@ def audit_formal(root: Path) -> dict[str, Any]:
                 )
             if name == "visual_faithfulness_rows.tex":
                 audit.add(
-                    "paper main faithfulness panel excludes cost-insensitive rows",
-                    "Center prior" not in text and "Visual LOO" not in text,
-                )
-                audit.add(
-                    "paper main faithfulness table has three three-metric rows",
-                    len(table_rows) == 3
+                    "paper main faithfulness table has eight three-metric rows",
+                    len(table_rows) == 8
                     and all(row.count("&") == 3 for row in table_rows)
                     and text.count("{") == text.count("}"),
                 )
@@ -3360,9 +3374,20 @@ def audit_formal(root: Path) -> dict[str, Any]:
     viz_faith_analysis_path = (
         formal_dir / "vizwiz_lf_n100_faithfulness/analysis.json"
     )
-    if localization_analysis_path.is_file() and viz_faith_analysis_path.is_file():
+    wiki_faith_analysis_path = (
+        formal_dir / "wiki_visa_n120_faithfulness/analysis.json"
+    )
+    semantic_summary_path = formal_dir / "vizwiz_lf_n100.semantic_summary.json"
+    if (
+        localization_analysis_path.is_file()
+        and viz_faith_analysis_path.is_file()
+        and wiki_faith_analysis_path.is_file()
+        and semantic_summary_path.is_file()
+    ):
         localization = _read_json(localization_analysis_path)
         viz_faith = _read_json(viz_faith_analysis_path)
+        wiki_faith = _read_json(wiki_faith_analysis_path)
+        semantic_summary = _read_json(semantic_summary_path)
         localization_rows = []
         for method in RENDER_METHODS:
             prefix = r"\rowcolor{cyan!10} " if method == "flashtrace" else ""
@@ -3385,7 +3410,7 @@ def audit_formal(root: Path) -> dict[str, Any]:
             if method == "flashtrace":
                 localization_rows.append(r"\midrule")
         faithfulness_rows = []
-        for method in ("visual-ig", "attnlrp", "flashtrace"):
+        for method in RENDER_METHODS:
             prefix = r"\rowcolor{cyan!10} " if method == "flashtrace" else ""
             estimates = viz_faith["overall"]["estimates"][method]
             cells = [
@@ -3399,11 +3424,16 @@ def audit_formal(root: Path) -> dict[str, Any]:
                 + " & ".join(cells)
                 + r" \\"
             )
+            if method == "flashtrace":
+                faithfulness_rows.append(r"\midrule")
         expected_primary_artifacts = {
             "visual_localization_rows.tex": "\n".join(localization_rows) + "\n",
             "visual_faithfulness_rows.tex": "\n".join(faithfulness_rows) + "\n",
             "visual_results_discussion.tex": _visual_discussion_tex(
-                localization, viz_faith
+                localization,
+                viz_faith,
+                wiki_faith,
+                semantic_summary,
             ),
         }
         mismatched_primary = [
@@ -3435,7 +3465,7 @@ def audit_formal(root: Path) -> dict[str, Any]:
                     "## A8: VizWiz semantic correctness sensitivity",
                     "## Observed visual compute",
                     "## Spatial resolution disclosure",
-                    "## Independent frozen-sample protocol audits",
+                    "## Owner-approved frozen-sample protocol audits",
                     "## Scope and limitations",
                 )
             )

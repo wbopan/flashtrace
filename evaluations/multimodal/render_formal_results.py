@@ -19,7 +19,6 @@ METHODS = (
     "ifr-span",
     "flashtrace-all-gen",
 )
-PRIMARY_FAITHFULNESS_METHODS = ("visual-ig", "attnlrp", "flashtrace")
 METHOD_LABELS = {
     "random": "Random",
     "center": "Center prior",
@@ -64,6 +63,14 @@ def _latex_cell(estimate: Mapping[str, Any]) -> str:
         f"{float(estimate['ci95_low']):.3f},"
         f"{float(estimate['ci95_high']):.3f}"
         r"]}}"
+    )
+
+
+def _latex_inline_estimate(estimate: Mapping[str, Any]) -> str:
+    return (
+        f"${float(estimate['mean']):.3f}$ "
+        f"(95\\% CI ${float(estimate['ci95_low']):.3f}$--"
+        f"${float(estimate['ci95_high']):.3f}$)"
     )
 
 
@@ -205,11 +212,8 @@ def _faithfulness_markdown(
         lines.extend(
             [
                 "",
-                "Visual LOO is retained in the complete eight-method appendix "
-                "as a cost-insensitive perturbation diagnostic. The practical "
-                "main comparison and interpretation use Visual IG, AttnLRP, "
-                "and FlashTrace; Center remains an explicit spatial-prior "
-                "check.",
+                "The main table and appendix report the same complete "
+                "eight-method panel.",
             ]
         )
     lines.extend(["", "### FlashTrace favorable deletion-AUC differences", ""])
@@ -357,7 +361,8 @@ def _fully_correct_markdown(
     lines = [
         "## A8: VizWiz semantic correctness sensitivity",
         "",
-        f"Labels: {semantic['label_counts']}. Independent human audit: "
+        f"Labels: {semantic['label_counts']}. Project-owner-approved assisted "
+        f"audit: "
         f"{semantic['audit_reviewed']}/{len(semantic['audit_sample_ids'])}. "
         f"Fully-correct subset size: {subset['samples']}.",
         "",
@@ -482,94 +487,78 @@ def _latex_escape(value: str) -> str:
 
 
 def _visual_discussion_tex(
-    localization: Mapping[str, Any], viz_faith: Mapping[str, Any]
+    localization: Mapping[str, Any],
+    viz_faith: Mapping[str, Any],
+    wiki_faith: Mapping[str, Any],
+    semantic: Mapping[str, Any],
 ) -> str:
-    localization_leaders = {}
-    for metric in (
-        "energy_in_mask",
-        "evidence_rank_auc",
-        "recovery_at_5pct",
-        "recovery_at_20pct",
-    ):
-        localization_leaders[metric] = max(
-            METHODS,
-            key=lambda method: float(
-                localization["estimates"][metric][method]["mean"]
-            ),
-        )
-    faithfulness_leaders = {
-        "deletion_auc": min(
-            PRIMARY_FAITHFULNESS_METHODS,
-            key=lambda method: float(
-                viz_faith["overall"]["estimates"][method]["deletion_auc"]["mean"]
-            ),
-        ),
-        "insertion_auc": max(
-            PRIMARY_FAITHFULNESS_METHODS,
-            key=lambda method: float(
-                viz_faith["overall"]["estimates"][method]["insertion_auc"]["mean"]
-            ),
-        ),
-        "visual_mas": min(
-            PRIMARY_FAITHFULNESS_METHODS,
-            key=lambda method: float(
-                viz_faith["overall"]["estimates"][method]["visual_mas"]["mean"]
-            ),
-        ),
-    }
-
-    def evidence(metric: str, baseline: str) -> str:
-        delta = localization["flashtrace_minus_baseline"][metric][baseline]
-        low = float(delta["ci95_low"])
-        high = float(delta["ci95_high"])
-        if low > 0:
-            return "favored"
-        if high < 0:
-            return "was lower than"
-        return "was directionally indistinguishable from"
-
-    def faithfulness_evidence(metric: str, baseline: str) -> str:
-        delta = viz_faith["overall"]["flashtrace_favorable_difference"][
-            baseline
-        ][metric]
-        low = float(delta["ci95_low"])
-        high = float(delta["ci95_high"])
-        if low > 0:
-            return "favored \\flashtrace{}"
-        if high < 0:
-            return f"favored {LATEX_LABELS[baseline]}"
-        return "did not resolve a difference"
+    localization_estimates = localization["estimates"]
+    localization_deltas = localization["flashtrace_minus_baseline"]
+    viz_estimates = viz_faith["overall"]["estimates"]
+    viz_deltas = viz_faith["overall"]["flashtrace_favorable_difference"]
+    wiki_estimates = wiki_faith["overall"]["estimates"]
+    wiki_deltas = wiki_faith["overall"]["flashtrace_favorable_difference"]
+    correct_subset = viz_faith["fully_correct_subset"]
+    label_counts = semantic["label_counts"]
 
     lines = [
         r"\noindent\textbf{Visual-results interpretation.}",
         "The formal Wiki-VISA panel separates concentration from coverage: "
-        f"{LATEX_LABELS[localization_leaders['energy_in_mask']]} had the largest "
-        "mean Energy, while "
-        f"{LATEX_LABELS[localization_leaders['evidence_rank_auc']]} and "
-        f"{LATEX_LABELS[localization_leaders['recovery_at_5pct']]} led mean "
-        "Rank AUC and R@5, respectively. Under the paired 95\\% intervals, "
-        f"\\flashtrace{{}} {evidence('energy_in_mask', 'ifr-span')} IFR-span "
-        f"but {evidence('energy_in_mask', 'attnlrp')} AttnLRP for Energy; "
-        f"it {evidence('recovery_at_5pct', 'ifr-span')} IFR-span and "
-        f"{evidence('recovery_at_5pct', 'attnlrp')} AttnLRP for R@5.",
-        "Within the practical VizWiz-LF learned-method panel, the mean leaders "
-        "were "
-        f"{LATEX_LABELS[faithfulness_leaders['deletion_auc']]} for deletion AUC, "
-        f"{LATEX_LABELS[faithfulness_leaders['insertion_auc']]} for insertion AUC, "
-        f"and {LATEX_LABELS[faithfulness_leaders['visual_mas']]} for Visual-MAS. "
-        "The paired intervals against AttnLRP "
-        f"{faithfulness_evidence('deletion_auc', 'attnlrp')} on deletion, "
-        f"{faithfulness_evidence('insertion_auc', 'attnlrp')} on insertion, and "
-        f"{faithfulness_evidence('visual_mas', 'attnlrp')} on Visual-MAS. "
-        "Against Center prior they "
-        f"{faithfulness_evidence('deletion_auc', 'center')} on deletion, "
-        f"{faithfulness_evidence('insertion_auc', 'center')} on insertion, and "
-        f"{faithfulness_evidence('visual_mas', 'center')} on Visual-MAS. "
-        "Visual LOO remains in the full appendix as a cost-insensitive "
-        "perturbation diagnostic rather than the practical main comparison. "
-        "We therefore do not claim an across-metric winner; the main conclusions "
-        "are endpoint-specific and are interpreted alongside the center, border, "
-        "mask-convention, sign, and fully-correct sensitivity analyses.",
+        "AttnLRP had the largest Energy "
+        f"{_latex_inline_estimate(localization_estimates['energy_in_mask']['attnlrp'])}, "
+        "whereas \\flashtrace{} led Rank AUC "
+        f"{_latex_inline_estimate(localization_estimates['evidence_rank_auc']['flashtrace'])} "
+        "and R@5 "
+        f"{_latex_inline_estimate(localization_estimates['recovery_at_5pct']['flashtrace'])}. "
+        "Relative to IFR-span, recursion increased Energy by "
+        f"{_latex_inline_estimate(localization_deltas['energy_in_mask']['ifr-span'])} "
+        "and R@5 by "
+        f"{_latex_inline_estimate(localization_deltas['recovery_at_5pct']['ifr-span'])}. "
+        "Against AttnLRP, the Energy difference favored AttnLRP "
+        f"({_latex_inline_estimate(localization_deltas['energy_in_mask']['attnlrp'])}), "
+        "while the R@5 difference remained unresolved "
+        f"({_latex_inline_estimate(localization_deltas['recovery_at_5pct']['attnlrp'])}).",
+        "On Wiki-VISA frozen-response faithfulness, excluding the deliberately "
+        "cost-insensitive Visual LOO diagnostic, \\flashtrace{} achieved deletion "
+        f"{_latex_inline_estimate(wiki_estimates['flashtrace']['deletion_auc'])}, "
+        "insertion "
+        f"{_latex_inline_estimate(wiki_estimates['flashtrace']['insertion_auc'])}, "
+        "and Visual-MAS "
+        f"{_latex_inline_estimate(wiki_estimates['flashtrace']['visual_mas'])}. "
+        "Its favorable deletion differences were "
+        f"{_latex_inline_estimate(wiki_deltas['attnlrp']['deletion_auc'])} "
+        "against AttnLRP and "
+        f"{_latex_inline_estimate(wiki_deltas['ifr-span']['deletion_auc'])} "
+        "against IFR-span; the all-generation contrast remained unresolved.",
+        "On the complete VizWiz-LF faithfulness panel, Visual LOO obtained "
+        "deletion "
+        f"{_latex_inline_estimate(viz_estimates['visual-loo']['deletion_auc'])}, "
+        "insertion "
+        f"{_latex_inline_estimate(viz_estimates['visual-loo']['insertion_auc'])}, "
+        "and Visual-MAS "
+        f"{_latex_inline_estimate(viz_estimates['visual-loo']['visual_mas'])}. "
+        "Among learned methods, \\flashtrace{} obtained deletion "
+        f"{_latex_inline_estimate(viz_estimates['flashtrace']['deletion_auc'])}, "
+        "insertion "
+        f"{_latex_inline_estimate(viz_estimates['flashtrace']['insertion_auc'])}, "
+        "and Visual-MAS "
+        f"{_latex_inline_estimate(viz_estimates['flashtrace']['visual_mas'])}. "
+        "None of its paired contrasts with AttnLRP resolved a difference: the "
+        "favorable deltas were "
+        f"{_latex_inline_estimate(viz_deltas['attnlrp']['deletion_auc'])}, "
+        f"{_latex_inline_estimate(viz_deltas['attnlrp']['insertion_auc'])}, and "
+        f"{_latex_inline_estimate(viz_deltas['attnlrp']['visual_mas'])}. "
+        "Against Center prior, deletion and Visual-MAS favored \\flashtrace{}, "
+        "whereas insertion favored Center, demonstrating why no across-metric "
+        "winner is claimed.",
+        f"The VizWiz-LF semantic audit labeled {label_counts['fully']} responses "
+        f"fully correct, {label_counts['partial']} partial, and "
+        f"{label_counts['wrong']} wrong. On the fully-correct subset "
+        f"($n={correct_subset['samples']}$), \\flashtrace{{}} deletion was "
+        f"{_latex_inline_estimate(correct_subset['estimates']['flashtrace']['deletion_auc'])}; "
+        "its contrast with AttnLRP remained unresolved. "
+        "The endpoint-specific conclusions are interpreted alongside the center, "
+        "border, mask-convention, sign, and semantic sensitivity analyses.",
         "",
     ]
     return "\n".join(lines)
@@ -590,6 +579,7 @@ def _appendix_tex(
     viz_faithfulness_summary: Mapping[str, Any],
     wiki_manual_audit: Mapping[str, Any],
     viz_manual_audit: Mapping[str, Any],
+    semantic: Mapping[str, Any],
 ) -> str:
     lines = [
         "% Generated by evaluations.multimodal.render_formal_results.",
@@ -626,6 +616,39 @@ def _appendix_tex(
             r"\begin{table*}[t]",
             r"\centering",
             r"\small",
+            r"\caption{\textbf{Paired Wiki-VISA primary-endpoint contrasts.} Deltas are oriented so positive values favor \flashtrace{}; W/T/L counts are paired at the frozen-sample level.}",
+            r"\label{tab:visual_wiki_primary_deltas}",
+            r"\resizebox{\textwidth}{!}{%",
+            r"\begin{tabular}{llcc}",
+            r"\toprule",
+            r"\rowcolor{gray!7}",
+            r"\textbf{Endpoint} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\",
+            r"\midrule",
+        ]
+    )
+    for endpoint_index, (endpoint, metric) in enumerate(
+        (("Energy", "energy_in_mask"), ("R@5", "recovery_at_5pct"))
+    ):
+        for method in METHODS:
+            if method == "flashtrace":
+                continue
+            delta = localization["flashtrace_minus_baseline"][metric][method]
+            lines.append(
+                f"{endpoint} & {LATEX_LABELS[method]} & "
+                f"{_latex_cell(delta)} & "
+                f"{delta['wins']}/{delta['ties']}/{delta['losses']} \\\\"
+            )
+        if endpoint_index == 0:
+            lines.append(r"\midrule")
+    lines.extend(
+        [
+            r"\bottomrule",
+            r"\end{tabular}}",
+            r"\end{table*}",
+            "",
+            r"\begin{table*}[t]",
+            r"\centering",
+            r"\small",
             r"\caption{\textbf{Supplemental Wiki-VISA localization endpoints.} Pointing Game, top-area IoU, R@1, and R@10 use the same whole-patch tie-aware protocol and paired $n=120$ intersection as the preregistered endpoints, but are reported only as supplemental diagnostics.}",
             r"\label{tab:visual_wiki_localization_supplemental}",
             r"\resizebox{\textwidth}{!}{%",
@@ -644,6 +667,41 @@ def _appendix_tex(
             f"{_latex_cell(localization['estimates']['recovery_at_1pct'][method])} & "
             f"{_latex_cell(localization['estimates']['recovery_at_10pct'][method])} \\\\"
         )
+    lines.extend(
+        [
+            r"\bottomrule",
+            r"\end{tabular}}",
+            r"\end{table*}",
+            "",
+            r"\begin{table*}[t]",
+            r"\centering",
+            r"\small",
+            r"\caption{\textbf{Paired frozen-response deletion contrasts.} Deletion AUC is the preregistered faithfulness endpoint; positive deltas favor \flashtrace{}. W/T/L counts use the complete paired intersection for each dataset.}",
+            r"\label{tab:visual_faithfulness_deltas}",
+            r"\resizebox{\textwidth}{!}{%",
+            r"\begin{tabular}{llcc}",
+            r"\toprule",
+            r"\rowcolor{gray!7}",
+            r"\textbf{Dataset} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\",
+            r"\midrule",
+        ]
+    )
+    for dataset_index, (dataset, analysis) in enumerate(
+        (("VizWiz-LF", viz_faith), ("Wiki-VISA", wiki_faith))
+    ):
+        for method in METHODS:
+            if method == "flashtrace":
+                continue
+            delta = analysis["overall"]["flashtrace_favorable_difference"][
+                method
+            ]["deletion_auc"]
+            lines.append(
+                f"{dataset} & {LATEX_LABELS[method]} & "
+                f"{_latex_cell(delta)} & "
+                f"{delta['wins']}/{delta['ties']}/{delta['losses']} \\\\"
+            )
+        if dataset_index == 0:
+            lines.append(r"\midrule")
     lines.extend(
         [
             r"\bottomrule",
@@ -775,10 +833,10 @@ def _appendix_tex(
             r"\begin{table*}[t]",
             r"\centering",
             r"\small",
-            r"\caption{\textbf{VizWiz-LF fully-correct sensitivity.} The subset is defined by the adjudicated semantic labels and is not used to select the frozen faithfulness panel.}",
+            rf"\caption{{\textbf{{VizWiz-LF fully-correct sensitivity}} ($n={viz_faith['fully_correct_subset']['samples']}$ of 100; semantic labels: {semantic['label_counts']['fully']} fully correct, {semantic['label_counts']['partial']} partial, {semantic['label_counts']['wrong']} wrong). The subset is not used to select the frozen faithfulness panel.}}",
             r"\label{tab:visual_vizwiz_fully_correct}",
             r"\resizebox{\textwidth}{!}{%",
-            r"\begin{tabular}{lccccc}",
+            r"\begin{tabular}{lccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
             r"\textbf{Method} & \textbf{Deletion AUC} $\downarrow$ & \textbf{Insertion AUC} $\uparrow$ & \textbf{Visual-MAS} $\downarrow$ \\",
@@ -799,13 +857,42 @@ def _appendix_tex(
             r"\end{tabular}}",
             r"\end{table*}",
             "",
+            r"\begin{table*}[t]",
+            r"\centering",
+            r"\small",
+            r"\caption{\textbf{VizWiz-LF fully-correct paired deletion contrasts} ($n=58$). Positive deltas favor \flashtrace{}; this post-hoc sensitivity subset does not alter the frozen primary panel.}",
+            r"\label{tab:visual_vizwiz_fully_correct_deltas}",
+            r"\resizebox{\textwidth}{!}{%",
+            r"\begin{tabular}{lcc}",
+            r"\toprule",
+            r"\rowcolor{gray!7}",
+            r"\textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\",
+            r"\midrule",
+        ]
+    )
+    for method in METHODS:
+        if method == "flashtrace":
+            continue
+        delta = viz_faith["fully_correct_subset"][
+            "flashtrace_favorable_difference"
+        ][method]["deletion_auc"]
+        lines.append(
+            f"{LATEX_LABELS[method]} & {_latex_cell(delta)} & "
+            f"{delta['wins']}/{delta['ties']}/{delta['losses']} \\\\"
+        )
+    lines.extend(
+        [
+            r"\bottomrule",
+            r"\end{tabular}}",
+            r"\end{table*}",
+            "",
             r"\begin{table}[t]",
             r"\centering",
             r"\small",
             r"\caption{\textbf{Single-hop recursion and geometry diagnostics.} Cosine compares exact-reasoning and all-generation maps; recursive mass is the positive visual mass contributed by the one-hop term.}",
             r"\label{tab:visual_recursion_geometry}",
             r"\resizebox{\linewidth}{!}{%",
-            r"\begin{tabular}{lccc}",
+            r"\begin{tabular}{lccccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
             r"\textbf{Dataset} & \textbf{Exact/all-gen cosine} & \textbf{Direct positive mass} & \textbf{Recursive positive mass} & \textbf{Recursive absolute mass} & \textbf{FlashTrace border mass} \\",
@@ -979,8 +1066,9 @@ def _appendix_tex(
             r"\end{tabular}}",
             r"\end{table*}",
             "",
-            r"\paragraph{Independent protocol audit.}",
-            "A deterministic 10\\% caveat-only review inspected "
+            r"\paragraph{Owner-approved protocol audit.}",
+            "A deterministic 10\\% caveat-only assisted review, with final "
+            "judgments approved by the project owner, inspected "
             f"{wiki_manual_audit['reviewed_count']}/120 Wiki-VISA and "
             f"{viz_manual_audit['reviewed_count']}/100 VizWiz-LF rows for "
             "image dependence and THINKING quality. Wiki image-dependence "
@@ -1039,7 +1127,7 @@ def render(formal_dir: Path) -> tuple[str, str, str, str, str]:
         or viz_manual_audit.get("complete") is not True
         or viz_manual_audit.get("reviewed_count") != 10
     ):
-        raise ValueError("independent 10% protocol audits are incomplete")
+        raise ValueError("owner-approved 10% protocol audits are incomplete")
     if localization["common_samples"] != 120:
         raise ValueError("Wiki localization common intersection is not n=120")
     if viz_faith["overall"]["samples"] != 100:
@@ -1104,7 +1192,7 @@ def render(formal_dir: Path) -> tuple[str, str, str, str, str]:
     lines.extend(_fully_correct_markdown(viz_faith, semantic))
     lines.extend(
         [
-            "## Independent frozen-sample protocol audits",
+            "## Owner-approved frozen-sample protocol audits",
             "",
             f"Wiki-VISA ({wiki_manual_audit['reviewed_count']}/120): "
             f"image dependence {wiki_manual_audit['image_dependence_counts']}; "
@@ -1153,7 +1241,7 @@ def render(formal_dir: Path) -> tuple[str, str, str, str, str]:
             localization_rows.append(r"\midrule")
 
     faith_rows = []
-    for method in ("visual-ig", "attnlrp", "flashtrace"):
+    for method in METHODS:
         prefix = r"\rowcolor{cyan!10} " if method == "flashtrace" else ""
         estimates = viz_faith["overall"]["estimates"][method]
         cells = [
@@ -1163,6 +1251,8 @@ def render(formal_dir: Path) -> tuple[str, str, str, str, str]:
         faith_rows.append(
             prefix + LATEX_LABELS[method] + " & " + " & ".join(cells) + r" \\"
         )
+        if method == "flashtrace":
+            faith_rows.append(r"\midrule")
     appendix = _appendix_tex(
         wiki_funnel=wiki_funnel,
         viz_funnel=viz_funnel,
@@ -1177,8 +1267,14 @@ def render(formal_dir: Path) -> tuple[str, str, str, str, str]:
         viz_faithfulness_summary=viz_faithfulness_summary,
         wiki_manual_audit=wiki_manual_audit,
         viz_manual_audit=viz_manual_audit,
+        semantic=semantic,
     )
-    discussion = _visual_discussion_tex(localization, viz_faith)
+    discussion = _visual_discussion_tex(
+        localization,
+        viz_faith,
+        wiki_faith,
+        semantic,
+    )
     return (
         "\n".join(lines),
         "\n".join(localization_rows) + "\n",

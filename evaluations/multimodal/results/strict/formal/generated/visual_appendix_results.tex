@@ -42,6 +42,36 @@ VizWiz-LF & unique\_image\_and\_fixed\_seed\_freeze & 100 & 44 & 0 \\
 \begin{table*}[t]
 \centering
 \small
+\caption{\textbf{Paired Wiki-VISA primary-endpoint contrasts.} Deltas are oriented so positive values favor \flashtrace{}; W/T/L counts are paired at the frozen-sample level.}
+\label{tab:visual_wiki_primary_deltas}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcc}
+\toprule
+\rowcolor{gray!7}
+\textbf{Endpoint} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\
+\midrule
+Energy & Random & \shortstack{0.166\\{\scriptsize[0.147,0.186]}} & 117/0/3 \\
+Energy & Center prior & \shortstack{0.172\\{\scriptsize[0.152,0.192]}} & 119/0/1 \\
+Energy & Visual LOO & \shortstack{0.086\\{\scriptsize[0.064,0.107]}} & 97/0/23 \\
+Energy & Visual IG & \shortstack{0.159\\{\scriptsize[0.139,0.179]}} & 116/0/4 \\
+Energy & AttnLRP & \shortstack{-0.080\\{\scriptsize[-0.095,-0.065]}} & 22/0/98 \\
+Energy & \textit{IFR-span ($K{=}0$)} & \shortstack{0.033\\{\scriptsize[0.027,0.039]}} & 105/0/15 \\
+Energy & \textit{\flashtrace{} all-generation} & \shortstack{0.010\\{\scriptsize[0.007,0.012]}} & 103/0/17 \\
+\midrule
+R@5 & Random & \shortstack{0.259\\{\scriptsize[0.224,0.296]}} & 118/1/1 \\
+R@5 & Center prior & \shortstack{0.262\\{\scriptsize[0.222,0.303]}} & 109/0/11 \\
+R@5 & Visual LOO & \shortstack{0.087\\{\scriptsize[0.045,0.130]}} & 78/0/42 \\
+R@5 & Visual IG & \shortstack{0.224\\{\scriptsize[0.190,0.258]}} & 110/4/6 \\
+R@5 & AttnLRP & \shortstack{0.011\\{\scriptsize[-0.008,0.031]}} & 61/4/55 \\
+R@5 & \textit{IFR-span ($K{=}0$)} & \shortstack{0.091\\{\scriptsize[0.075,0.108]}} & 106/10/4 \\
+R@5 & \textit{\flashtrace{} all-generation} & \shortstack{0.029\\{\scriptsize[0.023,0.035]}} & 84/27/9 \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
 \caption{\textbf{Supplemental Wiki-VISA localization endpoints.} Pointing Game, top-area IoU, R@1, and R@10 use the same whole-patch tie-aware protocol and paired $n=120$ intersection as the preregistered endpoints, but are reported only as supplemental diagnostics.}
 \label{tab:visual_wiki_localization_supplemental}
 \resizebox{\textwidth}{!}{%
@@ -58,6 +88,36 @@ AttnLRP & \shortstack{0.583\\{\scriptsize[0.492,0.667]}} & \shortstack{0.132\\{\
 \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.633\\{\scriptsize[0.542,0.717]}} & \shortstack{0.128\\{\scriptsize[0.115,0.142]}} & \shortstack{0.124\\{\scriptsize[0.105,0.145]}} & \shortstack{0.444\\{\scriptsize[0.404,0.485]}} \\
 \textit{IFR-span ($K{=}0$)} & \shortstack{0.592\\{\scriptsize[0.500,0.675]}} & \shortstack{0.091\\{\scriptsize[0.081,0.103]}} & \shortstack{0.095\\{\scriptsize[0.078,0.114]}} & \shortstack{0.340\\{\scriptsize[0.303,0.378]}} \\
 \textit{\flashtrace{} all-generation} & \shortstack{0.625\\{\scriptsize[0.533,0.708]}} & \shortstack{0.115\\{\scriptsize[0.103,0.127]}} & \shortstack{0.114\\{\scriptsize[0.095,0.134]}} & \shortstack{0.408\\{\scriptsize[0.370,0.447]}} \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\small
+\caption{\textbf{Paired frozen-response deletion contrasts.} Deletion AUC is the preregistered faithfulness endpoint; positive deltas favor \flashtrace{}. W/T/L counts use the complete paired intersection for each dataset.}
+\label{tab:visual_faithfulness_deltas}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcc}
+\toprule
+\rowcolor{gray!7}
+\textbf{Dataset} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\
+\midrule
+VizWiz-LF & Random & \shortstack{0.041\\{\scriptsize[0.019,0.065]}} & 64/3/33 \\
+VizWiz-LF & Center prior & \shortstack{0.042\\{\scriptsize[0.011,0.072]}} & 60/2/38 \\
+VizWiz-LF & Visual LOO & \shortstack{-0.024\\{\scriptsize[-0.048,0.000]}} & 38/4/58 \\
+VizWiz-LF & Visual IG & \shortstack{0.052\\{\scriptsize[0.027,0.077]}} & 61/2/37 \\
+VizWiz-LF & AttnLRP & \shortstack{0.006\\{\scriptsize[-0.012,0.026]}} & 42/6/52 \\
+VizWiz-LF & \textit{IFR-span ($K{=}0$)} & \shortstack{0.000\\{\scriptsize[-0.006,0.005]}} & 44/15/41 \\
+VizWiz-LF & \textit{\flashtrace{} all-generation} & \shortstack{0.002\\{\scriptsize[-0.003,0.006]}} & 39/22/39 \\
+\midrule
+Wiki-VISA & Random & \shortstack{0.111\\{\scriptsize[0.070,0.152]}} & 77/9/34 \\
+Wiki-VISA & Center prior & \shortstack{0.185\\{\scriptsize[0.136,0.234]}} & 82/8/30 \\
+Wiki-VISA & Visual LOO & \shortstack{-0.104\\{\scriptsize[-0.136,-0.072]}} & 25/26/69 \\
+Wiki-VISA & Visual IG & \shortstack{0.110\\{\scriptsize[0.075,0.146]}} & 82/11/27 \\
+Wiki-VISA & AttnLRP & \shortstack{0.062\\{\scriptsize[0.030,0.096]}} & 56/21/43 \\
+Wiki-VISA & \textit{IFR-span ($K{=}0$)} & \shortstack{0.016\\{\scriptsize[0.004,0.028]}} & 55/34/31 \\
+Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.005\\{\scriptsize[-0.004,0.014]}} & 40/44/36 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -170,10 +230,10 @@ Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.335\\{\scripts
 \begin{table*}[t]
 \centering
 \small
-\caption{\textbf{VizWiz-LF fully-correct sensitivity.} The subset is defined by the adjudicated semantic labels and is not used to select the frozen faithfulness panel.}
+\caption{\textbf{VizWiz-LF fully-correct sensitivity} ($n=58$ of 100; semantic labels: 58 fully correct, 22 partial, 20 wrong). The subset is not used to select the frozen faithfulness panel.}
 \label{tab:visual_vizwiz_fully_correct}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{lccccc}
+\begin{tabular}{lccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Method} & \textbf{Deletion AUC} $\downarrow$ & \textbf{Insertion AUC} $\uparrow$ & \textbf{Visual-MAS} $\downarrow$ \\
@@ -190,13 +250,35 @@ AttnLRP & \shortstack{0.331\\{\scriptsize[0.276,0.387]}} & \shortstack{0.517\\{\
 \end{tabular}}
 \end{table*}
 
+\begin{table*}[t]
+\centering
+\small
+\caption{\textbf{VizWiz-LF fully-correct paired deletion contrasts} ($n=58$). Positive deltas favor \flashtrace{}; this post-hoc sensitivity subset does not alter the frozen primary panel.}
+\label{tab:visual_vizwiz_fully_correct_deltas}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcc}
+\toprule
+\rowcolor{gray!7}
+\textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\
+\midrule
+Random & \shortstack{0.048\\{\scriptsize[0.023,0.076]}} & 40/2/16 \\
+Center prior & \shortstack{0.054\\{\scriptsize[0.016,0.091]}} & 35/2/21 \\
+Visual LOO & \shortstack{-0.004\\{\scriptsize[-0.035,0.028]}} & 25/3/30 \\
+Visual IG & \shortstack{0.048\\{\scriptsize[0.016,0.079]}} & 36/2/20 \\
+AttnLRP & \shortstack{-0.002\\{\scriptsize[-0.023,0.020]}} & 23/5/30 \\
+\textit{IFR-span ($K{=}0$)} & \shortstack{0.002\\{\scriptsize[-0.005,0.009]}} & 24/10/24 \\
+\textit{\flashtrace{} all-generation} & \shortstack{0.006\\{\scriptsize[-0.000,0.012]}} & 23/16/19 \\
+\bottomrule
+\end{tabular}}
+\end{table*}
+
 \begin{table}[t]
 \centering
 \small
 \caption{\textbf{Single-hop recursion and geometry diagnostics.} Cosine compares exact-reasoning and all-generation maps; recursive mass is the positive visual mass contributed by the one-hop term.}
 \label{tab:visual_recursion_geometry}
 \resizebox{\linewidth}{!}{%
-\begin{tabular}{lccc}
+\begin{tabular}{lccccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Dataset} & \textbf{Exact/all-gen cosine} & \textbf{Direct positive mass} & \textbf{Recursive positive mass} & \textbf{Recursive absolute mass} & \textbf{FlashTrace border mass} \\
@@ -310,6 +392,6 @@ VizWiz-LF & \textit{\flashtrace{} all-generation} & 1.56 & 10.80 & 15.48 \\
 \end{tabular}}
 \end{table*}
 
-\paragraph{Independent protocol audit.}
-A deterministic 10\% caveat-only review inspected 12/120 Wiki-VISA and 10/100 VizWiz-LF rows for image dependence and THINKING quality. Wiki image-dependence labels were {'borderline': 1, 'supported': 11}; VizWiz labels were {'borderline': 1, 'supported': 8, 'unsupported': 1}. No review changed the frozen sample set.
+\paragraph{Owner-approved protocol audit.}
+A deterministic 10\% caveat-only assisted review, with final judgments approved by the project owner, inspected 12/120 Wiki-VISA and 10/100 VizWiz-LF rows for image dependence and THINKING quality. Wiki image-dependence labels were {'borderline': 1, 'supported': 11}; VizWiz labels were {'borderline': 1, 'supported': 8, 'unsupported': 1}. No review changed the frozen sample set.
 

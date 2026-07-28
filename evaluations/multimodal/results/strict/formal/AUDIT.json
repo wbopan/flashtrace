@@ -3,8 +3,8 @@
   "complete": true,
   "protocol_violations": 0,
   "incomplete_checks": 0,
-  "passed_checks": 189,
-  "total_checks": 189,
+  "passed_checks": 188,
+  "total_checks": 188,
   "checks": [
     {
       "name": "protocol: file",
@@ -548,22 +548,22 @@
         "flashtrace": {
           "88x22": 120
         },
-        "flashtrace-all-gen": {
-          "88x22": 120
-        },
-        "center": {
-          "32x32": 120
-        },
         "random": {
           "32x32": 120
         },
         "visual-ig": {
           "88x22": 120
         },
+        "center": {
+          "32x32": 120
+        },
         "visual-loo": {
           "4x4": 120
         },
         "ifr-span": {
+          "88x22": 120
+        },
+        "flashtrace-all-gen": {
           "88x22": 120
         },
         "attnlrp": {
@@ -674,20 +674,6 @@
           "40x30": 33,
           "51x38": 43
         },
-        "flashtrace-all-gen": {
-          "14x14": 1,
-          "17x13": 10,
-          "20x15": 1,
-          "22x30": 4,
-          "26x19": 2,
-          "32x24": 3,
-          "38x51": 3,
-          "40x30": 33,
-          "51x38": 43
-        },
-        "center": {
-          "32x32": 100
-        },
         "random": {
           "32x32": 100
         },
@@ -702,10 +688,24 @@
           "40x30": 33,
           "51x38": 43
         },
+        "center": {
+          "32x32": 100
+        },
         "visual-loo": {
           "4x4": 100
         },
         "ifr-span": {
+          "14x14": 1,
+          "17x13": 10,
+          "20x15": 1,
+          "22x30": 4,
+          "26x19": 2,
+          "32x24": 3,
+          "38x51": 3,
+          "40x30": 33,
+          "51x38": 43
+        },
+        "flashtrace-all-gen": {
           "14x14": 1,
           "17x13": 10,
           "20x15": 1,
@@ -817,16 +817,6 @@
           "8x8": 1,
           "9x7": 92
         },
-        "flashtrace-all-gen": {
-          "7x9": 7,
-          "8x8": 1,
-          "9x7": 92
-        },
-        "center": {
-          "7x9": 7,
-          "8x8": 1,
-          "9x7": 92
-        },
         "random": {
           "7x9": 7,
           "8x8": 1,
@@ -837,12 +827,22 @@
           "8x8": 1,
           "9x7": 92
         },
+        "center": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
         "visual-loo": {
           "7x9": 7,
           "8x8": 1,
           "9x7": 92
         },
         "ifr-span": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "flashtrace-all-gen": {
           "7x9": 7,
           "8x8": 1,
           "9x7": 92
@@ -951,22 +951,22 @@
         "flashtrace": {
           "16x4": 120
         },
-        "flashtrace-all-gen": {
-          "16x4": 120
-        },
-        "center": {
-          "16x4": 120
-        },
         "random": {
           "16x4": 120
         },
         "visual-ig": {
           "16x4": 120
         },
+        "center": {
+          "16x4": 120
+        },
         "visual-loo": {
           "16x4": 120
         },
         "ifr-span": {
+          "16x4": 120
+        },
+        "flashtrace-all-gen": {
           "16x4": 120
         },
         "attnlrp": {
@@ -1449,13 +1449,7 @@
       "detail": null
     },
     {
-      "name": "paper main faithfulness panel excludes cost-insensitive rows",
-      "passed": true,
-      "failure_kind": null,
-      "detail": null
-    },
-    {
-      "name": "paper main faithfulness table has three three-metric rows",
+      "name": "paper main faithfulness table has eight three-metric rows",
       "passed": true,
       "failure_kind": null,
       "detail": null
@@ -1713,8 +1707,8 @@
     },
     {
       "path": "evaluations/multimodal/results/strict/formal/RESULTS.md",
-      "bytes": 22575,
-      "sha256": "2ab190b28a6c1559a6d00af1e1cd9618ada2cc5874a0f7e045041a111133016d"
+      "bytes": 22420,
+      "sha256": "c708d68af7dde696514619df0e7607ee8cc157f6b200cda1c98951ef48127bea"
     },
     {
       "path": "evaluations/multimodal/results/strict/formal/RUNBOOK.md",
@@ -2053,18 +2047,18 @@
     },
     {
       "path": "paper/appendix.tex",
-      "bytes": 52392,
-      "sha256": "2532190d9b73eb43b0b40a16a25679bc754c60126f106764169d512c34e59c72"
+      "bytes": 52429,
+      "sha256": "f2da039d8091e1d543c3ecbccebe312f59a19eb1c2ad2f20ea43ed5d40bfd4b0"
     },
     {
       "path": "paper/generated/visual_appendix_results.tex",
-      "bytes": 25613,
-      "sha256": "2a4cb7eeb6d3ee46351049498aa91ab54384aade0bb486f0402ed5893e8feb38"
+      "bytes": 30245,
+      "sha256": "abf81f26fa36ba53551ec061f9b817a26444f93f3a7066ef1e932dae987db588"
     },
     {
       "path": "paper/generated/visual_faithfulness_rows.tex",
-      "bytes": 527,
-      "sha256": "d1ab106df7821ec1fbf90937c1c5a996ae7b442c8508284f7730ea230bca83ae"
+      "bytes": 1383,
+      "sha256": "0330a82c702144f6f2d11bf800b2192c18f4e130ea3e781ce77e0513feede499"
     },
     {
       "path": "paper/generated/visual_localization_rows.tex",
@@ -2073,13 +2067,13 @@
     },
     {
       "path": "paper/generated/visual_results_discussion.tex",
-      "bytes": 1363,
-      "sha256": "da91a0c260c951ff78704f8a3b7873e4461e26e03c6c95411f248b5817751cd6"
+      "bytes": 2218,
+      "sha256": "850d052da3414739d3a39065cfae11a55aa9749df7d16ad590a4fd4d9031fabb"
     },
     {
       "path": "paper/main.tex",
-      "bytes": 57954,
-      "sha256": "454a46463cc9e2ba31990ff95b717daa5b0a236f79069d7e63e21ce524b3232f"
+      "bytes": 58992,
+      "sha256": "61b0587cb8b055f77c60e124e221b4183beaa1b8ebcfaf7c2fb8c7f2e93ee29b"
     }
   ]
 }

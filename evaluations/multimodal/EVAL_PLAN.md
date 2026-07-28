@@ -84,7 +84,7 @@ VLM 全部裁剪；递归机制分析降为对 E3–E5 已有记录的离线分�
   THINKING+OUTPUT，只累计 `OUTPUT_SPAN` log-prob。
 - 次面板（E5）：Wiki-VISA n=120 复用同一批冻结样本跑同预算 faithfulness（零额外生成成本），
   入 appendix。
-- 方法：同 E3 的 8 方法。主表展示 Visual IG、AttnLRP、FlashTrace，完整 8 方法入 appendix。
+- 方法：同 E3 的 8 方法，主表与 appendix 均完整展示。
 - 指标：Deletion AUC ↓（primary endpoint）、Insertion AUC ↑、Visual-MAS ↓；保存全部
   perturbation curves 与 degenerate-curve 计数。
 - 符号敏感性：deletion/insertion 排序用 signed score、MAS 用 positive mass；另算一版

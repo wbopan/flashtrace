@@ -160,7 +160,7 @@ Common paired samples: 100; paired bootstrap draws: 50000. Deletion AUC is the p
 | IFR-span (K=0) | 0.3599 [0.3208, 0.3990] | 0.5327 [0.4926, 0.5726] | 0.4935 [0.4431, 0.5444] |
 | FlashTrace all-generation | 0.3614 [0.3223, 0.4006] | 0.5314 [0.4915, 0.5701] | 0.4964 [0.4466, 0.5475] |
 
-Visual LOO is retained in the complete eight-method appendix as a cost-insensitive perturbation diagnostic. The practical main comparison and interpretation use Visual IG, AttnLRP, and FlashTrace; Center remains an explicit spatial-prior check.
+The main table and appendix report the same complete eight-method panel.
 
 ### FlashTrace favorable deletion-AUC differences
 
@@ -328,7 +328,7 @@ Times are per successful sample-method on the formal common intersection. Attrib
 
 ## A8: VizWiz semantic correctness sensitivity
 
-Labels: {'fully': 58, 'partial': 22, 'wrong': 20}. Independent human audit: 10/10. Fully-correct subset size: 58.
+Labels: {'fully': 58, 'partial': 22, 'wrong': 20}. Project-owner-approved assisted audit: 10/10. Fully-correct subset size: 58.
 
 | method | Deletion AUC ↓ | Insertion AUC ↑ | Visual-MAS ↓ |
 |---|---:|---:|---:|
@@ -353,7 +353,7 @@ Labels: {'fully': 58, 'partial': 22, 'wrong': 20}. Independent human audit: 10/1
 | IFR-span (K=0) | 0.0018 [-0.0047, 0.0087] | 24/10/24 |
 | FlashTrace all-generation | 0.0055 [-0.0000, 0.0120] | 23/16/19 |
 
-## Independent frozen-sample protocol audits
+## Owner-approved frozen-sample protocol audits
 
 Wiki-VISA (12/120): image dependence {'borderline': 1, 'supported': 11}; THINKING quality {'good': 11, 'mixed': 1}.
 
