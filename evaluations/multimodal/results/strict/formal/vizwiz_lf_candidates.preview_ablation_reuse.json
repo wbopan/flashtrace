@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "policy": "reuse_only_response_token_model_and_ablation_config_identical",
+  "formal_candidates": 200,
+  "preview_candidates": 40,
+  "overlap_candidates": 40,
+  "identity_matched_candidates": 38,
+  "identity_mismatched_sample_ids": [
+    "vizwiz-lf-242",
+    "vizwiz-lf-575"
+  ],
+  "reusable_complete_ablation_records": 28,
+  "newly_seeded_ablation_records": 28,
+  "reused_ablation_records": 28,
+  "reused_sample_ids": [
+    "vizwiz-lf-042",
+    "vizwiz-lf-058",
+    "vizwiz-lf-060",
+    "vizwiz-lf-073",
+    "vizwiz-lf-123",
+    "vizwiz-lf-142",
+    "vizwiz-lf-160",
+    "vizwiz-lf-161",
+    "vizwiz-lf-169",
+    "vizwiz-lf-186",
+    "vizwiz-lf-192",
+    "vizwiz-lf-220",
+    "vizwiz-lf-227",
+    "vizwiz-lf-250",
+    "vizwiz-lf-281",
+    "vizwiz-lf-309",
+    "vizwiz-lf-329",
+    "vizwiz-lf-343",
+    "vizwiz-lf-347",
+    "vizwiz-lf-376",
+    "vizwiz-lf-378",
+    "vizwiz-lf-402",
+    "vizwiz-lf-417",
+    "vizwiz-lf-475",
+    "vizwiz-lf-520",
+    "vizwiz-lf-543",
+    "vizwiz-lf-550",
+    "vizwiz-lf-595"
+  ],
+  "source_sha256": {
+    "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_candidates_n40.ablation.model.jsonl": "26572d26e264f33290b9732e2c3dc250171d43b304f3d7b228f1db03aeb9ded6"
+  }
+}

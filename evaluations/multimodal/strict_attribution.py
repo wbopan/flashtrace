@@ -30,6 +30,7 @@ import torch
 import torch.nn.functional as F
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
+from .jsonl_checkpoint import PairJsonlCheckpoint
 from .metrics import (
     patch_energy_in_mask,
     patch_evidence_rank_auc,
@@ -40,12 +41,13 @@ from .metrics import (
 )
 from .strict_generation import (
     DEFAULT_MODEL,
+    FORMAL_MAX_PIXELS,
+    FROZEN_MODEL_REVISION,
     _messages,
     model_record_prompt,
     output_mean_logprob,
     read_jsonl,
     validate_model_record,
-    write_jsonl,
 )
 
 
@@ -54,11 +56,8 @@ DEFAULT_METHODS = (
     "center",
     "visual-loo",
     "ifr-span",
-    "attention-rollout",
-    "grad-attention",
     "visual-ig",
     "attnlrp",
-    "tam",
     "flashtrace",
     "flashtrace-all-gen",
 )
@@ -652,9 +651,19 @@ def _common_summary(
             for record in paired
             if isinstance(record.get("localization"), Mapping)
         ]
+        native_grid_shapes: dict[str, int] = defaultdict(int)
+        for record in paired:
+            shape = record.get("visual_grid_shape")
+            if (
+                isinstance(shape, list)
+                and len(shape) == 2
+                and all(isinstance(value, int) for value in shape)
+            ):
+                native_grid_shapes[f"{shape[0]}x{shape[1]}"] += 1
         method_summary[method] = {
             "common_samples": len(paired),
             "localization_samples": len(localized),
+            "native_grid_shapes": dict(sorted(native_grid_shapes.items())),
             **{
                 metric: (
                     statistics.fmean(
@@ -782,7 +791,8 @@ def run(
         )
 
     results_path = output_dir / "attribution_records.jsonl"
-    existing = read_jsonl(results_path) if results_path.exists() else []
+    checkpoint = PairJsonlCheckpoint(results_path)
+    existing = checkpoint.records()
     completed = {
         (str(record.get("sample_id")), str(record.get("method")))
         for record in existing
@@ -888,32 +898,30 @@ def run(
                     "traceback": traceback.format_exc(),
                     **timing,
                 }
-            # Replace stale protocol versions for this paired sample/method.
-            # Keeping both would silently double count the aggregate.
-            records = [
-                item
-                for item in records
-                if (
-                    str(item.get("sample_id")),
-                    str(item.get("method")),
-                )
-                != (sample_id, method)
-            ]
-            records.append(record)
-            write_jsonl(records, results_path)
+            # A per-pair atomic journal preserves resumability without
+            # serializing the increasingly large full trace matrix here.
+            checkpoint.put(record)
+            records = checkpoint.records()
             print(
                 f"[{sample_index + 1}/{len(selected_ids)}] {sample_id} "
                 f"{method} status={record['status']} seconds={record['seconds']:.2f}",
                 flush=True,
             )
-            # Methods such as decoder Grad×Attention and checkpointed visual IG
-            # temporarily reserve tens of GB at document resolution.  Reclaim
-            # method-local tensors before the next baseline so a resumable mixed
-            # method run is not sensitive to allocator history.
-            gc.collect()
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
+            # White-box decoder methods temporarily reserve tens of GB at
+            # document resolution. Reclaim after those high-water operations;
+            # inference-only and trace methods reuse the allocator until the
+            # sample boundary instead of forcing an expensive full collection
+            # after every pair.
+            if method in WHITEBOX_METHODS:
+                gc.collect()
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
+    checkpoint.compact()
+    records = checkpoint.records()
     summary = {
         "schema_version": 2,
         "dataset_manifest": str(dataset_manifest),
@@ -921,6 +929,10 @@ def run(
         "generation_evaluation": str(generation_evaluation),
         "model": model_name,
         "revision": revision,
+        "processor": {
+            "min_pixels": min_pixels,
+            "max_pixels": max_pixels,
+        },
         "eligible_samples": len(selected_ids),
         **_common_summary(records, methods),
     }
@@ -944,10 +956,10 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--methods", nargs="+", default=list(DEFAULT_METHODS))
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--revision")
+    parser.add_argument("--revision", default=FROZEN_MODEL_REVISION)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--min-pixels", type=int, default=256 * 28 * 28)
-    parser.add_argument("--max-pixels", type=int, default=1280 * 28 * 28)
+    parser.add_argument("--max-pixels", type=int, default=FORMAL_MAX_PIXELS)
     parser.add_argument("--ig-steps", type=int, default=8)
     parser.add_argument("--loo-grid-size", type=int, default=4)
     parser.add_argument("--tam-source", type=Path, default=Path("data/external/TAM"))

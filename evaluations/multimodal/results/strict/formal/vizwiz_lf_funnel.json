@@ -1,0 +1,125 @@
+{
+  "candidate_count": 200,
+  "model_record_count": 193,
+  "evaluation_record_count": 200,
+  "strict_eligible_count": 144,
+  "frozen_sample_count": 100,
+  "excluded_prior_pilot_count": 3,
+  "gate_marginal_counts": {
+    "thinking_closed": {
+      "passed": 193,
+      "failed": 4,
+      "not_evaluated": 0
+    },
+    "generated_teacher_forced_ids_match": {
+      "passed": 191,
+      "failed": 2,
+      "not_evaluated": 4
+    },
+    "thinking_within_token_limit": {
+      "passed": 191,
+      "failed": 0,
+      "not_evaluated": 6
+    },
+    "output_meets_min_tokens": {
+      "passed": 179,
+      "failed": 12,
+      "not_evaluated": 6
+    },
+    "output_non_refusal": {
+      "passed": 156,
+      "failed": 35,
+      "not_evaluated": 6
+    },
+    "generation_stable": {
+      "passed": 191,
+      "failed": 0,
+      "not_evaluated": 6
+    },
+    "positive_blur_logprob_drop": {
+      "passed": 191,
+      "failed": 0,
+      "not_evaluated": 6
+    },
+    "generation_ablation_changes_output": {
+      "passed": 144,
+      "failed": 53,
+      "not_evaluated": 0
+    }
+  },
+  "stages": [
+    {
+      "stage": "candidate_manifest",
+      "passed": 200,
+      "eliminated_at_stage": 0
+    },
+    {
+      "stage": "prior_pilot_sample_exclusion",
+      "passed": 197,
+      "eliminated_at_stage": 3
+    },
+    {
+      "stage": "thinking_closed",
+      "passed": 193,
+      "eliminated_at_stage": 4,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "generated_teacher_forced_ids_match",
+      "passed": 191,
+      "eliminated_at_stage": 2,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "model_record_available",
+      "passed": 191,
+      "eliminated_at_stage": 0
+    },
+    {
+      "stage": "thinking_within_token_limit",
+      "passed": 191,
+      "eliminated_at_stage": 0,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "output_meets_min_tokens",
+      "passed": 179,
+      "eliminated_at_stage": 12,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "output_non_refusal",
+      "passed": 144,
+      "eliminated_at_stage": 35,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "generation_stable",
+      "passed": 144,
+      "eliminated_at_stage": 0,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "positive_blur_logprob_drop",
+      "passed": 144,
+      "eliminated_at_stage": 0,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "generation_ablation_changes_output",
+      "passed": 144,
+      "eliminated_at_stage": 0,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "final_strict_eligible",
+      "passed": 144,
+      "eliminated_at_stage": 0
+    },
+    {
+      "stage": "unique_image_and_fixed_seed_freeze",
+      "passed": 100,
+      "eliminated_at_stage": 44
+    }
+  ]
+}

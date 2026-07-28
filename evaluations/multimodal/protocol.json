@@ -1,141 +1,176 @@
 {
-  "schema_version": 1,
-  "frozen_on": "2026-07-16",
-  "models": {
-    "primary": [
-      "Qwen/Qwen3-VL-8B-Instruct",
-      "Qwen/Qwen3-VL-8B-Thinking"
-    ],
-    "generalization": [
-      "Qwen/Qwen2.5-VL-7B-Instruct"
-    ]
+  "schema_version": 2,
+  "frozen_on": "2026-07-24",
+  "status": "main_experiment_scope_frozen",
+  "amendment_policy": "Sample selection, gates, methods, and primary endpoints must not be changed in response to attribution results.",
+  "model": {
+    "repo_id": "Qwen/Qwen3-VL-8B-Thinking",
+    "revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b",
+    "wiki_visa_max_pixels": 2007040,
+    "generation_budgets": {
+      "wiki_visa_max_new_tokens": 1024,
+      "vizwiz_lf_max_new_tokens": 2048
+    },
+    "input_fields": ["I_IMAGE", "I_QUESTION"],
+    "generated_fields": ["THINKING", "OUTPUT"],
+    "attribution_sink": "complete_OUTPUT_SPAN",
+    "teacher_force_same_frozen_response_across_methods": true
   },
-  "sample_budget": {
-    "pilot_per_dataset": 32,
-    "main_per_primary_dataset": 500,
-    "generalization_per_primary_dataset": 200,
-    "diagnostic_gqa": 300,
-    "diagnostic_repope": 200,
-    "seed": 17,
-    "bootstrap_resamples": 10000
+  "artifact_separation": {
+    "join_key": "sample_id",
+    "files": [
+      "dataset.jsonl",
+      "model.jsonl",
+      "generation_eval.jsonl",
+      "ablation.model.jsonl",
+      "attribution_records.jsonl"
+    ],
+    "dataset_rationales_or_programs_enter_prompt": false
+  },
+  "formal_sample_exclusion": {
+    "policy": "Protocol-validation and native-pilot sample IDs are excluded before formal subset freezing.",
+    "reported_in_gate_funnel": true
+  },
+  "independent_manual_audit": {
+    "fraction_per_dataset": 0.1,
+    "selection_seed": 17,
+    "dimensions": [
+      "image_dependence",
+      "thinking_quality"
+    ],
+    "selection_effect": "caveat_only_no_frozen_id_changes"
   },
   "benchmarks": [
     {
-      "id": "coco_captions_grounded",
+      "id": "wiki_visa",
       "tier": "primary",
-      "task": "open_ended_image_captioning",
-      "target_spans": ["full_caption", "matched_noun_phrase"],
-      "evidence": "COCO instance masks and bounding boxes matched to generated noun phrases",
-      "metrics": [
-        "insertion_auc",
-        "deletion_auc",
-        "pointing_game_box",
-        "pointing_game_mask",
-        "energy_in_mask",
-        "evidence_recall_at_10pct",
-        "runtime_seconds",
-        "peak_vram_gb"
+      "role": "localization",
+      "candidate_count_initial": 240,
+      "candidate_extension_policy": "Add deterministic disjoint candidates when any stratum has fewer than 40 strict-eligible rows; never relax a gate.",
+      "final_count": 120,
+      "strata": {
+        "first_page_passage": 40,
+        "later_page_passage": 40,
+        "non_passage": 40
+      },
+      "ground_truth": "native_supporting_html_element_boxes",
+      "hard_gates": [
+        "whole_output_correct",
+        "two_identical_greedy_generations",
+        "generated_teacher_forced_token_identity",
+        "positive_output_logprob_drop_under_global_blur",
+        "blur_or_gray_generation_changes_whole_output",
+        "thinking_closes_within_generation_budget"
+      ],
+      "primary_endpoints": ["energy_in_evidence", "recovery_at_5pct"],
+      "secondary_metrics": [
+        "evidence_rank_auc",
+        "recovery_at_20pct",
+        "pointing_game",
+        "top_evidence_area_iou",
+        "recovery_at_1pct",
+        "recovery_at_10pct"
       ]
     },
     {
-      "id": "wiki_visa_single_oracle",
+      "id": "vizwiz_lf",
       "tier": "primary",
-      "task": "visual_document_question_answering",
-      "target_spans": ["answer", "reasoning_prefix", "reasoning_plus_answer"],
-      "evidence": "Human Natural Questions answers aligned to evidence boxes in historical Wikipedia screenshots",
-      "strata": ["first_page_passage", "later_page_passage", "non_passage"],
-      "metrics": [
-        "insertion_auc",
-        "deletion_auc",
-        "pointing_game_box",
-        "energy_in_box",
-        "evidence_recall_at_10pct",
-        "image_text_reasoning_mass",
-        "runtime_seconds",
-        "peak_vram_gb"
-      ]
+      "role": "frozen_response_faithfulness",
+      "candidate_count": 200,
+      "final_count": 100,
+      "selection": "fixed_seed_sample_from_full_strict_eligible_pool",
+      "recorded_strata": ["output_length_tercile", "question_type"],
+      "ground_truth": null,
+      "hard_gates": [
+        "output_is_not_refusal_or_unanswerable",
+        "two_identical_greedy_generations",
+        "generated_teacher_forced_token_identity",
+        "positive_output_logprob_drop_under_global_blur",
+        "blur_or_gray_generation_changes_whole_output",
+        "thinking_closes_within_2048_tokens",
+        "output_has_at_least_16_tokens"
+      ],
+      "correctness_policy": {
+        "hard_gate": false,
+        "labels": ["fully", "partial", "wrong"],
+        "annotation": "LLM judge with 10 percent human review",
+        "fully_correct_subset_sensitivity": true
+      },
+      "primary_endpoints": ["deletion_auc"],
+      "secondary_metrics": ["insertion_auc", "visual_mas"]
     },
     {
-      "id": "gqa_balanced_grounded",
+      "id": "vistaqa",
       "tier": "diagnostic",
-      "task": "compositional_visual_reasoning",
-      "target_spans": ["answer", "reasoning_prefix", "reasoning_plus_answer"],
-      "evidence": "GQA visual pointers and functional-program object ids joined to scene-graph boxes; treated as derived rather than human attribution ground truth",
-      "metrics": [
-        "insertion_auc",
-        "deletion_auc",
-        "pointing_game_box",
-        "energy_in_evidence_boxes",
-        "evidence_recall_at_10pct"
-      ]
+      "role": "localization_failure_analysis",
+      "new_gpu_run": false,
+      "artifact": "results/strict/native_pilot",
+      "sample_count": 10
     },
     {
-      "id": "repope",
+      "id": "clevr_xai_complex",
       "tier": "diagnostic",
-      "task": "object_hallucination",
-      "target_spans": ["hallucinated_object_span", "reasoning_plus_answer"],
-      "evidence": "COCO object annotations and RePOPE hallucination labels",
-      "metrics": [
-        "insertion_auc",
-        "deletion_auc",
-        "average_minimal_correction_region",
-        "correction_success_rate_at_10pct"
-      ]
+      "role": "single_token_center_bias_counterexample",
+      "new_gpu_run": false,
+      "artifact": "results/strict/final",
+      "sample_count": 20
     }
   ],
-  "baselines": [
+  "methods": [
+    {"id": "random", "role": "sanity"},
+    {"id": "center", "role": "sanity"},
+    {"id": "visual-loo", "role": "baseline"},
+    {"id": "visual-ig", "role": "baseline"},
+    {"id": "attnlrp", "role": "baseline"},
     {
-      "id": "random",
-      "tier": "sanity",
-      "status": "implement_in_shared_evaluator"
+      "id": "flashtrace",
+      "role": "primary",
+      "definition": "direct_OUTPUT_to_IMAGE_plus_mass_weighted_exact_OUTPUT_to_THINKING_to_IMAGE",
+      "recursive_hops": 1
     },
-    {
-      "id": "center_prior",
-      "tier": "sanity",
-      "status": "implement_in_shared_evaluator"
-    },
-    {
-      "id": "attention_rollout",
-      "tier": "fast",
-      "status": "implement_against_shared_qwen_adapter"
-    },
-    {
-      "id": "grad_cam_or_grad_attention",
-      "tier": "fast",
-      "status": "implement_against_shared_qwen_adapter"
-    },
-    {
-      "id": "tam",
-      "tier": "primary",
-      "status": "official_qwen2_code_requires_qwen3_port"
-    },
-    {
-      "id": "igospp_gnc",
-      "tier": "primary",
-      "status": "official_qwen2_5_code_requires_qwen3_port"
-    },
-    {
-      "id": "eagle_early_stop",
-      "tier": "primary",
-      "status": "official_qwen2_5_code_and_model_agnostic_objective_require_qwen3_adapter"
-    },
-    {
-      "id": "cc_shap",
-      "tier": "diagnostic",
-      "status": "optional_modality_balance_only"
-    }
+    {"id": "ifr-span", "role": "k0_ablation"},
+    {"id": "flashtrace-all-gen", "role": "bridge_ablation"}
   ],
-  "shared_protocol": {
-    "frozen_target": true,
-    "target_score": "teacher_forced_sum_log_probability",
-    "target_token_counts": [1, 8, 32, 128],
-    "target_span_policy": "Use the same frozen generated token indices for every method. Answer spans are uncapped up to 32 tokens; Thinking traces additionally report prefixes at 8, 32, and 128 tokens.",
-    "visual_units": "same SLICO 64-region partition for perturbation baselines; native visual-token grid additionally reported for white-box methods",
-    "insertion_baseline": "Gaussian-blurred image",
-    "deletion_replacement": "Gaussian-blurred image",
-    "curve_fractions": [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
-    "localization_subset": "correct and causally image-dependent samples",
-    "faithfulness_subset": "all samples with stable frozen generations",
-    "uncertainty": "paired sample-level bootstrap 95pct confidence intervals"
-  }
+  "shared_spatial_protocol": {
+    "complete_visual_patches": true,
+    "cutoff_ties": "expected_credit_under_uniform_tie_break",
+    "metric_interpolation": "none",
+    "display_interpolation": "nearest_neighbor_only"
+  },
+  "faithfulness_protocol": {
+    "frozen_tokens": "complete_THINKING_plus_OUTPUT",
+    "scored_tokens": "OUTPUT_SPAN_only",
+    "region_budget": 64,
+    "curve_steps": 10,
+    "replacement": "gaussian_blur",
+    "deletion_insertion_order": "signed_score",
+    "visual_mas_density": "positive_mass",
+    "positive_only_ordering_sensitivity": true,
+    "save_all_curves": true,
+    "report_degenerate_curve_count": true
+  },
+  "statistics": {
+    "comparison_subset": "intersection_of_successful_sample_ids_across_requested_methods",
+    "bootstrap_unit": "paired_sample",
+    "bootstrap_resamples_minimum": 10000,
+    "planned_bootstrap_resamples": 50000,
+    "confidence_interval": 0.95,
+    "report": ["paired_difference", "wins_ties_losses", "gate_funnel"]
+  },
+  "formal_experiments": [
+    {"id": "E1", "dataset": "wiki_visa", "task": "candidate_generation_and_ablation_audit"},
+    {"id": "E2", "dataset": "vizwiz_lf", "task": "candidate_generation_and_ablation_audit"},
+    {"id": "E3", "dataset": "wiki_visa", "task": "localization"},
+    {"id": "E4", "dataset": "vizwiz_lf", "task": "frozen_response_faithfulness"},
+    {"id": "E5", "dataset": "wiki_visa", "task": "frozen_response_faithfulness_appendix"}
+  ],
+  "frozen_id_artifact": "results/strict/formal/frozen_ids.json",
+  "excluded_new_runs": [
+    "k2_recursion",
+    "rollout_grad_attention_tam_appendix",
+    "position_equivariance",
+    "visual_efficiency_scaling_grid",
+    "vistaqa_expansion",
+    "second_vlm"
+  ]
 }

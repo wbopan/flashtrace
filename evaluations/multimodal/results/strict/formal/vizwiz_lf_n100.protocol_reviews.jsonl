@@ -1,0 +1,10 @@
+{"sample_id": "vizwiz-lf-116", "image_dependence": "supported", "thinking_quality": "mixed", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "模型依赖图片识别出纸张和黑色文件夹，但把胶带座等不清晰物体描述成绿色文件夹和灰色环，主体判断有用但细节不稳。"}
+{"sample_id": "vizwiz-lf-186", "image_dependence": "supported", "thinking_quality": "good", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "黑底白色圆点的颜色与图案均被准确识别，模糊和灰色消融只保留灰色，原图证据明确。"}
+{"sample_id": "vizwiz-lf-191", "image_dependence": "borderline", "thinking_quality": "good", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "原图确实支持灰色且推理正确，但模糊和统一灰色消融仍给出相同的灰色语义答案，因而视觉内容的特异性有限。"}
+{"sample_id": "vizwiz-lf-220", "image_dependence": "supported", "thinking_quality": "mixed", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "模型确实依据图片判断，但照片中的深色条纹难以区分黑、蓝或灰；将蓝灰看成黑色属于合理但不确定的颜色误判。"}
+{"sample_id": "vizwiz-lf-277", "image_dependence": "supported", "thinking_quality": "good", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "图片中的袜子明显为黑色，模型答案与参考一致，去除视觉内容后无法回答。"}
+{"sample_id": "vizwiz-lf-362", "image_dependence": "supported", "thinking_quality": "good", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "模型准确读取血压计上的111/87并正确对应SYS和DIA，消融后无法读取数值。"}
+{"sample_id": "vizwiz-lf-378", "image_dependence": "supported", "thinking_quality": "mixed", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "图片略有模糊但人类仍可读出116/65；模型确实依赖图片，只是发生了可理解的视觉误读。"}
+{"sample_id": "vizwiz-lf-484", "image_dependence": "supported", "thinking_quality": "good", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "产品标签中的品牌和成分表在原图可读，模型列出的主要化学成分与标签一致，消融后无法回答。"}
+{"sample_id": "vizwiz-lf-524", "image_dependence": "unsupported", "thinking_quality": "poor", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "图片只能支持长发男子正在弹吉他的描述，没有可靠线索确认具体身份；模型在多个名人之间猜测后武断认定为Neil Young。"}
+{"sample_id": "vizwiz-lf-589", "image_dependence": "supported", "thinking_quality": "good", "reviewer": "project-owner-approved (Codex-assisted)", "reason": "海报标题Abraham Lincoln Vampire Hunter清晰可见，模型准确读取，消融后无法识别影片。"}

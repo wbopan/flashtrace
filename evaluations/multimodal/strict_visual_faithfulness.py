@@ -22,16 +22,21 @@ import numpy as np
 import torch
 from PIL import Image, ImageDraw, ImageFilter
 
+from .jsonl_checkpoint import PairJsonlCheckpoint
 from .metrics import curve_auc
 from .strict_attribution import _resample
 from .strict_generation import (
     DEFAULT_MODEL,
+    FORMAL_MAX_PIXELS,
+    FROZEN_MODEL_REVISION,
     model_record_prompt,
     output_mean_logprob,
     read_jsonl,
     validate_model_record,
     write_jsonl,
 )
+
+CURVE_NORMALIZATION_POLICY = "directional_endpoint_span_nonpositive_is_degenerate"
 
 
 def region_layout(image: Image.Image, target_regions: int) -> tuple[int, int]:
@@ -85,17 +90,17 @@ def _groups(order: np.ndarray, steps: int) -> list[np.ndarray]:
 
 def _normalize_deletion(scores: np.ndarray) -> tuple[np.ndarray, bool]:
     denominator = float(scores[0] - scores[-1])
-    if abs(denominator) < 1e-8:
+    if denominator <= 1e-8:
         return np.linspace(1.0, 0.0, scores.size), True
-    normalized = np.clip((scores - scores[-1]) / abs(denominator), 0.0, 1.0)
+    normalized = np.clip((scores - scores[-1]) / denominator, 0.0, 1.0)
     return np.minimum.accumulate(normalized), False
 
 
 def _normalize_insertion(scores: np.ndarray) -> tuple[np.ndarray, bool]:
     denominator = float(scores[-1] - scores[0])
-    if abs(denominator) < 1e-8:
+    if denominator <= 1e-8:
         return np.linspace(0.0, 1.0, scores.size), True
-    normalized = np.clip((scores - scores[0]) / abs(denominator), 0.0, 1.0)
+    normalized = np.clip((scores - scores[0]) / denominator, 0.0, 1.0)
     return np.maximum.accumulate(normalized), False
 
 
@@ -122,35 +127,111 @@ def visual_mas(
     }
 
 
-def evaluate_grid(
+def _derived_curve_metrics(
+    *,
+    deletion: np.ndarray,
+    insertion: np.ndarray,
+    fractions: np.ndarray,
+    remaining_density: np.ndarray,
+) -> dict[str, Any]:
+    """Derive reproducible metrics from saved perturbation observations."""
+
+    normalized_deletion, deletion_degenerate = _normalize_deletion(deletion)
+    normalized_insertion, insertion_degenerate = _normalize_insertion(insertion)
+    return {
+        "normalization_policy": CURVE_NORMALIZATION_POLICY,
+        "normalized_deletion": normalized_deletion.tolist(),
+        "normalized_insertion": normalized_insertion.tolist(),
+        "deletion_auc": curve_auc(normalized_deletion, fractions),
+        "insertion_auc": curve_auc(normalized_insertion, fractions),
+        "deletion_endpoint_delta": float(deletion[0] - deletion[-1]),
+        "insertion_endpoint_delta": float(insertion[-1] - insertion[0]),
+        "deletion_degenerate": deletion_degenerate,
+        "insertion_degenerate": insertion_degenerate,
+        **visual_mas(normalized_deletion, remaining_density),
+    }
+
+
+def refresh_derived_curve_metrics(curve: Mapping[str, Any]) -> dict[str, Any]:
+    """Refresh only metrics derivable from an already saved raw curve."""
+
+    refreshed = dict(curve)
+    deletion = np.asarray(
+        refreshed["deletion_output_mean_logprob"], dtype=np.float64
+    )
+    insertion = np.asarray(
+        refreshed["insertion_output_mean_logprob"], dtype=np.float64
+    )
+    fractions = np.asarray(refreshed["fractions"], dtype=np.float64)
+    density = np.asarray(
+        refreshed["remaining_attribution_density"], dtype=np.float64
+    )
+    if not (
+        deletion.ndim
+        == insertion.ndim
+        == fractions.ndim
+        == density.ndim
+        == 1
+        and deletion.size
+        == insertion.size
+        == fractions.size
+        == density.size
+        and deletion.size >= 2
+        and np.isfinite(deletion).all()
+        and np.isfinite(insertion).all()
+        and np.isfinite(fractions).all()
+        and np.isfinite(density).all()
+    ):
+        raise ValueError("cannot refresh malformed faithfulness curve")
+    refreshed.update(
+        _derived_curve_metrics(
+            deletion=deletion,
+            insertion=insertion,
+            fractions=fractions,
+            remaining_density=density,
+        )
+    )
+    return refreshed
+
+
+def refresh_record_metrics(record: Mapping[str, Any]) -> dict[str, Any]:
+    """Refresh signed and positive-only metrics without running the model."""
+
+    refreshed = dict(record)
+    if refreshed.get("status") != "ok":
+        return refreshed
+    faithfulness = dict(refreshed["faithfulness"])
+    positive_only = refresh_derived_curve_metrics(
+        faithfulness["positive_only_ordering"]
+    )
+    positive_only["identical_to_signed_order"] = faithfulness[
+        "positive_only_ordering"
+    ]["identical_to_signed_order"]
+    faithfulness.update(refresh_derived_curve_metrics(faithfulness))
+    faithfulness["positive_only_ordering"] = positive_only
+    refreshed["faithfulness"] = faithfulness
+    return refreshed
+
+
+def _evaluate_order(
     *,
     model: Any,
     processor: Any,
     image: Image.Image,
+    blurred: Image.Image,
     prompt: str,
     response: str,
     output_span: tuple[int, int],
-    grid: Sequence[Sequence[float]],
+    region_scores: np.ndarray,
+    order: np.ndarray,
+    layout: tuple[int, int],
     steps: int,
-    target_regions: int,
-    original_score: float | None = None,
-    blurred_score: float | None = None,
+    original_score: float,
+    blurred_score: float,
 ) -> dict[str, Any]:
-    layout = region_layout(image, target_regions)
-    region_scores = _resample(grid, layout).reshape(-1)
-    order = np.argsort(region_scores, kind="stable")[::-1]
     groups = _groups(order, steps)
     positive = np.clip(region_scores, 0.0, None)
     positive_total = float(positive.sum())
-    blurred = image.filter(ImageFilter.GaussianBlur(radius=max(image.size) / 12))
-    if original_score is None:
-        original_score = output_mean_logprob(
-            model, processor, image, prompt, response, output_span
-        )
-    if blurred_score is None:
-        blurred_score = output_mean_logprob(
-            model, processor, blurred, prompt, response, output_span
-        )
 
     deletion_scores = [float(original_score)]
     insertion_scores = [float(blurred_score)]
@@ -184,26 +265,94 @@ def evaluate_grid(
     insertion = np.asarray(insertion_scores, dtype=np.float64)
     x = np.asarray(fractions, dtype=np.float64)
     density = np.asarray(remaining_density, dtype=np.float64)
-    normalized_deletion, deletion_degenerate = _normalize_deletion(deletion)
-    normalized_insertion, insertion_degenerate = _normalize_insertion(insertion)
     return {
-        "region_layout": list(layout),
-        "regions": int(order.size),
         "steps": len(groups),
         "fractions": x.tolist(),
         "region_order": order.tolist(),
         "remaining_attribution_density": density.tolist(),
         "deletion_output_mean_logprob": deletion.tolist(),
         "insertion_output_mean_logprob": insertion.tolist(),
-        "normalized_deletion": normalized_deletion.tolist(),
-        "normalized_insertion": normalized_insertion.tolist(),
-        "deletion_auc": curve_auc(normalized_deletion, x),
-        "insertion_auc": curve_auc(normalized_insertion, x),
-        "deletion_endpoint_delta": float(deletion[0] - deletion[-1]),
-        "insertion_endpoint_delta": float(insertion[-1] - insertion[0]),
-        "deletion_degenerate": deletion_degenerate,
-        "insertion_degenerate": insertion_degenerate,
-        **visual_mas(normalized_deletion, density),
+        **_derived_curve_metrics(
+            deletion=deletion,
+            insertion=insertion,
+            fractions=x,
+            remaining_density=density,
+        ),
+    }
+
+
+def evaluate_grid(
+    *,
+    model: Any,
+    processor: Any,
+    image: Image.Image,
+    prompt: str,
+    response: str,
+    output_span: tuple[int, int],
+    grid: Sequence[Sequence[float]],
+    steps: int,
+    target_regions: int,
+    original_score: float | None = None,
+    blurred_score: float | None = None,
+) -> dict[str, Any]:
+    layout = region_layout(image, target_regions)
+    region_scores = _resample(grid, layout).reshape(-1)
+    signed_order = np.argsort(region_scores, kind="stable")[::-1]
+    positive_scores = np.clip(region_scores, 0.0, None)
+    positive_order = np.argsort(positive_scores, kind="stable")[::-1]
+    blurred = image.filter(ImageFilter.GaussianBlur(radius=max(image.size) / 12))
+    if original_score is None:
+        original_score = output_mean_logprob(
+            model, processor, image, prompt, response, output_span
+        )
+    if blurred_score is None:
+        blurred_score = output_mean_logprob(
+            model, processor, blurred, prompt, response, output_span
+        )
+
+    signed = _evaluate_order(
+        model=model,
+        processor=processor,
+        image=image,
+        blurred=blurred,
+        prompt=prompt,
+        response=response,
+        output_span=output_span,
+        region_scores=region_scores,
+        order=signed_order,
+        layout=layout,
+        steps=steps,
+        original_score=float(original_score),
+        blurred_score=float(blurred_score),
+    )
+    identical = np.array_equal(signed_order, positive_order)
+    positive_only = (
+        dict(signed)
+        if identical
+        else _evaluate_order(
+            model=model,
+            processor=processor,
+            image=image,
+            blurred=blurred,
+            prompt=prompt,
+            response=response,
+            output_span=output_span,
+            region_scores=region_scores,
+            order=positive_order,
+            layout=layout,
+            steps=steps,
+            original_score=float(original_score),
+            blurred_score=float(blurred_score),
+        )
+    )
+    positive_only["identical_to_signed_order"] = identical
+    return {
+        "region_layout": list(layout),
+        "regions": int(signed_order.size),
+        "region_scores": region_scores.tolist(),
+        "ordering_policy": "signed_descending",
+        **signed,
+        "positive_only_ordering": positive_only,
     }
 
 
@@ -231,8 +380,18 @@ def _summary(records: list[dict[str, Any]], methods: tuple[str, ...]) -> dict[st
             and record["method"] == method
             and record["sample_id"] in common
         ]
+        region_layouts: dict[str, int] = defaultdict(int)
+        for record in paired:
+            layout = record["faithfulness"].get("region_layout")
+            if (
+                isinstance(layout, list)
+                and len(layout) == 2
+                and all(isinstance(value, int) for value in layout)
+            ):
+                region_layouts[f"{layout[0]}x{layout[1]}"] += 1
         by_method[method] = {
             "common_samples": len(paired),
+            "region_layouts": dict(sorted(region_layouts.items())),
             **{
                 metric: statistics.fmean(record["faithfulness"][metric] for record in paired)
                 for metric in metric_names
@@ -243,6 +402,19 @@ def _summary(records: list[dict[str, Any]], methods: tuple[str, ...]) -> dict[st
             ),
             "degenerate_insertion_curves": sum(
                 bool(record["faithfulness"]["insertion_degenerate"]) for record in paired
+            ),
+            "positive_only_ordering": {
+                metric: statistics.fmean(
+                    record["faithfulness"]["positive_only_ordering"][metric]
+                    for record in paired
+                )
+                for metric in ("deletion_auc", "insertion_auc", "visual_mas")
+            },
+            "positive_order_differs": sum(
+                not record["faithfulness"]["positive_only_ordering"][
+                    "identical_to_signed_order"
+                ]
+                for record in paired
             ),
         }
     return {
@@ -263,6 +435,45 @@ def _summary(records: list[dict[str, Any]], methods: tuple[str, ...]) -> dict[st
     }
 
 
+def _write_summary(
+    *,
+    output_dir: Path,
+    dataset_manifest: Path,
+    model_output: Path,
+    attribution_dir: Path,
+    model_name: str,
+    revision: str,
+    min_pixels: int,
+    max_pixels: int,
+    steps: int,
+    target_regions: int,
+    methods: tuple[str, ...],
+    records: list[dict[str, Any]],
+) -> dict[str, Any]:
+    summary = {
+        "schema_version": 1,
+        "dataset_manifest": str(dataset_manifest),
+        "model_output": str(model_output),
+        "attribution_dir": str(attribution_dir),
+        "model": model_name,
+        "revision": revision,
+        "processor": {
+            "min_pixels": min_pixels,
+            "max_pixels": max_pixels,
+        },
+        "target_span": "output_only",
+        "response_frozen": True,
+        "teacher_forced": True,
+        "curve_normalization_policy": CURVE_NORMALIZATION_POLICY,
+        "steps": steps,
+        "target_regions": target_regions,
+        **_summary(records, methods),
+    }
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    return summary
+
+
 def run(
     *,
     dataset_manifest: Path,
@@ -278,6 +489,8 @@ def run(
     steps: int,
     target_regions: int,
     sample_ids: Sequence[str] | None,
+    summary_only: bool = False,
+    refresh_derived_metrics: bool = False,
 ) -> dict[str, Any]:
     datasets = {record["sample_id"]: record for record in read_jsonl(dataset_manifest)}
     models = {record["sample_id"]: record for record in read_jsonl(model_output)}
@@ -310,6 +523,49 @@ def run(
             raise ValueError(f"model outputs contain mixed revisions: {sorted(revisions)}")
         revision = next(iter(revisions))
 
+    output_dir.mkdir(parents=True, exist_ok=True)
+    results_path = output_dir / "faithfulness_records.jsonl"
+    checkpoint = PairJsonlCheckpoint(results_path)
+    existing = checkpoint.records()
+    completed = {
+        (record.get("sample_id"), record.get("method"))
+        for record in existing
+        if record.get("status") == "ok"
+    }
+    records = list(existing)
+    if summary_only:
+        expected_pairs = {
+            (sample_id, method)
+            for sample_id in eligible_ids
+            for method in methods
+        }
+        if completed != expected_pairs:
+            raise ValueError(
+                "cannot summarize an incomplete faithfulness matrix: "
+                f"complete={len(completed)}, expected={len(expected_pairs)}"
+            )
+        checkpoint.compact()
+        records = checkpoint.records()
+        if refresh_derived_metrics:
+            records = [refresh_record_metrics(record) for record in records]
+            write_jsonl(records, results_path)
+        return _write_summary(
+            output_dir=output_dir,
+            dataset_manifest=dataset_manifest,
+            model_output=model_output,
+            attribution_dir=attribution_dir,
+            model_name=model_name,
+            revision=revision,
+            min_pixels=min_pixels,
+            max_pixels=max_pixels,
+            steps=steps,
+            target_regions=target_regions,
+            methods=methods,
+            records=records,
+        )
+    if refresh_derived_metrics:
+        raise ValueError("--refresh-derived-metrics requires --summary-only")
+
     from flashtrace import load_vlm_and_processor
 
     model, processor = load_vlm_and_processor(
@@ -323,14 +579,6 @@ def run(
             "max_pixels": max_pixels,
         },
     )
-    results_path = output_dir / "faithfulness_records.jsonl"
-    existing = read_jsonl(results_path) if results_path.exists() else []
-    completed = {
-        (record.get("sample_id"), record.get("method"))
-        for record in existing
-        if record.get("status") == "ok"
-    }
-    records = list(existing)
     for sample_index, sample_id in enumerate(eligible_ids):
         model_record = models[sample_id]
         image = Image.open(model_record["I_IMAGE"]).convert("RGB")
@@ -389,30 +637,30 @@ def run(
                     "traceback": traceback.format_exc(),
                     "seconds": time.perf_counter() - started,
                 }
-            records.append(record)
-            output_dir.mkdir(parents=True, exist_ok=True)
-            write_jsonl(records, results_path)
+            checkpoint.put(record)
+            records = checkpoint.records()
             print(
                 f"[{sample_index + 1}/{len(eligible_ids)}] {sample_id} {method} "
                 f"status={record['status']} seconds={record['seconds']:.2f}",
                 flush=True,
             )
 
-    summary = {
-        "schema_version": 1,
-        "dataset_manifest": str(dataset_manifest),
-        "model_output": str(model_output),
-        "attribution_dir": str(attribution_dir),
-        "model": model_name,
-        "revision": revision,
-        "target_span": "output_only",
-        "response_frozen": True,
-        "teacher_forced": True,
-        "steps": steps,
-        "target_regions": target_regions,
-        **_summary(records, methods),
-    }
-    (output_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    checkpoint.compact()
+    records = checkpoint.records()
+    summary = _write_summary(
+        output_dir=output_dir,
+        dataset_manifest=dataset_manifest,
+        model_output=model_output,
+        attribution_dir=attribution_dir,
+        model_name=model_name,
+        revision=revision,
+        min_pixels=min_pixels,
+        max_pixels=max_pixels,
+        steps=steps,
+        target_regions=target_regions,
+        methods=methods,
+        records=records,
+    )
     del processor, model
     gc.collect()
     if torch.cuda.is_available():
@@ -429,12 +677,25 @@ def main() -> None:
     parser.add_argument("--methods", nargs="+")
     parser.add_argument("--sample-id", action="append", dest="sample_ids")
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--revision")
+    parser.add_argument("--revision", default=FROZEN_MODEL_REVISION)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--min-pixels", type=int, default=256 * 28 * 28)
-    parser.add_argument("--max-pixels", type=int, default=1280 * 28 * 28)
+    parser.add_argument("--max-pixels", type=int, default=FORMAL_MAX_PIXELS)
     parser.add_argument("--steps", type=int, default=10)
     parser.add_argument("--target-regions", type=int, default=64)
+    parser.add_argument(
+        "--summary-only",
+        action="store_true",
+        help="Compact and summarize an already complete matrix without loading the model.",
+    )
+    parser.add_argument(
+        "--refresh-derived-metrics",
+        action="store_true",
+        help=(
+            "With --summary-only, recompute normalized curves and derived metrics "
+            "from saved raw perturbation observations without loading the model."
+        ),
+    )
     args = parser.parse_args()
     summary = run(
         dataset_manifest=args.dataset_manifest,
@@ -450,6 +711,8 @@ def main() -> None:
         steps=args.steps,
         target_regions=args.target_regions,
         sample_ids=args.sample_ids,
+        summary_only=args.summary_only,
+        refresh_derived_metrics=args.refresh_derived_metrics,
     )
     print(json.dumps(summary, indent=2))
 

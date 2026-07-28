@@ -1,0 +1,1561 @@
+{
+  "schema_version": 1,
+  "hash_algorithm": "sha256",
+  "canonical_dataset_record": "json.dumps(sort_keys=True,separators=(',',':'),ensure_ascii=False)",
+  "manifests": [
+    {
+      "manifest_path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.dataset.jsonl",
+      "manifest_sha256": "9aa9903c5ab3e09cfc3f86ca6770cf06ccc8e903032c717b47c52ce3ea7d36b3",
+      "sample_count": 100,
+      "samples": [
+        {
+          "sample_id": "vizwiz-lf-005",
+          "image_path": "data/vizwiz_lf/images/005.jpg",
+          "image_sha256": "989831a29522ece28b52846e0269291d6e7cc589ecb0e53d12a89437c2c65e53",
+          "question_sha256": "9aad71cfe10d219d6ffe7f08652ea91b637399340db9c07167d738c71b01b564",
+          "dataset_record_sha256": "29b06f97f13dda7717d6069616347dcc01626c2de6a71b2e891d42a0dd2ab5ed"
+        },
+        {
+          "sample_id": "vizwiz-lf-006",
+          "image_path": "data/vizwiz_lf/images/006.jpg",
+          "image_sha256": "8e1b32e83d9a38474ff4fee9226013b8c8ba591f1540ccf684f95728210d1d07",
+          "question_sha256": "5231a50db896c3f2fa40e6ad647c0cda0a9eb7d55a9650c463d036bd16f69674",
+          "dataset_record_sha256": "dc50dcd74a947f0a9dabf459c63531b6846e2b124d94e3a64b94931785b3fa39"
+        },
+        {
+          "sample_id": "vizwiz-lf-010",
+          "image_path": "data/vizwiz_lf/images/010.jpg",
+          "image_sha256": "aab140f220720d83b502f27597f9dfffd6ccf0d0b30e0fb56e06d3991c27685b",
+          "question_sha256": "0b12ba39ab4d0851c8a36c5bbc9997333c630060bee493b9c2cfe78f6dc25c27",
+          "dataset_record_sha256": "9391fd984d726c38604d4688d538622cfa7a68aec2d7d8b2aa1ad2f6339d574c"
+        },
+        {
+          "sample_id": "vizwiz-lf-012",
+          "image_path": "data/vizwiz_lf/images/012.jpg",
+          "image_sha256": "81d10c1fa000d2532c2bad2bd074916e6e25b18a86f51dda1cb5b0d0ae26cd94",
+          "question_sha256": "3fbbfc89b4a0cf82e8e8b125ac91b6aaaaa017e0943a960149af0be72279283d",
+          "dataset_record_sha256": "58d97f45f2f2029af1883c9780a60dbe0439546a846d3b8c37e68a78cee0c87e"
+        },
+        {
+          "sample_id": "vizwiz-lf-014",
+          "image_path": "data/vizwiz_lf/images/014.jpg",
+          "image_sha256": "daab8e1816863fd71361fea4e21224dcdc58fcb1da9c471b42e5d53b91f823e0",
+          "question_sha256": "0aef1e413e230b4fe0aa6c97114661862fe5101e4eda99923c920f3800b4155e",
+          "dataset_record_sha256": "f189ed12856e6ed25152bb10e28d308484d342c7f226e597be5f5210ee16c832"
+        },
+        {
+          "sample_id": "vizwiz-lf-021",
+          "image_path": "data/vizwiz_lf/images/021.jpg",
+          "image_sha256": "adf648c1af4be0b1ce4b7224181dba5f35d020af7ad687527c583ca64d1692b4",
+          "question_sha256": "19f5d04c1f681f62a9456cc5e507116359d943ab6c641df400a4790abbf45ed8",
+          "dataset_record_sha256": "44f0eadecafab561e62a638f23c36fdc0b476ca3ef234c6fc1621664e007d0d0"
+        },
+        {
+          "sample_id": "vizwiz-lf-037",
+          "image_path": "data/vizwiz_lf/images/037.jpg",
+          "image_sha256": "93106b23d20d233fcb395c20112e645e749baf90f141bf722faedf1610453cd0",
+          "question_sha256": "de222aba874ee2390b8aad0abc87c4362244e4aae7ec806d3597f8cf24c8dcd3",
+          "dataset_record_sha256": "d2724e81f7dad7b3289c0cd63d5b0f14f6de85bfdf8b0366fca912b0a4c10946"
+        },
+        {
+          "sample_id": "vizwiz-lf-042",
+          "image_path": "data/vizwiz_lf/images/042.jpg",
+          "image_sha256": "3856857d1fa1ce4410a3d3a29619b70e349f82ac13e93339c427c2da1f20839a",
+          "question_sha256": "c704093f78f34959bc3375d5b323dc45cf2ffd9677be6adc0fce711c3477605f",
+          "dataset_record_sha256": "5b2a4d1d7a5dd025c88b7b7bebddc66f032163932f45aefec912e861430627f6"
+        },
+        {
+          "sample_id": "vizwiz-lf-050",
+          "image_path": "data/vizwiz_lf/images/050.jpg",
+          "image_sha256": "6f1e8be77ec6b384e3a23a623cb8c8ad074f0d7a55d350c6df21e04f46d52a43",
+          "question_sha256": "bbff7b98d6da70612cb94badd2dde68a4dbe1107104b55f330a2225c8ebf55b2",
+          "dataset_record_sha256": "4381420405e5b99f89b67bf69dcbb4a2c99afd1ebb5b942bb8bbdd00d5445762"
+        },
+        {
+          "sample_id": "vizwiz-lf-057",
+          "image_path": "data/vizwiz_lf/images/057.jpg",
+          "image_sha256": "6989c88965fd24742b231aa7155d581073ab20234724cd9f81e41a8ce7c6efa9",
+          "question_sha256": "f1eb5c4adaa9ad04f947750aaf0c91b918a20b692bcb9d929bb5e3f8f8915ad4",
+          "dataset_record_sha256": "e9d3761564ff98a83a5ad6da99292f54a72dc44d7392121189b08c7271f71f29"
+        },
+        {
+          "sample_id": "vizwiz-lf-058",
+          "image_path": "data/vizwiz_lf/images/058.jpg",
+          "image_sha256": "6281525cdbc8f96877dc3b4e30efc18a06d4e365262531a4839d5aefccf1718e",
+          "question_sha256": "0b12ba39ab4d0851c8a36c5bbc9997333c630060bee493b9c2cfe78f6dc25c27",
+          "dataset_record_sha256": "0e30dc4f487231c7de78a4c72e7b6e94203b195a3cb582db98b17fadbe2052d1"
+        },
+        {
+          "sample_id": "vizwiz-lf-060",
+          "image_path": "data/vizwiz_lf/images/060.jpg",
+          "image_sha256": "94162f63d4b7468afbb064aec5788103d07b9b3144f22549f83e1ad2c88e2fc6",
+          "question_sha256": "0b12ba39ab4d0851c8a36c5bbc9997333c630060bee493b9c2cfe78f6dc25c27",
+          "dataset_record_sha256": "000e5efc7e9b24c302f0864cec6d9eeb42ea77209d910681eaab955ff4935bcb"
+        },
+        {
+          "sample_id": "vizwiz-lf-066",
+          "image_path": "data/vizwiz_lf/images/066.jpg",
+          "image_sha256": "509f5675e715ed032c72f382a8e209b354c64e103a8a0cb92554819251c2be75",
+          "question_sha256": "d7ceda28c0edf7893fa8fa621ec515b2db5618599961df08026f167793b14fd8",
+          "dataset_record_sha256": "8e642fa87726a49b83bafe6c680bd137122e79968820cbe2f568024cc342f3bd"
+        },
+        {
+          "sample_id": "vizwiz-lf-073",
+          "image_path": "data/vizwiz_lf/images/073.jpg",
+          "image_sha256": "ac4f7923617e9284855a8fe16b1a08d80a63519c00199be32bf5189f251cf271",
+          "question_sha256": "c560d6b36c108b1210ad937f07ebc9c2667d86a99529685fae216334062f65b1",
+          "dataset_record_sha256": "62174458aca19ffb61d838852505d968b45a386ec8fe9763b5b17180471c1474"
+        },
+        {
+          "sample_id": "vizwiz-lf-079",
+          "image_path": "data/vizwiz_lf/images/079.jpg",
+          "image_sha256": "26ee56cb41e80fc8812fa51477a5c3e475498a6c9200cf945da55b09c8be21b7",
+          "question_sha256": "a14851415d7821028203cb5de703ae80d340951fbdb272ecd0e5a14072aa7e97",
+          "dataset_record_sha256": "803c13242e697b92d7232a7ed04b69bdcfd3db180248b55acb95333c4fb4bbb2"
+        },
+        {
+          "sample_id": "vizwiz-lf-080",
+          "image_path": "data/vizwiz_lf/images/080.jpg",
+          "image_sha256": "23f77d55f35896a695581b8ff7896c98b2423d8ece16b2b940a50ea937efc688",
+          "question_sha256": "f5c6964b674a59da7cd61fc31b1922bcc7dd2127a8aec925d427f5754dc84888",
+          "dataset_record_sha256": "6dc6c2cbe041df1361cbf5e0c9c80eb6292db99db9dff4efb0e3bc28b0ae9d07"
+        },
+        {
+          "sample_id": "vizwiz-lf-081",
+          "image_path": "data/vizwiz_lf/images/081.jpg",
+          "image_sha256": "5699c07b6baa985904c2b8cd84b666794237ea0066e2f584ff81a68ca1102803",
+          "question_sha256": "5b6866877ef3ce9d92322fda0c1189b30f94eaedb5bb38dc5c50564f1c880a3c",
+          "dataset_record_sha256": "9f417d74ea41687992974fa541b5f44da2abf8b6ae00508b5e565163079ab180"
+        },
+        {
+          "sample_id": "vizwiz-lf-087",
+          "image_path": "data/vizwiz_lf/images/087.jpg",
+          "image_sha256": "54763b2ee640cafa5db84b006f2d83fe0e16980fb76e8a1137878935d4aeee6c",
+          "question_sha256": "59e0fca039f6d0d1aadc0c8e475ff530f31f6f9ba77a2a3c603f7db1f811de2d",
+          "dataset_record_sha256": "5bf56c642b078536546d875577c79f758ad304fe6ef8c1e6bd131381d8aca24c"
+        },
+        {
+          "sample_id": "vizwiz-lf-102",
+          "image_path": "data/vizwiz_lf/images/102.jpg",
+          "image_sha256": "7017e72dda0b15ff9b389c8a459cbf295aeac9a67cc4eecceb6f48d7c703c82a",
+          "question_sha256": "0b12ba39ab4d0851c8a36c5bbc9997333c630060bee493b9c2cfe78f6dc25c27",
+          "dataset_record_sha256": "5a6c4b750136282048270784b56328860161cd8b5b0fe96fdf27005010d8c497"
+        },
+        {
+          "sample_id": "vizwiz-lf-109",
+          "image_path": "data/vizwiz_lf/images/109.jpg",
+          "image_sha256": "d8cae8f8b6ea64d1e32bb51b39383a92cf0d6ba2e84f79307345b4eddd83c089",
+          "question_sha256": "657eada066ca82fd771f4f7410b508178d16d90e3e435d5e62b2013f93dde403",
+          "dataset_record_sha256": "87e89a399d65258499d90dfc8e85cc53ae65b6ddc7e184e25138c83351aaf1d1"
+        },
+        {
+          "sample_id": "vizwiz-lf-111",
+          "image_path": "data/vizwiz_lf/images/111.jpg",
+          "image_sha256": "9bb2b12717bd2914d29bf00461a48bc0b32c496f752b0c1f06d39527035ce4a1",
+          "question_sha256": "d7ceda28c0edf7893fa8fa621ec515b2db5618599961df08026f167793b14fd8",
+          "dataset_record_sha256": "17565a4109290c1264d198349af7cf66a26942e2ac6a62e6904cf895dfe473ad"
+        },
+        {
+          "sample_id": "vizwiz-lf-115",
+          "image_path": "data/vizwiz_lf/images/115.jpg",
+          "image_sha256": "974eb10e46c66212bc1f0e0f594736ab58374c9ccbcf806b6de735ffe6227b28",
+          "question_sha256": "d160f2a259c8f5cea3465eb7034d8fe3e6b2e34b31f0cb0db6139aed43e8dc3e",
+          "dataset_record_sha256": "f6fbf2d5c9597b904496b0e677e299b2553b0159a5e2f2b017fc3de9a98dc17b"
+        },
+        {
+          "sample_id": "vizwiz-lf-116",
+          "image_path": "data/vizwiz_lf/images/116.jpg",
+          "image_sha256": "4d26757e122168cff9271b4be180c7e929f921b12ef410e8c38373d9c0bd2648",
+          "question_sha256": "99fc04f1647f3ca59e069d3e10d7eb275779f173671946716cbd29d6e1fabbcd",
+          "dataset_record_sha256": "d12ec20df79ffe5c2d6d6971327210d07eb7c861ff6e9790eaad7cb9541579d1"
+        },
+        {
+          "sample_id": "vizwiz-lf-118",
+          "image_path": "data/vizwiz_lf/images/118.jpg",
+          "image_sha256": "6cf8e2fbd7071675471532bf9e9d6d9a04adf562b7094d30e07be99c14231762",
+          "question_sha256": "efe3b91b2ed65d1e394d327d05d2e71a53d1f4de023d1438297dfc2b8aaff198",
+          "dataset_record_sha256": "a1e294bbac954f19fd0025b3ac2b294b0336431b4b08d1fcdec1c7ca140388f8"
+        },
+        {
+          "sample_id": "vizwiz-lf-123",
+          "image_path": "data/vizwiz_lf/images/123.jpg",
+          "image_sha256": "922519cc08514e2efdfd06dc4c13dbc3d8495bdbcec3042fc6f22fb9fda316c4",
+          "question_sha256": "0b12ba39ab4d0851c8a36c5bbc9997333c630060bee493b9c2cfe78f6dc25c27",
+          "dataset_record_sha256": "fefa9b54fd95c28b327557b63ddcfec99ff405c528f155593d025aae6e031ee9"
+        },
+        {
+          "sample_id": "vizwiz-lf-126",
+          "image_path": "data/vizwiz_lf/images/126.jpg",
+          "image_sha256": "da63278857b10ac0e0d6bf3eab308fc3ac795ddbe23c7601159b1a85836ac4e2",
+          "question_sha256": "5978b78e43117a7dd66f09f86061f36db7ff0119ff8f666f26c28ce229b6338c",
+          "dataset_record_sha256": "89fbacc4b1bd75e19f347bdc7be6b60f00e82712ce61ccf383e5ec4c49e86dab"
+        },
+        {
+          "sample_id": "vizwiz-lf-130",
+          "image_path": "data/vizwiz_lf/images/130.jpg",
+          "image_sha256": "ffb3523078c37aacf3c4a89f0bf621c0adc9e8c4a6083d4efdac8ca427e4154c",
+          "question_sha256": "3c401b99a7af78eccf2c0bf02a45ffc85aa66a06d10380254c6eb6bef544d76f",
+          "dataset_record_sha256": "0de3f68e9ef83bc12cbe9e55ffa925d1d9a5f732969f6da9535925ddf1ef454d"
+        },
+        {
+          "sample_id": "vizwiz-lf-136",
+          "image_path": "data/vizwiz_lf/images/136.jpg",
+          "image_sha256": "4d7a10080d2075c39d812144962f5e1f3cf0aa9c3143a0890c9064059bfe9a76",
+          "question_sha256": "ddfd032cce17828b78f39a45ec9eb7e08706234daff45da0498cf931407c07a6",
+          "dataset_record_sha256": "12f8feb672377aef5a85f2eaa5e544bc787afa4b6abab3551584dffb384b944e"
+        },
+        {
+          "sample_id": "vizwiz-lf-142",
+          "image_path": "data/vizwiz_lf/images/142.jpg",
+          "image_sha256": "ab9ff11dfd1f0120d5d48723f25d86476a43cf93d24defa5c5769e3488b551e7",
+          "question_sha256": "0b0c411c600fc8d6a730fa543cacbf23a13dc4dc5c5dad58efc936fa63371470",
+          "dataset_record_sha256": "5ce1397e4b95419994ba71d020c95bb135b8de420efd4e2c3a4dea0cd01aac1b"
+        },
+        {
+          "sample_id": "vizwiz-lf-153",
+          "image_path": "data/vizwiz_lf/images/153.jpg",
+          "image_sha256": "311b0338e215ca85ce8333d56195b667cbbfaf3e7e04cb168e36a3c9ed5a4777",
+          "question_sha256": "d762ceffab3a275c7294dbae4cb008dd4615b68b9e1739ee14f6499cfbec6044",
+          "dataset_record_sha256": "19c588257da80443585bbd6d010852ae76865a860cd64ffd76c3e5bfa3c10668"
+        },
+        {
+          "sample_id": "vizwiz-lf-159",
+          "image_path": "data/vizwiz_lf/images/159.jpg",
+          "image_sha256": "3fc871a1c1ce1a41e6bf6066efe68ab4cadf16bc94709f3c4a6345844dd653a5",
+          "question_sha256": "1e0d80707e13bd3897e756ef465221afd82d4da26b6b715fe5c5de5c07631b7a",
+          "dataset_record_sha256": "d3db2c67c079d556004394ee8908778556a453122840f4444eddb1bc0d8cde32"
+        },
+        {
+          "sample_id": "vizwiz-lf-161",
+          "image_path": "data/vizwiz_lf/images/161.jpg",
+          "image_sha256": "b3ccacad49c6018d546e1ad180af61ebe0d17ca1b0d4ef97d33b061a94bc8524",
+          "question_sha256": "362b13d4ab6fb2d4171476138980d7a5e56d28d9933f600353351d33e313dbff",
+          "dataset_record_sha256": "04b0973f4c71dda93c186bf8b7ea32e2785f659a79c3b3a722517eb362b98b8b"
+        },
+        {
+          "sample_id": "vizwiz-lf-167",
+          "image_path": "data/vizwiz_lf/images/167.jpg",
+          "image_sha256": "68c814dad8b3d8b52ce9f575b143a80982f3622ace5af1aca3f8a99d9b2c4a54",
+          "question_sha256": "f1ea9fad94bab84bd329a2fc6922020c0498239cb103c68d9a97149556679832",
+          "dataset_record_sha256": "ed0e68a5229e52ea389fd7447b7b1155f7155f9e2a50131befee411fa63b53b4"
+        },
+        {
+          "sample_id": "vizwiz-lf-169",
+          "image_path": "data/vizwiz_lf/images/169.jpg",
+          "image_sha256": "9ea88b98abcaf3cf3c2ccfd569838de71006d350d8f19cb67fbc7fb0abbe3fa6",
+          "question_sha256": "86a451980a7a4242ae50b3af7f18ed4ed02dc923da2ae78fd96ee8971b640be3",
+          "dataset_record_sha256": "383511ca3ca421a9dc8fab1ebeae0d0f96ce99f4348a7db7c279eebe8378c24e"
+        },
+        {
+          "sample_id": "vizwiz-lf-180",
+          "image_path": "data/vizwiz_lf/images/180.jpg",
+          "image_sha256": "12817b99159d8c86790f2b0e65fb168307b13cd3de51e92231d93a7aef68ea1c",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "2d2740c21fa1490bd447aecbfdbe8a948c5f44fc4fd50978bc229f75c9a494aa"
+        },
+        {
+          "sample_id": "vizwiz-lf-182",
+          "image_path": "data/vizwiz_lf/images/182.jpg",
+          "image_sha256": "bbf6f9d9430166c9c42dfcbd52ab7632082751b87490f868464e515c6be17c72",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "d27e8876bcc88a56959a3d13f829ba22b11ea9cd6600f3568479f519388d47d7"
+        },
+        {
+          "sample_id": "vizwiz-lf-183",
+          "image_path": "data/vizwiz_lf/images/183.jpg",
+          "image_sha256": "6f15250ef9bd815ab1effa131254be3bda30b004b67d836af252d36f3decb893",
+          "question_sha256": "8b67ef54f801d07e156363b657915199c1f83fd0948a17552cec1c6d2f225151",
+          "dataset_record_sha256": "3e7e8aaa5b8920982f9c42d6447779efbe2898a677b402b61d2bfdc855cabc73"
+        },
+        {
+          "sample_id": "vizwiz-lf-186",
+          "image_path": "data/vizwiz_lf/images/186.jpg",
+          "image_sha256": "2626470962eb0807c0cfaf8412e5726af1255f6874f2720571f7befbda8d842c",
+          "question_sha256": "b8470945c27e129bd10a455b7876d3fe321eb7587f871c6c41d833c4b3776346",
+          "dataset_record_sha256": "53e10bb466217b978a2dc1d9c578e7e643795755173675a27ec0d6f84108d2dc"
+        },
+        {
+          "sample_id": "vizwiz-lf-191",
+          "image_path": "data/vizwiz_lf/images/191.jpg",
+          "image_sha256": "80acc45ed020544f14be74c779f5f6cefd5ff38553f1056b8f343b9f43af5a02",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "6caa4f693e1c011cca60d92b95fd6dfdfe69ac330b73f18e598eabf60df24576"
+        },
+        {
+          "sample_id": "vizwiz-lf-192",
+          "image_path": "data/vizwiz_lf/images/192.jpg",
+          "image_sha256": "79d9dc4caa248c5893bdd8a43df8cccc76c7b96439682a81a13340f2ec82ddc0",
+          "question_sha256": "a76e02ad86a5c0f11d3ea6ee02111d4f270af422068c583b32b277d995430cef",
+          "dataset_record_sha256": "664a8a8572c9ac7f5cf58f0ef499083dccad353af124f6e5418bea9f0dd23385"
+        },
+        {
+          "sample_id": "vizwiz-lf-195",
+          "image_path": "data/vizwiz_lf/images/195.jpg",
+          "image_sha256": "3a1e9a09b04d4b4eb69b58037b1837712f02274b702185739b3250e5c63684f1",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "34b81aa534eeb73dc3e13522efff33c14568819de65135948adf1f7c3f7b4d03"
+        },
+        {
+          "sample_id": "vizwiz-lf-197",
+          "image_path": "data/vizwiz_lf/images/197.jpg",
+          "image_sha256": "b536846faa95d7859695050d6038e92e14962c54b4d26c76f1878796d47e6f9b",
+          "question_sha256": "a76e02ad86a5c0f11d3ea6ee02111d4f270af422068c583b32b277d995430cef",
+          "dataset_record_sha256": "f626de5e521b551c641506c5d0eff600042ae8c7db4e126ff47760c11da37adb"
+        },
+        {
+          "sample_id": "vizwiz-lf-200",
+          "image_path": "data/vizwiz_lf/images/200.jpg",
+          "image_sha256": "da43faa36d283a17569caadee012e3db091fc0070ea34c533498231b771ea8f7",
+          "question_sha256": "7585d5a8f38e4c93c806fd9eef9da2b1ec379c85ed87c8a89efb58916404bde2",
+          "dataset_record_sha256": "01c1551cda9af9676ee96b98b4424c292ac2e7cc178f85882a3cc6e5f1360551"
+        },
+        {
+          "sample_id": "vizwiz-lf-201",
+          "image_path": "data/vizwiz_lf/images/201.jpg",
+          "image_sha256": "2c0024ec010e3a8da27575fe259221c1c7eb1b2bc2626cfc4b7adab469ce6ec0",
+          "question_sha256": "ad53f70e88d3681e9f65b168c7c2401e5a7ee9056b055e15e7e7d78e925bf59b",
+          "dataset_record_sha256": "1d80acafeb81df952e3c0629ecb705a06b8f05ee67dc1f6cb4c136db90a34507"
+        },
+        {
+          "sample_id": "vizwiz-lf-204",
+          "image_path": "data/vizwiz_lf/images/204.jpg",
+          "image_sha256": "b719af2b06adc19a161b666ae2a43439bd98500ae0621bfc66dbf42c725045dc",
+          "question_sha256": "f61f637ae9eced0111241e422ed0babd8a944203e3953c27cabc8cf552fb63ec",
+          "dataset_record_sha256": "d742edaa9d21e773753000695bd1439e928d972dd1154d0958cb8039d48e8148"
+        },
+        {
+          "sample_id": "vizwiz-lf-216",
+          "image_path": "data/vizwiz_lf/images/216.jpg",
+          "image_sha256": "7390be7be4eeb46809b8f7fee5d957767c14a82c544ef21b1c00b48e4cd25b8a",
+          "question_sha256": "6ca4b229009664727bfd39844d7e26dfda27a3e0307c83c5e0cf2aa9ed47ef49",
+          "dataset_record_sha256": "3bad328620ceb511d36d2f3de828f1760d20692ecdc0a304c00454a512c4910a"
+        },
+        {
+          "sample_id": "vizwiz-lf-220",
+          "image_path": "data/vizwiz_lf/images/220.jpg",
+          "image_sha256": "8b73a07f604c012ef2d643e860f9989a8401f1a132f814d41f4ce7028b71054e",
+          "question_sha256": "bf6e1a24facfc253575fb4d11a1590d2a701e2fb409b40e8256eb7e31a3582e4",
+          "dataset_record_sha256": "d98f5e2049af03549c52fcc3cb2cb3012620f7728c3c751a1890e07aab9bebcd"
+        },
+        {
+          "sample_id": "vizwiz-lf-230",
+          "image_path": "data/vizwiz_lf/images/230.jpg",
+          "image_sha256": "64ab2768071c1ea735cacac1e5948a3a7cf8fab918a475c7ab127c17d141edd2",
+          "question_sha256": "481472be8ebcc643cffe885372330c914d7e9415dbe936892aeed7fb967190d7",
+          "dataset_record_sha256": "adf21fab311e056acf4a478e50488b62eef97b446219708291b29023ed9c5a5b"
+        },
+        {
+          "sample_id": "vizwiz-lf-234",
+          "image_path": "data/vizwiz_lf/images/234.jpg",
+          "image_sha256": "5cbe9848c4532e7eccb6d45c334badb21ee03d89ef88300e3de1a2af0f1575db",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "4e1c32a9492791fc62387c5c85a22d3618a430518b72b2785095b0e6e28ff57d"
+        },
+        {
+          "sample_id": "vizwiz-lf-238",
+          "image_path": "data/vizwiz_lf/images/238.jpg",
+          "image_sha256": "8b59fd09c9dd43684b0979ff9768e9c960b16650eddca068ec75214c480c4371",
+          "question_sha256": "b3eca670b030f4f231d66319aadb226bc77157c2974b219585660302b0f4ae0c",
+          "dataset_record_sha256": "55548046d433bf7b344c173e7af9d016491e728d94a191428a2b9dfe98a39502"
+        },
+        {
+          "sample_id": "vizwiz-lf-261",
+          "image_path": "data/vizwiz_lf/images/261.jpg",
+          "image_sha256": "dc712dcb3459662a959bebbdcd9a0a7b9c55d00498d6f2f8eca97b053e84d908",
+          "question_sha256": "29ec23009b0408d6855e0861ad3294ab44ff5f4975fe490d8614c7920bd58e07",
+          "dataset_record_sha256": "74c2b81ed8ab7ec1af58a1f13c7908a57ce490f13f2c2207e5b823fbba6562f2"
+        },
+        {
+          "sample_id": "vizwiz-lf-265",
+          "image_path": "data/vizwiz_lf/images/265.jpg",
+          "image_sha256": "5c0d7320abc6b7bcfd2d6a9f621c0c0ca5b392cfa661a1dc48ccb6ccd8f91fb0",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "4acd4efc13d84b1eeb536a3b0f13b774b88fc5d467f1a432ae78e8af0cbd5ea1"
+        },
+        {
+          "sample_id": "vizwiz-lf-270",
+          "image_path": "data/vizwiz_lf/images/270.jpg",
+          "image_sha256": "6106d319c385efd08ce0dbb7738bbdb0842c0d9ce3aa7b134a105534a78bf5a9",
+          "question_sha256": "976e05b4936ad80a3d24f49e054b3c9918bcd8a63a008143a4366e6e37a47be8",
+          "dataset_record_sha256": "f18e5468634b64267714ae67bfa24f0afce5f64aad40c14965d0bb4a8f9d338a"
+        },
+        {
+          "sample_id": "vizwiz-lf-277",
+          "image_path": "data/vizwiz_lf/images/277.jpg",
+          "image_sha256": "cb98969af3360b791fe3cd4af96618bcb0e3aa5d34d7224301a266d1d1f96eff",
+          "question_sha256": "3aee14fe055fee65ce3124a8be1bae0a5c0194daf47b6367d97b9d05c85d4ce3",
+          "dataset_record_sha256": "8404beab29887e92dac0199dc9ee345379e93826d811203ccb93f0c91792eac6"
+        },
+        {
+          "sample_id": "vizwiz-lf-293",
+          "image_path": "data/vizwiz_lf/images/293.jpg",
+          "image_sha256": "c0b1a9772ba683759b37622433c07099cd1d6fdad881db4d2b7405e9987663c9",
+          "question_sha256": "27c3c08a416f411702e91565b40db231ad4f01e56468b64ace485d7e33d84a47",
+          "dataset_record_sha256": "f34def36b397638e0f64c8468a26fcecb88b4a1d8620b66208a6f7f053293ada"
+        },
+        {
+          "sample_id": "vizwiz-lf-298",
+          "image_path": "data/vizwiz_lf/images/298.jpg",
+          "image_sha256": "f1f0554cb8f3c7216040ac937d12d0904295189699d9887f888f18a17b09ab3f",
+          "question_sha256": "ee433f8b969d0e9065acc2fa5fb285e06abe08ac3dba85bf85e1044cdb300ce7",
+          "dataset_record_sha256": "63799960b89482a131cd1d7f67427971e2b8a151ede76acc6aecd9b46e78aa67"
+        },
+        {
+          "sample_id": "vizwiz-lf-301",
+          "image_path": "data/vizwiz_lf/images/301.jpg",
+          "image_sha256": "448f6ad26f935609ad7dded82e4d7ea47b953f6ef064acca2166ce1f2813e9a9",
+          "question_sha256": "0a0860b3d0d75230f8ca3b6605f9eb7d0b1a3dfaf134df76aa635e139b000526",
+          "dataset_record_sha256": "35f217c07038210f23a4798c4bbe3f84fd8dc3893a1b7cc498b166b87aef98c7"
+        },
+        {
+          "sample_id": "vizwiz-lf-307",
+          "image_path": "data/vizwiz_lf/images/307.jpg",
+          "image_sha256": "ce8ee2a8581692cec577773ac4841e8bd82248db9aa36015322d9dcb00eded5f",
+          "question_sha256": "5b44f8b66d453405ed48e88bdb155eaf3edcf3cbef1ac3e271cac1b3763f2f3e",
+          "dataset_record_sha256": "decac875bee30d355838f140f07bf8c69a9205125dd2e397f483af8922896794"
+        },
+        {
+          "sample_id": "vizwiz-lf-309",
+          "image_path": "data/vizwiz_lf/images/309.jpg",
+          "image_sha256": "857e3fb652a4b04760c4150a3802f70f93410d6f063a738e3775d4e614fb2337",
+          "question_sha256": "00455b07f940039bec7ef9459876bce157a1cb78b4d91c2cc5a9ac7ad55d7e43",
+          "dataset_record_sha256": "e935b5f0d0af22efa5f3ac1484f6898a5f469f53c08e88b3cc54a775f1333eca"
+        },
+        {
+          "sample_id": "vizwiz-lf-316",
+          "image_path": "data/vizwiz_lf/images/316.jpg",
+          "image_sha256": "73f2e0b3aee3a90e963c2281be51e223672f1afbdc7f568688ac787d1270ea59",
+          "question_sha256": "06e25efd448b022016404a25f1f55475f0b6378bd253a8b7e0ff12d7b67b9f18",
+          "dataset_record_sha256": "e9f4a2251fdf3abad8aa25516a8a08b7f1feab35de5b664fa580a362b7245dc2"
+        },
+        {
+          "sample_id": "vizwiz-lf-318",
+          "image_path": "data/vizwiz_lf/images/318.jpg",
+          "image_sha256": "6e10c466e520db7446ef5f6d42d9641651cb573890cb548e835cc9f5014de717",
+          "question_sha256": "88f34c24086ab5aec5d5e88421d4a17264a6d2ee0d7464c3bdade12a72b62d21",
+          "dataset_record_sha256": "dd5ea1674e075c76986cc7b7127e48b858804a5712a3464ed0313cb07db6ad8a"
+        },
+        {
+          "sample_id": "vizwiz-lf-323",
+          "image_path": "data/vizwiz_lf/images/323.jpg",
+          "image_sha256": "88dcff5d32d12180301d4f412226b06436956fc189dec87064810a6cd31c22db",
+          "question_sha256": "9ddbb680e098d50d6bb0168ea8b835fd88836cd8de637b3ebb434691b3d07332",
+          "dataset_record_sha256": "240af01e35eefbeee17f83295e73fae8c1f86ea3204a26ffc35bb2324e04a122"
+        },
+        {
+          "sample_id": "vizwiz-lf-329",
+          "image_path": "data/vizwiz_lf/images/329.jpg",
+          "image_sha256": "dbf55528c33303f085cadd761f3055326b54e54245267d8a84ea34e0cbd845e0",
+          "question_sha256": "8ccb10c9bc0fb33893602afd262c5b31fcdb2253b11cdecfbc1f2fb3e767f01a",
+          "dataset_record_sha256": "eaba9a585a36d974d77b28e3d9243e6c09e8f18ca06bee796b303c49533933df"
+        },
+        {
+          "sample_id": "vizwiz-lf-336",
+          "image_path": "data/vizwiz_lf/images/336.jpg",
+          "image_sha256": "8dd3d1f62b0a6ee2e6f1be1cdedd14ce7a8c2bf11e7e11aa7462fd6da5f65622",
+          "question_sha256": "b9e8f26a3054b1d99841cf5817d4f76d68b1fb512dbff32329949a55d6dd27a7",
+          "dataset_record_sha256": "f9465e18e2e6e1b72e7f599d8081e531cbba5661f0ff2b305f93d961d9a73106"
+        },
+        {
+          "sample_id": "vizwiz-lf-347",
+          "image_path": "data/vizwiz_lf/images/347.jpg",
+          "image_sha256": "31ca900a1d7c1d1e40de568b40ef7c380f8488cb3f825619507cb2103a6147d5",
+          "question_sha256": "44b85c332df7f4e5d7d91eef755b92bc9c81cb32db0026f37996fa5d74a2d9eb",
+          "dataset_record_sha256": "00502c80416fb410e52b7c05dd646e914d07eb04046d560924ddbeb22c988c29"
+        },
+        {
+          "sample_id": "vizwiz-lf-359",
+          "image_path": "data/vizwiz_lf/images/359.jpg",
+          "image_sha256": "1ea836fdeb69788636bb90415674749d3e172e4147ecf3bf38b22069ca06361b",
+          "question_sha256": "66d49920c8c1de34b8ecbce6e50293fc25837098f46079fd59bed6fb086a6cf1",
+          "dataset_record_sha256": "2d3f60a3fd76dff0395782f393be05239a3c0d020e606d4d53a3fc1913a3e1b0"
+        },
+        {
+          "sample_id": "vizwiz-lf-362",
+          "image_path": "data/vizwiz_lf/images/362.jpg",
+          "image_sha256": "067d228a9114da173be267f4f6f2ab98cb7f161fa8659b2558f472ab20a26764",
+          "question_sha256": "073f2b1887d079d8bc5459b9348d181a24848041ecd0e5d62f1ea5891ccf3fbe",
+          "dataset_record_sha256": "97e2bfbac00cada866b5748fd6ce54403a2641c315a855d3c49879206c79741a"
+        },
+        {
+          "sample_id": "vizwiz-lf-368",
+          "image_path": "data/vizwiz_lf/images/368.jpg",
+          "image_sha256": "c823b5e9a6fb0f6a46ef85c9d208cb986824a33325279a3c7de9543e4a648cb5",
+          "question_sha256": "54f08cd6e1e41b63034272b27c73ec64e38c830359c683851322d10c114009b0",
+          "dataset_record_sha256": "0e3faf1fec04889704f5e1ea23b43eb3c9bfee105bd12d1359af75358322ccaa"
+        },
+        {
+          "sample_id": "vizwiz-lf-371",
+          "image_path": "data/vizwiz_lf/images/371.jpg",
+          "image_sha256": "3ee9757dec1fe931df5cb5be0294f3bb70f6567aa3fdf82fb4017d5251ca0476",
+          "question_sha256": "e42af36b220cda07248153b56805ee32aac585698046b0894ea632498ab7987b",
+          "dataset_record_sha256": "a057514501949296f815b9fba8882a18493ff325df905675945f8c2cc3153e99"
+        },
+        {
+          "sample_id": "vizwiz-lf-378",
+          "image_path": "data/vizwiz_lf/images/378.jpg",
+          "image_sha256": "8421bf4170f5ab73d29a69a61ed3c4a3ebab4035bbf4d97c5f8adbf5e4500855",
+          "question_sha256": "073f2b1887d079d8bc5459b9348d181a24848041ecd0e5d62f1ea5891ccf3fbe",
+          "dataset_record_sha256": "56bb83a5c72cf562e6940b9d595fe0e5ca93ab6cbb4501d6c0c391435baf5801"
+        },
+        {
+          "sample_id": "vizwiz-lf-380",
+          "image_path": "data/vizwiz_lf/images/380.jpg",
+          "image_sha256": "f79e38b19c9002ce73cae765bbf54689a5b2c6d080059e39645205ecf45b3507",
+          "question_sha256": "a7964b40fc897a26c4fb2704b13fb9ad55a767a780b509f8c4de8011b90c0b98",
+          "dataset_record_sha256": "b86273c1a854d9be3fdef9a361c6a145b021319e8ee2c7801571228df860a510"
+        },
+        {
+          "sample_id": "vizwiz-lf-394",
+          "image_path": "data/vizwiz_lf/images/394.jpg",
+          "image_sha256": "bed07f6267d5235300459f7288736534232ed360e895fc08d306d2dd6202db04",
+          "question_sha256": "83115ee95a4b79d48cc3e44cabf0b814ca548a5fe298b799128105d9dc8f1745",
+          "dataset_record_sha256": "b292261b7ddb02cad31a3a31ad86cd529efe7afc2dfd75e22cc90d4abe7013c8"
+        },
+        {
+          "sample_id": "vizwiz-lf-413",
+          "image_path": "data/vizwiz_lf/images/413.jpg",
+          "image_sha256": "237bcf73df1967b81c6b4bc67d1f4bb1fa4c2b17d6e94c57d8e2aabe62edbe70",
+          "question_sha256": "45109bb8673cbed33ed07d9b3b7dc120638a5f4515fcae1b02df82b0d22ddb8b",
+          "dataset_record_sha256": "e096539267893631318a0a3218b6f0860155d90376e05faa25b6fe99567b61cb"
+        },
+        {
+          "sample_id": "vizwiz-lf-417",
+          "image_path": "data/vizwiz_lf/images/417.jpg",
+          "image_sha256": "5191e04a296fa7e9bd10943bff08273e39653031b2cfc2da7ad14adb83d1a20e",
+          "question_sha256": "8f710e7dca7c86896390ae5f99af341ffa766b636b94b09e0ee760b254aec4f5",
+          "dataset_record_sha256": "afbae75278e9d0ad344ca62bfdd87dc17f7de011a8cf331c06ba555aa8bf3c9c"
+        },
+        {
+          "sample_id": "vizwiz-lf-420",
+          "image_path": "data/vizwiz_lf/images/420.jpg",
+          "image_sha256": "7fd8f69591724c03908c2a7d9c45e5ed74492486e5b481fe8881b70fb86175a4",
+          "question_sha256": "dc81e05430809a4d3c1984558256025f45976b7c4b728fd505d09ebf75c5debe",
+          "dataset_record_sha256": "d1dec680aca27823b9a5986e15da1f93ab49fc9c5d4c5c583836969af8c38893"
+        },
+        {
+          "sample_id": "vizwiz-lf-423",
+          "image_path": "data/vizwiz_lf/images/423.jpg",
+          "image_sha256": "cca274d9013b67d45fa339dd4ac73ad2c7e98fbf45a44b71f1c85c9e2542b377",
+          "question_sha256": "748eaa01f21d6ede1fd9703ffd51a9745727c3482003abe09477d7c966127295",
+          "dataset_record_sha256": "c2618b6d08e5e53bc067c7e5cad0ee214826d3d2e934e8932e8e43c8d943f61d"
+        },
+        {
+          "sample_id": "vizwiz-lf-424",
+          "image_path": "data/vizwiz_lf/images/424.jpg",
+          "image_sha256": "8e7148c7e3945d4c5e9537b502e503c0341ada5095a80e76126f0f6a75b66648",
+          "question_sha256": "1ae2af72bb606601042c76c0fdf47cbac493deef2f0bd7524cba89ab491acbd2",
+          "dataset_record_sha256": "4be748e2cfb5322707ecd62dd0f5629393a8b6bbcefab46d033a42e9d045d2d7"
+        },
+        {
+          "sample_id": "vizwiz-lf-445",
+          "image_path": "data/vizwiz_lf/images/445.jpg",
+          "image_sha256": "93dffd9d0286944a3934690837a79957479d93573fdb0624b4b81ba33e10cff0",
+          "question_sha256": "00455b07f940039bec7ef9459876bce157a1cb78b4d91c2cc5a9ac7ad55d7e43",
+          "dataset_record_sha256": "d6e24e78452a19b097c9094d5141cdd851efd219e36675fd824f487b45c31297"
+        },
+        {
+          "sample_id": "vizwiz-lf-449",
+          "image_path": "data/vizwiz_lf/images/449.jpg",
+          "image_sha256": "6c38abd5fe89037a6776344d08318ea07c2851b565f64bfed2c7664ec0c97e42",
+          "question_sha256": "afddd3f71b1d13ee2ce9c52fecb9d8cd25a5cdcd61ce7aedf55449a1ea82a8e2",
+          "dataset_record_sha256": "a7feed37bbcd2211485eccec8c41b7a77db58b00997f261652207df9f3a582a9"
+        },
+        {
+          "sample_id": "vizwiz-lf-466",
+          "image_path": "data/vizwiz_lf/images/466.jpg",
+          "image_sha256": "21b33234807480330ae52e27c616e45ad0281c48dc3bcf273391a3f5faca003f",
+          "question_sha256": "992a929878bac9c2f9187cc06096eb0140b4c0ab64a8a99a1720f3635d814d9a",
+          "dataset_record_sha256": "4e1a37994b32b0153c50077b80a32793fb1196032fe1a3cb69235f9a0afc38b2"
+        },
+        {
+          "sample_id": "vizwiz-lf-471",
+          "image_path": "data/vizwiz_lf/images/471.jpg",
+          "image_sha256": "d2d26dfb1e8f489dcc9d675bf5a620e46895243e7eab0bb8a6d6023d45cbd38c",
+          "question_sha256": "d4633bf5e410b3cfe5763901913713c878ceb46fec5a3c8e101bb8348618752e",
+          "dataset_record_sha256": "052ee4733abc0854ad2980b21a99f436cbc396bb18c5e8c385ae617569e0aee0"
+        },
+        {
+          "sample_id": "vizwiz-lf-472",
+          "image_path": "data/vizwiz_lf/images/472.jpg",
+          "image_sha256": "c6424f515197da28b3111875ffabdc99046b45688772b0c5c647946b8c4967d1",
+          "question_sha256": "97be7040c95012dbe555e9eaee5caeaa30f8009b465f27428da485c76b955db9",
+          "dataset_record_sha256": "7dab44a8cc3cf6bf226f69d29c4a9d4ceb454ca6d2156e40e59e943499d7e0da"
+        },
+        {
+          "sample_id": "vizwiz-lf-475",
+          "image_path": "data/vizwiz_lf/images/475.jpg",
+          "image_sha256": "aedd7ebc7f9b5a4626855965db3a37a6fbdf8d63686f7d69c9e861b8915cac4a",
+          "question_sha256": "9313e5afb23559f26c64e75aa1e1685215a8cd6a9745e1a9cfced4861cc364d7",
+          "dataset_record_sha256": "5a6cfc70a298a6de46ab0dfde12cedde44b9f93dfc8412c1eb50c72d55e6f933"
+        },
+        {
+          "sample_id": "vizwiz-lf-482",
+          "image_path": "data/vizwiz_lf/images/482.jpg",
+          "image_sha256": "607f1dd2c5f1cb7b042f446d1a6890b712ce0345c2fea3854c5a1c55a91bd175",
+          "question_sha256": "af20a8c12baac0fbd4dfae638d6d789b815ee1798511b93b7cf59adde4c2f4f7",
+          "dataset_record_sha256": "092b521282bb9f115da398056c38d37944228f377c74a0244dd97122fd3d107e"
+        },
+        {
+          "sample_id": "vizwiz-lf-484",
+          "image_path": "data/vizwiz_lf/images/484.jpg",
+          "image_sha256": "2e844ea14f65e7096b4519b3ff2784cea51ce749c8b2ac7b1878162449e803ef",
+          "question_sha256": "d01b07cc3c6158a4241c9d19209fbdc290e39c88e34d3f1ae62e1c29adb92355",
+          "dataset_record_sha256": "b180400582707d35e7dc5c1539cca4f1f20769f74ac47c234add0548539e0635"
+        },
+        {
+          "sample_id": "vizwiz-lf-487",
+          "image_path": "data/vizwiz_lf/images/487.jpg",
+          "image_sha256": "0fa998d2d9c1df39a5a3108ff61cc018ed3fa6b1aed0a1afdb8ba49c2e22ce7b",
+          "question_sha256": "b918ab81d0386cae18ba903da1c8a3b331b269df0d7135ebc2c95cc63191ac6c",
+          "dataset_record_sha256": "3be0916bc2d21291577ed4ec331d8e901a2f0b6bde7b6b166060cf6578525dbe"
+        },
+        {
+          "sample_id": "vizwiz-lf-491",
+          "image_path": "data/vizwiz_lf/images/491.jpg",
+          "image_sha256": "985cd6b837544ce8a9a6e284e7b1927948ca5fd6ec2729191f51c6d4a97f0b81",
+          "question_sha256": "a6884a5e0fcb96e4704dc8277a72207e27381647be65e9eada69eee26086543f",
+          "dataset_record_sha256": "5ba4e97b84880bd01260e85fb06dd382a7d8f9f9fc4aba145f79014919b08d32"
+        },
+        {
+          "sample_id": "vizwiz-lf-502",
+          "image_path": "data/vizwiz_lf/images/502.jpg",
+          "image_sha256": "e54bafcd8ca1b756ece79560b55aced1df0507593b34484b2ec87519a3944ca9",
+          "question_sha256": "b0068daa47d3645fcf851c16755d0fd109df507a2c50a0b4f9827fadc4f61a9c",
+          "dataset_record_sha256": "e9071ffaca3f0c244cc58bf7867c564524813dfd0dd1a2e24e7d7fba7c738d73"
+        },
+        {
+          "sample_id": "vizwiz-lf-516",
+          "image_path": "data/vizwiz_lf/images/516.jpg",
+          "image_sha256": "649196618ca5e690c6233271e14fa66f8fd119ba04e57b9ffde91d601f1af6d1",
+          "question_sha256": "6d4ab4c9d2b5f3300f52c07c0a2d8344406a85aa9b7a643fbc59281acc9bf768",
+          "dataset_record_sha256": "c212a3300b8f2011edc2be2a478556dd009b811e8bcfb726d586ca37082313e8"
+        },
+        {
+          "sample_id": "vizwiz-lf-520",
+          "image_path": "data/vizwiz_lf/images/520.jpg",
+          "image_sha256": "91a962471ac34da4eba10d42b0ba968f1b5debfcc09a19578ee57affd00224f4",
+          "question_sha256": "a812725a7691fa8df567e0de300b7bbab66c4564b5769a0a7f9baaf89a8ac63e",
+          "dataset_record_sha256": "1939c98394adff9cae65bd4ed8a0af3b73e0e42512d1d87defec3320b041f092"
+        },
+        {
+          "sample_id": "vizwiz-lf-524",
+          "image_path": "data/vizwiz_lf/images/524.jpg",
+          "image_sha256": "83df7fbed124f39e9b817230f6b5bec20db6b063ed573300b95075472fe41249",
+          "question_sha256": "b7f28b09afe416287024cabcba27e176d8516368662a2cd99e283e4ad219e46b",
+          "dataset_record_sha256": "0523f61ea58fd80b3dbc138d28bed259358537b71ec9973147cc25b302909f0c"
+        },
+        {
+          "sample_id": "vizwiz-lf-544",
+          "image_path": "data/vizwiz_lf/images/544.jpg",
+          "image_sha256": "83387326226cfcebb3a0e3c20f216b7fd6f5bd95a84f1c844ed259995d28c6b3",
+          "question_sha256": "61b848a0a3a1edcdd83d729fdae81fdf14c53bef31215f7d10117a528f0a2ca2",
+          "dataset_record_sha256": "c71393c3a2fc2590a94af934115ba678124dcd01ab2a5a25f1effd6c4f0d1329"
+        },
+        {
+          "sample_id": "vizwiz-lf-549",
+          "image_path": "data/vizwiz_lf/images/549.jpg",
+          "image_sha256": "650d28dbef70c6d41d4ba2d68ad2ab0bd2f70d7a3acf762fb5bcc893798ba40a",
+          "question_sha256": "324df0ea7f2d712b327c5d0f3c09151f28ec14e8b95d38efe20de38b9541f581",
+          "dataset_record_sha256": "e7797596050e454f9628105eb2b7021e3065470192b7bc5cff6a94d9be4f9d06"
+        },
+        {
+          "sample_id": "vizwiz-lf-550",
+          "image_path": "data/vizwiz_lf/images/550.jpg",
+          "image_sha256": "c6b5fd0f27a18f86b0b832d3dcd8d2b2ab8709342f970a7c6f7d2afa6ece1e2c",
+          "question_sha256": "4acd0e083dddd5b3092d387015cbe0def349ebc451e687a9429489e7c198e595",
+          "dataset_record_sha256": "05209a2e1701318e528dc75bc658141dbd9ef961971b647e6c068a66e7601f7d"
+        },
+        {
+          "sample_id": "vizwiz-lf-571",
+          "image_path": "data/vizwiz_lf/images/571.jpg",
+          "image_sha256": "e0a7ee478915cc06b1895f847d6dfd3a0a2c5424cc01c4881e090d79ec594dc2",
+          "question_sha256": "303d632f5c6b3a67adad9527aaa74175ace06ef0a9502a78d4f28716b06140ad",
+          "dataset_record_sha256": "ca574b802bd13d4761e7a3b38182813fa0b41abc657049b965b4b0d8ace2bc13"
+        },
+        {
+          "sample_id": "vizwiz-lf-573",
+          "image_path": "data/vizwiz_lf/images/573.jpg",
+          "image_sha256": "47baa117b058e96b5fce6ea7490c567c236c33a9306bfecfd0668743fd91c146",
+          "question_sha256": "0f5f2842f1defa4dbab19091adaf93b049a36053c247dabc0a2d177d02dccd60",
+          "dataset_record_sha256": "9c96b19680597a11a537d6c3dfb80e021c4603b09f14ba210eea28aaaa8de4be"
+        },
+        {
+          "sample_id": "vizwiz-lf-580",
+          "image_path": "data/vizwiz_lf/images/580.jpg",
+          "image_sha256": "7e573e7e483f217dfd51c0b29e29605e988d2292fc11302a0ebb03938087ab77",
+          "question_sha256": "8060c727c2e905cca6d5d0c950eb968a1ab3fdd3fff8822a616368847674d220",
+          "dataset_record_sha256": "6c7d987b7d842e91fc50a67de6fd301e9995624b66021adfaca6861651792593"
+        },
+        {
+          "sample_id": "vizwiz-lf-581",
+          "image_path": "data/vizwiz_lf/images/581.jpg",
+          "image_sha256": "2b4a6aa5d03c262c7d1367be278572cd15db678ea15724dded0327258399817c",
+          "question_sha256": "58898d993668277b28c95f33021b949bb16f8b18a7fa05b9ac3458ba01d4f29e",
+          "dataset_record_sha256": "4ce0a481ff4066c93bde6b46468df703b03f545e57825ef6505fc4b1fc13cf13"
+        },
+        {
+          "sample_id": "vizwiz-lf-589",
+          "image_path": "data/vizwiz_lf/images/589.jpg",
+          "image_sha256": "879b592b6839287adf9df0aba64d104fd23bb447f7b8502e1513f4d3d13efab1",
+          "question_sha256": "c4f140edcc18e2b6be0842eb5023f6ceebc67ca2c585536a93d7a60ce92868c4",
+          "dataset_record_sha256": "9ad12766620946244ca178f2ab5772c087dd9543a27b73068b2bede9fbafbd64"
+        },
+        {
+          "sample_id": "vizwiz-lf-595",
+          "image_path": "data/vizwiz_lf/images/595.jpg",
+          "image_sha256": "dca3b34858416b2c171fbad71417b579fea313923cc2dfb7f1feaebcae688133",
+          "question_sha256": "6f2ced0e702289450b2b84565181368ab990a200d2a49c59a255a73f986f0494",
+          "dataset_record_sha256": "a2c61645e28cb7b62ad91a23e9daaece7a3e6301b37edb57e8173597859ec77f"
+        }
+      ]
+    },
+    {
+      "manifest_path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.dataset.jsonl",
+      "manifest_sha256": "99225cb42e004d8df744e3b1bba0028babd3fba311eadb3d1f713b51ff0093c1",
+      "sample_count": 120,
+      "samples": [
+        {
+          "sample_id": "wiki-visa-0013",
+          "image_path": "data/wiki_visa/images/0013.png",
+          "image_sha256": "6fa498d2fc5fcde38983d163c4a8bc27f66871d4f43115288b2213c5a0d24cd0",
+          "question_sha256": "a062052437ef75948169510cdbb3db0cd219d7e88744c3cc8d185acb92045f66",
+          "dataset_record_sha256": "58230a0d8f896a9422035f7841d3f323ff9ffbd1037ed2196d77ea0f7281065c"
+        },
+        {
+          "sample_id": "wiki-visa-0051",
+          "image_path": "data/wiki_visa/images/0051.png",
+          "image_sha256": "082a4233f2667b2dd6c3bd1e23347d47ac606f6e489790b7efb10333125b2104",
+          "question_sha256": "1fe11abfaeea4fcf742239a014f06d692602712c2ee4cec98695d8e1982ac366",
+          "dataset_record_sha256": "50d8d9081f72d797c466fa6dbe8badaeacec3c8c57950877a9e90202d1ed4ec7"
+        },
+        {
+          "sample_id": "wiki-visa-0054",
+          "image_path": "data/wiki_visa/images/0054.png",
+          "image_sha256": "d85c7b1a1166535756dc623d73481a9a740d6227150b0dd52ca324604eb4cb73",
+          "question_sha256": "e77a54a63ba67a8ac5fe3509c537a0f128cd9b331474c0f178a99d27ce819cc3",
+          "dataset_record_sha256": "c34aad7e02f81a7becbd0ee8b5cd083bbf1e9b2a6f022a960f7608897b7d4c22"
+        },
+        {
+          "sample_id": "wiki-visa-0057",
+          "image_path": "data/wiki_visa/images/0057.png",
+          "image_sha256": "7811b095f476d7401ce45b7f1e7668ca3db37aa38b3379642bc878962b3b1348",
+          "question_sha256": "fc9788833dd004e2db910d9e6d1121e5e126c9b3d4593f84904368a7874f0a88",
+          "dataset_record_sha256": "ffc2a8a9c2ca28de6cae492d8904c1df8f3093f64fdf08d425b81bf1a166c501"
+        },
+        {
+          "sample_id": "wiki-visa-0061",
+          "image_path": "data/wiki_visa/images/0061.png",
+          "image_sha256": "1c5301fb19e45d1081a9b874e47f34fdd1d1a9f305cd450c1e0a927c3227a669",
+          "question_sha256": "8eb03df5fbc4020b7b0e3e620e908059418873efbaa13062ae08153395c8562c",
+          "dataset_record_sha256": "0f6d4b3a02e24ac860689ce6c064a49376f3243357ffe22e9d01112fe700d1f1"
+        },
+        {
+          "sample_id": "wiki-visa-0070",
+          "image_path": "data/wiki_visa/images/0070.png",
+          "image_sha256": "cc6c6e35d1ced0cb19de5baee74e112532c835f73e6c3e0889ba65073e2e0260",
+          "question_sha256": "7a187dffa6680b913bb1813178a26eaa101dae3c11670a74b4e02d90b1827ecf",
+          "dataset_record_sha256": "d3bc3a3e75225ff16dbf3d891f8f8b82bfee273b29f236a60a5b973766f4c1f4"
+        },
+        {
+          "sample_id": "wiki-visa-0081",
+          "image_path": "data/wiki_visa/images/0081.png",
+          "image_sha256": "f0f956dd3b32854a232cb7174f28709a30ba9c9f72a086c6b7f39be1854676f7",
+          "question_sha256": "79aaeb46e0c54aa15694c591ee9b8fd720662eccbf0ae46b6ce43cb30eed241f",
+          "dataset_record_sha256": "601177f8ec36893433289d692aed1ed8f42dad3e8ce17f8781822dbedd1f2e16"
+        },
+        {
+          "sample_id": "wiki-visa-0170",
+          "image_path": "data/wiki_visa/images/0170.png",
+          "image_sha256": "99975a99665e6f76323edfd5f5c509c1639c12c5c6ab01f5fd6799f5c0ee66b3",
+          "question_sha256": "16285de473157613a94bc0b05f0605e702c630136da2f6d64ada91eb766b25f2",
+          "dataset_record_sha256": "22f5e4d5a297e509292c63ec6fa80d582731cf0758cc8a854146d45deab99d6e"
+        },
+        {
+          "sample_id": "wiki-visa-0179",
+          "image_path": "data/wiki_visa/images/0179.png",
+          "image_sha256": "335f338f58acd5c82a522e084e03a3f4f43a3035108c8dfaf7ab35545d6ae70d",
+          "question_sha256": "8aeb34b798a835860906ad1a74fef3d36e69d1711a5c54279ae8135a1b9dbcc5",
+          "dataset_record_sha256": "0d5bbc17a2110ba8cbc23f6947d6c9f74634cbaf3ad5fd034e13839201d160ac"
+        },
+        {
+          "sample_id": "wiki-visa-0203",
+          "image_path": "data/wiki_visa/images/0203.png",
+          "image_sha256": "a013cc158f5c6756c57e0ee31b9ed00c9e71490e075dbed57fed3f035cd16ef4",
+          "question_sha256": "ef98070367b5bded4a5de106673be4fc99a37ac93a32f9ddafd37bab4a57a191",
+          "dataset_record_sha256": "92ac7a5d3822052940faa3a6238f413c2a3d008d7b4081e51782abc6aa29dfc1"
+        },
+        {
+          "sample_id": "wiki-visa-0217",
+          "image_path": "data/wiki_visa/images/0217.png",
+          "image_sha256": "ce25166b73998f6ff367fa17615c9318a985b22f308dcba359d7059d8bd07e5f",
+          "question_sha256": "564ec3bee19f9524e136f3fb3846336fab5c9c910cb191851338b18ea0f27cac",
+          "dataset_record_sha256": "0301a94c8ea25c205769b16a340da28077644eff24792e12c7529cf236785c02"
+        },
+        {
+          "sample_id": "wiki-visa-0250",
+          "image_path": "data/wiki_visa/images/0250.png",
+          "image_sha256": "05e7594eaf3c0295e44b60a7786dfe7fc1c1998c4e951af53c0fc9ed7286ac42",
+          "question_sha256": "9d7c1e303214c698a07a3a875758cee36ab4d7c1016786d9084b5959c281f2b1",
+          "dataset_record_sha256": "9bb20cfee1e0756a50fea18d7429c1c98bf4d4b6695b54bf3c3eafe2fe2d7baa"
+        },
+        {
+          "sample_id": "wiki-visa-0256",
+          "image_path": "data/wiki_visa/images/0256.png",
+          "image_sha256": "82476a099f475c162aeb5ae02e45b6d1b892234b348a7cc58ec9d3c34182dad4",
+          "question_sha256": "2ffbc1b66b7d5053c50a00f90a0507b3de1f84dd7c11691d39de1f29d4ad0974",
+          "dataset_record_sha256": "8a17b088ccf20322488bb8781b2a0e298006f06454f8586763e665ba54dbbdae"
+        },
+        {
+          "sample_id": "wiki-visa-0276",
+          "image_path": "data/wiki_visa/images/0276.png",
+          "image_sha256": "a238ea8a560b02270d8a8389f08f5b0694bb6d0660b607e360c02c71f2edc7f9",
+          "question_sha256": "54e87cce6a57537a76406f5ee614a121c182991f69836c04a077d01a91a2866e",
+          "dataset_record_sha256": "9873da17984a4e6909a63be31e7d2db46892cda967e01c9d0f7abead90789f0f"
+        },
+        {
+          "sample_id": "wiki-visa-0320",
+          "image_path": "data/wiki_visa/images/0320.png",
+          "image_sha256": "63bf423337c880f2a3f5bd9da7352dc005b5ae7f537d40f807b3b22a676714b8",
+          "question_sha256": "27757a73d1e8727305acf9c91d8dc3526912b79a4679925aae017da125776464",
+          "dataset_record_sha256": "8600f6dc55e08e60169469fddb5d587f9b1c8c51cbf1e7d8b4570ae35a9a06e6"
+        },
+        {
+          "sample_id": "wiki-visa-0356",
+          "image_path": "data/wiki_visa/images/0356.png",
+          "image_sha256": "5ab5ad94ee1c7e4443e216094f02bd89a3e1e171ace35b2af02b3c0c468a3189",
+          "question_sha256": "71aca147fe9c54b0bcb6ff42b6b268b46e18c71e5ac0703aeff881f959f72bce",
+          "dataset_record_sha256": "616d3f2d141fe618fff0de082d82bc7814dfa804467ff81db8ff686a589c29b8"
+        },
+        {
+          "sample_id": "wiki-visa-0392",
+          "image_path": "data/wiki_visa/images/0392.png",
+          "image_sha256": "b43836eaaf13b9b7374845b51308984ebb7af055af6937582bc64e9ecf68013f",
+          "question_sha256": "dababf61bb8fd68108c9dadfac736f474aa96d01fa443038532bbda16aed4e40",
+          "dataset_record_sha256": "3c456378e34a0cbc6586c3ca63157b9fc3c55249a9dc5c091a58e0350f873f6c"
+        },
+        {
+          "sample_id": "wiki-visa-0408",
+          "image_path": "data/wiki_visa/images/0408.png",
+          "image_sha256": "34199e27bd5a401956fc1069ec1d03afc5e8b22289814519c37a3795424d1c0d",
+          "question_sha256": "d0ad2f2b4c912ec5d47dcbc649f85d60a2a1868703411a202d856a85121f5692",
+          "dataset_record_sha256": "096b8d1da657621354b576aa6524ada4c6b4662796db665ab7ab823bee6d1ccb"
+        },
+        {
+          "sample_id": "wiki-visa-0465",
+          "image_path": "data/wiki_visa/images/0465.png",
+          "image_sha256": "8a7c6ac1c01a65f14935af046d168599a0a9334a6ac60a33238c378766b4030b",
+          "question_sha256": "87b74b4eb031379b13c653f356113cd037fe674cf4509a768477252675bfb94c",
+          "dataset_record_sha256": "a95642171a51f1d00f443f09b7529bd2e36981eb79ee54b90b8c28ffa2340f7c"
+        },
+        {
+          "sample_id": "wiki-visa-0471",
+          "image_path": "data/wiki_visa/images/0471.png",
+          "image_sha256": "257dcd9a09c9e22369f25e73d50820e124240a26a3c0403cdf0a2aca39d05642",
+          "question_sha256": "0a11a1b76789d7798cacf4e7d96cad7bf828166ac3e0e76b6028fb4bf366c24b",
+          "dataset_record_sha256": "9076a03668956e7cb2717eaae9fccc81095dce21c8dce6c0e51e143810809945"
+        },
+        {
+          "sample_id": "wiki-visa-0509",
+          "image_path": "data/wiki_visa/images/0509.png",
+          "image_sha256": "99c159a3219165c9ee8ae25a93ace8732eff695dcac5805a46341a9f8f1636b7",
+          "question_sha256": "7dc4ae80365380d9cb4b46f4511b3890ba1a2ee0c9168596d4e5d1dbbcf59b11",
+          "dataset_record_sha256": "95f7776bd412ed6d726fb7274434db00432a01b124197a702a2592c786dc2583"
+        },
+        {
+          "sample_id": "wiki-visa-0556",
+          "image_path": "data/wiki_visa/images/0556.png",
+          "image_sha256": "2882347129f865730d784110af021d48120c43d0d776535ff4b38642fbd40e50",
+          "question_sha256": "8efed23f97d856f2603312e5336faf7a116dd8f2ce0fbe85e43dc6aabc091a80",
+          "dataset_record_sha256": "ea423219ca0f7d1dd711c5b7e54ce3d0d45ebb9b744272291fcfb4894a110659"
+        },
+        {
+          "sample_id": "wiki-visa-0567",
+          "image_path": "data/wiki_visa/images/0567.png",
+          "image_sha256": "1ae532f2baf2a6b0e97531a46b69827355e4d6abfbf9f465fef6f5a1944dfa82",
+          "question_sha256": "2e852769246fbf67bfb6b675ef33a763c55df14f53f5aa03104006ecd2146148",
+          "dataset_record_sha256": "18dcf2ad1bcc86ebdde3e83a9e0f46002d1b7e00afed8ad925736371f6c51c42"
+        },
+        {
+          "sample_id": "wiki-visa-0569",
+          "image_path": "data/wiki_visa/images/0569.png",
+          "image_sha256": "8f9bab0fbc92cd4ceca473f6e1bcc84cf95b56bacd01138ee0010e40d7b84aed",
+          "question_sha256": "157016e0edb46ef5a9cbbcad3a5b91aa0a7f7f4b6091f3df23da8de47ec5f048",
+          "dataset_record_sha256": "3bed7d1f9c3bf1395eb1f120cbf274318f01abc2c79f6ffd88befb3556bc21f9"
+        },
+        {
+          "sample_id": "wiki-visa-0581",
+          "image_path": "data/wiki_visa/images/0581.png",
+          "image_sha256": "1e0501d86570136e01635026a12b29f0932c6db2a0f6e276d366f9c6bb25a1c2",
+          "question_sha256": "6065913faf9734a2a13f6abce9095d92c331744c995841fc12ea83d0abda4796",
+          "dataset_record_sha256": "585ef2bcaca7cc741a42ec77c03c259a91d57bc1f52a28853785e586eba31fca"
+        },
+        {
+          "sample_id": "wiki-visa-0631",
+          "image_path": "data/wiki_visa/images/0631.png",
+          "image_sha256": "15f91efa5eaa76641056c8521ce8b2c1c7420a623ced0863564bac5c1137f8aa",
+          "question_sha256": "489eefebf7c78d25da59dacb2da824542e46122c7f0d6ede43209985dd381c3e",
+          "dataset_record_sha256": "9c1f1718e209f8a568c147f2ad37d960ebb83e63802789d7b29b61b8347203a9"
+        },
+        {
+          "sample_id": "wiki-visa-0659",
+          "image_path": "data/wiki_visa/images/0659.png",
+          "image_sha256": "f6a22ede9dc894b2a6fb9b1b4f948588ffedc77307be25a058f4614fa232ce2e",
+          "question_sha256": "bfe24771c306f0865c02796f811fdeb451b6824395485423c22f50a27f3cf14a",
+          "dataset_record_sha256": "1869be76548f3f15fb5672b86b1bd7b56b6e3bcfed7033b8e398db453c20b9ae"
+        },
+        {
+          "sample_id": "wiki-visa-0668",
+          "image_path": "data/wiki_visa/images/0668.png",
+          "image_sha256": "7b2691d97308c4459cb63e2de6ee1112ae02b655e8b5ce937a4b25b6addccc32",
+          "question_sha256": "b64b2a5b379db96a5abfe3fe62959f1c038640d258d909c40c6667e9daa66f34",
+          "dataset_record_sha256": "9a13d16ff0c2c790a941ce16d94252ed82adc69f549a7963afcdcc91e90a9ab9"
+        },
+        {
+          "sample_id": "wiki-visa-0721",
+          "image_path": "data/wiki_visa/images/0721.png",
+          "image_sha256": "75d41f22e17269521766ac9db6f7743c16c65ced711bdf86876d7eca37ce4759",
+          "question_sha256": "cf52ebca83ef3bfa16636eb427964e5dee08357921638f993ba0f095fea16952",
+          "dataset_record_sha256": "30baecaec3308fd3105dd94dda1ee6e0da011eae215a91f433f2ac67c86b87c1"
+        },
+        {
+          "sample_id": "wiki-visa-0755",
+          "image_path": "data/wiki_visa/images/0755.png",
+          "image_sha256": "3b8d1d74308b9cdc2197d9e88e69f540fd05d44d12e33a602a85d629fd27e624",
+          "question_sha256": "c69a73df788340378350dbc4f5c6608c7342702ca2a3ad4ed93f500c8237eb57",
+          "dataset_record_sha256": "7f85043ed6c9fa82b161bb5c6ff4f5c364e8883f506e44214ab8be6295283c36"
+        },
+        {
+          "sample_id": "wiki-visa-0762",
+          "image_path": "data/wiki_visa/images/0762.png",
+          "image_sha256": "02637a85cb282fbec4fd724049f64f1933ee73b40c6eb5b358e8915c29111cbb",
+          "question_sha256": "128d7f71894ae84939c51c2ced5acf4d8447f22ab21b348cbe4932870c930ffe",
+          "dataset_record_sha256": "203c8cb62b92889cb1dd78b8c47be9ab24d1ac5029031d205b5910484caa9e7e"
+        },
+        {
+          "sample_id": "wiki-visa-0798",
+          "image_path": "data/wiki_visa/images/0798.png",
+          "image_sha256": "a46a620902b502cf5eb9cdb88dc9c95dde28ec2b18e4b2ce92147b33ded6f20b",
+          "question_sha256": "3df783a3408103f2d0ac599d688197b51ada079bff172f1304f3f33b494d2789",
+          "dataset_record_sha256": "d616fa8a38facfda0b0dbba25520e46769d7cc3807ec6b7d05c34b7bd3fcceb6"
+        },
+        {
+          "sample_id": "wiki-visa-0817",
+          "image_path": "data/wiki_visa/images/0817.png",
+          "image_sha256": "250b76a66f902cd980f0ae4e063de970dd0b69e7fb81f5809af27403de382183",
+          "question_sha256": "82c2f525cabc09cfc53dea4e0b7a3d49b02885555d7a499020f29c39243c4f42",
+          "dataset_record_sha256": "37d04f2ab1076e53716c2f2434a2565ba7d087fa0749d40fdce8b671796acbd6"
+        },
+        {
+          "sample_id": "wiki-visa-0830",
+          "image_path": "data/wiki_visa/images/0830.png",
+          "image_sha256": "60b4c65f5f65c8140e1b7ef183c3d8f1c33222233a90fbaf845380fda455c44f",
+          "question_sha256": "d53a53d6699d48b54e728ef88dc4033372f4f995a5d048e7f1381dc32e687608",
+          "dataset_record_sha256": "fb561fcc44f2283e36815e92ee7e733dc55f5a5b58f51e18432a1fcd04ea4237"
+        },
+        {
+          "sample_id": "wiki-visa-0839",
+          "image_path": "data/wiki_visa/images/0839.png",
+          "image_sha256": "2349a34498f471e17ea9eccd3cdd8f952f4af989b8d977fd660b43469a94caed",
+          "question_sha256": "ae05285356eac1ef591a90166da1f660d0f3f3757fd7554daa5f7d26ff6cf664",
+          "dataset_record_sha256": "e074513b6cfac89b4f0c11dc4350349aee413687a7a1be19c46ec6000609d0c0"
+        },
+        {
+          "sample_id": "wiki-visa-0872",
+          "image_path": "data/wiki_visa/images/0872.png",
+          "image_sha256": "bf44b97b7564ed9f6c98f221e995253191ee69194bed76414220089041a04b4c",
+          "question_sha256": "245ef17054d211296ee399789b68a37ff43c4d3327c7b1022526d73b79312b42",
+          "dataset_record_sha256": "4a39aea7d2c6f85684fe519ea9e94b1e90d90bed2c3de2c1c06fa7f9034c22f0"
+        },
+        {
+          "sample_id": "wiki-visa-0905",
+          "image_path": "data/wiki_visa/images/0905.png",
+          "image_sha256": "496e0b527d70732a9d99c7fb48c953c090fa6d682f6988810b7444c7c4403dc5",
+          "question_sha256": "362b813192db4c77e026b071c6940e2a4dff2abab80237e9a03eda90d65a688e",
+          "dataset_record_sha256": "0666baca1ddd196bc3ffd04c3f7b1872954f264dc1ffd930d3516bed8ed80645"
+        },
+        {
+          "sample_id": "wiki-visa-0908",
+          "image_path": "data/wiki_visa/images/0908.png",
+          "image_sha256": "6c52e8d17b80b5a812aca44db44e4f8cef7c71c506f9e3af6118a4e1cc2d384b",
+          "question_sha256": "aec93fed11d4a1ee878e1240061d089199b0161de215d7b284191eaa623f8bad",
+          "dataset_record_sha256": "2e541a1f6b1a05ffb01390a21c0b28fa87139d2e17edadbb32a8bd36a29d9f4c"
+        },
+        {
+          "sample_id": "wiki-visa-0931",
+          "image_path": "data/wiki_visa/images/0931.png",
+          "image_sha256": "973a2b5d1ef79526d4b0c57b71272ac10b365f420cd0d614b5441ac7e632cf45",
+          "question_sha256": "0f893dccd0e05fa36fdfc24caf1a3626ece3914e704e3bd8dd660861e9752a25",
+          "dataset_record_sha256": "e04e036f1a366fba44a8b18b4126541c62b9dc97d43694ac64a858048efc7586"
+        },
+        {
+          "sample_id": "wiki-visa-0987",
+          "image_path": "data/wiki_visa/images/0987.png",
+          "image_sha256": "999a8aedb483874a3dab5eadcdad7f3636c895fc52e564a87f4bdba93ae3619e",
+          "question_sha256": "402149c377f8ccb160d7cf5ecf95daff5f00c88521f91636a140ab6a24855e17",
+          "dataset_record_sha256": "36950b789a4f33ab45ba5ce54a10c50baf66e8dab74a3b91facb043d8993ab0f"
+        },
+        {
+          "sample_id": "wiki-visa-1008",
+          "image_path": "data/wiki_visa/images/1008.png",
+          "image_sha256": "813688f92a32f917b6c33429a92d954fbbde59476bbe59e494d2daf0df1e0ac3",
+          "question_sha256": "41ec5e0bf7a6a8bc7f8dc9bee5da89da43f657fcdcab99257ee83798e5442154",
+          "dataset_record_sha256": "e07c7d8a97582b0053b5d78f876b4982e2514cb3bf91ed2e5f0454b39086b52a"
+        },
+        {
+          "sample_id": "wiki-visa-1016",
+          "image_path": "data/wiki_visa/images/1016.png",
+          "image_sha256": "371b22da11764b45bc3a2b583a2fd6303afa27ee10591d101658232454143fe0",
+          "question_sha256": "4cd6e1e663d31468c47884a840d96218bed641961b9cc0fc9d992d2a7822d790",
+          "dataset_record_sha256": "1ac18cfbf82ab0962e41bdd9e0eb06c78211ce51febf287a1f52eea757301e92"
+        },
+        {
+          "sample_id": "wiki-visa-1028",
+          "image_path": "data/wiki_visa/images/1028.png",
+          "image_sha256": "bec66595339497c2b00a51d5cf017f88d332be42e8e1fe981107ae78cbcdfcbb",
+          "question_sha256": "dbd11461952823732058ed59dbba590000b8e6d7ea6d92706c75de76c0c30024",
+          "dataset_record_sha256": "16e868fa80eb9a16fb3951fd47aff9b1ebb3c20e359839780ea0895d0203b24f"
+        },
+        {
+          "sample_id": "wiki-visa-1036",
+          "image_path": "data/wiki_visa/images/1036.png",
+          "image_sha256": "42a267ed60a3dbca419269b33443c8baaf902ef909e0b4a88b0f68a758ddb10e",
+          "question_sha256": "09c84e519df95e6e3e869835c70065d4693c26de378303a8d9331ef7fd153a81",
+          "dataset_record_sha256": "c97112c3f589bbcbbf4e9f44c34824a9d01d17168646fd7a551b1d2d794cb04d"
+        },
+        {
+          "sample_id": "wiki-visa-1050",
+          "image_path": "data/wiki_visa/images/1050.png",
+          "image_sha256": "631105fbe16d84c0a8a4fb95d345a996faff036c4e6d03edae612f10feaa1880",
+          "question_sha256": "7296ded69e51a79ef428592a7d44de001e0bfbc9436944af56974bf9a705d0db",
+          "dataset_record_sha256": "876524626029809f08cc772a81c22fedfe53da3a2aa9348fc2227d5b32d4c8b0"
+        },
+        {
+          "sample_id": "wiki-visa-1069",
+          "image_path": "data/wiki_visa/images/1069.png",
+          "image_sha256": "0034279405586391e641db59948ba5c3a0f456f6f265d30d31814d6d670aca9e",
+          "question_sha256": "d969690b22f0efff692fefebd682f41a9e233b548f91d03c665a374e423f01cd",
+          "dataset_record_sha256": "5e31f1fa8b0de632f5a0274e91873b0eff88fc133855e07817cdf774d6a56f40"
+        },
+        {
+          "sample_id": "wiki-visa-1095",
+          "image_path": "data/wiki_visa/images/1095.png",
+          "image_sha256": "4a3ce7325b3f8e7211d6d390c7ad92a84ad02c76cef10fed3822044906c5f25b",
+          "question_sha256": "91683a403eca11340d34a4bd5674649901f2a4093bf44577062ce8813a9561e6",
+          "dataset_record_sha256": "cde4623231d1acbb03628be245f87a324e05b67796cfc922b6c8c4a5b98efb9a"
+        },
+        {
+          "sample_id": "wiki-visa-1113",
+          "image_path": "data/wiki_visa/images/1113.png",
+          "image_sha256": "8e3db070f3a17f0d136bc5139f923345c05c5e20857422e1d5ea32d525688312",
+          "question_sha256": "41fc2b69b3832ce4b47b8ac85905b0f0711f8344104bd22fd6a1b6c0614a11fd",
+          "dataset_record_sha256": "39078cb7fa9b72bc88f74618c630e05aa87b46208d2f2a8b5ccd8e62223b8ad8"
+        },
+        {
+          "sample_id": "wiki-visa-1118",
+          "image_path": "data/wiki_visa/images/1118.png",
+          "image_sha256": "bd74a63669ae795a030c903e8caabb9e55c93011843f8f3329ece6608354b3ac",
+          "question_sha256": "aab29518e80c4770f2201499e6f31da571742ea4deca1dddac31544033b4f630",
+          "dataset_record_sha256": "3e25e0ee2f68c0be2fe447e95ffc39eddef80a21709c71af2450d68f5c95a7cb"
+        },
+        {
+          "sample_id": "wiki-visa-1128",
+          "image_path": "data/wiki_visa/images/1128.png",
+          "image_sha256": "afae63bedd552721f511365c10749ec4860ce27bbeb61e9d3876722890bda4b9",
+          "question_sha256": "86750bc2ee4aa56878bdcb71f5f22299791b4413b72db9425e2a713b92d5062d",
+          "dataset_record_sha256": "8364c06fd0926a38bbbd84a302ebf7d13c2009e1ee7fd31cf5f1e6d9b32e2caf"
+        },
+        {
+          "sample_id": "wiki-visa-1140",
+          "image_path": "data/wiki_visa/images/1140.png",
+          "image_sha256": "9224ef4857af551da765cce49e7e2449169c5870a6f4745b43b134491c075a28",
+          "question_sha256": "58cce3aafe5aaae5affc2ddf30f2cf977eb9ad7249cd72f9a96e7a55551c2028",
+          "dataset_record_sha256": "039bb1932cc81eb1c05ca788b5dbc51a532123347c9aabf6a6fb975208da2c0b"
+        },
+        {
+          "sample_id": "wiki-visa-1148",
+          "image_path": "data/wiki_visa/images/1148.png",
+          "image_sha256": "1a13ecad7b351f8b8dd95725deef900d147c1647eac8df08a73aa78f54080eab",
+          "question_sha256": "7a658e6367fef460fa1445dbe90cc6cdc80d99a95157096ed76f7a5cb77fb97c",
+          "dataset_record_sha256": "4b2da4942ae016f7e14acf1593a707b8d25fab811e06fb046ded7822362416b8"
+        },
+        {
+          "sample_id": "wiki-visa-1174",
+          "image_path": "data/wiki_visa/images/1174.png",
+          "image_sha256": "07efe26882dd4b822fb3725355c09e4d043edb954ecd62a91f2ae8524ad72663",
+          "question_sha256": "f6720ac3cf9958926514420e35e504b9b912b720c4fd5af895cde161e3ba8583",
+          "dataset_record_sha256": "da3d993ae0641b615af0773e76b7134490971e62f8a0cdfc06fda6956a5b234e"
+        },
+        {
+          "sample_id": "wiki-visa-1187",
+          "image_path": "data/wiki_visa/images/1187.png",
+          "image_sha256": "a488951e3a491e4fa1e7bc975bacb894f2d8e6f4b7f1d63d0e25e3648a01fb2e",
+          "question_sha256": "1c64e2373968fdacf2fb251dcb10d01d5b17818444fde88496ec3261299afa26",
+          "dataset_record_sha256": "352cee93ecc0e5be066258048417461e3d9c312f0c87ec334bee9a85d1a1b961"
+        },
+        {
+          "sample_id": "wiki-visa-1232",
+          "image_path": "data/wiki_visa/images/1232.png",
+          "image_sha256": "e4993c6c392ce01895ba352eee5b44ec3913cc36ef4a782da4dddde1e1fc7f23",
+          "question_sha256": "54848117fb4e1ac3646f343e73ad0ceeb9f64c44423b1ade91426dc7280ba20c",
+          "dataset_record_sha256": "fae653bba7fa5cdb5323b0cf7ba382f184b1186261c85aa07c868ca5228de787"
+        },
+        {
+          "sample_id": "wiki-visa-1245",
+          "image_path": "data/wiki_visa/images/1245.png",
+          "image_sha256": "94f77cfce73d77305ddb9f530285eae49500841b5148462f972638e608b182f0",
+          "question_sha256": "d9b2fd928ac742f689c69b1ebd1c64ceac80414545381078aa352c302730ca53",
+          "dataset_record_sha256": "a14d12486b99a1eff5f14f3d45dce45edd4fde1f03ab2860ac43fcb4a099990a"
+        },
+        {
+          "sample_id": "wiki-visa-1326",
+          "image_path": "data/wiki_visa/images/1326.png",
+          "image_sha256": "2e9c766cdf8d7a81c9252f329e7af8ba579d034f8949150add9a42f49d79b27f",
+          "question_sha256": "dc0cf1ae973891ad926dda239b3ead249a55513692c03ecf2f2c81bd0da89802",
+          "dataset_record_sha256": "e68082008c5e4cbbd0562708a62cd1aad214293ec7042ce179d6606630e01ee6"
+        },
+        {
+          "sample_id": "wiki-visa-1330",
+          "image_path": "data/wiki_visa/images/1330.png",
+          "image_sha256": "fbc702b0e95ed871368f9801a1c79982c42c807bb0af0f9c9569a678e65b4fa2",
+          "question_sha256": "d6133476fa7b1811ea9ae00f0b2523d03ce0fb63b30839b6e37dc609d650b67b",
+          "dataset_record_sha256": "fbd7a5e3ae9d39a68f70a05e6fb175389a81adb46316ed326386f4edf00d0ac2"
+        },
+        {
+          "sample_id": "wiki-visa-1361",
+          "image_path": "data/wiki_visa/images/1361.png",
+          "image_sha256": "e004f4ce19831d37de7936087cd1397ee893b352e60130242b35d052fcc1b87a",
+          "question_sha256": "300260b76e22bfffe47a19136511dab23074fb32c94944d95514e953136c4355",
+          "dataset_record_sha256": "e12e5f6df1f5effc74a39b7f9edbfeb07f3c7a3a5f943d6448497f9694d1c045"
+        },
+        {
+          "sample_id": "wiki-visa-1363",
+          "image_path": "data/wiki_visa/images/1363.png",
+          "image_sha256": "6fe7e808a725f208f6b6b930b5276b029ecf1e1c5d01dec07db2d82bb322e5a0",
+          "question_sha256": "57bdb5c3294a62b898eb3d27b7eec25794b60e5e3dab40ebb2b9fcc9dde6a603",
+          "dataset_record_sha256": "01345000f1e6133eed9629f93da38960e37fad6b678e5775a533db7e2a4150df"
+        },
+        {
+          "sample_id": "wiki-visa-1383",
+          "image_path": "data/wiki_visa/images/1383.png",
+          "image_sha256": "ca0644230420eb2398d30c07036165a7262f9df8f7b95ce8efec3206ac56422a",
+          "question_sha256": "dfba1ff743e23f8b29fe4f1ffad44e3bb28651ed3470fdd240351f955958ab5c",
+          "dataset_record_sha256": "e438146087c67d31d1189a619b72db1be2a22571c707d338a5de3e9713fb0092"
+        },
+        {
+          "sample_id": "wiki-visa-1428",
+          "image_path": "data/wiki_visa/images/1428.png",
+          "image_sha256": "8122f198ad60a130e6f08e8bc3c07444039b91efa0235899839d7b89e08c4558",
+          "question_sha256": "5b41e7142011642145c66104ce0b1df6c1126b83e06650ad1304d61f749cba73",
+          "dataset_record_sha256": "7f472b6aeffa5098f8707a94ab0dc4e2a58d130dea6053aa89fb38d264726a2d"
+        },
+        {
+          "sample_id": "wiki-visa-1450",
+          "image_path": "data/wiki_visa/images/1450.png",
+          "image_sha256": "ccdd97f001d6ba664f386e59691dde976d9982b4244914d4b9a7657559d5a86f",
+          "question_sha256": "111a8a0c609cbcecc785eea0f6aed3180dfdb8c2a637fa60ab358de9d073b771",
+          "dataset_record_sha256": "e039b5aa29b5833944e5d7ddb0db58279db1a61930a9c43dc6a64a681a82961d"
+        },
+        {
+          "sample_id": "wiki-visa-1466",
+          "image_path": "data/wiki_visa/images/1466.png",
+          "image_sha256": "0bb98077604aa46383b1d289c2bef0be2147fbc1ab57676d7e22bcd7dbfd7ec0",
+          "question_sha256": "f7326312124873e559f33b9949d7a48a185e8945e3a4e6c0c15e2fa2713be4ee",
+          "dataset_record_sha256": "2ef1adc4b6783bebebb24964e1a714a17c7701dc84dc2bc4021b22063c11fb59"
+        },
+        {
+          "sample_id": "wiki-visa-1486",
+          "image_path": "data/wiki_visa/images/1486.png",
+          "image_sha256": "d1c4d1a9682c81cab20a8e12dbe2a7eb372c2702d5a4ad19c0ed18e8898321a3",
+          "question_sha256": "f8e655715698c04324b5fdce52c8faa394c155cee928e136f7918e5dfee57b2c",
+          "dataset_record_sha256": "53e7c8b8261b244a4dec556a004588c55f0d754f97fe59ecdc4626c36cfbf3c3"
+        },
+        {
+          "sample_id": "wiki-visa-1539",
+          "image_path": "data/wiki_visa/images/1539.png",
+          "image_sha256": "2f8895ffbe74b93326317fd69ff9fd6dfbf6121891d3d1f3a352308715ec2586",
+          "question_sha256": "6dcbecb29fce8f5e6e29bd1dd53aa917be28dbd4d405b87b1bc2a2bae5c13e5c",
+          "dataset_record_sha256": "12aabd7fd18f138f3164c7f9e109c5871c5c30655e2621e783806673d62b4bf5"
+        },
+        {
+          "sample_id": "wiki-visa-1608",
+          "image_path": "data/wiki_visa/images/1608.png",
+          "image_sha256": "cf97303f71905a00231284e9837ae3c7512b8fe8122d01edc64b9fcf0a58db70",
+          "question_sha256": "6c9c0372ece38d69dde01e09974aa2aa3470c5957959f707e349bd97b9870ce5",
+          "dataset_record_sha256": "bd03c3e7779c985cf9e190fd134e66ee5896b1224985fb870280db79908c75f9"
+        },
+        {
+          "sample_id": "wiki-visa-1622",
+          "image_path": "data/wiki_visa/images/1622.png",
+          "image_sha256": "57978b39f9a77e94519ae1400d1d0befcb35071c43a09ae081fc42b2a2329713",
+          "question_sha256": "ac91b87fa378f3314206f4452e656cddb26a79f2e41374a698b4e19240c2bcfb",
+          "dataset_record_sha256": "8f52de4914afc5a667783042b081088f0ddff58723d8d8573bcfee6c6dbcdea3"
+        },
+        {
+          "sample_id": "wiki-visa-1743",
+          "image_path": "data/wiki_visa/images/1743.png",
+          "image_sha256": "a484257fff154858587eeb033749c23c2a4543bdd561c17c130158e735008ab8",
+          "question_sha256": "400efd60dc2037680000066b905ab3447f2a616a06df5f21e272d135b059d96b",
+          "dataset_record_sha256": "b500cf6fd5d497d04a7e2758fd0b8e111c36b3a5bf1f61ec4fcc13a2fabfa3d3"
+        },
+        {
+          "sample_id": "wiki-visa-1744",
+          "image_path": "data/wiki_visa/images/1744.png",
+          "image_sha256": "64589b6ca53bb702b14c939e3012cc92b3104806bc38ecca3c279c561721323c",
+          "question_sha256": "a294559cb3fdd5de0338ae6f60d5de46092eba534814cd2d92cb6aa47d9075b9",
+          "dataset_record_sha256": "cf4104efa8a98d256c331318293a18fec55784c864a1fb263eb4a39e6bd6d6de"
+        },
+        {
+          "sample_id": "wiki-visa-1767",
+          "image_path": "data/wiki_visa/images/1767.png",
+          "image_sha256": "81e823a2341d025410a2f598c3b08740ec11408e0e7ae4414aad32345c09dfb7",
+          "question_sha256": "0d0bd5213738569ff0cac515de8d11dce31f3ca4491105d4a4ddac61aab37679",
+          "dataset_record_sha256": "c6d7df766d51d003cc5338b0806dc88dea6d4cf99010ebc5e0a7932b174374f3"
+        },
+        {
+          "sample_id": "wiki-visa-1772",
+          "image_path": "data/wiki_visa/images/1772.png",
+          "image_sha256": "99f9d2c669b10ce3c17c689d54947ed3d617db054884fcb4f5856ac75ae8ab18",
+          "question_sha256": "eadcd540c1b708075f829ef181064218d48990f8e03710698984827563f32e8d",
+          "dataset_record_sha256": "e9fba35c5470936e7b935bfb027ee1a74f72df7b399d8420a9e7f7488d48729b"
+        },
+        {
+          "sample_id": "wiki-visa-1780",
+          "image_path": "data/wiki_visa/images/1780.png",
+          "image_sha256": "b34bf07b52d709434bbf417c9a93ed67514b4f4a24787d5ee09d336018b52b3e",
+          "question_sha256": "39ed32f0f36732dc856f9ada9a3fc79de99335c17f44a20302b2d3c7f4f4769c",
+          "dataset_record_sha256": "fc0a3b3d28b6099d633b37f545cf74255c6c0ae1d6a37e7d385d8fecd6c5ddb7"
+        },
+        {
+          "sample_id": "wiki-visa-1848",
+          "image_path": "data/wiki_visa/images/1848.png",
+          "image_sha256": "7dcc63bbfe1fb6bd948869dfd015f3c00b4603588bdd2db38041ebd5aa6a523a",
+          "question_sha256": "6938cb61acfdff93920deccde58c31366425408f041b69ccf012eea738784bc8",
+          "dataset_record_sha256": "b814c76f09038647db2613e1cdd7e71c24ac2bb5c4767e1629726c5b6483934a"
+        },
+        {
+          "sample_id": "wiki-visa-1857",
+          "image_path": "data/wiki_visa/images/1857.png",
+          "image_sha256": "e5b73afc887ea8a3f1ff6cc756d17cb9cfd9159b0b5b05b1fb5351d1d7265e65",
+          "question_sha256": "8abc9abe697788f42413c252e0cd1b8c37d990c47a0aab8f9a97cda59458d658",
+          "dataset_record_sha256": "ec5fadae805640832546ad6d912e50af36a1e6ea21356722bae7f4e795d5ce3e"
+        },
+        {
+          "sample_id": "wiki-visa-1858",
+          "image_path": "data/wiki_visa/images/1858.png",
+          "image_sha256": "4ea759012d03d5c092e6a35ed6e046e00fbd8dea4ed8ba2a94ae9abdfd08e18a",
+          "question_sha256": "e1a02d4ee0a272c158816d5bfc5f66efd3624105dfad80d754f027f77f6bd484",
+          "dataset_record_sha256": "374f39a420c870cd0a1b4a9bab076a4ac79a086020e973b02cfb3a9cbf36f151"
+        },
+        {
+          "sample_id": "wiki-visa-1871",
+          "image_path": "data/wiki_visa/images/1871.png",
+          "image_sha256": "f73b38eb4a5b59286e4312c6523c7972e02db5b7fa7e447f269b15cbe4da2e57",
+          "question_sha256": "5449f1f30776f64d8500873fcfe063c923354973b66851bde2f583bf3e594e55",
+          "dataset_record_sha256": "1cb7f2321581bdfbe6e3314e3512d8cf8b27b1dddbdc5d5290d973a3e6eedf29"
+        },
+        {
+          "sample_id": "wiki-visa-1930",
+          "image_path": "data/wiki_visa/images/1930.png",
+          "image_sha256": "b9a55e687235c632ee394b55335769ace8889d04f2541b1639d07998de5072c1",
+          "question_sha256": "2ff7bf92402d9fb4658645025dd458a321bca7a5990944bc1394a735f815b72d",
+          "dataset_record_sha256": "b94ec181caa1b0a189e59d4301d5392825215078bf5b38cce6d6e4868109f4e8"
+        },
+        {
+          "sample_id": "wiki-visa-1953",
+          "image_path": "data/wiki_visa/images/1953.png",
+          "image_sha256": "ca2c34ba44df3385518a1414e0fe2ed56d108dafa07554e9711f17f5ab569ecf",
+          "question_sha256": "9591daca6852694ef8a371aa72220e6afc9dc76e992ae5ea8b5886967c332210",
+          "dataset_record_sha256": "cd2fd4050a73afc2f556f6169d2da44a001149769a23b408c98635a30d5647a5"
+        },
+        {
+          "sample_id": "wiki-visa-1982",
+          "image_path": "data/wiki_visa/images/1982.png",
+          "image_sha256": "039c29278989136bb562aa6bd3493649e563737f44bffd13a544f2ec01287cea",
+          "question_sha256": "5f1c5a23dc00000717cdef3d78f918641a962b8a7e542924f27777ba05206910",
+          "dataset_record_sha256": "b73bb88e707df704c0799b75e8ec4a9001d5b515fb8f8693a0630a99a7d20b49"
+        },
+        {
+          "sample_id": "wiki-visa-2018",
+          "image_path": "data/wiki_visa/images/2018.png",
+          "image_sha256": "f57a4151f9156826f719a8d2405f0d373405ac2259bb4adbc3c342d775f0dc52",
+          "question_sha256": "ac6eb89b53bb3a7dfcdafcc3921938d2124c2c60f16a2644c4d14d3a08ed9656",
+          "dataset_record_sha256": "16c5b685f310d5c92e816a95ac74fc031a3465f1b9a38b56c8abe88cb9996c89"
+        },
+        {
+          "sample_id": "wiki-visa-2026",
+          "image_path": "data/wiki_visa/images/2026.png",
+          "image_sha256": "f7be43964911b39a373894c5e2f20f7f946017321057de1594baa7d2aca2a6a1",
+          "question_sha256": "2fb0efd264cf2e7b22117b1302a15696c8d9b69c3ee05cd6d2be55cc7b90c8d1",
+          "dataset_record_sha256": "31c9e3c019aa4ae7cb3c3c875feece6cef0ec4b4c7d5fb53d1f39dacaba4b7d3"
+        },
+        {
+          "sample_id": "wiki-visa-2048",
+          "image_path": "data/wiki_visa/images/2048.png",
+          "image_sha256": "d8e4a8d702972bf4c427b1b0ed1324d0dc62a726eb2a39e63c0de32aebe9c6d8",
+          "question_sha256": "b5cadcd6c99b8f9f0051098e8150f4225d5ddd4f5f2816a375e7895dc55d9dce",
+          "dataset_record_sha256": "0d29f8d222b6b1b1fb5f8f981e276cdb449e47069719aac23d4bb04137759daa"
+        },
+        {
+          "sample_id": "wiki-visa-2083",
+          "image_path": "data/wiki_visa/images/2083.png",
+          "image_sha256": "cdc68bf5215ba55846c5eb283eab649810c437aa2b241a6b80268688a2a15861",
+          "question_sha256": "c8bbe9d5eaa1a0c848851eed360a938192943b18efbd1ac4606bf441087ee2ed",
+          "dataset_record_sha256": "a26c292194518291c6ea3960322783fa9a2e304ca0fb0d2193c2823d01b1ac1e"
+        },
+        {
+          "sample_id": "wiki-visa-2112",
+          "image_path": "data/wiki_visa/images/2112.png",
+          "image_sha256": "02bd00e2248b7de2308364574292a022f1b26b083f65a9aceab0317067df66ba",
+          "question_sha256": "6166735732c6b5717970b91e5f8c47a5ba9e2ef8a55ff7b6800dacbc1b4688d2",
+          "dataset_record_sha256": "8ce93d4cc00b8c26b91b0e5e6158bc2957a65772ef15268bda8712bd4c3b9bac"
+        },
+        {
+          "sample_id": "wiki-visa-2123",
+          "image_path": "data/wiki_visa/images/2123.png",
+          "image_sha256": "d1577dc39b5a127f05d7654e54f056c43e93bb73ec0c10cfd0e246ffdcac0a11",
+          "question_sha256": "ec5b52c9e47add70f54846e69e70c35ae472548c7c70b77c35a687d8bbc27574",
+          "dataset_record_sha256": "011dc5212f80d2bf200f37e259efc70b90be40cc4049c25ec39308de6241adfb"
+        },
+        {
+          "sample_id": "wiki-visa-2180",
+          "image_path": "data/wiki_visa/images/2180.png",
+          "image_sha256": "1645078c972d98aba4c5b1d79f397ef22f0c3472ab16c071f0478920ca41ceeb",
+          "question_sha256": "1a94b8cd26ce5b64be30f9d1b6962aa565d86042a4b8f2c5e21a5d849e48884c",
+          "dataset_record_sha256": "7cfa7875a0735beb400a98cf24d8429d7e0449db8c73685a0f475da75c200eb5"
+        },
+        {
+          "sample_id": "wiki-visa-2198",
+          "image_path": "data/wiki_visa/images/2198.png",
+          "image_sha256": "05ae79f11b05be4217afb6ca137cb6a46aa17bc4603eeab4072ea23f1b57a710",
+          "question_sha256": "2363a803cbe521f1e1de035e515f27f1f97cc7ece90cd1b57456c88a56ae6692",
+          "dataset_record_sha256": "3719184ca586560db383f010fdcb6f679c4fa133a6b2e9f2303b2863618176d8"
+        },
+        {
+          "sample_id": "wiki-visa-2227",
+          "image_path": "data/wiki_visa/images/2227.png",
+          "image_sha256": "813b2d5239b3c89b474a6f423979a123f536f9b2a14604f26faccb704d24c29f",
+          "question_sha256": "917e9b53749ee287a065557bd078d6074f4c405c074e7f57c6714b7ea05d688b",
+          "dataset_record_sha256": "d4e4870956594548b77e3f012b91ae891f426f5201653151b2d8a3cebe5c67e1"
+        },
+        {
+          "sample_id": "wiki-visa-2239",
+          "image_path": "data/wiki_visa/images/2239.png",
+          "image_sha256": "13669fa023de4178f429c7e5ccd090945041c59fb5606c3804ce5b96dc670c28",
+          "question_sha256": "0328e8f2608badd5ebd82cc4bbf22ada48bdfa0a2d95e7916fd909b4387919f5",
+          "dataset_record_sha256": "6992bbb63858af45ad6c64bd1729a3ac582df49586190c565afdad798df5bdba"
+        },
+        {
+          "sample_id": "wiki-visa-2270",
+          "image_path": "data/wiki_visa/images/2270.png",
+          "image_sha256": "e8c6aae47e05a6f32fbc4c16a1f0f4a2f7b1b471a822b89d23ffce33b76b3cd8",
+          "question_sha256": "9aa67984163da2417ce22aadc8dc932a12885aef45db8beb5377a534550d6bbd",
+          "dataset_record_sha256": "84c4baca0b65d2da6b42490fb7b115f13233663a0153ce7ed7f042c532bfa31d"
+        },
+        {
+          "sample_id": "wiki-visa-2278",
+          "image_path": "data/wiki_visa/images/2278.png",
+          "image_sha256": "b0881015bc93f989f2bd6d4ff5ac677fd6b54eccce61bc58207d025c93bf30a3",
+          "question_sha256": "3fdb223ae4c3da31c4de61aa00f205c8eaba39bc18910d6738e8c72b580685c6",
+          "dataset_record_sha256": "477e3a0da4e3cd4fef2099b8d4b65295b0b0d19d6be599ff1e5978fe9b9a1cf1"
+        },
+        {
+          "sample_id": "wiki-visa-2309",
+          "image_path": "data/wiki_visa/images/2309.png",
+          "image_sha256": "9b44eaa600e3b60fcc86c4ba67f6c1eadb1ffb4606f76b6a216478e949b89edf",
+          "question_sha256": "bf9f07453c01511600bf0039b2f28494170ee7e17a4e3bc155afa654951e42f3",
+          "dataset_record_sha256": "c50db16fb541f1df14d29ea39aba5d3d9eff96de35ce9e2ab7fe1b14492e7623"
+        },
+        {
+          "sample_id": "wiki-visa-2312",
+          "image_path": "data/wiki_visa/images/2312.png",
+          "image_sha256": "64933eae86d75aa17486b4ad1b7be690fbcf83ee0e1fbe86983911dbe988f6b1",
+          "question_sha256": "5542e3e92621ad10e03264c83da14d5cc351d944805ae03fda90e7aa58f37853",
+          "dataset_record_sha256": "b87603c12c2758cd91b87158e831f09de5b19bcc648d5ddddcb8873430ffec67"
+        },
+        {
+          "sample_id": "wiki-visa-2325",
+          "image_path": "data/wiki_visa/images/2325.png",
+          "image_sha256": "5af6312e963b53b55b2974e10710c7f9e9df8ec727119d296966aab72f7808fb",
+          "question_sha256": "01f616ff30fcb59c02956b87549e87c99b2f1b4d73b4d2cfe9ae5dc32e04c660",
+          "dataset_record_sha256": "19e4a489e016d83bb29e3b217f464d50964a47910e35a7b5ca6ea8afb231ee46"
+        },
+        {
+          "sample_id": "wiki-visa-2381",
+          "image_path": "data/wiki_visa/images/2381.png",
+          "image_sha256": "89579875513cde96853012db3a6bbfa1263b194f8fce3200214e383faab4495e",
+          "question_sha256": "3dbc3fd858fa5831a9270380a66e19b74a86f1eb1e410a1b8f96755862aa75f8",
+          "dataset_record_sha256": "ac8a9d26d9b8036006d0baa96ff88262f2956d1d51e11845c9bdabb5a48122e9"
+        },
+        {
+          "sample_id": "wiki-visa-2410",
+          "image_path": "data/wiki_visa/images/2410.png",
+          "image_sha256": "3fff8d91d30bc85bd2e32f3ec6d4c63dd2ccbb512f41c2795f3df0b9e41d3d80",
+          "question_sha256": "35dd8691b029f28a13012587124d9bec70412be816592d2db327b5a25780c6fa",
+          "dataset_record_sha256": "51e14b6e4e49e4942ccd6198504c0858c9c238738df00cedc99621cb92a53f90"
+        },
+        {
+          "sample_id": "wiki-visa-2413",
+          "image_path": "data/wiki_visa/images/2413.png",
+          "image_sha256": "edfc026a3fe085036177b1e4335ea6573ba547f759d1bd3bb99f55b009653481",
+          "question_sha256": "903d0e3e6dc8cbf9878c7e8c56d539aebeb129ef9e318479c0f25dbe3d3bd08a",
+          "dataset_record_sha256": "9a9e709a584a880f7695c7bccf56b86571b49a3fc16598d0c5f621fe546a18a1"
+        },
+        {
+          "sample_id": "wiki-visa-2545",
+          "image_path": "data/wiki_visa/images/2545.png",
+          "image_sha256": "8f2d3060ef92ac9a793fe292eb4933a30895e64ea595a4e577d98e083bce116b",
+          "question_sha256": "ba1e52017e73ac7ecd8ffc1a5ca1be3ba4b2ae78fe8954164af5bceec5a1d991",
+          "dataset_record_sha256": "7397472404c8eceb85b074b12cde6192e2381606f47efedd7ccbb05eb784b940"
+        },
+        {
+          "sample_id": "wiki-visa-2589",
+          "image_path": "data/wiki_visa/images/2589.png",
+          "image_sha256": "4e287a723ae3f40b7cbd63c49bbb2873bb439af6ee0ec038c1d5fd969b75b1db",
+          "question_sha256": "ad62d85510fa207806f12910e2ceacc49c5c67dde5e111f77ce3c4b40c1d603b",
+          "dataset_record_sha256": "1ef2a8d019e293eb25f7cf93267a24da6a18a7a9610f2a2827d22e00cae4971e"
+        },
+        {
+          "sample_id": "wiki-visa-2604",
+          "image_path": "data/wiki_visa/images/2604.png",
+          "image_sha256": "5452bed99b1d574e935e92b8552e675e90f10c0554ccca7b9ce7637b1c0951d8",
+          "question_sha256": "1276e126f5dbb5af41ae1ff3fa67a4e270f23f032741ff25e96c61b4b4729072",
+          "dataset_record_sha256": "dba2b847ef6e7b9defa691a7840fc97cbee18946a1a6ab58a3cc4d24fff69f28"
+        },
+        {
+          "sample_id": "wiki-visa-2614",
+          "image_path": "data/wiki_visa/images/2614.png",
+          "image_sha256": "d46432fa40289f3f8309c4136061490a581b42cd47a67331b2a9d65946b3567e",
+          "question_sha256": "491ce67596a138b281dde0db75da5d88a2bcd2a34cb0374e14f6b193a4314241",
+          "dataset_record_sha256": "9cc0ebe71a885de4875f490056deb1614cbb902a5bf72c43690c770bdf845eeb"
+        },
+        {
+          "sample_id": "wiki-visa-2618",
+          "image_path": "data/wiki_visa/images/2618.png",
+          "image_sha256": "91f5652ccaa5b4de096d110b238ae242a27482c7ce456fecce1976a2dfcde7d7",
+          "question_sha256": "3f1a74cb5f87e87d506211bff1fbcbf114fa91197573ea4ebc6520872f5db1d9",
+          "dataset_record_sha256": "6816ae4a3deea78b1c9dc648612f28ace89ba4988943aea4a5c2f168d3e84ee4"
+        },
+        {
+          "sample_id": "wiki-visa-2620",
+          "image_path": "data/wiki_visa/images/2620.png",
+          "image_sha256": "12143ac106a1255982af72416a2da139f0ef4211caaf8e1793144fee523bf7f7",
+          "question_sha256": "2e953f0e85c5245d43f3af686692424c6d6e30b187ac9dc05aa728d9ad1267a2",
+          "dataset_record_sha256": "ea26b3705d48426d2f92ef9c545ad54d69e235752c04be87611595857b8fb80f"
+        },
+        {
+          "sample_id": "wiki-visa-2679",
+          "image_path": "data/wiki_visa/images/2679.png",
+          "image_sha256": "ac8758f00c6cff400335332f46880ec1c52d34ae8f4a32f00efe9ed32806c906",
+          "question_sha256": "ac9f869a69c56af08c2862d9436f14753a0b6ae2b6352dd1fd8bf4f68554c47b",
+          "dataset_record_sha256": "e63b305962e19f1e50a21beaa0547449684199a23be85a1f265fcbdd27e01007"
+        },
+        {
+          "sample_id": "wiki-visa-2702",
+          "image_path": "data/wiki_visa/images/2702.png",
+          "image_sha256": "c955b2083708bed39f1b82780db26b85c9063ef2db0d20bede29a4b9d16be958",
+          "question_sha256": "8eac080d34134c2a10e77b982157d871284b9d4dc3f5ba71d2146580252bc42f",
+          "dataset_record_sha256": "f036692d1f027d1151e9685cda2a037954416c166750ad977fa25caf18147f3e"
+        },
+        {
+          "sample_id": "wiki-visa-2705",
+          "image_path": "data/wiki_visa/images/2705.png",
+          "image_sha256": "5362fb310ee63da35301568e7e2c614a3f1b5bda381c90a5c0a72c9183c6c342",
+          "question_sha256": "1a19b83003de84de5acd33a4e0cebb707456928f8cb11b26448d36d879e93e8a",
+          "dataset_record_sha256": "3ec8836bd21b0a04b1b3d15714cf04a76afb4f4e59969d0b6c2fece91220fc61"
+        },
+        {
+          "sample_id": "wiki-visa-2734",
+          "image_path": "data/wiki_visa/images/2734.png",
+          "image_sha256": "0b5efb56352ac9d9bf4fb86cc291b245f069008b9886dfcc47e0b6096160c102",
+          "question_sha256": "b4898961c4848799d508d94105fe9089873174cdc021e909dcdc8d879734d5ab",
+          "dataset_record_sha256": "84879f7dc93dcbe286367516f8cfe062da7f3145fcbf6f679c17b541194a09ae"
+        },
+        {
+          "sample_id": "wiki-visa-2741",
+          "image_path": "data/wiki_visa/images/2741.png",
+          "image_sha256": "e5d51f0f4f35d8c416341ee43dbebf229dfec706628e5f1cb8a9acb2e36a3d58",
+          "question_sha256": "a51046ddc78a5542171486f11b3806478b409ce4fd8db75e04dd77192801646a",
+          "dataset_record_sha256": "f8b6d21f9829d4d99a2d9bb2c7c648124b433b3254de37e5aa3bb9cbd2a40754"
+        },
+        {
+          "sample_id": "wiki-visa-2802",
+          "image_path": "data/wiki_visa/images/2802.png",
+          "image_sha256": "d2f1519301c27e2bd4d54f52a15c487f9ddd537bbf8a17da223812be60f99908",
+          "question_sha256": "e296e532c68b505c171e242409394a8cf7baac9350eaae4b02dd06e167271b87",
+          "dataset_record_sha256": "59bfc24c2a0e098c023ab0e722d932ee6556f4197a7fe33c955c07ccc02ce85c"
+        },
+        {
+          "sample_id": "wiki-visa-2820",
+          "image_path": "data/wiki_visa/images/2820.png",
+          "image_sha256": "0866ddc2bfddb12def5337140d680ac53c7669ec233f843ad918e009a51f5d48",
+          "question_sha256": "56d74242a6dba3acbf55675f6ccfd823c58ce530ea0abefb1a47b9d1c13202dd",
+          "dataset_record_sha256": "b2db3ce779dce7a28fb325822f1a055a22f5e944d2748eb4a53f785d14183a1f"
+        },
+        {
+          "sample_id": "wiki-visa-2866",
+          "image_path": "data/wiki_visa/images/2866.png",
+          "image_sha256": "784741bac07700b61cb63842069b6b299743ae2f2887eaf737746fc8897b2ddb",
+          "question_sha256": "e4aee881691b1c9790f2189e4690bf96dec7b75c4cfd0bbbd9cccee79d37d587",
+          "dataset_record_sha256": "cbc965bfd4394fe5be31f157a704a89283ac3947105b0c384011c23a620ada35"
+        },
+        {
+          "sample_id": "wiki-visa-2879",
+          "image_path": "data/wiki_visa/images/2879.png",
+          "image_sha256": "f856331e25f78e31702fbc44c08f1963b030368dea66a0d9d124cec79c657d17",
+          "question_sha256": "4ef4c9c35d712eb0e1b09f65b0dea336446937b6e01d85b53845640c02c98fef",
+          "dataset_record_sha256": "9eb0fad661fa105047cdc8aa56e04c1b6312164f170d5a8e760350601ea9d5fe"
+        },
+        {
+          "sample_id": "wiki-visa-2880",
+          "image_path": "data/wiki_visa/images/2880.png",
+          "image_sha256": "1f50a6d9680c18123998f6e382cb1cebeb2b52c7e03e91263f5b47614c0918bc",
+          "question_sha256": "644f7b23c77d001832481b8860fe8a055dceebb2269b3149f183e77e39a902c3",
+          "dataset_record_sha256": "9a0a8ac667b271fd9a5c0f57aa45b31d03b67941150ca8476e5cbff32c356bb5"
+        },
+        {
+          "sample_id": "wiki-visa-2893",
+          "image_path": "data/wiki_visa/images/2893.png",
+          "image_sha256": "f6a0bc009cd3b869b71e8a6d0a6076cec09e85ea6b41be4b2481375dd45710db",
+          "question_sha256": "e5d2237a6e56a29a2bd6396b069a2867f2f32022896844518b0ab74ba26c82e8",
+          "dataset_record_sha256": "5d3dceea66ec91775ffd49b0e822f791f0a00794d38a987b764c1cd636c911dc"
+        },
+        {
+          "sample_id": "wiki-visa-2899",
+          "image_path": "data/wiki_visa/images/2899.png",
+          "image_sha256": "307c221c23a0725a76993e28ae174bc3f2ecb0ff7e8cd1b1c74824045a8bc780",
+          "question_sha256": "e06e12bf6dc2653cd30174e71f3f1b9803babdf2dd4430b48eb29c5399823ed5",
+          "dataset_record_sha256": "b3bee4f73fb85b6762f135ab60d94c4d2cee054abdabc6505b80db54666bdd29"
+        },
+        {
+          "sample_id": "wiki-visa-2961",
+          "image_path": "data/wiki_visa/images/2961.png",
+          "image_sha256": "be05f842d324cd39b9290fa5dcbb612c26a70340ddf69f42b98eca5facd0fa53",
+          "question_sha256": "894c5b15e5a2792fd351eb87b0c774d04a2323479cdf24842051a3cd6c72fd04",
+          "dataset_record_sha256": "92d113dfb78d39bc1691786e229c915938967159385e75c93804347a2b004231"
+        },
+        {
+          "sample_id": "wiki-visa-2965",
+          "image_path": "data/wiki_visa/images/2965.png",
+          "image_sha256": "9639060c0861f046f889d337b10d42e4c2a6bf4412e075ad1d94f8d86efdeb7a",
+          "question_sha256": "18626d2a7ca7c712cde65595b1489e8587210660b444f5df74678053f38f4f29",
+          "dataset_record_sha256": "f768a918e2701295c1a84b629f61c953f224dd45008e659dd6ca2ded2ba7539c"
+        },
+        {
+          "sample_id": "wiki-visa-2966",
+          "image_path": "data/wiki_visa/images/2966.png",
+          "image_sha256": "5583ecfd2cbf21a9e2e8a5660fe7b1ac1fc6f0cad6bb599000f0997f209f876c",
+          "question_sha256": "89dbaa6bb0e609541952da6e3ed65c26478aef89a3613a4b1cce887c966663cf",
+          "dataset_record_sha256": "66ac8a9f5e6965ffde343c301de7e228ff018a93649c3adea4249fc94e1e5de0"
+        },
+        {
+          "sample_id": "wiki-visa-2997",
+          "image_path": "data/wiki_visa/images/2997.png",
+          "image_sha256": "fe74559eef38773f871544c7bd3641bbd19a147c62c3d3eaa14a4e3ae4040704",
+          "question_sha256": "12e447efd41acfd54c2e50b2b228899c1a257a989af7025e573708e947839a4b",
+          "dataset_record_sha256": "9ddc8293156ebf81df4d3f81dd013cff68940432b344e948a285f85a48c6bcf1"
+        }
+      ]
+    }
+  ]
+}

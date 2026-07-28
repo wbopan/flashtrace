@@ -1,0 +1,1237 @@
+{
+  "schema_version": 1,
+  "faithfulness_dir": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness",
+  "generation_evaluation": null,
+  "model_output": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.model.jsonl",
+  "bootstrap_draws": 50000,
+  "bootstrap_seed": 17,
+  "metric_directions": {
+    "deletion_auc": "lower",
+    "insertion_auc": "higher",
+    "visual_mas": "lower"
+  },
+  "overall": {
+    "samples": 120,
+    "sample_ids": [
+      "wiki-visa-0013",
+      "wiki-visa-0051",
+      "wiki-visa-0054",
+      "wiki-visa-0057",
+      "wiki-visa-0061",
+      "wiki-visa-0070",
+      "wiki-visa-0081",
+      "wiki-visa-0170",
+      "wiki-visa-0179",
+      "wiki-visa-0203",
+      "wiki-visa-0217",
+      "wiki-visa-0250",
+      "wiki-visa-0256",
+      "wiki-visa-0276",
+      "wiki-visa-0320",
+      "wiki-visa-0356",
+      "wiki-visa-0392",
+      "wiki-visa-0408",
+      "wiki-visa-0465",
+      "wiki-visa-0471",
+      "wiki-visa-0509",
+      "wiki-visa-0556",
+      "wiki-visa-0567",
+      "wiki-visa-0569",
+      "wiki-visa-0581",
+      "wiki-visa-0631",
+      "wiki-visa-0659",
+      "wiki-visa-0668",
+      "wiki-visa-0721",
+      "wiki-visa-0755",
+      "wiki-visa-0762",
+      "wiki-visa-0798",
+      "wiki-visa-0817",
+      "wiki-visa-0830",
+      "wiki-visa-0839",
+      "wiki-visa-0872",
+      "wiki-visa-0905",
+      "wiki-visa-0908",
+      "wiki-visa-0931",
+      "wiki-visa-0987",
+      "wiki-visa-1008",
+      "wiki-visa-1016",
+      "wiki-visa-1028",
+      "wiki-visa-1036",
+      "wiki-visa-1050",
+      "wiki-visa-1069",
+      "wiki-visa-1095",
+      "wiki-visa-1113",
+      "wiki-visa-1118",
+      "wiki-visa-1128",
+      "wiki-visa-1140",
+      "wiki-visa-1148",
+      "wiki-visa-1174",
+      "wiki-visa-1187",
+      "wiki-visa-1232",
+      "wiki-visa-1245",
+      "wiki-visa-1326",
+      "wiki-visa-1330",
+      "wiki-visa-1361",
+      "wiki-visa-1363",
+      "wiki-visa-1383",
+      "wiki-visa-1428",
+      "wiki-visa-1450",
+      "wiki-visa-1466",
+      "wiki-visa-1486",
+      "wiki-visa-1539",
+      "wiki-visa-1608",
+      "wiki-visa-1622",
+      "wiki-visa-1743",
+      "wiki-visa-1744",
+      "wiki-visa-1767",
+      "wiki-visa-1772",
+      "wiki-visa-1780",
+      "wiki-visa-1848",
+      "wiki-visa-1857",
+      "wiki-visa-1858",
+      "wiki-visa-1871",
+      "wiki-visa-1930",
+      "wiki-visa-1953",
+      "wiki-visa-1982",
+      "wiki-visa-2018",
+      "wiki-visa-2026",
+      "wiki-visa-2048",
+      "wiki-visa-2083",
+      "wiki-visa-2112",
+      "wiki-visa-2123",
+      "wiki-visa-2180",
+      "wiki-visa-2198",
+      "wiki-visa-2227",
+      "wiki-visa-2239",
+      "wiki-visa-2270",
+      "wiki-visa-2278",
+      "wiki-visa-2309",
+      "wiki-visa-2312",
+      "wiki-visa-2325",
+      "wiki-visa-2381",
+      "wiki-visa-2410",
+      "wiki-visa-2413",
+      "wiki-visa-2545",
+      "wiki-visa-2589",
+      "wiki-visa-2604",
+      "wiki-visa-2614",
+      "wiki-visa-2618",
+      "wiki-visa-2620",
+      "wiki-visa-2679",
+      "wiki-visa-2702",
+      "wiki-visa-2705",
+      "wiki-visa-2734",
+      "wiki-visa-2741",
+      "wiki-visa-2802",
+      "wiki-visa-2820",
+      "wiki-visa-2866",
+      "wiki-visa-2879",
+      "wiki-visa-2880",
+      "wiki-visa-2893",
+      "wiki-visa-2899",
+      "wiki-visa-2961",
+      "wiki-visa-2965",
+      "wiki-visa-2966",
+      "wiki-visa-2997"
+    ],
+    "estimates": {
+      "random": {
+        "deletion_auc": {
+          "mean": 0.44140728342283353,
+          "ci95_low": 0.3974841057134602,
+          "ci95_high": 0.48574822377641463
+        },
+        "insertion_auc": {
+          "mean": 0.5422888016334869,
+          "ci95_low": 0.49357945885134435,
+          "ci95_high": 0.5899853023692494
+        },
+        "visual_mas": {
+          "mean": 0.568083177638605,
+          "ci95_low": 0.5274921010620522,
+          "ci95_high": 0.6095297755201189
+        }
+      },
+      "center": {
+        "deletion_auc": {
+          "mean": 0.5151080373600979,
+          "ci95_low": 0.4683683217708593,
+          "ci95_high": 0.561440323493036
+        },
+        "insertion_auc": {
+          "mean": 0.4399410264207467,
+          "ci95_low": 0.39095004207981876,
+          "ci95_high": 0.4897489690536804
+        },
+        "visual_mas": {
+          "mean": 0.603556181021074,
+          "ci95_low": 0.5560386643442229,
+          "ci95_high": 0.6509701727806241
+        }
+      },
+      "visual-loo": {
+        "deletion_auc": {
+          "mean": 0.22658907925743468,
+          "ci95_low": 0.18683102373481714,
+          "ci95_high": 0.26842340168285567
+        },
+        "insertion_auc": {
+          "mean": 0.7953983744012881,
+          "ci95_low": 0.7652833120288614,
+          "ci95_high": 0.8237880347036742
+        },
+        "visual_mas": {
+          "mean": 0.32365920909558443,
+          "ci95_low": 0.2733946373004027,
+          "ci95_high": 0.3759764046514105
+        }
+      },
+      "ifr-span": {
+        "deletion_auc": {
+          "mean": 0.34641516738609696,
+          "ci95_low": 0.2998867157051839,
+          "ci95_high": 0.3933950134928802
+        },
+        "insertion_auc": {
+          "mean": 0.679263740521113,
+          "ci95_low": 0.6370159441772687,
+          "ci95_high": 0.7196774381712154
+        },
+        "visual_mas": {
+          "mean": 0.4515796758037252,
+          "ci95_low": 0.39763397689327884,
+          "ci95_high": 0.5059978635719533
+        }
+      },
+      "visual-ig": {
+        "deletion_auc": {
+          "mean": 0.44017920014305756,
+          "ci95_low": 0.3937898736445889,
+          "ci95_high": 0.4863095224210483
+        },
+        "insertion_auc": {
+          "mean": 0.545288645760575,
+          "ci95_low": 0.5010356597382146,
+          "ci95_high": 0.5886045021819484
+        },
+        "visual_mas": {
+          "mean": 0.531300516593486,
+          "ci95_low": 0.4779534564333642,
+          "ci95_high": 0.584223820032484
+        }
+      },
+      "attnlrp": {
+        "deletion_auc": {
+          "mean": 0.39271295478033097,
+          "ci95_low": 0.33818659338861573,
+          "ci95_high": 0.44743802077754813
+        },
+        "insertion_auc": {
+          "mean": 0.6438790127038707,
+          "ci95_low": 0.5907654135799068,
+          "ci95_high": 0.6951380736057623
+        },
+        "visual_mas": {
+          "mean": 0.4963749709510475,
+          "ci95_low": 0.4306434793190119,
+          "ci95_high": 0.5621441959041472
+        }
+      },
+      "flashtrace": {
+        "deletion_auc": {
+          "mean": 0.3303071579722267,
+          "ci95_low": 0.284814356601152,
+          "ci95_high": 0.37677635314130115
+        },
+        "insertion_auc": {
+          "mean": 0.694987551755394,
+          "ci95_low": 0.653920722827978,
+          "ci95_high": 0.7346543335138059
+        },
+        "visual_mas": {
+          "mean": 0.433139180457984,
+          "ci95_low": 0.3814363637146593,
+          "ci95_high": 0.4853370066502792
+        }
+      },
+      "flashtrace-all-gen": {
+        "deletion_auc": {
+          "mean": 0.33527698408578827,
+          "ci95_low": 0.2888622328212104,
+          "ci95_high": 0.38279502173086744
+        },
+        "insertion_auc": {
+          "mean": 0.6931955547860978,
+          "ci95_low": 0.6507438467815366,
+          "ci95_high": 0.733719910613884
+        },
+        "visual_mas": {
+          "mean": 0.4394504521068059,
+          "ci95_low": 0.38540351756200375,
+          "ci95_high": 0.4936316259981533
+        }
+      }
+    },
+    "flashtrace_favorable_difference": {
+      "random": {
+        "deletion_auc": {
+          "mean": 0.11110012545060685,
+          "ci95_low": 0.07039275381141666,
+          "ci95_high": 0.1523878800516759,
+          "wins": 77,
+          "ties": 9,
+          "losses": 34
+        },
+        "insertion_auc": {
+          "mean": 0.15269875012190698,
+          "ci95_low": 0.11073356601457991,
+          "ci95_high": 0.1955643867975498,
+          "wins": 86,
+          "ties": 5,
+          "losses": 29
+        },
+        "visual_mas": {
+          "mean": 0.1349439971806211,
+          "ci95_low": 0.09124669410718661,
+          "ci95_high": 0.17880445795389618,
+          "wins": 85,
+          "ties": 3,
+          "losses": 32
+        }
+      },
+      "center": {
+        "deletion_auc": {
+          "mean": 0.18480087938787115,
+          "ci95_low": 0.13576716357042662,
+          "ci95_high": 0.2335236489017706,
+          "wins": 82,
+          "ties": 8,
+          "losses": 30
+        },
+        "insertion_auc": {
+          "mean": 0.25504652533464717,
+          "ci95_low": 0.20529124230633775,
+          "ci95_high": 0.30463971819923835,
+          "wins": 98,
+          "ties": 4,
+          "losses": 18
+        },
+        "visual_mas": {
+          "mean": 0.17041700056309014,
+          "ci95_low": 0.12159346624619857,
+          "ci95_high": 0.21955496356161555,
+          "wins": 83,
+          "ties": 3,
+          "losses": 34
+        }
+      },
+      "visual-loo": {
+        "deletion_auc": {
+          "mean": -0.10371807871479201,
+          "ci95_low": -0.13622095203830295,
+          "ci95_high": -0.07246994623434297,
+          "wins": 25,
+          "ties": 26,
+          "losses": 69
+        },
+        "insertion_auc": {
+          "mean": -0.10041082264589431,
+          "ci95_low": -0.1379543678557343,
+          "ci95_high": -0.06435459597198993,
+          "wins": 28,
+          "ties": 7,
+          "losses": 85
+        },
+        "visual_mas": {
+          "mean": -0.10947997136239947,
+          "ci95_low": -0.1484842680376406,
+          "ci95_high": -0.07139702380450651,
+          "wins": 33,
+          "ties": 5,
+          "losses": 82
+        }
+      },
+      "ifr-span": {
+        "deletion_auc": {
+          "mean": 0.01610800941387021,
+          "ci95_low": 0.003906671008840597,
+          "ci95_high": 0.028285984102511878,
+          "wins": 55,
+          "ties": 34,
+          "losses": 31
+        },
+        "insertion_auc": {
+          "mean": 0.01572381123428083,
+          "ci95_low": 0.0036356271359720377,
+          "ci95_high": 0.029140704963488504,
+          "wins": 67,
+          "ties": 14,
+          "losses": 39
+        },
+        "visual_mas": {
+          "mean": 0.018440495345741253,
+          "ci95_low": 0.00258622044372582,
+          "ci95_high": 0.034248788331211026,
+          "wins": 63,
+          "ties": 7,
+          "losses": 50
+        }
+      },
+      "visual-ig": {
+        "deletion_auc": {
+          "mean": 0.1098720421708309,
+          "ci95_low": 0.0747471122585157,
+          "ci95_high": 0.1455284712414614,
+          "wins": 82,
+          "ties": 11,
+          "losses": 27
+        },
+        "insertion_auc": {
+          "mean": 0.14969890599481891,
+          "ci95_low": 0.10481094091188908,
+          "ci95_high": 0.1948302363947242,
+          "wins": 84,
+          "ties": 4,
+          "losses": 32
+        },
+        "visual_mas": {
+          "mean": 0.09816133613550207,
+          "ci95_low": 0.05826094685537267,
+          "ci95_high": 0.13958536437933364,
+          "wins": 73,
+          "ties": 6,
+          "losses": 41
+        }
+      },
+      "attnlrp": {
+        "deletion_auc": {
+          "mean": 0.06240579680810431,
+          "ci95_low": 0.030168773107831087,
+          "ci95_high": 0.09624704116954498,
+          "wins": 56,
+          "ties": 21,
+          "losses": 43
+        },
+        "insertion_auc": {
+          "mean": 0.05110853905152313,
+          "ci95_low": 0.013044106550416452,
+          "ci95_high": 0.0905043103293891,
+          "wins": 62,
+          "ties": 10,
+          "losses": 48
+        },
+        "visual_mas": {
+          "mean": 0.06323579049306353,
+          "ci95_low": 0.02258509823406137,
+          "ci95_high": 0.10534240823769646,
+          "wins": 56,
+          "ties": 7,
+          "losses": 57
+        }
+      },
+      "flashtrace-all-gen": {
+        "deletion_auc": {
+          "mean": 0.004969826113561615,
+          "ci95_low": -0.003565353717218621,
+          "ci95_high": 0.013605933723624461,
+          "wins": 40,
+          "ties": 44,
+          "losses": 36
+        },
+        "insertion_auc": {
+          "mean": 0.0017919969692959462,
+          "ci95_low": -0.007704569253857826,
+          "ci95_high": 0.012773439402498895,
+          "wins": 45,
+          "ties": 22,
+          "losses": 53
+        },
+        "visual_mas": {
+          "mean": 0.006311271648821953,
+          "ci95_low": -0.006105377994738523,
+          "ci95_high": 0.01868565458733388,
+          "wins": 57,
+          "ties": 8,
+          "losses": 55
+        }
+      }
+    }
+  },
+  "positive_only_available": true,
+  "positive_only_ordering": {
+    "samples": 120,
+    "sample_ids": [
+      "wiki-visa-0013",
+      "wiki-visa-0051",
+      "wiki-visa-0054",
+      "wiki-visa-0057",
+      "wiki-visa-0061",
+      "wiki-visa-0070",
+      "wiki-visa-0081",
+      "wiki-visa-0170",
+      "wiki-visa-0179",
+      "wiki-visa-0203",
+      "wiki-visa-0217",
+      "wiki-visa-0250",
+      "wiki-visa-0256",
+      "wiki-visa-0276",
+      "wiki-visa-0320",
+      "wiki-visa-0356",
+      "wiki-visa-0392",
+      "wiki-visa-0408",
+      "wiki-visa-0465",
+      "wiki-visa-0471",
+      "wiki-visa-0509",
+      "wiki-visa-0556",
+      "wiki-visa-0567",
+      "wiki-visa-0569",
+      "wiki-visa-0581",
+      "wiki-visa-0631",
+      "wiki-visa-0659",
+      "wiki-visa-0668",
+      "wiki-visa-0721",
+      "wiki-visa-0755",
+      "wiki-visa-0762",
+      "wiki-visa-0798",
+      "wiki-visa-0817",
+      "wiki-visa-0830",
+      "wiki-visa-0839",
+      "wiki-visa-0872",
+      "wiki-visa-0905",
+      "wiki-visa-0908",
+      "wiki-visa-0931",
+      "wiki-visa-0987",
+      "wiki-visa-1008",
+      "wiki-visa-1016",
+      "wiki-visa-1028",
+      "wiki-visa-1036",
+      "wiki-visa-1050",
+      "wiki-visa-1069",
+      "wiki-visa-1095",
+      "wiki-visa-1113",
+      "wiki-visa-1118",
+      "wiki-visa-1128",
+      "wiki-visa-1140",
+      "wiki-visa-1148",
+      "wiki-visa-1174",
+      "wiki-visa-1187",
+      "wiki-visa-1232",
+      "wiki-visa-1245",
+      "wiki-visa-1326",
+      "wiki-visa-1330",
+      "wiki-visa-1361",
+      "wiki-visa-1363",
+      "wiki-visa-1383",
+      "wiki-visa-1428",
+      "wiki-visa-1450",
+      "wiki-visa-1466",
+      "wiki-visa-1486",
+      "wiki-visa-1539",
+      "wiki-visa-1608",
+      "wiki-visa-1622",
+      "wiki-visa-1743",
+      "wiki-visa-1744",
+      "wiki-visa-1767",
+      "wiki-visa-1772",
+      "wiki-visa-1780",
+      "wiki-visa-1848",
+      "wiki-visa-1857",
+      "wiki-visa-1858",
+      "wiki-visa-1871",
+      "wiki-visa-1930",
+      "wiki-visa-1953",
+      "wiki-visa-1982",
+      "wiki-visa-2018",
+      "wiki-visa-2026",
+      "wiki-visa-2048",
+      "wiki-visa-2083",
+      "wiki-visa-2112",
+      "wiki-visa-2123",
+      "wiki-visa-2180",
+      "wiki-visa-2198",
+      "wiki-visa-2227",
+      "wiki-visa-2239",
+      "wiki-visa-2270",
+      "wiki-visa-2278",
+      "wiki-visa-2309",
+      "wiki-visa-2312",
+      "wiki-visa-2325",
+      "wiki-visa-2381",
+      "wiki-visa-2410",
+      "wiki-visa-2413",
+      "wiki-visa-2545",
+      "wiki-visa-2589",
+      "wiki-visa-2604",
+      "wiki-visa-2614",
+      "wiki-visa-2618",
+      "wiki-visa-2620",
+      "wiki-visa-2679",
+      "wiki-visa-2702",
+      "wiki-visa-2705",
+      "wiki-visa-2734",
+      "wiki-visa-2741",
+      "wiki-visa-2802",
+      "wiki-visa-2820",
+      "wiki-visa-2866",
+      "wiki-visa-2879",
+      "wiki-visa-2880",
+      "wiki-visa-2893",
+      "wiki-visa-2899",
+      "wiki-visa-2961",
+      "wiki-visa-2965",
+      "wiki-visa-2966",
+      "wiki-visa-2997"
+    ],
+    "estimates": {
+      "random": {
+        "deletion_auc": {
+          "mean": 0.44140728342283353,
+          "ci95_low": 0.39722499156013896,
+          "ci95_high": 0.48616671264924344
+        },
+        "insertion_auc": {
+          "mean": 0.5422888016334869,
+          "ci95_low": 0.4941241090640552,
+          "ci95_high": 0.5908742212597906
+        },
+        "visual_mas": {
+          "mean": 0.568083177638605,
+          "ci95_low": 0.5275784497031356,
+          "ci95_high": 0.6093113775281668
+        }
+      },
+      "center": {
+        "deletion_auc": {
+          "mean": 0.5151080373600979,
+          "ci95_low": 0.46752017145857955,
+          "ci95_high": 0.561700930190213
+        },
+        "insertion_auc": {
+          "mean": 0.4399410264207467,
+          "ci95_low": 0.3908903626169905,
+          "ci95_high": 0.48874642631975435
+        },
+        "visual_mas": {
+          "mean": 0.603556181021074,
+          "ci95_low": 0.5551985152529029,
+          "ci95_high": 0.650433461569996
+        }
+      },
+      "visual-loo": {
+        "deletion_auc": {
+          "mean": 0.23415421454074964,
+          "ci95_low": 0.19340992409050956,
+          "ci95_high": 0.2777635199155409
+        },
+        "insertion_auc": {
+          "mean": 0.7869067669501679,
+          "ci95_low": 0.7550108036668418,
+          "ci95_high": 0.8172865851525071
+        },
+        "visual_mas": {
+          "mean": 0.33247325873693157,
+          "ci95_low": 0.2814979351084483,
+          "ci95_high": 0.38575503386146837
+        }
+      },
+      "ifr-span": {
+        "deletion_auc": {
+          "mean": 0.34641516738609696,
+          "ci95_low": 0.3004900552753296,
+          "ci95_high": 0.39330477530491165
+        },
+        "insertion_auc": {
+          "mean": 0.679263740521113,
+          "ci95_low": 0.6368892152315417,
+          "ci95_high": 0.7195746714816331
+        },
+        "visual_mas": {
+          "mean": 0.4515796758037252,
+          "ci95_low": 0.3981014217616072,
+          "ci95_high": 0.5066335744850596
+        }
+      },
+      "visual-ig": {
+        "deletion_auc": {
+          "mean": 0.4770871346462679,
+          "ci95_low": 0.42643652531747617,
+          "ci95_high": 0.5278447093070266
+        },
+        "insertion_auc": {
+          "mean": 0.516835060594778,
+          "ci95_low": 0.4693704359453239,
+          "ci95_high": 0.5641449033343507
+        },
+        "visual_mas": {
+          "mean": 0.5778438396139246,
+          "ci95_low": 0.5193951384824707,
+          "ci95_high": 0.6355274707308892
+        }
+      },
+      "attnlrp": {
+        "deletion_auc": {
+          "mean": 0.39334035605466,
+          "ci95_low": 0.3396984866453921,
+          "ci95_high": 0.44826773649318546
+        },
+        "insertion_auc": {
+          "mean": 0.6543813166469413,
+          "ci95_low": 0.6035044102604277,
+          "ci95_high": 0.7034151049545276
+        },
+        "visual_mas": {
+          "mean": 0.4982780934594032,
+          "ci95_low": 0.4327195269026351,
+          "ci95_high": 0.5644911778777506
+        }
+      },
+      "flashtrace": {
+        "deletion_auc": {
+          "mean": 0.3303071579722267,
+          "ci95_low": 0.2845536436988186,
+          "ci95_high": 0.3770378158806857
+        },
+        "insertion_auc": {
+          "mean": 0.694987551755394,
+          "ci95_low": 0.6531577713196862,
+          "ci95_high": 0.7349599447871127
+        },
+        "visual_mas": {
+          "mean": 0.433139180457984,
+          "ci95_low": 0.38107005477638706,
+          "ci95_high": 0.48624878502914737
+        }
+      },
+      "flashtrace-all-gen": {
+        "deletion_auc": {
+          "mean": 0.33527698408578827,
+          "ci95_low": 0.2894012508115607,
+          "ci95_high": 0.38260911503197964
+        },
+        "insertion_auc": {
+          "mean": 0.6931955547860978,
+          "ci95_low": 0.6507908138479663,
+          "ci95_high": 0.7340872281993202
+        },
+        "visual_mas": {
+          "mean": 0.4394504521068059,
+          "ci95_low": 0.38696797111127684,
+          "ci95_high": 0.4936763520810814
+        }
+      }
+    },
+    "flashtrace_favorable_difference": {
+      "random": {
+        "deletion_auc": {
+          "mean": 0.11110012545060685,
+          "ci95_low": 0.07047783378602672,
+          "ci95_high": 0.15189458816446108,
+          "wins": 77,
+          "ties": 9,
+          "losses": 34
+        },
+        "insertion_auc": {
+          "mean": 0.15269875012190698,
+          "ci95_low": 0.11070223695212787,
+          "ci95_high": 0.19572948600082246,
+          "wins": 86,
+          "ties": 5,
+          "losses": 29
+        },
+        "visual_mas": {
+          "mean": 0.1349439971806211,
+          "ci95_low": 0.09148110392317528,
+          "ci95_high": 0.17823167132874693,
+          "wins": 85,
+          "ties": 3,
+          "losses": 32
+        }
+      },
+      "center": {
+        "deletion_auc": {
+          "mean": 0.18480087938787115,
+          "ci95_low": 0.1351895894554113,
+          "ci95_high": 0.2343529730698313,
+          "wins": 82,
+          "ties": 8,
+          "losses": 30
+        },
+        "insertion_auc": {
+          "mean": 0.25504652533464717,
+          "ci95_low": 0.20622062271075578,
+          "ci95_high": 0.30471367054084564,
+          "wins": 98,
+          "ties": 4,
+          "losses": 18
+        },
+        "visual_mas": {
+          "mean": 0.17041700056309014,
+          "ci95_low": 0.12159531575768162,
+          "ci95_high": 0.21920991698110753,
+          "wins": 83,
+          "ties": 3,
+          "losses": 34
+        }
+      },
+      "visual-loo": {
+        "deletion_auc": {
+          "mean": -0.09615294343147708,
+          "ci95_low": -0.1282461099491814,
+          "ci95_high": -0.06495710113446139,
+          "wins": 27,
+          "ties": 26,
+          "losses": 67
+        },
+        "insertion_auc": {
+          "mean": -0.09191921519477407,
+          "ci95_low": -0.12991852330978987,
+          "ci95_high": -0.05430571961805504,
+          "wins": 31,
+          "ties": 7,
+          "losses": 82
+        },
+        "visual_mas": {
+          "mean": -0.10066592172105236,
+          "ci95_low": -0.1393687809321794,
+          "ci95_high": -0.06187310509856245,
+          "wins": 33,
+          "ties": 5,
+          "losses": 82
+        }
+      },
+      "ifr-span": {
+        "deletion_auc": {
+          "mean": 0.01610800941387021,
+          "ci95_low": 0.003907618504846623,
+          "ci95_high": 0.028235427227761116,
+          "wins": 55,
+          "ties": 34,
+          "losses": 31
+        },
+        "insertion_auc": {
+          "mean": 0.01572381123428083,
+          "ci95_low": 0.0036226640300517647,
+          "ci95_high": 0.02907795447038425,
+          "wins": 67,
+          "ties": 14,
+          "losses": 39
+        },
+        "visual_mas": {
+          "mean": 0.018440495345741253,
+          "ci95_low": 0.0025848930304764894,
+          "ci95_high": 0.03427952771432101,
+          "wins": 63,
+          "ties": 7,
+          "losses": 50
+        }
+      },
+      "visual-ig": {
+        "deletion_auc": {
+          "mean": 0.14677997667404122,
+          "ci95_low": 0.10690143463860398,
+          "ci95_high": 0.18728587174442876,
+          "wins": 82,
+          "ties": 11,
+          "losses": 27
+        },
+        "insertion_auc": {
+          "mean": 0.1781524911606158,
+          "ci95_low": 0.1298753862295816,
+          "ci95_high": 0.22805933468929224,
+          "wins": 88,
+          "ties": 4,
+          "losses": 28
+        },
+        "visual_mas": {
+          "mean": 0.1447046591559407,
+          "ci95_low": 0.09988779230729457,
+          "ci95_high": 0.19017106479695525,
+          "wins": 81,
+          "ties": 6,
+          "losses": 33
+        }
+      },
+      "attnlrp": {
+        "deletion_auc": {
+          "mean": 0.06303319808243331,
+          "ci95_low": 0.03133770644690822,
+          "ci95_high": 0.096028045691677,
+          "wins": 60,
+          "ties": 21,
+          "losses": 39
+        },
+        "insertion_auc": {
+          "mean": 0.04060623510845252,
+          "ci95_low": 0.005014551052941479,
+          "ci95_high": 0.07779365405563725,
+          "wins": 59,
+          "ties": 9,
+          "losses": 52
+        },
+        "visual_mas": {
+          "mean": 0.06513891300141927,
+          "ci95_low": 0.024134746813032137,
+          "ci95_high": 0.10833845977183142,
+          "wins": 56,
+          "ties": 7,
+          "losses": 57
+        }
+      },
+      "flashtrace-all-gen": {
+        "deletion_auc": {
+          "mean": 0.004969826113561615,
+          "ci95_low": -0.0034821411544816655,
+          "ci95_high": 0.013523343714009194,
+          "wins": 40,
+          "ties": 44,
+          "losses": 36
+        },
+        "insertion_auc": {
+          "mean": 0.0017919969692959462,
+          "ci95_low": -0.0076603808617079616,
+          "ci95_high": 0.012880638372357185,
+          "wins": 45,
+          "ties": 22,
+          "losses": 53
+        },
+        "visual_mas": {
+          "mean": 0.006311271648821953,
+          "ci95_low": -0.006028788157225581,
+          "ci95_high": 0.01866419106211543,
+          "wins": 57,
+          "ties": 8,
+          "losses": 55
+        }
+      }
+    }
+  },
+  "recursion_by_thinking_bucket": {
+    "short": {
+      "samples": 40,
+      "sample_ids": [
+        "wiki-visa-0070",
+        "wiki-visa-0081",
+        "wiki-visa-0256",
+        "wiki-visa-0276",
+        "wiki-visa-0392",
+        "wiki-visa-0471",
+        "wiki-visa-0509",
+        "wiki-visa-0556",
+        "wiki-visa-0569",
+        "wiki-visa-0581",
+        "wiki-visa-0755",
+        "wiki-visa-0798",
+        "wiki-visa-0817",
+        "wiki-visa-0830",
+        "wiki-visa-0839",
+        "wiki-visa-0872",
+        "wiki-visa-0987",
+        "wiki-visa-1008",
+        "wiki-visa-1016",
+        "wiki-visa-1069",
+        "wiki-visa-1148",
+        "wiki-visa-1174",
+        "wiki-visa-1383",
+        "wiki-visa-1848",
+        "wiki-visa-1930",
+        "wiki-visa-1982",
+        "wiki-visa-2026",
+        "wiki-visa-2123",
+        "wiki-visa-2227",
+        "wiki-visa-2270",
+        "wiki-visa-2278",
+        "wiki-visa-2413",
+        "wiki-visa-2545",
+        "wiki-visa-2589",
+        "wiki-visa-2604",
+        "wiki-visa-2618",
+        "wiki-visa-2679",
+        "wiki-visa-2899",
+        "wiki-visa-2965",
+        "wiki-visa-2997"
+      ],
+      "estimates": {
+        "ifr-span": {
+          "deletion_auc": {
+            "mean": 0.2862768494807968,
+            "ci95_low": 0.21228120621849253,
+            "ci95_high": 0.3646885661514633
+          },
+          "insertion_auc": {
+            "mean": 0.7109660295415118,
+            "ci95_low": 0.6311200183321256,
+            "ci95_high": 0.7832271855936709
+          },
+          "visual_mas": {
+            "mean": 0.388145685851395,
+            "ci95_low": 0.29954167723078606,
+            "ci95_high": 0.482322236357051
+          }
+        },
+        "flashtrace": {
+          "deletion_auc": {
+            "mean": 0.28099375304360746,
+            "ci95_low": 0.20925747839682857,
+            "ci95_high": 0.3544315902448548
+          },
+          "insertion_auc": {
+            "mean": 0.7201956023272725,
+            "ci95_low": 0.6411798539118001,
+            "ci95_high": 0.7926097389340016
+          },
+          "visual_mas": {
+            "mean": 0.3779825134546761,
+            "ci95_low": 0.2975305133599453,
+            "ci95_high": 0.463452354167438
+          }
+        }
+      },
+      "flashtrace_favorable_difference": {
+        "ifr-span": {
+          "deletion_auc": {
+            "mean": 0.005283096437189358,
+            "ci95_low": -0.019672767934250164,
+            "ci95_high": 0.029393244095189546,
+            "wins": 18,
+            "ties": 12,
+            "losses": 10
+          },
+          "insertion_auc": {
+            "mean": 0.009229572785760693,
+            "ci95_low": -0.0038305485969400343,
+            "ci95_high": 0.022604530675575454,
+            "wins": 22,
+            "ties": 7,
+            "losses": 11
+          },
+          "visual_mas": {
+            "mean": 0.010163172396718854,
+            "ci95_low": -0.026208302879170673,
+            "ci95_high": 0.04659280627563935,
+            "wins": 20,
+            "ties": 0,
+            "losses": 20
+          }
+        }
+      }
+    },
+    "medium": {
+      "samples": 40,
+      "sample_ids": [
+        "wiki-visa-0054",
+        "wiki-visa-0061",
+        "wiki-visa-0170",
+        "wiki-visa-0179",
+        "wiki-visa-0203",
+        "wiki-visa-0217",
+        "wiki-visa-0356",
+        "wiki-visa-0465",
+        "wiki-visa-0567",
+        "wiki-visa-0659",
+        "wiki-visa-0668",
+        "wiki-visa-0762",
+        "wiki-visa-0905",
+        "wiki-visa-0908",
+        "wiki-visa-0931",
+        "wiki-visa-1113",
+        "wiki-visa-1118",
+        "wiki-visa-1128",
+        "wiki-visa-1326",
+        "wiki-visa-1361",
+        "wiki-visa-1428",
+        "wiki-visa-1466",
+        "wiki-visa-1486",
+        "wiki-visa-1772",
+        "wiki-visa-1780",
+        "wiki-visa-1871",
+        "wiki-visa-2018",
+        "wiki-visa-2112",
+        "wiki-visa-2198",
+        "wiki-visa-2309",
+        "wiki-visa-2312",
+        "wiki-visa-2325",
+        "wiki-visa-2381",
+        "wiki-visa-2620",
+        "wiki-visa-2741",
+        "wiki-visa-2820",
+        "wiki-visa-2879",
+        "wiki-visa-2880",
+        "wiki-visa-2893",
+        "wiki-visa-2966"
+      ],
+      "estimates": {
+        "ifr-span": {
+          "deletion_auc": {
+            "mean": 0.3869809582504345,
+            "ci95_low": 0.30586076078144486,
+            "ci95_high": 0.46930380615634065
+          },
+          "insertion_auc": {
+            "mean": 0.7039493610050431,
+            "ci95_low": 0.6334939641473066,
+            "ci95_high": 0.7710154783267794
+          },
+          "visual_mas": {
+            "mean": 0.48586029541985515,
+            "ci95_low": 0.395417314525327,
+            "ci95_high": 0.579266309618107
+          }
+        },
+        "flashtrace": {
+          "deletion_auc": {
+            "mean": 0.36848889722471895,
+            "ci95_low": 0.29037105877494945,
+            "ci95_high": 0.4496019353249095
+          },
+          "insertion_auc": {
+            "mean": 0.7068766251744859,
+            "ci95_low": 0.6354807073487154,
+            "ci95_high": 0.7724606775365525
+          },
+          "visual_mas": {
+            "mean": 0.4660403553000676,
+            "ci95_low": 0.37764141702708504,
+            "ci95_high": 0.5570821733239375
+          }
+        }
+      },
+      "flashtrace_favorable_difference": {
+        "ifr-span": {
+          "deletion_auc": {
+            "mean": 0.018492061025715517,
+            "ci95_low": 0.003619504911266326,
+            "ci95_high": 0.03461646276775092,
+            "wins": 19,
+            "ties": 11,
+            "losses": 10
+          },
+          "insertion_auc": {
+            "mean": 0.0029272641694427226,
+            "ci95_low": -0.015110676995634283,
+            "ci95_high": 0.021161358723450544,
+            "wins": 19,
+            "ties": 3,
+            "losses": 18
+          },
+          "visual_mas": {
+            "mean": 0.019819940119787532,
+            "ci95_low": 0.0033188998052198315,
+            "ci95_high": 0.03845338993155813,
+            "wins": 21,
+            "ties": 4,
+            "losses": 15
+          }
+        }
+      }
+    },
+    "long": {
+      "samples": 40,
+      "sample_ids": [
+        "wiki-visa-0013",
+        "wiki-visa-0051",
+        "wiki-visa-0057",
+        "wiki-visa-0250",
+        "wiki-visa-0320",
+        "wiki-visa-0408",
+        "wiki-visa-0631",
+        "wiki-visa-0721",
+        "wiki-visa-1028",
+        "wiki-visa-1036",
+        "wiki-visa-1050",
+        "wiki-visa-1095",
+        "wiki-visa-1140",
+        "wiki-visa-1187",
+        "wiki-visa-1232",
+        "wiki-visa-1245",
+        "wiki-visa-1330",
+        "wiki-visa-1363",
+        "wiki-visa-1450",
+        "wiki-visa-1539",
+        "wiki-visa-1608",
+        "wiki-visa-1622",
+        "wiki-visa-1743",
+        "wiki-visa-1744",
+        "wiki-visa-1767",
+        "wiki-visa-1857",
+        "wiki-visa-1858",
+        "wiki-visa-1953",
+        "wiki-visa-2048",
+        "wiki-visa-2083",
+        "wiki-visa-2180",
+        "wiki-visa-2239",
+        "wiki-visa-2410",
+        "wiki-visa-2614",
+        "wiki-visa-2702",
+        "wiki-visa-2705",
+        "wiki-visa-2734",
+        "wiki-visa-2802",
+        "wiki-visa-2866",
+        "wiki-visa-2961"
+      ],
+      "estimates": {
+        "ifr-span": {
+          "deletion_auc": {
+            "mean": 0.3659876944270595,
+            "ci95_low": 0.2867987827544378,
+            "ci95_high": 0.44796638175940556
+          },
+          "insertion_auc": {
+            "mean": 0.6228758310167841,
+            "ci95_low": 0.5553425187473326,
+            "ci95_high": 0.6872900287712977
+          },
+          "visual_mas": {
+            "mean": 0.4807330461399254,
+            "ci95_low": 0.3856789277330232,
+            "ci95_high": 0.5779779776778918
+          }
+        },
+        "flashtrace": {
+          "deletion_auc": {
+            "mean": 0.3414388236483537,
+            "ci95_low": 0.2599735841568818,
+            "ci95_high": 0.42738377892644464
+          },
+          "insertion_auc": {
+            "mean": 0.6578904277644233,
+            "ci95_low": 0.5912335554466949,
+            "ci95_high": 0.7214384101058039
+          },
+          "visual_mas": {
+            "mean": 0.4553946726192081,
+            "ci95_low": 0.360392416627584,
+            "ci95_high": 0.5516930442488732
+          }
+        }
+      },
+      "flashtrace_favorable_difference": {
+        "ifr-span": {
+          "deletion_auc": {
+            "mean": 0.02454887077870575,
+            "ci95_low": 0.0034264220346863733,
+            "ci95_high": 0.047126424928152694,
+            "wins": 18,
+            "ties": 11,
+            "losses": 11
+          },
+          "insertion_auc": {
+            "mean": 0.035014596747639085,
+            "ci95_low": 0.007908100777965539,
+            "ci95_high": 0.0674570262158287,
+            "wins": 26,
+            "ties": 4,
+            "losses": 10
+          },
+          "visual_mas": {
+            "mean": 0.025338373520717366,
+            "ci95_low": 0.00029289196127502343,
+            "ci95_high": 0.05058801617397587,
+            "wins": 22,
+            "ties": 3,
+            "losses": 15
+          }
+        }
+      }
+    }
+  }
+}

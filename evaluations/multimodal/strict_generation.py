@@ -15,7 +15,9 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
+import tempfile
 import time
 from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
@@ -28,7 +30,17 @@ from PIL import Image, ImageFilter
 
 SCHEMA_VERSION = 2
 DEFAULT_MODEL = "Qwen/Qwen3-VL-8B-Thinking"
+FROZEN_MODEL_REVISION = "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+FORMAL_MAX_PIXELS = 2560 * 28 * 28
+WIKI_MAX_NEW_TOKENS = 1024
+VIZWIZ_MAX_NEW_TOKENS = 2048
 DEFAULT_PROMPT_PROFILE = "concise"
+VIZWIZ_MIN_OUTPUT_TOKENS = 16
+VIZWIZ_MAX_THINKING_TOKENS = 2048
+DETERMINISTIC_GENERATION_ERROR_PREFIXES = (
+    "strict Thinking response has no </think> terminator",
+    "generated token IDs differ from decode/re-encoded teacher-forced IDs",
+)
 PROMPT_TEMPLATES = {
     "concise": """Answer the visual question using the image. Think carefully through the visual evidence before giving the final answer. After the reasoning, give one concise final answer and do not add commentary after it.
 
@@ -68,14 +80,59 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def default_max_new_tokens(records: Sequence[Mapping[str, Any]]) -> int:
+    """Choose the frozen generation budget for one benchmark bundle."""
+
+    benchmarks = {str(record["benchmark"]) for record in records}
+    if not benchmarks:
+        raise ValueError("cannot choose a generation budget for an empty manifest")
+    if len(benchmarks) != 1:
+        raise ValueError(f"manifest mixes benchmarks: {sorted(benchmarks)}")
+    return (
+        VIZWIZ_MAX_NEW_TOKENS
+        if benchmarks == {"vizwiz_lf"}
+        else WIKI_MAX_NEW_TOKENS
+    )
+
+
 def write_jsonl(records: Iterable[Mapping[str, Any]], path: Path) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
-    with path.open("w", encoding="utf-8") as handle:
-        for record in records:
-            handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-            count += 1
+    temporary_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as handle:
+            temporary_path = Path(handle.name)
+            for record in records:
+                handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+                count += 1
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary_path, path)
+    except BaseException:
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+        raise
     return count
+
+
+def is_recorded_deterministic_generation_error(
+    evaluation_record: Mapping[str, Any] | None,
+) -> bool:
+    """Identify frozen-protocol failures that cannot improve on an identical retry."""
+
+    if not evaluation_record or evaluation_record.get("status") != "error":
+        return False
+    if evaluation_record.get("error_type") != "ValueError":
+        return False
+    error = str(evaluation_record.get("error", ""))
+    return error.startswith(DETERMINISTIC_GENERATION_ERROR_PREFIXES)
 
 
 def split_thinking_output(response: str) -> tuple[str, str, tuple[int, int], tuple[int, int]]:
@@ -364,6 +421,107 @@ def output_correct(output: str, reference: str, benchmark: str) -> bool:
     return prediction == target
 
 
+_UNUSABLE_VIZWIZ_OUTPUT = re.compile(
+    r"(?is)^(?:"
+    r"unanswerable|unsuitable|unknown|"
+    r"i\s+(?:cannot|can't|can\s+not|am\s+unable\s+to)\s+"
+    r"(?:answer|determine|identify|tell|see|read)|"
+    r"(?:the\s+)?(?:image|photo|picture)\s+(?:is\s+)?"
+    r"(?:unanswerable|unavailable|not\s+(?:visible|provided))"
+    r")(?:\b|[.!,:;])"
+)
+_EXPLICIT_UNANSWERABLE_VIZWIZ_OUTPUT = re.compile(
+    r"(?is)\b(?:making\s+it\s+)?impossible\s+to\s+"
+    r"(?:clearly\s+)?(?:answer|determine|identify|tell|see|read|discern)\b|"
+    r"\b(?:does|do)\s+not\s+provide\s+sufficient\s+"
+    r"(?:clarity|information|detail|evidence)\s+to\s+"
+    r"(?:answer|determine|identify|tell|see|read)\b|"
+    r"\b(?:does|do)\s+not\s+contain\s+(?:any\s+)?"
+    r"(?:readable|visible|discernible)\s+"
+    r"(?:text|letters|characters)\b|"
+    r"\b(?:the\s+)?(?:image|photo|picture)\s+"
+    r"(?:is\s+)?insufficient\s+to\s+"
+    r"(?:answer|determine|identify|tell|see|read)\b|"
+    r"\bcannot\s+be\s+(?:clearly\s+)?"
+    r"(?:determined|identified|read)\s+from\s+"
+    r"(?:(?:the|this|provided)\s+)?"
+    r"(?:image|photo|picture|visual\s+evidence|provided\s+visual)\b|"
+    r"\bcannot\s+be\s+(?:fully\s+)?"
+    r"(?:determined|identified)\s+with\s+certainty\s+"
+    r"(?:based\s+on|from)\s+(?:(?:the|this|provided)\s+)?"
+    r"(?:image|photo|picture|visual\s+evidence|provided\s+visual)\b|"
+    r"\b(?:there\s+is\s+)?no\s+visual\s+evidence\s+"
+    r"(?:in|from)\s+(?:(?:the|this|provided)\s+)?"
+    r"(?:image|photo|picture)\s+to\s+"
+    r"(?:answer|determine|identify|tell|see|read)\b|"
+    r"\b(?:the\s+)?(?:image|photo|picture)\s+does\s+not\s+"
+    r"provide\s+(?:any\s+)?information\s+"
+    r"(?:about|on|regarding)\b|"
+    r"\b(?:the\s+)?question"
+    r"(?:\s+about\s+[^.!?\n]{1,120})?\s+"
+    r"(?:cannot|can't|can\s+not)\s+"
+    r"be\s+(?:answered|addressed)\s+"
+    r"(?:based\s+on|from)\s+(?:the\s+)?"
+    r"(?:provided\s+)?visual\s+evidence\b|"
+    r"\bit\s+(?:cannot|can't|can\s+not)\s+be\s+"
+    r"(?:identified|determined)(?:\s*[.!])?(?:\s|$)"
+)
+
+
+def output_is_refusal_or_unanswerable(output: str) -> bool:
+    """Conservatively identify unusable VizWiz-LF frozen responses.
+
+    This intentionally catches explicit refusals and bare unanswerable labels,
+    not every uncertainty statement. A substantive answer may appropriately
+    describe blur or uncertainty and remains usable for faithfulness.
+    """
+
+    normalized = normalized_output(output)
+    return bool(
+        _UNUSABLE_VIZWIZ_OUTPUT.match(normalized)
+        or _EXPLICIT_UNANSWERABLE_VIZWIZ_OUTPUT.search(normalized)
+    )
+
+
+def pre_ablation_gate(
+    *,
+    benchmark: str,
+    output: str,
+    output_correct_value: bool,
+    generation_stable: bool,
+    image_dependence_delta: float,
+    token_identity_stable: bool,
+    thinking_tokens: int,
+    output_tokens: int,
+) -> dict[str, Any]:
+    """Return explicit pre-ablation gates and benchmark-aware eligibility."""
+
+    common = {
+        "generation_stable": bool(generation_stable),
+        "positive_blur_logprob_drop": float(image_dependence_delta) > 0.0,
+        "generated_teacher_forced_ids_match": bool(token_identity_stable),
+        "thinking_closed": True,
+    }
+    if benchmark == "vizwiz_lf":
+        benchmark_gates = {
+            "output_non_refusal": not output_is_refusal_or_unanswerable(output),
+            "thinking_within_token_limit": (
+                int(thinking_tokens) <= VIZWIZ_MAX_THINKING_TOKENS
+            ),
+            "output_meets_min_tokens": int(output_tokens) >= VIZWIZ_MIN_OUTPUT_TOKENS,
+        }
+        correctness_required = False
+    else:
+        benchmark_gates = {"whole_output_correct": bool(output_correct_value)}
+        correctness_required = True
+    gates = {**common, **benchmark_gates}
+    return {
+        "correctness_gate_required": correctness_required,
+        "gates": gates,
+        "pre_ablation_eligible": all(gates.values()),
+    }
+
+
 def _sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
@@ -506,6 +664,19 @@ def evaluate_record(
     }
     validate_model_record(model_record)
     reference = str(dataset_record["evaluation"]["REFERENCE_OUTPUT"])
+    correctness = output_correct(
+        output, reference, str(dataset_record["benchmark"])
+    )
+    gate = pre_ablation_gate(
+        benchmark=str(dataset_record["benchmark"]),
+        output=output,
+        output_correct_value=correctness,
+        generation_stable=stable,
+        image_dependence_delta=dependence_delta,
+        token_identity_stable=token_identity_stable,
+        thinking_tokens=model_record["generation_metadata"]["thinking_tokens"],
+        output_tokens=model_record["generation_metadata"]["output_tokens"],
+    )
     evaluation_record = {
         "schema_version": SCHEMA_VERSION,
         "benchmark": dataset_record["benchmark"],
@@ -513,8 +684,18 @@ def evaluate_record(
         "REFERENCE_OUTPUT": reference,
         "normalized_prediction": normalized_output(output),
         "normalized_reference": normalized_output(reference),
-        "output_correct": output_correct(
-            output, reference, str(dataset_record["benchmark"])
+        "output_correct": (
+            None if dataset_record["benchmark"] == "vizwiz_lf" else correctness
+        ),
+        "reference_exact_match": correctness,
+        "semantic_correctness": (
+            {
+                "status": "unreviewed",
+                "label": None,
+                "allowed_labels": ["fully", "partial", "wrong"],
+            }
+            if dataset_record["benchmark"] == "vizwiz_lf"
+            else None
         ),
         "generation_stable": stable,
         "stability_repeats": max(1, stability_repeats),
@@ -523,12 +704,11 @@ def evaluate_record(
         "image_dependence_delta": dependence_delta,
         "image_dependent": dependence_delta > 0.0,
         "generated_teacher_forced_ids_match": token_identity_stable,
-        "strict_eligible": (
-            output_correct(output, reference, str(dataset_record["benchmark"]))
-            and stable
-            and dependence_delta > 0.0
-            and token_identity_stable
-        ),
+        **gate,
+        # Before the deterministic generation ablation, strict_eligible means
+        # all currently observable gates pass. strict_ablation_audit rewrites
+        # it to final eligibility after adding the last gate.
+        "strict_eligible": gate["pre_ablation_eligible"],
     }
     return model_record, evaluation_record
 
@@ -539,13 +719,17 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--model-output", type=Path, required=True)
     parser.add_argument("--evaluation-output", type=Path, required=True)
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--revision")
+    parser.add_argument("--revision", default=FROZEN_MODEL_REVISION)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--dtype", choices=("bfloat16", "float16"), default="bfloat16")
-    parser.add_argument("--max-new-tokens", type=int, default=512)
+    parser.add_argument(
+        "--max-new-tokens",
+        type=int,
+        help="Override the frozen dataset-aware default (Wiki 1024, VizWiz 2048).",
+    )
     parser.add_argument("--stability-repeats", type=int, default=2)
     parser.add_argument("--min-pixels", type=int, default=256 * 28 * 28)
-    parser.add_argument("--max-pixels", type=int, default=1280 * 28 * 28)
+    parser.add_argument("--max-pixels", type=int, default=FORMAL_MAX_PIXELS)
     parser.add_argument("--limit", type=int)
     parser.add_argument(
         "--sample-id",
@@ -556,6 +740,14 @@ def _parse_args() -> argparse.Namespace:
         "--resume",
         action="store_true",
         help="Keep completed model records and retry only samples without one.",
+    )
+    parser.add_argument(
+        "--skip-recorded-deterministic-errors",
+        action="store_true",
+        help=(
+            "With --resume, retain saved unclosed-Thinking and teacher-forced "
+            "token-identity ValueErrors; transient failures remain retryable."
+        ),
     )
     return parser.parse_args()
 
@@ -573,6 +765,11 @@ def main() -> None:
             raise ValueError(f"sample IDs not found in manifest: {sorted(missing)}")
     if args.limit is not None:
         records = records[: max(0, args.limit)]
+    max_new_tokens = (
+        args.max_new_tokens
+        if args.max_new_tokens is not None
+        else default_max_new_tokens(records)
+    )
     processor = AutoProcessor.from_pretrained(
         args.model,
         revision=args.revision,
@@ -613,6 +810,19 @@ def main() -> None:
                 flush=True,
             )
             continue
+        if (
+            args.resume
+            and args.skip_recorded_deterministic_errors
+            and is_recorded_deterministic_generation_error(
+                evaluation_by_id.get(sample_id)
+            )
+        ):
+            print(
+                f"[{index + 1}/{len(records)}] {sample_id} "
+                "resume=skip-deterministic-error",
+                flush=True,
+            )
+            continue
         try:
             model_record, evaluation_record = evaluate_record(
                 dataset_record,
@@ -620,7 +830,7 @@ def main() -> None:
                 processor=processor,
                 model_name=args.model,
                 requested_revision=args.revision,
-                max_new_tokens=args.max_new_tokens,
+                max_new_tokens=max_new_tokens,
                 stability_repeats=args.stability_repeats,
             )
         except Exception as error:

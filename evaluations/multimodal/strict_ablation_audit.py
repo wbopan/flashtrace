@@ -19,6 +19,9 @@ from PIL import Image, ImageFilter
 
 from .strict_generation import (
     DEFAULT_MODEL,
+    FORMAL_MAX_PIXELS,
+    FROZEN_MODEL_REVISION,
+    default_max_new_tokens,
     generate_response,
     model_record_prompt,
     normalized_output,
@@ -102,8 +105,10 @@ def run(
         sample_id
         for sample_id in datasets
         if sample_id in models
-        and evaluations.get(sample_id, {}).get("output_correct")
-        and evaluations[sample_id].get("generation_stable")
+        and evaluations.get(sample_id, {}).get(
+            "pre_ablation_eligible",
+            evaluations.get(sample_id, {}).get("strict_eligible"),
+        )
         and _token_identity_stable(models[sample_id])
     ]
     existing_models = (
@@ -235,10 +240,14 @@ def run(
                 "generated_teacher_forced_ids_match": identity,
                 "ablation_outputs": comparisons,
                 "image_dependent_by_generation_ablation": confirmed,
+                "gates": {
+                    **dict(original.get("gates") or {}),
+                    "generation_ablation_changes_output": confirmed,
+                },
                 "strict_eligible": bool(
-                    original.get("output_correct")
-                    and original.get("generation_stable")
-                    and float(original.get("image_dependence_delta", 0.0)) > 0.0
+                    original.get(
+                        "pre_ablation_eligible", original.get("strict_eligible")
+                    )
                     and identity
                     and confirmed
                 ),
@@ -254,7 +263,7 @@ def run(
         "token_identity_mismatches": sum(
             not record.get("generated_teacher_forced_ids_match", False)
             for record in revised
-            if record.get("output_correct") and record.get("generation_stable")
+            if record.get("pre_ablation_eligible", record.get("strict_eligible"))
         ),
         "ablation_model_output": str(ablation_model_output),
         "revised_evaluation_output": str(revised_evaluation_output),
@@ -275,12 +284,21 @@ def main() -> None:
     parser.add_argument("--ablation-model-output", type=Path, required=True)
     parser.add_argument("--revised-evaluation-output", type=Path, required=True)
     parser.add_argument("--model", default=DEFAULT_MODEL)
-    parser.add_argument("--revision")
+    parser.add_argument("--revision", default=FROZEN_MODEL_REVISION)
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--min-pixels", type=int, default=256 * 28 * 28)
-    parser.add_argument("--max-pixels", type=int, default=1280 * 28 * 28)
-    parser.add_argument("--max-new-tokens", type=int, default=1024)
+    parser.add_argument("--max-pixels", type=int, default=FORMAL_MAX_PIXELS)
+    parser.add_argument(
+        "--max-new-tokens",
+        type=int,
+        help="Override the frozen dataset-aware default (Wiki 1024, VizWiz 2048).",
+    )
     args = parser.parse_args()
+    max_new_tokens = (
+        args.max_new_tokens
+        if args.max_new_tokens is not None
+        else default_max_new_tokens(read_jsonl(args.dataset_manifest))
+    )
     summary = run(
         dataset_manifest=args.dataset_manifest,
         model_output=args.model_output,
@@ -292,7 +310,7 @@ def main() -> None:
         device=args.device,
         min_pixels=args.min_pixels,
         max_pixels=args.max_pixels,
-        max_new_tokens=args.max_new_tokens,
+        max_new_tokens=max_new_tokens,
     )
     print(json.dumps(summary, indent=2))
 

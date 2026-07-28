@@ -1,0 +1,103 @@
+{
+  "candidate_count": 240,
+  "model_record_count": 192,
+  "evaluation_record_count": 240,
+  "strict_eligible_count": 44,
+  "frozen_sample_count": 20,
+  "excluded_prior_pilot_count": 3,
+  "gate_marginal_counts": {
+    "thinking_closed": {
+      "passed": 198,
+      "failed": 39,
+      "not_evaluated": 0
+    },
+    "generated_teacher_forced_ids_match": {
+      "passed": 189,
+      "failed": 9,
+      "not_evaluated": 39
+    },
+    "generation_stable": {
+      "passed": 189,
+      "failed": 0,
+      "not_evaluated": 48
+    },
+    "whole_output_correct": {
+      "passed": 78,
+      "failed": 111,
+      "not_evaluated": 48
+    },
+    "positive_blur_logprob_drop": {
+      "passed": 144,
+      "failed": 45,
+      "not_evaluated": 48
+    },
+    "generation_ablation_changes_output": {
+      "passed": 44,
+      "failed": 193,
+      "not_evaluated": 0
+    }
+  },
+  "stages": [
+    {
+      "stage": "candidate_manifest",
+      "passed": 240,
+      "eliminated_at_stage": 0
+    },
+    {
+      "stage": "prior_pilot_sample_exclusion",
+      "passed": 237,
+      "eliminated_at_stage": 3
+    },
+    {
+      "stage": "thinking_closed",
+      "passed": 198,
+      "eliminated_at_stage": 39,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "generated_teacher_forced_ids_match",
+      "passed": 189,
+      "eliminated_at_stage": 9,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "model_record_available",
+      "passed": 189,
+      "eliminated_at_stage": 0
+    },
+    {
+      "stage": "generation_stable",
+      "passed": 189,
+      "eliminated_at_stage": 0,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "whole_output_correct",
+      "passed": 78,
+      "eliminated_at_stage": 111,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "positive_blur_logprob_drop",
+      "passed": 51,
+      "eliminated_at_stage": 27,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "generation_ablation_changes_output",
+      "passed": 44,
+      "eliminated_at_stage": 7,
+      "not_evaluated_at_stage": 0
+    },
+    {
+      "stage": "final_strict_eligible",
+      "passed": 44,
+      "eliminated_at_stage": 0
+    },
+    {
+      "stage": "unique_image_and_fixed_seed_freeze",
+      "passed": 20,
+      "eliminated_at_stage": 24
+    }
+  ]
+}

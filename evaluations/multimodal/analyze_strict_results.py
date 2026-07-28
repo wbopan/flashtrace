@@ -118,6 +118,7 @@ def analyze(
             metadata.get("reasoning_family", metadata.get("stratum", "all"))
         )
     per_group: dict[str, dict[str, dict[str, float]]] = {}
+    per_group_paired: dict[str, Any] = {}
     for group in sorted(set(group_by_sample.values())):
         ids = [sample_id for sample_id in common_ids if group_by_sample[sample_id] == group]
         per_group[group] = {}
@@ -131,6 +132,50 @@ def analyze(
                 for metric in METRICS
             }
             per_group[group][method]["samples"] = len(ids)
+        group_estimates: dict[str, Any] = {}
+        group_flashtrace: dict[str, Any] = {}
+        for metric in METRICS:
+            group_estimates[metric] = {
+                method: _interval(
+                    np.asarray(
+                        [metric_value(method, sample_id, metric) for sample_id in ids],
+                        dtype=np.float64,
+                    ),
+                    rng,
+                    draws,
+                )
+                for method in methods
+            }
+            if "flashtrace" not in methods:
+                continue
+            flashtrace = np.asarray(
+                [
+                    metric_value("flashtrace", sample_id, metric)
+                    for sample_id in ids
+                ],
+                dtype=np.float64,
+            )
+            group_flashtrace[metric] = {}
+            for method in methods:
+                if method == "flashtrace":
+                    continue
+                baseline = np.asarray(
+                    [metric_value(method, sample_id, metric) for sample_id in ids],
+                    dtype=np.float64,
+                )
+                differences = flashtrace - baseline
+                group_flashtrace[metric][method] = {
+                    **_interval(differences, rng, draws),
+                    "wins": int(np.sum(differences > 1e-12)),
+                    "ties": int(np.sum(np.abs(differences) <= 1e-12)),
+                    "losses": int(np.sum(differences < -1e-12)),
+                }
+        per_group_paired[group] = {
+            "samples": len(ids),
+            "sample_ids": ids,
+            "estimates": group_estimates,
+            "flashtrace_minus_baseline": group_flashtrace,
+        }
 
     return {
         "schema_version": 1,
@@ -145,6 +190,7 @@ def analyze(
         "ranks": ranks,
         "flashtrace_minus_baseline": paired_flashtrace,
         "per_group": per_group,
+        "per_group_paired": per_group_paired,
     }
 
 
@@ -205,6 +251,30 @@ def _markdown(analysis: dict[str, Any]) -> str:
                     f"{delta['wins']}/{delta['ties']}/{delta['losses']} |"
                 )
             lines.append("")
+    if analysis.get("per_group_paired"):
+        lines.extend(
+            [
+                "## Stratum-level primary endpoints",
+                "",
+                "Intervals and W/T/L use the same paired bootstrap protocol as the "
+                "overall analysis.",
+                "",
+                "| stratum | n | method | Energy [95% CI] | R@5 [95% CI] |",
+                "|---|---:|---|---:|---:|",
+            ]
+        )
+        for group, group_analysis in analysis["per_group_paired"].items():
+            for method in methods:
+                energy = group_analysis["estimates"]["energy_in_mask"][method]
+                recovery = group_analysis["estimates"]["recovery_at_5pct"][method]
+                lines.append(
+                    f"| {group} | {group_analysis['samples']} | {method} | "
+                    f"{energy['mean']:.4f} "
+                    f"[{energy['ci95_low']:.4f}, {energy['ci95_high']:.4f}] | "
+                    f"{recovery['mean']:.4f} "
+                    f"[{recovery['ci95_low']:.4f}, {recovery['ci95_high']:.4f}] |"
+                )
+        lines.append("")
     return "\n".join(lines)
 
 

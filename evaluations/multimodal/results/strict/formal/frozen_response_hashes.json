@@ -1,0 +1,2228 @@
+{
+  "schema_version": 1,
+  "hash_algorithm": "sha256",
+  "canonical_model_record": "json.dumps(sort_keys=True,separators=(',',':'),ensure_ascii=False)",
+  "token_ids_encoding": "json.dumps(separators=(',',':'))",
+  "model_outputs": [
+    {
+      "model_output_path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.model.jsonl",
+      "model_output_sha256": "fdddf6f751aabbfd25d477df84c53376e6edacbbb4fa57f794ea3a2ce1c5001e",
+      "sample_count": 100,
+      "resolved_revisions": [
+        "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+      ],
+      "samples": [
+        {
+          "sample_id": "vizwiz-lf-005",
+          "model_record_sha256": "243a657221fa4cb087e7370e0decb46d0a86705fb3d2465d59539d2fdb4a50ea",
+          "raw_response_sha256": "ecf04b65a49fe40fe6a838b5c4c883bdec41ff3374d7a0a3c1dff7588849ffe7",
+          "thinking_sha256": "d400091d53b5f1fe71fb734b248a3ad98c9ab945eb2878915aefebb50980719f",
+          "output_sha256": "607e70dfef348e12859870a32d65c2d4d1b72fe11b65c5c03f5cabd8cb4a8fab",
+          "generated_token_ids_sha256": "935a8e3f24c5b2bf5e745cbe3dc0c0c63676d755e29489a69e41000057343175",
+          "teacher_forced_token_ids_sha256": "935a8e3f24c5b2bf5e745cbe3dc0c0c63676d755e29489a69e41000057343175",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-006",
+          "model_record_sha256": "451a72463dabfd338fd33e09bfb64cb9622522e47743ff206ed9f303b07ff6c6",
+          "raw_response_sha256": "6024f167ff4c99f3d0fe47ad90b660f5fd365a12f9c92d014f4208fc1185a11a",
+          "thinking_sha256": "84b66bf56a390811e49a694d8e1a17bee9226879211e7dd5f148fa085802ddfa",
+          "output_sha256": "d6482668adffd95fef4d88e26f0485b1f834a5a8c18994021da009fca336fff6",
+          "generated_token_ids_sha256": "1d261024881be235dcd74d6a889684d2d407ad80faa9d2f8ba929b5ab83c7570",
+          "teacher_forced_token_ids_sha256": "1d261024881be235dcd74d6a889684d2d407ad80faa9d2f8ba929b5ab83c7570",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-010",
+          "model_record_sha256": "6584b762a999d362239f6aafcbacb31952a874669f94abdff11fb6d0bfd6e1eb",
+          "raw_response_sha256": "0fa4720dd2ec2d7a764f3e3e49db964b84b55510ceff9e839bb4c36f47e412fa",
+          "thinking_sha256": "2876546020efc043c22e793c30b76c01d4da97afad94cb9c70a1c1dde3332c2c",
+          "output_sha256": "3989cd22a9f06631f8e32a5c92aee5e93c3ceccd66f7c1cbc1dfdb7b0ebe8b53",
+          "generated_token_ids_sha256": "1484e26b200cdb07d841b348182c3fc7dc4d985adb42b2aeeabd3a4791b997b7",
+          "teacher_forced_token_ids_sha256": "1484e26b200cdb07d841b348182c3fc7dc4d985adb42b2aeeabd3a4791b997b7",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-012",
+          "model_record_sha256": "caddc5fd64989e5c758f35c1234473cb002dfa943462e9c4200be5fd18849613",
+          "raw_response_sha256": "bac35c4f7705d8701cca7859e101bd322ec6e8f45992d6500c71e93554b762c3",
+          "thinking_sha256": "d821a47d8839a7c01e24eceb6cf58ffdc49aa9770c76442f11c4294407ba63fc",
+          "output_sha256": "fadaa8efdf28270f30aeac7b9a6d281fa4e8393c1bf6a9bb250d0313a506fd65",
+          "generated_token_ids_sha256": "2411121086370541df5ed5b959075b3011f9893c1eb5718ccf18c8ddc1fbbefa",
+          "teacher_forced_token_ids_sha256": "2411121086370541df5ed5b959075b3011f9893c1eb5718ccf18c8ddc1fbbefa",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-014",
+          "model_record_sha256": "ff73a4bf03545255bbddb84a510e85b9a91c7cc861ca8b5b562688e6cfc43bbc",
+          "raw_response_sha256": "5c154f31d627e2a37c8f41acaf310041cb4081bcfa2aaa3f365343e2d067ed7c",
+          "thinking_sha256": "2641a33d6dd8d4d02f7e920e2aa9147491fe3f4cadaebe6db34c34fc9a2553fd",
+          "output_sha256": "847a4fedf1490065a2a750856a64c467279a40ae19eaa8334c9d11d3347465c5",
+          "generated_token_ids_sha256": "ec80c9916403a5e413adb33aa28f3c55fd6e99c97f0816c57a1db98ad8154748",
+          "teacher_forced_token_ids_sha256": "ec80c9916403a5e413adb33aa28f3c55fd6e99c97f0816c57a1db98ad8154748",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-021",
+          "model_record_sha256": "ec8985fb42c1a3387788cca6b8552f1fead34ddf912a0a50dc452261178948d5",
+          "raw_response_sha256": "dd6e2728fcb3399816950f9784bb11a456ef3f155d47f2f93c6030a14dadbb3d",
+          "thinking_sha256": "4d3f5531e736284cbd6a31ab08c54cbd099e29ebdc2137b281c76b9d43c7139d",
+          "output_sha256": "c5a5fa3bfcd773a0bc68d1a2c2380af0d385d607e4a710716493caf503f6b169",
+          "generated_token_ids_sha256": "57ae75c7113b21db8dea4b0ad16c154cde74da8c137d883b91b47c985f1ff28d",
+          "teacher_forced_token_ids_sha256": "57ae75c7113b21db8dea4b0ad16c154cde74da8c137d883b91b47c985f1ff28d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-037",
+          "model_record_sha256": "f356e62321858045b1d030cb00ef892478c712471c1cec400bed642c29668692",
+          "raw_response_sha256": "96775f80543c8f677c51cc863230cfbe12f4e47029ffc32f01bb45f54896cccc",
+          "thinking_sha256": "c3e1f00b6593519796df1337b7824847c81cb1e95b0df32575a65c4e752ce822",
+          "output_sha256": "f7c1ea5def79625e1f7f3a61be25ebb2bc00b66ea32cce02ecbf3c8586f2d19f",
+          "generated_token_ids_sha256": "c50ae42404a491126eda3319e00b2ba66c60dc7d79ce04834f04c69e7effe1e6",
+          "teacher_forced_token_ids_sha256": "c50ae42404a491126eda3319e00b2ba66c60dc7d79ce04834f04c69e7effe1e6",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-042",
+          "model_record_sha256": "d8f09221628e8e6775b8a91911c079513eb4c87b229ad58293ee0b323389a298",
+          "raw_response_sha256": "444c164bcdb41d42be1da16de4a4dcf269a45f1ef31680e6d55cc5c90c1d58ef",
+          "thinking_sha256": "60e7fa952c25ebd97fe1e155612f313aa516d9629d8d54439f894c82a9610d7f",
+          "output_sha256": "e9389cac6b88490636e7ca9c8fe36453407a02cef5e62c927261d368c3c32177",
+          "generated_token_ids_sha256": "a7c522bd48ba9afdbc9212531a6d287af963146538ac3755cd3dd3f4365148ff",
+          "teacher_forced_token_ids_sha256": "a7c522bd48ba9afdbc9212531a6d287af963146538ac3755cd3dd3f4365148ff",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-050",
+          "model_record_sha256": "c85e9483df1b516cad25540ca28f768cdc1906690ea877de25a009e2beab471c",
+          "raw_response_sha256": "fbebd5e82cd0432f6fe993810f43960c95e6f045c98f08427c147dfc0d2722e4",
+          "thinking_sha256": "cbe94431d790364fc7f5b985836543d3e963a64f124132a8f93c9987c9fa5ec3",
+          "output_sha256": "b4f1e2bddf5cb8bf4a5f431e4e192c075c775a4a7583f3bbeaa40382bde828f8",
+          "generated_token_ids_sha256": "fc7d02490939944195be51e90be1af504df0a76f6bd7f8b653eb19f08d17d712",
+          "teacher_forced_token_ids_sha256": "fc7d02490939944195be51e90be1af504df0a76f6bd7f8b653eb19f08d17d712",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-057",
+          "model_record_sha256": "656fc7092d5b45aa0e1e3e995135a226ec7132a5e4d2854c31c60e1ea44d1c94",
+          "raw_response_sha256": "b042bd725ef1d38b635a45d842e000fb10104ead6c146740a6c0377a5d14653d",
+          "thinking_sha256": "aeaa4abb8e0b9173c9f2fe2d505334921ac85b2791caf808c43725e81eff6338",
+          "output_sha256": "36fe48f76fa6cb436ad4066864736de01d4407fda239260e2b16e359f4ef3c88",
+          "generated_token_ids_sha256": "512d4f4963f599f89ba06a3ebfde2959ce5baedaf1d2d20b51f416d4709c7022",
+          "teacher_forced_token_ids_sha256": "512d4f4963f599f89ba06a3ebfde2959ce5baedaf1d2d20b51f416d4709c7022",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-058",
+          "model_record_sha256": "d87059b323d6208a1ba37fe4a370d24e3f7f5d6e7c99ee42b709be4e3ee7d731",
+          "raw_response_sha256": "080770fa1eaf25947379e05a1fccd2e37b5ec529cde42f6aa767bac18daa7eb5",
+          "thinking_sha256": "fca71603863de9f20720989feec0b88847d1ffa6f2ab8012007cb743159af293",
+          "output_sha256": "e4fb14cecb6deaac498133528688deca58b70416d8d02aa306fee15079661951",
+          "generated_token_ids_sha256": "3706bd519ac29d2ab7de5ff58f7bdb033d41029a579fc3fb701a4dedd72dc79f",
+          "teacher_forced_token_ids_sha256": "3706bd519ac29d2ab7de5ff58f7bdb033d41029a579fc3fb701a4dedd72dc79f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-060",
+          "model_record_sha256": "cf43540713c1ff6d6b24cd7feb9fe35d18380debfd6d8221a850065707927849",
+          "raw_response_sha256": "8c47b7a707db7e82280437fe39acb19dd913ca4bff1b9e69b982787461552c8c",
+          "thinking_sha256": "09a315316a98deadb383edb5739315be0b98029b25c1ed962926d6d7d8755ffc",
+          "output_sha256": "fea3f24cf0c67aa51b3a87a06b9edf7a4c03769265fca3e18881fd33c950b1e0",
+          "generated_token_ids_sha256": "832c641821b263a2dfe03b805a9093234a5aacc4835c585d93def458e175de0d",
+          "teacher_forced_token_ids_sha256": "832c641821b263a2dfe03b805a9093234a5aacc4835c585d93def458e175de0d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-066",
+          "model_record_sha256": "2bbc2081f9ed6b1774e1993322fef0695c254823add0c6bfb3098b89884b6405",
+          "raw_response_sha256": "5a6c28b290fd09cdf8923185231f91597cb694240a7b90f466c6193dcace5c0b",
+          "thinking_sha256": "9ffdeaab8a7b11e4241373907512bd3c2bc687f33d431ee9d0749666a5e88310",
+          "output_sha256": "ba863a69d14db77dc4e47f417b1b58f74f76d7676d70ac02f74193516fd5a4d2",
+          "generated_token_ids_sha256": "38b13949ec0e27d45af29626773d99896d05e99bbee8318f8b6e956a277af4ce",
+          "teacher_forced_token_ids_sha256": "38b13949ec0e27d45af29626773d99896d05e99bbee8318f8b6e956a277af4ce",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-073",
+          "model_record_sha256": "a9df17eee0c155d5a5a43c96c9b7308a3aa2caf9f0d9aadd0a6b84e60ebfe282",
+          "raw_response_sha256": "e9693a8b0cdfc52d9e005f89c842ff8940b6e92dd91173f0b9e357e83aa98f38",
+          "thinking_sha256": "f2b9057370adf31c4c9690017643c1066f6e375c27a51ba0efd47b32f98e9483",
+          "output_sha256": "8949e2e6600fb2095a99111e448fa861fae044c0f85cd3729e2252b39f51d7a7",
+          "generated_token_ids_sha256": "8538089a4b1ba59fa5db3f9575f7292439af81cd6463f54bede60881167e31ef",
+          "teacher_forced_token_ids_sha256": "8538089a4b1ba59fa5db3f9575f7292439af81cd6463f54bede60881167e31ef",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-079",
+          "model_record_sha256": "577a3dc8bf1875f1002876902bbc7fe55122e4c6bf151938de1707aa09ab5411",
+          "raw_response_sha256": "56ab7397f2c3d3a382d9c48ddbf604e1a8808c6e12f5529134b507e97d4eef0e",
+          "thinking_sha256": "7f048638122e1a585e6b6b28a01adc35bf6bf7b46560aa3a12e0d700fc643fe6",
+          "output_sha256": "788ed916b552ed8c8ee28a2f3e1244b7db347154670d4205f1d0e51f397b1578",
+          "generated_token_ids_sha256": "4ae7616f617d77bfa44a4086bd2722ce3179cf617b5f06169e46b6d5a3721350",
+          "teacher_forced_token_ids_sha256": "4ae7616f617d77bfa44a4086bd2722ce3179cf617b5f06169e46b6d5a3721350",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-080",
+          "model_record_sha256": "4e84493529c168e645cb3a173a7859887e82200e8762ae3e0e83704ef8e5f007",
+          "raw_response_sha256": "2f23fba1b93af438a7960e788e05f1e54ad7a29f7ba86a43392f011df0e6e9c2",
+          "thinking_sha256": "c0ddc7fc3514faabd73e9e4efab61b3e2f462bb36b3a772822868accba24973e",
+          "output_sha256": "7ebecbda6a01fb23ee852383c8bebb6e215622891a9c27467abc66e221d3acee",
+          "generated_token_ids_sha256": "633f975473235e3b526e942b8b5122c18d4086673e561f810a260de478e8251a",
+          "teacher_forced_token_ids_sha256": "633f975473235e3b526e942b8b5122c18d4086673e561f810a260de478e8251a",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-081",
+          "model_record_sha256": "719286074b52cedfd7d83d8f021a125acf02ef4da4e43e049fca50300ce134ed",
+          "raw_response_sha256": "228e7e4bcb9b2b02263e154ab3e35a68e7619b4268150a4d16f372b59d34f279",
+          "thinking_sha256": "44ca2767b57c70985e5186abf797011a43a8db74b4477001a53bb20634188154",
+          "output_sha256": "11ac8e1539d48efde1ebc6c426bb578cc2d3733074f2608a0f9fdbcc667e495e",
+          "generated_token_ids_sha256": "b80effa068764d9783ba27bd0b3b1e57f68709026390e19346bceb412e3ecf9d",
+          "teacher_forced_token_ids_sha256": "b80effa068764d9783ba27bd0b3b1e57f68709026390e19346bceb412e3ecf9d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-087",
+          "model_record_sha256": "69cb6634133c8361523cb7f25cbe7fee4cae107a1c12ed1c4844f91ee2b96f00",
+          "raw_response_sha256": "e73e996deb4f0883b05ce89e72c7f63e7745f570b677b6109e49de0a914c33ef",
+          "thinking_sha256": "5d66ea6c33bc4ff400e6d8f1db63eca2c2bb0ecf32843bed0dd0c6c11f30f139",
+          "output_sha256": "a694c50d8f543794b0dd975e9e45b0939af8295362b325de38c9c6fb5dbd6c6d",
+          "generated_token_ids_sha256": "53bb945a121d7ab3123cd04d362a2108e36236cc3484463f0075695f2e46d9fe",
+          "teacher_forced_token_ids_sha256": "53bb945a121d7ab3123cd04d362a2108e36236cc3484463f0075695f2e46d9fe",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-102",
+          "model_record_sha256": "745d432a44e9088da24f9840a789e8826191f6757c120f83a9023db4304fc735",
+          "raw_response_sha256": "6ee3e1a3c8755886f0ebedd6cdb7f25d3cc1cb1e61e1893691541ac5aa8ab193",
+          "thinking_sha256": "a0838818b3d50fa53d360ce002c3d9db3d3d7e58bbf8313649552248d1294cb2",
+          "output_sha256": "293470e476fcf7f4178f5c14e74e5329d115813bbfb88cf25c80a34ee1c0b43b",
+          "generated_token_ids_sha256": "c18242165049b838bae8fb5c627ab9b8d24b84fa8fc2e770e56d8c85995d1cb8",
+          "teacher_forced_token_ids_sha256": "c18242165049b838bae8fb5c627ab9b8d24b84fa8fc2e770e56d8c85995d1cb8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-109",
+          "model_record_sha256": "bbb4862057540914252f8bfa79bb6b6006325f6ecffc1ec9bbfe0cc05b0163f2",
+          "raw_response_sha256": "8f3a08c0390aadcff57a25c9b2b48c20b8cea78194b31f08399f0794b3e3ddf2",
+          "thinking_sha256": "f6376beceffb160f15705ee69440eb4150915acaaf8d7784dc86a59d0a83ed0c",
+          "output_sha256": "77d4daab710e755185f4ac2b0ac41ceaffbdcfe5241db5da0afdf3086be95b3b",
+          "generated_token_ids_sha256": "ed3eb4d2ae8038e2decc99fec7903c6cca5059887c3370481a3c882eda185764",
+          "teacher_forced_token_ids_sha256": "ed3eb4d2ae8038e2decc99fec7903c6cca5059887c3370481a3c882eda185764",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-111",
+          "model_record_sha256": "8aa4e49d757adefc21e15e1f987ac439adbf33f0e2bd4c4cc8d3467634c4e638",
+          "raw_response_sha256": "3d8d156f252fa82060fbf6907340389e84be663debba8c603ffcc04ab5df12dd",
+          "thinking_sha256": "36455968982278520899684a84e590a1fcf7363441f0a542caeeafbca5033863",
+          "output_sha256": "64894a4e3f7a59aaeead2e228062bdf494c3a9e7309dbcdc177e0e278ecd72fd",
+          "generated_token_ids_sha256": "daad6fe3ee16c7ecaf45803557161182f3f33fe7e87b5b3d4507a8e7a32fae20",
+          "teacher_forced_token_ids_sha256": "daad6fe3ee16c7ecaf45803557161182f3f33fe7e87b5b3d4507a8e7a32fae20",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-115",
+          "model_record_sha256": "6f872f3cb4d96df84f8131b0a4f82efcd80125ff989d5e0633d054e1bf193ead",
+          "raw_response_sha256": "906eae7861d1e12715b0df5c4477babeff80d8b1c546d92694a8f921078d3f0d",
+          "thinking_sha256": "b820a6abfef388a3df6bb879aaeeafe6a2f3a650971eb7d1be5aa80991c2711f",
+          "output_sha256": "c82d3c8f94718532a2322320cfcce20f0d363668bdfa5b5a37c0ce8c9b0efe56",
+          "generated_token_ids_sha256": "a78a48d4d6b33980eb1b41e46b755541005d03657979d6123d001a398a310bd1",
+          "teacher_forced_token_ids_sha256": "a78a48d4d6b33980eb1b41e46b755541005d03657979d6123d001a398a310bd1",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-116",
+          "model_record_sha256": "fc97510f04e5d5e96cf00a09398643cd36320ef06ac45da4865cb5da19c822ff",
+          "raw_response_sha256": "b5892a481ebfdd750b812bc0faea714578c6d7e1be429427908ebbc310c5e1f3",
+          "thinking_sha256": "b7ed1c4bbcfc2671e5813a035ab3d7a84912ad6955fe21738f69525dbf7563bd",
+          "output_sha256": "546319d407a5af06b9bd7ec110ba18aec9a452223c083d8c8d127fc0e13179b1",
+          "generated_token_ids_sha256": "939b5b74cdec3df68e255e1b2320ea895d4fde1b7f49b06096c8359f29d56d64",
+          "teacher_forced_token_ids_sha256": "939b5b74cdec3df68e255e1b2320ea895d4fde1b7f49b06096c8359f29d56d64",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-118",
+          "model_record_sha256": "8aa27caf215c8660515c5e2dab06fce4e9a2414787c44b70385fcdf3886aaacb",
+          "raw_response_sha256": "78e7026929a43252dbbb9f1fe01177dbc80ad6936f6ece6460cb74c9079c686f",
+          "thinking_sha256": "697cc992e6f224ed4761b2c6605a8c21ca9138918fab2bcb99bd5d5fcf6cfb1f",
+          "output_sha256": "b568eed9bd3f312338d43bfdaccf0f71eed24982730d5073c5d9038a5c7e62b5",
+          "generated_token_ids_sha256": "8b7c3ab63599d3c99bbe0284adb058f4f749dcdc92bfb4889fb5f17304888d06",
+          "teacher_forced_token_ids_sha256": "8b7c3ab63599d3c99bbe0284adb058f4f749dcdc92bfb4889fb5f17304888d06",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-123",
+          "model_record_sha256": "08111b9d07f02c9d22e0da613a435ad8b2015d876edfbdc456c00065123c51da",
+          "raw_response_sha256": "ff6298e9ae13f14521fcb2adbea3944563a3b4eedf79966cfc8089b028c4fbb1",
+          "thinking_sha256": "4e547ad1d8df0957bc54bb13b7abda330b72a351f953881f97e7aa9444e4c2bd",
+          "output_sha256": "2a3d9b52c657c8115203cc820bd8bb98c22e2bb661e8c39fd789e4c58ab3447a",
+          "generated_token_ids_sha256": "992a71dbd92806782db358b97bcb7a9a6c94e13e6c97357ce9e68cba3fdff9cc",
+          "teacher_forced_token_ids_sha256": "992a71dbd92806782db358b97bcb7a9a6c94e13e6c97357ce9e68cba3fdff9cc",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-126",
+          "model_record_sha256": "4fb41564524e661691ad71b1652a52301b76a5790c7be5787b351db2700dd66c",
+          "raw_response_sha256": "f7c674f06c620f38de777fafff5773426482d45ceed6e02ec608824c5704f07b",
+          "thinking_sha256": "b6688e21f44b61c6f42c380dbf09919c743f714523c590528a9ee54c10fa7de2",
+          "output_sha256": "32ae5fab336cb97430b9695adea59c6e948220a03d0a2487166ceceb3f39d328",
+          "generated_token_ids_sha256": "747a8d03828ff1b317288632013abee81a9f14e7710b7511284cbb722ee6de65",
+          "teacher_forced_token_ids_sha256": "747a8d03828ff1b317288632013abee81a9f14e7710b7511284cbb722ee6de65",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-130",
+          "model_record_sha256": "73a457e3c63dd581079f835844fa24f75db81989be504e84a6e07df2b534f2b7",
+          "raw_response_sha256": "63a943e1cfe0ea0aaed4f942e870548144da03baf35c5c831db6ba70b06ce8c9",
+          "thinking_sha256": "14b19a6a6056d9a8984b6b0891a229c6aefca1a21a50d4ff94cfc74be61ea70f",
+          "output_sha256": "6fc66bc397a758a24b4fa9d0c223bfc8d183314ab7c57096c39e1bbf23f11406",
+          "generated_token_ids_sha256": "a93a33a224f1c49829ba496869af94e59bbd1051ee1432c33e70150dce790ae5",
+          "teacher_forced_token_ids_sha256": "a93a33a224f1c49829ba496869af94e59bbd1051ee1432c33e70150dce790ae5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-136",
+          "model_record_sha256": "dd47bebe983f368129e3a4c678983420081488507a13ffa6b50742dd4b0d09ab",
+          "raw_response_sha256": "064e6a9f317ede71dca677b90da657c260243c31f8b708925321d454d9fc2d6c",
+          "thinking_sha256": "fe3ac24304f27e77e1513bc52bf06ab7a17d0821a9bda65216f257e919fc5fa4",
+          "output_sha256": "1e318efb9245937dab52a8f9b881760d70228c6fbcf21858b09a0ea70f8fe574",
+          "generated_token_ids_sha256": "bdde4c9b71110c2b1913f76177d6c35b102ec908172fb7bbf90c6e6ab901c654",
+          "teacher_forced_token_ids_sha256": "bdde4c9b71110c2b1913f76177d6c35b102ec908172fb7bbf90c6e6ab901c654",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-142",
+          "model_record_sha256": "84489700db93e1adb3a9d37708c2a9b9476d7449a40be18c92eaa16261c0d05a",
+          "raw_response_sha256": "92791d312c6f5a5b63781d7df507ac8995c848c421507e9daac6ef84c47b9115",
+          "thinking_sha256": "17390959f547f5bfe7f3f42d722bce41c76294f36aaeb59530f38028f2f382c6",
+          "output_sha256": "c6a4b45826267cb69bcf136ed4fe2637cb1d7f9989e01e9e0cb09fd8160f807f",
+          "generated_token_ids_sha256": "9e9b0d4a83d2ef875870b75c94649e5865b8abf0a27e4f10f66118f82ef25e56",
+          "teacher_forced_token_ids_sha256": "9e9b0d4a83d2ef875870b75c94649e5865b8abf0a27e4f10f66118f82ef25e56",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-153",
+          "model_record_sha256": "8c86793f991e7e6af037a4e7683c093028cc1600a55fc9da25519308e2fda312",
+          "raw_response_sha256": "f630b41ed6f5694f3de4171d02f623863ef9000b2226a6bb58da68a16f24b094",
+          "thinking_sha256": "0fadc622da5d5dcc19c5981ef363ef31c8a6423c4f00e289a66e85e755a623b9",
+          "output_sha256": "70ece097ac5ce4e8c8e6be720dc8507d033ea8ccde4ed17a9dad4f34ca50cefd",
+          "generated_token_ids_sha256": "a87f927fe9efb7164696ba2f7400aac9757f9959b24f394ae7dacf8e816d79d8",
+          "teacher_forced_token_ids_sha256": "a87f927fe9efb7164696ba2f7400aac9757f9959b24f394ae7dacf8e816d79d8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-159",
+          "model_record_sha256": "d2bdb110a8793af2bfa67ad48b80360ca5fbc906a014c7af5de1360316aae2a5",
+          "raw_response_sha256": "ca96f559485a11becbb9e009bb08f5ea8867b9eafcd21eb23a20ac8516f76500",
+          "thinking_sha256": "ae2b263399d0daec28cf33ab7e936fb439f46128e87465501a96085b57c701ec",
+          "output_sha256": "f95eceeb5d040541a94dce36213e71cf2d4f0bea193d8c374af60a429ca55398",
+          "generated_token_ids_sha256": "5f5cf9aa287ffaedade600bcd725262845cf5e0e3b45a698a597fb631f3a1edd",
+          "teacher_forced_token_ids_sha256": "5f5cf9aa287ffaedade600bcd725262845cf5e0e3b45a698a597fb631f3a1edd",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-161",
+          "model_record_sha256": "eb2c2fa6cbb1ec5d225b1e8600d1d2b58a17b2b5c9726a7386734e0c09eaedeb",
+          "raw_response_sha256": "1c9dd3d458f6e8bcabadb5d4cc3e04844140aa44fe541b5f88238e091871e899",
+          "thinking_sha256": "518c45af73fcb78dd5c4c5074e665b89bb20352a40da488a6e5c7703b0df5840",
+          "output_sha256": "46434313de2de493857ef0b413508e2301f2bb45f34e3dd8ef66df32f7013043",
+          "generated_token_ids_sha256": "56395e96965b63c054be4c61f80065fb95c5bfd5af01b1d5ab07ee76ad83cee2",
+          "teacher_forced_token_ids_sha256": "56395e96965b63c054be4c61f80065fb95c5bfd5af01b1d5ab07ee76ad83cee2",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-167",
+          "model_record_sha256": "770a84c553e227bdb8a5bc5fd5591fd3f6968b8d4a0e7c63457e33bc80a097ea",
+          "raw_response_sha256": "5d33d6deef2cdfbcf965756eccd357f37c7ba4bff17cd121c131e1fc283ba434",
+          "thinking_sha256": "5ac61517c1153ae4bfd305fb220c8f3607d13a84edf2453f9283b63627fb454f",
+          "output_sha256": "e8fab0b58c86e4203110a8a61dea3503cc63bd1709278c03a65b9d2fd5195cf2",
+          "generated_token_ids_sha256": "cac96dcca9fa667659d7806183d855d099e3cda599836ac252d7610373ea2238",
+          "teacher_forced_token_ids_sha256": "cac96dcca9fa667659d7806183d855d099e3cda599836ac252d7610373ea2238",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-169",
+          "model_record_sha256": "51e5eafce23b8a4e6c71b15a17c06893a4c6f71704360cd53339ef7c6ac65af5",
+          "raw_response_sha256": "e05cbe21f32e61d8d24b56880b050594c787494b141b9d800d7da3cedeb72469",
+          "thinking_sha256": "f52ae2353968d878ec7d8eede5c629ce9817566ee48fb68e42e0f31b92551728",
+          "output_sha256": "8e6cf29e7fcdabf43f59fd88a73b4a6cc60c861be114712295fc8106f1edec84",
+          "generated_token_ids_sha256": "e2738597d2b15d2f1165aa50f90bedfadd3d8e42333158c37cecff0f7888b60c",
+          "teacher_forced_token_ids_sha256": "e2738597d2b15d2f1165aa50f90bedfadd3d8e42333158c37cecff0f7888b60c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-180",
+          "model_record_sha256": "5f7e6432719ea62dfbc546af0c817a7da4c8ce1cb65d3c86b5513955dce5c369",
+          "raw_response_sha256": "3651bd29172e6f7c7c336fdadb71272982388d809b2427ccc63f147a97672e13",
+          "thinking_sha256": "47f9ec1aafd00b56b992069b03fd94e367f82bb2fecb23b9c762e7f93446a8a1",
+          "output_sha256": "e7231445e956f4308c53d7c4c1a241f26837a6eeb265fa934b9283861d3e270f",
+          "generated_token_ids_sha256": "0958a972cfac39687914e47416ca0b3afc67a2308a3d2cb6d8fa69b8a54b8699",
+          "teacher_forced_token_ids_sha256": "0958a972cfac39687914e47416ca0b3afc67a2308a3d2cb6d8fa69b8a54b8699",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-182",
+          "model_record_sha256": "eace7afeda533a9647ff6563b8a656b58296881dd9fb927402b1d9d0bc9ef962",
+          "raw_response_sha256": "e85408f7cc67b21025985f6fc9fc89a37fc4e07ace7dbb7a6bf8cce582dfef29",
+          "thinking_sha256": "614ecef062bf8e562e53426a79ea68c7e77da7f3c5ee36ab0f294e7587d81e39",
+          "output_sha256": "518b7e00f4ecd878cea621e6ea48e20422e82aeb70b2830452698688c94f07c8",
+          "generated_token_ids_sha256": "ca7eb3a478ef9e0fe5a6ebb95429b919fa2de63b982b90957b9bc302c950f0aa",
+          "teacher_forced_token_ids_sha256": "ca7eb3a478ef9e0fe5a6ebb95429b919fa2de63b982b90957b9bc302c950f0aa",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-183",
+          "model_record_sha256": "5c0fe10891ffa7b2209c80e2f5a88e1dce7b4bb599db2dc528545d089d1bdeac",
+          "raw_response_sha256": "952e35e9b156e78907de60f0d3a56321490b94da2832587f49e9934090961c1f",
+          "thinking_sha256": "05952b2925f416bcffbaad226c3dea47f56eaea2ce91e4f8de6d064e92a06dcb",
+          "output_sha256": "2fc25db88dfdd607e60061f0b9e38d210874bcadb56f7f3f511b28c1ec3ba28d",
+          "generated_token_ids_sha256": "f96a7502f90c81bd75e2cf877d70c1721066607724679767d98bb3be137a73ee",
+          "teacher_forced_token_ids_sha256": "f96a7502f90c81bd75e2cf877d70c1721066607724679767d98bb3be137a73ee",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-186",
+          "model_record_sha256": "7192f8f705eae70655ba202a819a0f1d9b5890348f4d72a17a6a2cf7aa2a62c7",
+          "raw_response_sha256": "24423aea15a16fbac93dcf7d020b2c375978874bc7d969a0ae7b737472947f3e",
+          "thinking_sha256": "5fde27f799242271df1762671173241423ace6f00191124af5f502ab70f6ef1a",
+          "output_sha256": "b83cbb6b78c84d638c269353c30847d03d7a7e4b0f6af7d6b214c7f25c5502b0",
+          "generated_token_ids_sha256": "df15f58fce43c96b5d242210562d0ea6c1f897ce9f17423769984c40a2cba9c2",
+          "teacher_forced_token_ids_sha256": "df15f58fce43c96b5d242210562d0ea6c1f897ce9f17423769984c40a2cba9c2",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-191",
+          "model_record_sha256": "dc2068adf7d0736f80652746dfe1a5e29449cd9ddecb09880e8749db6dbcf7a7",
+          "raw_response_sha256": "177c79a2ab064b86e57fd415c4e0a993dcedb1df0502e2575f3d3513cd449f09",
+          "thinking_sha256": "c32e0ce93fc58a569803b71dbecc4a5d58ceb53a0ba946578f0b67f0ee4e0c65",
+          "output_sha256": "1cfba6d2024e4d70ef6e11e3af1a893c6229227fd3530c575a5ed99e863ddb73",
+          "generated_token_ids_sha256": "c38beb587803c62be72b536bf72c14cf4591ec435022c7d493737dbc2464b249",
+          "teacher_forced_token_ids_sha256": "c38beb587803c62be72b536bf72c14cf4591ec435022c7d493737dbc2464b249",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-192",
+          "model_record_sha256": "003aef5f28c69bd3184862242009fa73adb62ca50d99ae008231fa6125393d00",
+          "raw_response_sha256": "6ee603387178a15a5ebf058f85520c8caffda4594488a4d94103c6910a56bc16",
+          "thinking_sha256": "40e0281b89743738d800e0fb912e2a78859a1b0b891f9466b605cb87541c0776",
+          "output_sha256": "0c26fdde7fa087caf96ad9302b1759c9a26ef6813507151d607be9b6a94b7b00",
+          "generated_token_ids_sha256": "09a42fad71c213333ab16808dba1d450ff13470e65697ec65b2fe4f6dbbe0e42",
+          "teacher_forced_token_ids_sha256": "09a42fad71c213333ab16808dba1d450ff13470e65697ec65b2fe4f6dbbe0e42",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-195",
+          "model_record_sha256": "e528a3ae357d288b0c629048e3cbb660d6dbafa44e8fd486ff7bc0b709995c29",
+          "raw_response_sha256": "8224caad54ac684eb4dfb2e69e0f57f15e5707e0b58df3032e17b7ffea1c79a0",
+          "thinking_sha256": "4923500abdee4cf0427a3e0d901e80e083b171c5214fc132e194d3586f945332",
+          "output_sha256": "4dad0a1dde5061aae28e1bfb4752fec51a1607cb04ad3a2d69e271125fb028ad",
+          "generated_token_ids_sha256": "6061f16295c32757c4d50c8135e0e7ef642a67349b53fe95486cde4b89e827ff",
+          "teacher_forced_token_ids_sha256": "6061f16295c32757c4d50c8135e0e7ef642a67349b53fe95486cde4b89e827ff",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-197",
+          "model_record_sha256": "cfce59a6d67fd2b0bdd366978fd3fff2a0fbda93fcb260685185abab85062815",
+          "raw_response_sha256": "6df58fcbd22a6615a021ff2234a2903a71efc883e2ab995b8286f75f1d8cd637",
+          "thinking_sha256": "525a31c0da0290b91d1a27985b45641fc7a0db1b02b69fa8b4dcf0a5ce8e40e7",
+          "output_sha256": "95bffdf416acd343d42356cc65e4fb5cef889b1c65770dc31029912953f2ab60",
+          "generated_token_ids_sha256": "6e235528113164df3468b6225091a82e4fdd3351ba1a749ae96d1d47a2a33037",
+          "teacher_forced_token_ids_sha256": "6e235528113164df3468b6225091a82e4fdd3351ba1a749ae96d1d47a2a33037",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-200",
+          "model_record_sha256": "9a2e0a60bd7a3985d578629356c3833bd8469ccaf1ee9a26eee0a8fc3619f4de",
+          "raw_response_sha256": "7e41e6c98bbb4511ec8e1163714aef1a56d7b6ffc7b915c8d26781e919cc3270",
+          "thinking_sha256": "3152b3d083c4b8aa4dd33de4b8db7171c5bbb64e7ad75279d3ae2bf46e798a33",
+          "output_sha256": "43c4959553073fcd7cf0832e5770f5e4a5c6bed30846bbc303f9bf48b8202dc4",
+          "generated_token_ids_sha256": "bd18f6fb1f47a98b7face123dd36eaa89cb7b1c7815b7b22982c760df7bf0149",
+          "teacher_forced_token_ids_sha256": "bd18f6fb1f47a98b7face123dd36eaa89cb7b1c7815b7b22982c760df7bf0149",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-201",
+          "model_record_sha256": "6d447a1d0c4481b32fce75d3861c0101770c7906c68c729fdb0a0ef891b3d607",
+          "raw_response_sha256": "7095414d0a63da75b2bddf772b85ac924f7376bfa3ca23c6ce5d77b064cdc5e0",
+          "thinking_sha256": "08c850326622e1bf1a6ac4fa2fda73ec9cb5527e858584048b28c4ed983fa31c",
+          "output_sha256": "74a60054e05ef182132bf272c51bda5fdec023a13f477c0859e87d738c474937",
+          "generated_token_ids_sha256": "2e5c56306892baef96f8c901b67f2015058c0d7632440fd2d9578c41ddd23869",
+          "teacher_forced_token_ids_sha256": "2e5c56306892baef96f8c901b67f2015058c0d7632440fd2d9578c41ddd23869",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-204",
+          "model_record_sha256": "508e7f2bdc0a762770426b4d178bff2ba2280745da0f390bf7901afbb8258034",
+          "raw_response_sha256": "c86e5f010d77d65c55e154f6bd67f16cfa7c36b696fc57a3c38b4f6599fd411b",
+          "thinking_sha256": "153b4524311963347c6c177e1635a54189aedf770b09e507eb2108bf46927c5f",
+          "output_sha256": "27fe8753e8245a9cee35138c19bb7fc343cc2425bc38a245d711a261386f461d",
+          "generated_token_ids_sha256": "1bbe57110a825d00b44b5d367c966a89e168f64b5a9f26fe485227722030cae4",
+          "teacher_forced_token_ids_sha256": "1bbe57110a825d00b44b5d367c966a89e168f64b5a9f26fe485227722030cae4",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-216",
+          "model_record_sha256": "eafe9c3582a36d10480d41d8e0a0890df603da32decc2ec29fa23ac8012fd396",
+          "raw_response_sha256": "505b4f3ff5475fa1ebba23260c43d5b0a2434ecded5959e33fd5945974f9ca1a",
+          "thinking_sha256": "02a8608c41c42aa8e6bcdb9c9bd6007076e5f25dd5622f1800e9abe0e43c91fd",
+          "output_sha256": "6fb1c22b4144390a059a216450e532b332c407c94ef7c4b0d1d659af5384feac",
+          "generated_token_ids_sha256": "6a3cf28128c8b27d46105b68ffca60ef401dce192239bc7a8c7ee64025cab1f5",
+          "teacher_forced_token_ids_sha256": "6a3cf28128c8b27d46105b68ffca60ef401dce192239bc7a8c7ee64025cab1f5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-220",
+          "model_record_sha256": "4bc3b5058d1f18727bfd3550d3e8404ed685dbd468218d1cd4402b30b6d3a6f8",
+          "raw_response_sha256": "a63d3b8407d7c12ea05080cd6eb93325f7fbeb7c1ced040fe738e9a494291f40",
+          "thinking_sha256": "e39f5838601c3e25822ec133e4c9af80c0d0682b14427656cd9dc7fed25f2cf8",
+          "output_sha256": "c23a9ff9308288efcc0b14f847411444e56f1281d3ace0914e51b560bdd3f6eb",
+          "generated_token_ids_sha256": "3fd6f53661f26613b75c2683e46f057ccbbcff07c600f3eadfb4c5df2b95e8c8",
+          "teacher_forced_token_ids_sha256": "3fd6f53661f26613b75c2683e46f057ccbbcff07c600f3eadfb4c5df2b95e8c8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-230",
+          "model_record_sha256": "1e9861186a0dfc8525aff4389a1aa04a0e59f8c791727e6735bba97af395e0d9",
+          "raw_response_sha256": "583954b18e710ddd90d31a5c2994211198cfd0e568fd53583569ab3018e32d4a",
+          "thinking_sha256": "54abef89ab4c724fc23a3bf3bbf0a230bc8cf09e39f1da10a958607528466dc4",
+          "output_sha256": "c5e2b926ca2f2da65d3ca13d5f950c80788a6311b0aa6b7acf1acbb7c7f8db87",
+          "generated_token_ids_sha256": "c996f953d623a1285243734f378591ec0dbb8f0604245876a43f0253e4322c02",
+          "teacher_forced_token_ids_sha256": "c996f953d623a1285243734f378591ec0dbb8f0604245876a43f0253e4322c02",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-234",
+          "model_record_sha256": "07dcb6f490f10d58b54ee2a266be6a79f642183418eaab8f9c0e57a0a8a73b73",
+          "raw_response_sha256": "c9f6f9681723e04dcb502dde03fbe2460a13d6bec61e53e89e9d061b92ddb5c7",
+          "thinking_sha256": "33c77ba94af6dcce21b79acd3579f5da14a4df82181a8753039b3e9d6c496121",
+          "output_sha256": "4443d35340fdb61bef94b3d0fad9d9e819dbf76230ca3e5313df352d4474f4bb",
+          "generated_token_ids_sha256": "1d6a687381ba69e0e9b4272e028aeb6c68d9f5fe84f1236d769957be68880416",
+          "teacher_forced_token_ids_sha256": "1d6a687381ba69e0e9b4272e028aeb6c68d9f5fe84f1236d769957be68880416",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-238",
+          "model_record_sha256": "ca5cb8152a8378e17e05d1b543520ab1e6b537f2c30a2a0959806111c8dc0fc0",
+          "raw_response_sha256": "3b4666feeed8479e29fca34bfab57ce47ada364d69160072f348c92bac8133d5",
+          "thinking_sha256": "f13123affe52a24f89b8fb1284c8f2018f136bd122c6a544e3fda724dc8f87d8",
+          "output_sha256": "72691127381acbd0b3f76d4ff60d4e95e2bebef86423bf48721bd6fa3db2c153",
+          "generated_token_ids_sha256": "e7ed44d815f14d82b92730e346ff344924a90413878c8368f5537e6b1d3b3060",
+          "teacher_forced_token_ids_sha256": "e7ed44d815f14d82b92730e346ff344924a90413878c8368f5537e6b1d3b3060",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-261",
+          "model_record_sha256": "99d9b366f6337e9dbf5006359124c9c566e418e939a092a2933bbb30a0221eff",
+          "raw_response_sha256": "9bf65e3351aaf03bf1af6196c7fc4473db1be57e272adf7d357e6ba1c39d7bc3",
+          "thinking_sha256": "2bac61b3ebe71ba6b4c63dd2e2b803feae3f30b643c6773eb872fb3603a2e7de",
+          "output_sha256": "6045199f6198fbd83d67db4e66ddb195c8bab2cb45ec2a505ba16dbdddfd690d",
+          "generated_token_ids_sha256": "f68a1a52aee6e9f1e5fb6f4bf70d1b683856d960385fbf679da38e6da629cea3",
+          "teacher_forced_token_ids_sha256": "f68a1a52aee6e9f1e5fb6f4bf70d1b683856d960385fbf679da38e6da629cea3",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-265",
+          "model_record_sha256": "992967e88b5fcaabac976602e8bf8abedf1bd7fdda37feab2448d07b23065749",
+          "raw_response_sha256": "6e1b0457a22b810b9b82612a047c78d5f8fed6eeb2d854cbb225723425c7eaf1",
+          "thinking_sha256": "63d528531d2da73b52b1f75d80df1ba148b64496e61274ca77cf1eb3731e6655",
+          "output_sha256": "c84d84724581c0bad07639ff1de5390e88fe4e663b2edf43dcff2e540ca9c0cd",
+          "generated_token_ids_sha256": "401ebf6cedf2527126da06960466f4c6bcccf5286325dfdcc887eaf370ce6229",
+          "teacher_forced_token_ids_sha256": "401ebf6cedf2527126da06960466f4c6bcccf5286325dfdcc887eaf370ce6229",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-270",
+          "model_record_sha256": "335721681718c009201714b1bb15a2c81b8bbd66af7c6d8ac14c4b83e105cccf",
+          "raw_response_sha256": "954dd31d936ccfa499d5ff9298e4e6c3aa977d7fc42044a46eda8a747b41aa48",
+          "thinking_sha256": "91c4d9d475a9e2478976a2f9b83f160640b0a6fe5208c0a495d6b09d923a585e",
+          "output_sha256": "35f39e3bf4d3edd5994dff95c1378c55afc89765a8c9a2751ad83e5fa3848c47",
+          "generated_token_ids_sha256": "66139cf869262f367ed3b2a85e9b52bc47caadb73f1a6e29abe810683f3775de",
+          "teacher_forced_token_ids_sha256": "66139cf869262f367ed3b2a85e9b52bc47caadb73f1a6e29abe810683f3775de",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-277",
+          "model_record_sha256": "27d5e41503a8cad389d432ec905480b641e195eef989d4be23c849dd9e8584cc",
+          "raw_response_sha256": "2f1c8f2d7585ac756aeb73bb9ed37e5579f90b16c2086f4ec75745e75625ccc1",
+          "thinking_sha256": "67702b6a68b970cd12bfcffffa1ce98548736493d41b20f94b59e01f110cb0cc",
+          "output_sha256": "03e3fde6ed23aa3b599213d6e2e94e2036e78c98110b914ab5f8f75c35358f7d",
+          "generated_token_ids_sha256": "96e125e0d4c7ded66131600ccb950c5137bdef1a6f091109e13dffc847e5d5c5",
+          "teacher_forced_token_ids_sha256": "96e125e0d4c7ded66131600ccb950c5137bdef1a6f091109e13dffc847e5d5c5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-293",
+          "model_record_sha256": "f25bf5031204186376dcf5596bb90fcf9b393bd6ec024d010deb19e194d433b4",
+          "raw_response_sha256": "0a4a54cc5bc8353ea420b994878a847667410896f1dfb58d0245d11c54c08729",
+          "thinking_sha256": "1ba7b5deed5262295206abdfe4e034516d437cbbf803466b4d60338aff576425",
+          "output_sha256": "c8b2ae1f1cde84eec5bccfe18b5916490edab6c77a1b2898d0d3bf74bf7ead42",
+          "generated_token_ids_sha256": "2b528959663c3f94a4db529609fceeb6a6ca12db22034815f31a76323a1c4390",
+          "teacher_forced_token_ids_sha256": "2b528959663c3f94a4db529609fceeb6a6ca12db22034815f31a76323a1c4390",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-298",
+          "model_record_sha256": "3b9fcbe44b73fcffc46e1b48eebe2033ac5e3a485197afb8e2d9e00ac3f4bfd1",
+          "raw_response_sha256": "84042f08f76ec00fab2a81be9268c097a8cf9d862ba3b27b953713d52dd84cdf",
+          "thinking_sha256": "d8794d95f30da87a3113d60bdf6116f4575b5b395697928a26e8e6a2ee0e7f31",
+          "output_sha256": "ef1aafa694d06816e931366da2d57edfaa275e3fece474d65bf9812b35c71e15",
+          "generated_token_ids_sha256": "4849e6a9e2c421958cf996b9732dc6bd77b4e25fc47751fb55b46d33f5d1023c",
+          "teacher_forced_token_ids_sha256": "4849e6a9e2c421958cf996b9732dc6bd77b4e25fc47751fb55b46d33f5d1023c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-301",
+          "model_record_sha256": "2dbacdc2c19ed0c4607e180d731f563dd6849b2ecce63234c163469860947fc2",
+          "raw_response_sha256": "1e0d433d6dd7595162a5ad2ab4761ce2eb0806950f14fd3ad35b1d7fcf0c7a6d",
+          "thinking_sha256": "1108418a628ae97d65aff6310cceec7eed3ce3e5fab1c50a43c3eb13ee765a08",
+          "output_sha256": "2ed93b3281c179b5fcdcfd5a2dddb6b0ff402632facf12117becddf4cc93c371",
+          "generated_token_ids_sha256": "430b91a08db951d9c16c5d023f983e664dd249c056b2cb1318a7dcf4397b4dc9",
+          "teacher_forced_token_ids_sha256": "430b91a08db951d9c16c5d023f983e664dd249c056b2cb1318a7dcf4397b4dc9",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-307",
+          "model_record_sha256": "6b4279922d63440a1ecf62995d3c86d8c80e6198394b3d3d1ffba72f823101eb",
+          "raw_response_sha256": "34c7ea4e5ef3afc526f7d774fcac9589809fb36d1d24e1ff7d345722fdcea2eb",
+          "thinking_sha256": "5dc495da7b47d0f5444323b1fd783be54170b1d17b681d1ae9743cfe0eca1804",
+          "output_sha256": "2e6fbc5c54e005d90930bad5500ef839eedd859d66d97d13d22091ad6a4070b2",
+          "generated_token_ids_sha256": "e15c9c7be6f3693c1d4c3294564361097f67fa578303615671be22427a47d233",
+          "teacher_forced_token_ids_sha256": "e15c9c7be6f3693c1d4c3294564361097f67fa578303615671be22427a47d233",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-309",
+          "model_record_sha256": "37bb4c799fc1c9afa18093ef62de8e7d97a0b1bf08b68fb6c471ae08c5bf7711",
+          "raw_response_sha256": "76266097c4a339d47c4f339557a0b2691ff4a3f397151d6681bfca6c3b7ff9f8",
+          "thinking_sha256": "b7306bfcebbee5bccf375d47b3a2e2fa8087109ecde92f61ea85e0284ffe0541",
+          "output_sha256": "cfd6df6ce2a4760b16708085001ddf879c95fc0c22cbe138353b0f49da3f5048",
+          "generated_token_ids_sha256": "c344286cfc85f1acc598200517e6e757c4dca7302d086f8735920fba866f7fad",
+          "teacher_forced_token_ids_sha256": "c344286cfc85f1acc598200517e6e757c4dca7302d086f8735920fba866f7fad",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-316",
+          "model_record_sha256": "8847ebef97251eefe9c9fbdf893e7d49e6fec5f33af18dd0fac8534a6a6c6e39",
+          "raw_response_sha256": "2c8c8991257057dea088516441f124e08db1b0e68a4cca03d07a61d2737a8445",
+          "thinking_sha256": "34695b4bd580faf5ea624007361dbd45559596539f5fb0711e2cfc9f6afc8c5d",
+          "output_sha256": "59e181a0fd168567d2d048bc5c7b24fa17cbae0f7e1ebbba2d34d01f091a9193",
+          "generated_token_ids_sha256": "5eeae7eee090ab62a0841646b41ad1b128e00853ea863cd92b7279105d39dcd5",
+          "teacher_forced_token_ids_sha256": "5eeae7eee090ab62a0841646b41ad1b128e00853ea863cd92b7279105d39dcd5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-318",
+          "model_record_sha256": "5827fa7a9caab1ba287428643e4599b7e6ffce42c54f6145fe0abc07ed2e9998",
+          "raw_response_sha256": "e7a75ba5c864d757c412ff05d15a8a91ae1cc486182b9b70985b49475ca8fe76",
+          "thinking_sha256": "50e2cb8cf76ec230d8087a3e6fa4b40761753cb4a501be12e47b67f9cfd6f657",
+          "output_sha256": "f4349c21e42d4e5c23840f6be084b9a0dd8dba7b8c7a9db7a931082cca4c83bb",
+          "generated_token_ids_sha256": "4b3b42963352028ac7fac555eb61635e2c3c0e3b7ca9becf196fecbc175efa1c",
+          "teacher_forced_token_ids_sha256": "4b3b42963352028ac7fac555eb61635e2c3c0e3b7ca9becf196fecbc175efa1c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-323",
+          "model_record_sha256": "90933bf9b231e29c11bc4b1d3094f0b2e9001c54a86e867751cd3b1c5f8cea1e",
+          "raw_response_sha256": "12c2c9c2d20fc93dc71e75b1abe99b3023a3930a2626ff3044219f0b869c1178",
+          "thinking_sha256": "1e108c0b216184ad3eba472c75d67b0466d7fa7ea5655e3116824a4463b9dc04",
+          "output_sha256": "df2d6f403f4141079e86d8991bacd14fe327bb6f7d28ac95189d9668b25bde8b",
+          "generated_token_ids_sha256": "846394bdac39a69f07081b5980777b6b16a60677b4a3fed4a1c0a0a2fc11baba",
+          "teacher_forced_token_ids_sha256": "846394bdac39a69f07081b5980777b6b16a60677b4a3fed4a1c0a0a2fc11baba",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-329",
+          "model_record_sha256": "b2cfac6d9c341b9d56c5355633ddebe37d23ba5dd1fb3c3f9f532da0f4d482d3",
+          "raw_response_sha256": "872371c46047d1d5e5fbc783b4ef8bc91ff7f3ba1d4313a513105c0e773cae54",
+          "thinking_sha256": "074c00ad337e4cf187ec6fdebd1892abe19c42a054fa1a2e93a48980ee071c2f",
+          "output_sha256": "3d63590cb7e08e2ddff0d662edba22174a2e5790eb21628d2b9d5d7e561987ae",
+          "generated_token_ids_sha256": "7694b8515d00ad38c8e6eeb68c2d0596e7e12de6e6fba57a95ac145da48ca64b",
+          "teacher_forced_token_ids_sha256": "7694b8515d00ad38c8e6eeb68c2d0596e7e12de6e6fba57a95ac145da48ca64b",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-336",
+          "model_record_sha256": "114741246cd591ca19ba85d53be45e0f9bf6fdcb4d07520377e404c078c7fd54",
+          "raw_response_sha256": "582f94ff31db9d4fbc8c847f566de5e9b3ce7e300202887b7088742f199c508c",
+          "thinking_sha256": "86577c35edbf22d7b0b8e5db1a1870546be6bee818639d0e6a7c87a57ed42af7",
+          "output_sha256": "8bbe1d64406d445dc31ae126d3e219c4b167797ea978ec675e3f0c68ceba8de7",
+          "generated_token_ids_sha256": "0bd60d65a9aee2798d70c64ca3806ea65d7b09c38d45600ea2d037ed5d21b0d8",
+          "teacher_forced_token_ids_sha256": "0bd60d65a9aee2798d70c64ca3806ea65d7b09c38d45600ea2d037ed5d21b0d8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-347",
+          "model_record_sha256": "aefdf78c0c25a0a1521e03c6c40f217e8b1dbb744783ed78a226c8b584510dcf",
+          "raw_response_sha256": "1e184628179c20cf3c708ac008fd10149971d155480c9e3d31af6d46973be542",
+          "thinking_sha256": "cb57f5eb7fbfd1527427a9457c672bd657a9d31116e2f2baf8c7e4c232a450d1",
+          "output_sha256": "4cf1051891454994800e84f47c0403d906207b720a059276de903753a91d0fde",
+          "generated_token_ids_sha256": "1c4fd17244855be8a647a4f8578e19bae628ad45a35773196b7c4fe5d967c79f",
+          "teacher_forced_token_ids_sha256": "1c4fd17244855be8a647a4f8578e19bae628ad45a35773196b7c4fe5d967c79f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-359",
+          "model_record_sha256": "ffa272de3e062a3ccd2c9d55c53025605adfed4c674f65cfae44642fe88bcd70",
+          "raw_response_sha256": "bfadddb7e7346dc9f84a39df21a7c68bfefbf436ed801a6e767f4aaf065c7ecd",
+          "thinking_sha256": "def25dea35c0ca23f10a8c469fc4012fec60ed52fa9328892fee03c3a2d18a8b",
+          "output_sha256": "dd99a0be3a5c82805ddf750155c1861db671a33c36c1b0eb426b19d62b9a351e",
+          "generated_token_ids_sha256": "fc83c1e6f9508a0cd597bc28bf80299ebc10505b02fae642621c45438defaf76",
+          "teacher_forced_token_ids_sha256": "fc83c1e6f9508a0cd597bc28bf80299ebc10505b02fae642621c45438defaf76",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-362",
+          "model_record_sha256": "9cc0d82bbcefe9e61d4324a2a6ec329210b682d4849fd2d343887479ae30492c",
+          "raw_response_sha256": "10551d5307f2cdda6549556d9a26c556ae76f290e20bd185b2c45915d24fe21e",
+          "thinking_sha256": "8c5da639c22e616ff0b769a1525702b3ace3b5ed8937cc040b71ce1bcfbac434",
+          "output_sha256": "f8348016785ffdb3fc36c04a20ec3e6520b7b2cce1150c42534d6a0bd511f492",
+          "generated_token_ids_sha256": "8f6a7ca4290ec26d7c5266415de55a23b35f3d634009a84f7adee1c4ef2357e6",
+          "teacher_forced_token_ids_sha256": "8f6a7ca4290ec26d7c5266415de55a23b35f3d634009a84f7adee1c4ef2357e6",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-368",
+          "model_record_sha256": "95f1814a663c6874b33327bc23a9e8cd532533b6fa11d3028f7150855a268d1e",
+          "raw_response_sha256": "55d08c16cf395fc41813ad2ca25a4d594559e6e914f7861b7e6e8d37d6c36a3c",
+          "thinking_sha256": "111c8d65e449db80a052f3adb6a5455ee49941e6e7df10692fa18bed5df31cc3",
+          "output_sha256": "729ff02ba9d87d1d0ffc306b412bd2fd7f7e50f7140587249988bfc99428a8ed",
+          "generated_token_ids_sha256": "d8671b50cc7ba7c9d9decd5047baaf6e2b9a3e6c484f200cd1255fb3a6354b4f",
+          "teacher_forced_token_ids_sha256": "d8671b50cc7ba7c9d9decd5047baaf6e2b9a3e6c484f200cd1255fb3a6354b4f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-371",
+          "model_record_sha256": "288757598e9f47e468a53e84e9367081a96c49cd14e2bacefd3390253ebc3569",
+          "raw_response_sha256": "4713e2cbe769c987149785a98b3bac475f0e226fea6964fcb51f269599e9e838",
+          "thinking_sha256": "c7de10d9cc1382ee566918f91a17d00daf2402ecf861b47fca8368e2e1f35d53",
+          "output_sha256": "9b30d9d54358e65ef10b4cc44abe2a0d2748c83338c6ddaeeb6313e4831ffcc3",
+          "generated_token_ids_sha256": "3b6c7813eb07b64f2395c29ec0072c943ebc501f042e2f849119bcf72472f276",
+          "teacher_forced_token_ids_sha256": "3b6c7813eb07b64f2395c29ec0072c943ebc501f042e2f849119bcf72472f276",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-378",
+          "model_record_sha256": "53d99d45a32895abbec18020bf6cb2361cedd2dc4a22e7bb1ee90e99e0f9ef8d",
+          "raw_response_sha256": "6baa82e522e79178ddfe5c5c7736200c0cb3e1f43f8e3a2e4046352aab900d88",
+          "thinking_sha256": "6ae87279648dc48f11c4119a95a498e467f7aa97f2448be073d070d8a09060a6",
+          "output_sha256": "b88ff5def3ebd24d9250cb690289c25b7f6ba7cd9d564a4001df8a2533c16ee4",
+          "generated_token_ids_sha256": "6f43b3b9bc1ecf4605ae00bdb418ffd819fa874d9d4bd9be4817050007041330",
+          "teacher_forced_token_ids_sha256": "6f43b3b9bc1ecf4605ae00bdb418ffd819fa874d9d4bd9be4817050007041330",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-380",
+          "model_record_sha256": "0bf33fc07f0d31281e0e77f2625215a246a20b48ef125647990a12166cd89fe9",
+          "raw_response_sha256": "02963ca5899e39ff27cd33352dc3dbd2e6773a84dbdd5aca38e948924e523328",
+          "thinking_sha256": "4b8a3feebebde408056bbe9127ca6339a1aa1d7cc77559f66202d1a1c7ed38a4",
+          "output_sha256": "49bb44adea6428e7fa62e4899b19e4336a1bd14c9fd67724c69f91390acc8706",
+          "generated_token_ids_sha256": "0fdf9f8af095c12b5259f35bd1db5fa5c4d8d15245821b3a16acd017f6d23a17",
+          "teacher_forced_token_ids_sha256": "0fdf9f8af095c12b5259f35bd1db5fa5c4d8d15245821b3a16acd017f6d23a17",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-394",
+          "model_record_sha256": "44fb9490040c6eff2037ae7109fe00ae4bc5da1a4e8fd578896cf8bb28bde4c1",
+          "raw_response_sha256": "8929be4a9c96e6e9c2e564ae06eb731d432b665d8dcb9505164f116d3be57bbf",
+          "thinking_sha256": "922079872437c07eb04aa0c6766372f4346cf57c50f802bdcd19570985e038fb",
+          "output_sha256": "5d4b628b5528a3d7fbceac042483a0c883da97b6cdd97f9731bab287167a5702",
+          "generated_token_ids_sha256": "49f65b246c2d74518dbc1c3df6fc6ffcb8ee99cc0df07a265b9ced3e0520604a",
+          "teacher_forced_token_ids_sha256": "49f65b246c2d74518dbc1c3df6fc6ffcb8ee99cc0df07a265b9ced3e0520604a",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-413",
+          "model_record_sha256": "2b13ba7f6b70e11b6c76bd3921d1fb157f637ca3b60735d7849a5d7f849ada42",
+          "raw_response_sha256": "a3e81710f679ab515a28ccf87c2220b53fe7742a8663af59abd49e691ab09dfb",
+          "thinking_sha256": "6358e89a23ef456dcaabdcb5b8b364b330b2fc4bfb4fad26b2002038fc404b2b",
+          "output_sha256": "5be104fe570e636e506a65768b2054065d9bd7a547f48b46ffb31ce891171b3a",
+          "generated_token_ids_sha256": "cde2eed9bf5273715a86eb09dccb6fb5c3d5afa24011393b4d869c71a6f99825",
+          "teacher_forced_token_ids_sha256": "cde2eed9bf5273715a86eb09dccb6fb5c3d5afa24011393b4d869c71a6f99825",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-417",
+          "model_record_sha256": "a5b0f54a18ed748d2762674878d938ed91c84bb06d579b279ac01dbde3dce547",
+          "raw_response_sha256": "13b638c27f4bd217dd36d0de61e259132f1552d8f13a646dacbba949299e8af5",
+          "thinking_sha256": "98659e4879a730c3c0f2527a3d95f7e6bd1fef2b46ba4fac874cef95367a8fa5",
+          "output_sha256": "cbb58dc4644a5ba03ef16df5429bdb87a6ab576aab483aa539d1e080441b3a43",
+          "generated_token_ids_sha256": "9a363f4215f0d2e5522fb77d121e604e0b6ca20f2eeda60baf600d5c99b2a24b",
+          "teacher_forced_token_ids_sha256": "9a363f4215f0d2e5522fb77d121e604e0b6ca20f2eeda60baf600d5c99b2a24b",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-420",
+          "model_record_sha256": "60f1cffff1fa63e6d5d45e68ba59cfd1744b330e15d375b412a8574860b8a3b5",
+          "raw_response_sha256": "79f96bb40610e5b8f17e49c18553270f1e6f2cc07b675b25ce027450f28d8f57",
+          "thinking_sha256": "ff1ad260a415ab1cc72a2a3f83479b9c6ebeffb57cf29fed80ed4f4b281dfbd9",
+          "output_sha256": "875c3b694546c13ba103fc3f7f6cbb28d465b14b75361c833d3b3ec41c46a50e",
+          "generated_token_ids_sha256": "bda959f559d5edb00746efc1175addb900d9a4af1101bf8e9ad3bb12aee0d93a",
+          "teacher_forced_token_ids_sha256": "bda959f559d5edb00746efc1175addb900d9a4af1101bf8e9ad3bb12aee0d93a",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-423",
+          "model_record_sha256": "75c28a5e53e864acfcf4c6c1287548577c885c8dbf4371996f274cf6010b97b2",
+          "raw_response_sha256": "ddbafc560b7cb770f9a879a2145e82e010285305cad9eda5bb0ce158d787fd8b",
+          "thinking_sha256": "89f1194a91f6c77fce4a50d06ee17fd7215c9c22c9a99866f852ae43a803fc0f",
+          "output_sha256": "30c198ba9727217f9394024fa4ee9b257469620655dc81c9b0558dc322ae70ed",
+          "generated_token_ids_sha256": "dd828d82758fc4099e992b9761fe5c61af7e4e29abd50c3dfeaae5facfd95885",
+          "teacher_forced_token_ids_sha256": "dd828d82758fc4099e992b9761fe5c61af7e4e29abd50c3dfeaae5facfd95885",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-424",
+          "model_record_sha256": "e46db8ced77b7d7ea505e21e8d2637a195aef72962c023db77406a26d4d8fa8b",
+          "raw_response_sha256": "c4f098c1b7bcc9d7cf11aa465c28994cefa6dd51018c62c8096506681f35d033",
+          "thinking_sha256": "fdd3d59e465c89f80fec33109abf2aea8674a4ec831f142f17bd6b70e41c2dde",
+          "output_sha256": "d93c606677d41328849725a072219aea2129b6a09f651115514303a2f6deae82",
+          "generated_token_ids_sha256": "d2da5aa696226dba80269faad3f274757483a4eebf0ad55dfcba64a6cca51b4f",
+          "teacher_forced_token_ids_sha256": "d2da5aa696226dba80269faad3f274757483a4eebf0ad55dfcba64a6cca51b4f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-445",
+          "model_record_sha256": "eb7afe815523751256ad9ab6fd6e2dcbbf295dc7147d9d3d40a2d5d4994d2221",
+          "raw_response_sha256": "7ac5702de3c051d3411a34586bece4f2f6339afcbce9053955f5dfc386a34afe",
+          "thinking_sha256": "2a123c3236019e9a68c0cc28b4cdeb8f7c3899ea866c2e11a55296c5aab0d327",
+          "output_sha256": "0b5876e1c4c64b9e013c4a4a590e2d9f5d1979d76ccd698d9c98574945bbf4be",
+          "generated_token_ids_sha256": "524558caa46ebc79e27ac964b9c19bbda9394ceac2844403b40b1130aa6b64aa",
+          "teacher_forced_token_ids_sha256": "524558caa46ebc79e27ac964b9c19bbda9394ceac2844403b40b1130aa6b64aa",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-449",
+          "model_record_sha256": "3721edb5536d3b07e92cd6b24ea23c3381292bff3de59884e157a9e63b5a7c08",
+          "raw_response_sha256": "f0afdaa8e387b6e6b5ec2b72b1df9d44bfe9d9305e1dd5cbbf7e14b65e07f12a",
+          "thinking_sha256": "f6cc330d51b485e553ab8ea27af4beb075c8f478af797d0fa1d7ecf5471a873c",
+          "output_sha256": "d00ba1c6f5b7f7ec420742baa0b6c726b38ad3a8d4b47fa59493fe2d4613544f",
+          "generated_token_ids_sha256": "a6f673cfdbb46d0a1bf0ebae3f343d7f62c9a213c2b127808a82c63ffd3c9522",
+          "teacher_forced_token_ids_sha256": "a6f673cfdbb46d0a1bf0ebae3f343d7f62c9a213c2b127808a82c63ffd3c9522",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-466",
+          "model_record_sha256": "275365324a45a314b4a778f1db111d2d7b202ff7c9ce87c7e0121c951712e59c",
+          "raw_response_sha256": "937636b4604c022e8549ccc199d5c878551b460f1f6249d2b41abc68f849acbf",
+          "thinking_sha256": "c798bd59dc08a01b6db2a22114c26eadc66827e325707c705935715fa0a68f25",
+          "output_sha256": "e212aabbdd104a2f230db75494f75b524d6651660460b16d631c886168e60495",
+          "generated_token_ids_sha256": "13f96c650ad7197befffbd182a10fdab763bf60344a5f9a0692a35e5a27426ea",
+          "teacher_forced_token_ids_sha256": "13f96c650ad7197befffbd182a10fdab763bf60344a5f9a0692a35e5a27426ea",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-471",
+          "model_record_sha256": "8ee39c0e975b1587e823663a55be7ad0cdd1d2ffc349fe34c97b4835807dbff3",
+          "raw_response_sha256": "12c6532473ee5a0dc4612c37bcc7f3d0f5533a1cf3e00c75a3afc919d610f120",
+          "thinking_sha256": "84b00c17e1da509147a810c2da91c79eeb9f226bd60eaa0545d79c7a2cc20249",
+          "output_sha256": "9009dd980d49665751f3ea7d8d59464ac647b454732e1b296fb277ffb21dff18",
+          "generated_token_ids_sha256": "6149458d0392ca77342d10541564b252a5c2d28d58606a4bdf6d46a7924e3af8",
+          "teacher_forced_token_ids_sha256": "6149458d0392ca77342d10541564b252a5c2d28d58606a4bdf6d46a7924e3af8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-472",
+          "model_record_sha256": "60cc9c13083e2569bf110f44d7b731d7a0b617acc2fa30897fbf3c849d67dbf3",
+          "raw_response_sha256": "fab1b6abbd45709d6bd31311cbf9d92b8cb77e2e108c47b274bc9a8246e98cf5",
+          "thinking_sha256": "c5171d890a3270f15c6b44808ec38cae452fb9ce8498cfd510f5fbc196e220a8",
+          "output_sha256": "c435cbb8388b2ccaa0865c78b6082d3f6fdc9888acf3495186a94924734048cd",
+          "generated_token_ids_sha256": "b553dd82baadb9b6ce976677f0687bd9b5510b622083fec5154e0d45f9128493",
+          "teacher_forced_token_ids_sha256": "b553dd82baadb9b6ce976677f0687bd9b5510b622083fec5154e0d45f9128493",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-475",
+          "model_record_sha256": "4ee4d53c2ab34921772e1b19377b54da2d5a1a099499b855dff241664421af7e",
+          "raw_response_sha256": "77263e2adeee7b780bd0235289d25756fa0e5d5bd02ddfdbd32f40e3d47283e7",
+          "thinking_sha256": "4e10d02cd302a52acf1470cf0a7508e23027ce4e09e6a3ce53ea4030f3249ccf",
+          "output_sha256": "37b8036bff3d5686d63566cb81d74a111f3951e8a0bd276a73a928b8a885bf38",
+          "generated_token_ids_sha256": "f5da177b6a8dde796d02425a2a65a898da7036f3f567735b815e21e0fce343c0",
+          "teacher_forced_token_ids_sha256": "f5da177b6a8dde796d02425a2a65a898da7036f3f567735b815e21e0fce343c0",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-482",
+          "model_record_sha256": "905243adada1a0f10a7013616f4a15d34e1ab2f00c64a4a5efd724faee5064a7",
+          "raw_response_sha256": "f1e5adb57b0f75524ed1c0ef35e9e448e62fe69cc5559fadc93292ef408ac2a2",
+          "thinking_sha256": "7b852a74e881e47c95a59012884fab066985f3e5ea09dda187c47ea64169e4c4",
+          "output_sha256": "1574972eae35fe998efe9da2b1fa331e6515a84dfb247287956ba3187fd4aef6",
+          "generated_token_ids_sha256": "519e365bd3476ab3ec8254cc7979a1d38c21b03fcef27b61d630b9c9e67cd48c",
+          "teacher_forced_token_ids_sha256": "519e365bd3476ab3ec8254cc7979a1d38c21b03fcef27b61d630b9c9e67cd48c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-484",
+          "model_record_sha256": "f86a2cba8a6df9e7796f31bfa1990a081d0da4ec18bcb97c888609536ba6f466",
+          "raw_response_sha256": "28b258b2649dd7f920700ef6a2d9c2441cc65894b7d7cf017ceda3b19713593e",
+          "thinking_sha256": "20cf8efee8bdb97a7e8b58a1e3616065f98d1fb16809b82b665b265321e0e1b2",
+          "output_sha256": "f968b694fdfe33d5f7acb973716aeda7be9820d2f6d718e5432c067c3055d94a",
+          "generated_token_ids_sha256": "5717c222362a4c0b6434968782c4ded7aa2cb80be0b96922a096e545daf278a2",
+          "teacher_forced_token_ids_sha256": "5717c222362a4c0b6434968782c4ded7aa2cb80be0b96922a096e545daf278a2",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-487",
+          "model_record_sha256": "7a2bb201f11f09eb80e0e327f8977d39f1918cf43bc7fcef56718b554d9bd6fb",
+          "raw_response_sha256": "0b80322eb00b179a4887f3753c7daca092e6ed8a37749c399edf42d24d993c01",
+          "thinking_sha256": "dee2265afd3d78994849e1579efd8f971625cd84959438bdd259750f07065f59",
+          "output_sha256": "f88ab9e36ca1f6277fbdf31cb0592de456930d5fb093bdf604ba7849450b086d",
+          "generated_token_ids_sha256": "ee6b964fc2a80feb687b1bcc6626278304fa85c3fc4ef55eaae4b25e699ca074",
+          "teacher_forced_token_ids_sha256": "ee6b964fc2a80feb687b1bcc6626278304fa85c3fc4ef55eaae4b25e699ca074",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-491",
+          "model_record_sha256": "ec93e019d0030e358a7acaa22af9544fcddc99ebfe2a711007bc1fdd638c77d9",
+          "raw_response_sha256": "5e8ec2564a8a6450f9a7454c04de905031ab8883e5ef2ecfa9bd7faa2b9da4ce",
+          "thinking_sha256": "4f1a867e722a0720ea2f8c07ac8bae9becf753cc26372b37f926bf9cb0133bd4",
+          "output_sha256": "a88bebbc7996f2291dd78b1a9994720bbcee87b2cb519f9cc5f975f15e1c31e6",
+          "generated_token_ids_sha256": "1953dc5fab1ac53fc05416ecb0f56e48bb1c5bb26faea41bc9ffa86654ed5f78",
+          "teacher_forced_token_ids_sha256": "1953dc5fab1ac53fc05416ecb0f56e48bb1c5bb26faea41bc9ffa86654ed5f78",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-502",
+          "model_record_sha256": "b9f3e33a1d063360c7bb60c2cf38145eb58a9e5ea5ba538ed7442a94758b7e8d",
+          "raw_response_sha256": "45425f134bed4b9184e8d77d145ff331ff065ad5251cb46c414b8344f45cc8a6",
+          "thinking_sha256": "290f18f26cec5ec1e4b964e287e4b0d2082183747fc06b77d390743b8ea58388",
+          "output_sha256": "3f20dc0eb53412fa16160a8d91c4359866f00115fed7beebb06557812feea77c",
+          "generated_token_ids_sha256": "8382957c54cac1d6056e28a96da6b390318bad29b0c609ad2296a4365bb7a760",
+          "teacher_forced_token_ids_sha256": "8382957c54cac1d6056e28a96da6b390318bad29b0c609ad2296a4365bb7a760",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-516",
+          "model_record_sha256": "8ab33274052c6f6c9a5394954dd353bcc7947b28772da8f4b78513c4671c4836",
+          "raw_response_sha256": "c6d7eaaf96f41a5a89713767d7bafe7afbc7cf6e4fa0f7c2c7b9a664a69c86f6",
+          "thinking_sha256": "8716c7d670e9df0203f2166069da882a2c1e21ad78e2375c111aae25f4483075",
+          "output_sha256": "62bc239cb8426060282a1ad2b184bed2932606c83070f0fbf60d391603525a3a",
+          "generated_token_ids_sha256": "57465833bf9267436c974090688df52124ace35845ab3f33ef8e8c67846319ec",
+          "teacher_forced_token_ids_sha256": "57465833bf9267436c974090688df52124ace35845ab3f33ef8e8c67846319ec",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-520",
+          "model_record_sha256": "cc9294ed9629a4330b640d1639d7823add2a66aaecfc84448070ae5622f179d0",
+          "raw_response_sha256": "16e21c28332a06bbd6c423ebc3c9db85e334a2404b5a5d80a5dc486c8047af9d",
+          "thinking_sha256": "0707263d35a26cafa4801d71d8a1fca18130d777f90cf862c9ff17863db9d98a",
+          "output_sha256": "e20f0e1811b68fd61e1366cacc60143db9f25afbcce89d19fbaf8396c45541d7",
+          "generated_token_ids_sha256": "6c1b86cdcce9c99a2b1cd88fc1699bd887c428d576298682f9301211e5ff38de",
+          "teacher_forced_token_ids_sha256": "6c1b86cdcce9c99a2b1cd88fc1699bd887c428d576298682f9301211e5ff38de",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-524",
+          "model_record_sha256": "35d702d35d5f8bdf72e912646ecf7caa4c03a2ba5a0d38453552ec6ddc7cfac2",
+          "raw_response_sha256": "7ed0d19d9500650bfa0fa98f593cba3da447c98408aaaa57b3fafd7d35a5c88d",
+          "thinking_sha256": "eb21c587f165b7bccaa58b60b32b3a7ac7240a156c63e425f206997905b30bbb",
+          "output_sha256": "a514841707402f99f141699af7afe7619787cb0ba8e73e2911dfdec2cf2b1ed4",
+          "generated_token_ids_sha256": "8297123b911d40fa4731f47550b1138379f21a631e3b7de5c32805a5dfa36c0c",
+          "teacher_forced_token_ids_sha256": "8297123b911d40fa4731f47550b1138379f21a631e3b7de5c32805a5dfa36c0c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-544",
+          "model_record_sha256": "79aa434fe6563c92edf2c16ad5fc20805c508cec46e8292fb97360683caee866",
+          "raw_response_sha256": "6e56caba90278884d22c12542e5efbe47cc48f71b2affbf73cefa46d13cf6b37",
+          "thinking_sha256": "671fc7bd7ce8b5de821ba0296257613aeca9610f3b4140e31471e005ed7efcd3",
+          "output_sha256": "3c04b1aaff43d39e5bff1a4ff34fad7daa34e1173f5decd61317bf59fe796e2c",
+          "generated_token_ids_sha256": "4f2c19d2e5e79313ed8e075c3d9ed1c251f6f494bc21eeb26e2a98038d2c3664",
+          "teacher_forced_token_ids_sha256": "4f2c19d2e5e79313ed8e075c3d9ed1c251f6f494bc21eeb26e2a98038d2c3664",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-549",
+          "model_record_sha256": "338dda70cfd18b8505b981dc247716f812a0990efa7549d0ce59aa77a8e90a60",
+          "raw_response_sha256": "ca4cf67bc6c7ca75d79d86dc7b174ec094dc13db1f107872ef8c0eb94411f2c7",
+          "thinking_sha256": "1f566702332c248a022a0a8c1f3363354b3cc4a695c982e3f66bc41f437aa9cb",
+          "output_sha256": "64c5e68293bba7bfb788852f9b04773be9f746a2a83da2591a48e8d4fd990815",
+          "generated_token_ids_sha256": "ac8ee955a5481425b30bed6728877d019b3ba1311edb301a849d220df01afac8",
+          "teacher_forced_token_ids_sha256": "ac8ee955a5481425b30bed6728877d019b3ba1311edb301a849d220df01afac8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-550",
+          "model_record_sha256": "a6650089a4b4774e7c98feedc6dd818a0d84f5d4db40e40aa8c3bc42aac7bba3",
+          "raw_response_sha256": "f998fd5a8661d6263204851e2a837939f459cf894040ccfc8d85fa503d81654f",
+          "thinking_sha256": "628c052a7d1fb70d47354b31c68db9377d6a0db4c54be267fee00d2536223f86",
+          "output_sha256": "bcd5e8ffa0f277d34486b2aa725823230a8ca772896674144ee03b0819cb00fa",
+          "generated_token_ids_sha256": "dbfbb752230a095f9543fd2a2d8bf2ff7f2ecab6db142eaeaf4bc55a1d7e43cc",
+          "teacher_forced_token_ids_sha256": "dbfbb752230a095f9543fd2a2d8bf2ff7f2ecab6db142eaeaf4bc55a1d7e43cc",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-571",
+          "model_record_sha256": "19a421bb6e7a51ffa4ab02948d74332021eb22a139fec8ad04c87dd52a7fc990",
+          "raw_response_sha256": "e027ed350a7e58f5937be1592a7c39e816546bd19bcc3cdf63216ab9c0af850f",
+          "thinking_sha256": "9ef8e76a4d43edaf8ab8c0bcfd725c37475949a4f6ad7e2bbaaf6a341e845717",
+          "output_sha256": "a027a2e03aa20a32ab79d87e8258c65ee10fd699298600b2153c3919d4408e41",
+          "generated_token_ids_sha256": "bc8d4d4bc1485b908fddf279e97c34433b68e31ebfbfc16e62cc33cd26662240",
+          "teacher_forced_token_ids_sha256": "bc8d4d4bc1485b908fddf279e97c34433b68e31ebfbfc16e62cc33cd26662240",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-573",
+          "model_record_sha256": "1ed3729416966df4e9293129f2330d205f3df9197296b59da40d1a8309df289e",
+          "raw_response_sha256": "b2e73f99f3f3f9c6c972c0227183aad5a9890fec1575d4aa5de5b59efc62b9d3",
+          "thinking_sha256": "227b9acdae329081cc3bad0b53927fb92487440d6a479f1216ed507df4cb0f40",
+          "output_sha256": "33f4b20d9d8bf0c95aa79ca6dc47b5b00e51fb2228743162be376001d56d80b0",
+          "generated_token_ids_sha256": "14203430037c795db9c9bd6d294dff54395cbbd6fdc67e1bb0b925814f0f7b5e",
+          "teacher_forced_token_ids_sha256": "14203430037c795db9c9bd6d294dff54395cbbd6fdc67e1bb0b925814f0f7b5e",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-580",
+          "model_record_sha256": "bb1268c6ee2b6c82dc83d871bf15a51a1fe9893aef81b2824912e14ffff63288",
+          "raw_response_sha256": "3f7bf72783007616b4c9e5ca8aefb80b239d5e19d091a3a2878ab34c157dd855",
+          "thinking_sha256": "be323db97c86237da410811e49e534e6cdd77907732d475025df53f1c264e4d0",
+          "output_sha256": "3312794f718746965d5a88e406f92f69944afb79b6ed94e138f1ebe8af90667e",
+          "generated_token_ids_sha256": "188e500bd8ac80ab8152ea4e10ae088dff9cb7808609ff3029c162b16e90b13f",
+          "teacher_forced_token_ids_sha256": "188e500bd8ac80ab8152ea4e10ae088dff9cb7808609ff3029c162b16e90b13f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-581",
+          "model_record_sha256": "30dc92e16abc1b6e3f44f42eda1b3d9f36d6551d077934a9170620be6383a01d",
+          "raw_response_sha256": "7d43abfb6b0ed32a1768286633c4a5cb3df03404a3a88a1ff3af553e70d7d9ab",
+          "thinking_sha256": "cc638b6d03ca5ae57ed306338786669b41a1ad5c2267344961d46477222963b7",
+          "output_sha256": "4b0a6db60a500193c82524ca084acee1a2fb80c89733f0b7809f5969a0f55b64",
+          "generated_token_ids_sha256": "4939c0fa394752adfc03daab3b5548b3c60a13b79f29e743f70019864cbaa7da",
+          "teacher_forced_token_ids_sha256": "4939c0fa394752adfc03daab3b5548b3c60a13b79f29e743f70019864cbaa7da",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-589",
+          "model_record_sha256": "12f74e104e111e3c218dd9c87a5e78e2d0fd47d0e1fad70f1223f5cf59024f2a",
+          "raw_response_sha256": "f399d2dd4f9d91ddd3c32c98a53c0485c1f5ce11ea9581d15c7cbf9190f1d57d",
+          "thinking_sha256": "fdfe5401f53293f60a96c88243d5a1bd6868f6333bb0420b780c22f81597f69e",
+          "output_sha256": "f7183a43cf1bbce1f17019913737e1cd780ade09966182363b7e1df84d258bd2",
+          "generated_token_ids_sha256": "d2e1b3e7892ffe51aff34b8911f87fffedf4a1ab326e80aacbcaa2e9164e34f1",
+          "teacher_forced_token_ids_sha256": "d2e1b3e7892ffe51aff34b8911f87fffedf4a1ab326e80aacbcaa2e9164e34f1",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "vizwiz-lf-595",
+          "model_record_sha256": "ae3a6c27d572f0a1dcd60dde628c0da432c30ba674fce6995023c0621bf0facd",
+          "raw_response_sha256": "96f3e82ad5d1ab9fa16591439978f8f9ed816b318b1c2d0a63d4e02be8d3fa22",
+          "thinking_sha256": "a0dce05161f40d3214fe022a235858dee92ce0e2b32d2291abffadeec597fc95",
+          "output_sha256": "b1762e31cb910d9b94687c12f37d367c05873f0ec6a0f0a8d5ccb076240f5081",
+          "generated_token_ids_sha256": "1d7503646c2383088d7baae8aed2616e2a6d19c80ed20140a9072278d8c46bda",
+          "teacher_forced_token_ids_sha256": "1d7503646c2383088d7baae8aed2616e2a6d19c80ed20140a9072278d8c46bda",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        }
+      ]
+    },
+    {
+      "model_output_path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.model.jsonl",
+      "model_output_sha256": "f5b1746ccb0b9c3865c1904bfbdb6ca28d2a9728f0a657f563ffb3d8fa992902",
+      "sample_count": 120,
+      "resolved_revisions": [
+        "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+      ],
+      "samples": [
+        {
+          "sample_id": "wiki-visa-0013",
+          "model_record_sha256": "e2e7a2e0d19aff2d9337d052ca81c6ff0dbf2ea4efd33936ab1f421b35be76b5",
+          "raw_response_sha256": "9d5681a85f82e86fd74dcdb64803a286ee62604562ac2c616fce4aef4e3dda36",
+          "thinking_sha256": "46c68080e503f6ed1f0224b406859c2329c2cc304d1b14e6671d7b7f6b10f357",
+          "output_sha256": "b728f18583f0132868fc079df4260b331770f31a24321c7e65be7334ae0d8b24",
+          "generated_token_ids_sha256": "64619fe07f0305e0523d74f61ea961fca01b6aa3fadb795bfe0b3121541f9f32",
+          "teacher_forced_token_ids_sha256": "64619fe07f0305e0523d74f61ea961fca01b6aa3fadb795bfe0b3121541f9f32",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0051",
+          "model_record_sha256": "65fef85b57d935d84e30864e6cdb9e8e52b606147b853b71e54905b402a226a2",
+          "raw_response_sha256": "ec52ae5c67c0b624608d796f0e7f2936a2d3572597351f44346ee9831b5bbce1",
+          "thinking_sha256": "ce7378f040fa494a065371199af1f93b9be00d86e8168885c0695e489295bec3",
+          "output_sha256": "83920c66da7784923844c080fa80f594839b3dafa57369c28999c00841eed57e",
+          "generated_token_ids_sha256": "fa48d91d1c0bfbe3b551dfdb9793f321c2c2a731bd43726b0db37577ead9d655",
+          "teacher_forced_token_ids_sha256": "fa48d91d1c0bfbe3b551dfdb9793f321c2c2a731bd43726b0db37577ead9d655",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0054",
+          "model_record_sha256": "e52a5ed350106bcc14824e4be91bd8a67114f067f28ff1666f08a2d17e333681",
+          "raw_response_sha256": "33ae98fafaacaaa379e83e8d59a5adf8b10ee82727990fd49c96ce2b950c502f",
+          "thinking_sha256": "69a7d65a10bedf582decb65af58cefbe20e5aab13a73b3c3488bbeeb475e86cf",
+          "output_sha256": "30fc1200d272df574ee54f1ee99ec35d3298aad0e2987d6808a156739d9dd823",
+          "generated_token_ids_sha256": "22bb98d4e00b3f0001c909d46a4c3b93280c001666012746f9998fefa3d78c14",
+          "teacher_forced_token_ids_sha256": "22bb98d4e00b3f0001c909d46a4c3b93280c001666012746f9998fefa3d78c14",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0057",
+          "model_record_sha256": "49a28bee58a048b9b4fb896a0c3a68a4d7ecb55f0983b44b1edcfbffa10a78e8",
+          "raw_response_sha256": "63b082d6f91e3c3b329b000ace975710b3e566fab2ab812879e8ffda45ffab99",
+          "thinking_sha256": "90b8fe5e25db16238c574a2db275e3ea0b42b1de8fb9c92718d576404e7f6b8c",
+          "output_sha256": "44dfca126d7323e4350a0b5d495d12dda9a24b5d17c2bd63b955fc898976b633",
+          "generated_token_ids_sha256": "d0c1af96093b767cdf031ec216e2bdcf71c0502af76feaf7a16b70607f3e85d3",
+          "teacher_forced_token_ids_sha256": "d0c1af96093b767cdf031ec216e2bdcf71c0502af76feaf7a16b70607f3e85d3",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0061",
+          "model_record_sha256": "3be10e929dcf34237956a5d829afdf6646fa705a937d720131ef1ae3199d00c4",
+          "raw_response_sha256": "f77c6f90e5f4c3c9de63741eb71c4fccb2f9fb4082b4d4a127857112e8f6fafb",
+          "thinking_sha256": "58412079923458cdd2abeab2feacf0f6554cb753c421c94d8c216bdb7ab6eec1",
+          "output_sha256": "f99631eea6cb67d3b5ff35fe0eab8e47ee27ffac6f0acec59c1d7306584da6f7",
+          "generated_token_ids_sha256": "bae9dd158ac7dfdb7b0c331cc1d1775995e4d25bd194016762e9793c192a2cc1",
+          "teacher_forced_token_ids_sha256": "bae9dd158ac7dfdb7b0c331cc1d1775995e4d25bd194016762e9793c192a2cc1",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0070",
+          "model_record_sha256": "0658cf4d9d3e7eaed8316d48bcb76696a0a87c363529251095f8b0af500c4786",
+          "raw_response_sha256": "4c78f00242d921e0131565d08ce4c24a7cc907412d278a2cfcdca7c511b71621",
+          "thinking_sha256": "5642ebf9ec7733460c756c55896768a8a1b1da5de6ee662743e79e4a11585177",
+          "output_sha256": "79bf08685d3138f9b109c3546780f056bc954fd69377b84a2cf23622e464897b",
+          "generated_token_ids_sha256": "7a09bfad54a5a4400d5455525ef698b286e01f004b1d5f255f93c89aeba802bd",
+          "teacher_forced_token_ids_sha256": "7a09bfad54a5a4400d5455525ef698b286e01f004b1d5f255f93c89aeba802bd",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0081",
+          "model_record_sha256": "00972979844c0c00ced7bf846c9f0011b2ad43caf128131b877d16988a4415f5",
+          "raw_response_sha256": "621fe351437addfa5736fda08961b837d2ee575eab123e726b660aab15b7d975",
+          "thinking_sha256": "98b4f91a307910e0b2d3b0e511dfeec81a51b1f7ebb0d1eca9ce35b05785507e",
+          "output_sha256": "c40ec43c0499d3264661fd8eeca3e49cf7018237b8800a7620d8c07bb44e1ae8",
+          "generated_token_ids_sha256": "e6ec60db26030204392bc5751cc0a3b87c6ba39da376de4698bd66a08d4fffe1",
+          "teacher_forced_token_ids_sha256": "e6ec60db26030204392bc5751cc0a3b87c6ba39da376de4698bd66a08d4fffe1",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0170",
+          "model_record_sha256": "b30860fc3d4dfc5088595ef05afbff0e2d04b894c08f13e863be17aee8ace57c",
+          "raw_response_sha256": "ee6f7e994ac12fe84d9609ad6ab364724cdc2040093a8182cfc6f1da8b61d37f",
+          "thinking_sha256": "93b03e6d26e2e3a172089781c0685dcf0dc1c7a638cbbb057a34263a75044246",
+          "output_sha256": "706bcacd3134b4bbfc23b4ee22636bd21908cd8cc66a8dffca3992a175150c76",
+          "generated_token_ids_sha256": "cedb36ca86c73d4a30c612bba6a9b3360bd94ba54b7b5fd5442f3f1719ec451d",
+          "teacher_forced_token_ids_sha256": "cedb36ca86c73d4a30c612bba6a9b3360bd94ba54b7b5fd5442f3f1719ec451d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0179",
+          "model_record_sha256": "f320b4596a3a33ff04f819a109c1d33e2c36dbf25d3e508005f77a1d59d2eabe",
+          "raw_response_sha256": "a91d17cc44d6ce0123891874f2d468ac960f853eccc730446a01d79d378dc20c",
+          "thinking_sha256": "8d5b3fbdbebc614ea11c12755393893159ae68c51e126d280404ce2b4cd510c4",
+          "output_sha256": "2f7f540702dcbf1b3dd3d65093c0173a3668811eec5a90f5a2b977da37bb5508",
+          "generated_token_ids_sha256": "b3095f7be76d9ed5a892cc93261f15c16477278df22770fc83625195e695f994",
+          "teacher_forced_token_ids_sha256": "b3095f7be76d9ed5a892cc93261f15c16477278df22770fc83625195e695f994",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0203",
+          "model_record_sha256": "085a62db951ad158bc261db657b6a0997c83534e144af0c89155222c51578d65",
+          "raw_response_sha256": "0d190ba915adcf04034b92a419ad0a18493189e4822918cf613d56262c65afb5",
+          "thinking_sha256": "53d3aa71a1367764bd08a425e3197b60f022ad85dfdbd803deb0456cf6b31b67",
+          "output_sha256": "64b1069bb1c5e98885f9f7cf69f9aa25a264663cda89035e0e3648f832b6977d",
+          "generated_token_ids_sha256": "9ee2a2f1cf03eb1ea9ecefb1956b30f0eb181962e61e2975908aec8722bcee1b",
+          "teacher_forced_token_ids_sha256": "9ee2a2f1cf03eb1ea9ecefb1956b30f0eb181962e61e2975908aec8722bcee1b",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0217",
+          "model_record_sha256": "225250e87127220dcd0af202052d2bad48106e9173ceddba6fac071584684dbe",
+          "raw_response_sha256": "bd8c3d4ee0e6dfa767466bc3427e61b49631334b5be417ef5b8c48dfa459af6f",
+          "thinking_sha256": "b6dab256cbca326cb06339cfa0617592f339d8cf98311d99ee95d6f40e3f932a",
+          "output_sha256": "9e2ff2f41e14926fe043deb8601a1545b74d742e4ece825942a10bb7db5dccb4",
+          "generated_token_ids_sha256": "6e20db30cfdcf16dce6c4bc3ff6ebf041698dd00f620ce9706082be3be2e3637",
+          "teacher_forced_token_ids_sha256": "6e20db30cfdcf16dce6c4bc3ff6ebf041698dd00f620ce9706082be3be2e3637",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0250",
+          "model_record_sha256": "06de9e1b85de9d08bd5198d44f9b1b8a876444f66484b07b8efd3511a1ac6395",
+          "raw_response_sha256": "132cdd677199ce099e4cbb78b09c48213dcb47b181449701d3be9c0abc67bd30",
+          "thinking_sha256": "cc566b0577cefb58bdeb57bb4beec858f3eca84a42115f779f8b4066870b1991",
+          "output_sha256": "966b04e1166554524d9f310d3b0a7759ce74ce202fe04a9a51cd06fdc732d7fe",
+          "generated_token_ids_sha256": "4723dc08c51ede95daabe0a1eb6fd7d099b431d3db6aa605d3346cb1d5ba8480",
+          "teacher_forced_token_ids_sha256": "4723dc08c51ede95daabe0a1eb6fd7d099b431d3db6aa605d3346cb1d5ba8480",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0256",
+          "model_record_sha256": "30d8da82237674b6b6a4d006da9759ec1ef13c17d1115685cea68b719007413b",
+          "raw_response_sha256": "2605e903bff4032db2c4ef7267259505e1119ba7edcdfd6889d718d53d690a9f",
+          "thinking_sha256": "2d0d494027883a848be6f7656fd7bd372e330b28ded2acbbcd965494c771696a",
+          "output_sha256": "667f7531170793ab625a779be201c0c75a0becfd59b0dcd54c0bf044842db4dc",
+          "generated_token_ids_sha256": "d2a1b8fbf6e0e7883851628d5d6e5870368d67e151a35ba1bb2f60a39d75904d",
+          "teacher_forced_token_ids_sha256": "d2a1b8fbf6e0e7883851628d5d6e5870368d67e151a35ba1bb2f60a39d75904d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0276",
+          "model_record_sha256": "093eadc1188a8e995efc1c9ce53a229721a3f9775ad24b54c8a26348356ea788",
+          "raw_response_sha256": "86f71e7ef1787b3db65c649993ee70fcf3e05a86acb4bc192ec479f9bd7d3bfa",
+          "thinking_sha256": "c894a031558b67cab01d6f1e7ddc50bf4d9717f02283d426f98c81fe3ebfa1ff",
+          "output_sha256": "4ec9599fc203d176a301536c2e091a19bc852759b255bd6818810a42c5fed14a",
+          "generated_token_ids_sha256": "bfd2ed357fab0efc0f4af8f1dbf589bbd5bb8e50832082f7978e68ceaebef85f",
+          "teacher_forced_token_ids_sha256": "bfd2ed357fab0efc0f4af8f1dbf589bbd5bb8e50832082f7978e68ceaebef85f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0320",
+          "model_record_sha256": "660bdfea2c0d9be53d6c2257436d237ad579962dcad11860cd8f747ecffbcc41",
+          "raw_response_sha256": "89fc1efd8f0f08d4bb9f17470d26dd6f7b89de04d4ec8735b2c2c93c5ad2e85b",
+          "thinking_sha256": "734775d4ae46e664d37d1ac20719d40ccad1e4eb8ecb77269ad7de15e56a7c3c",
+          "output_sha256": "2c302be98c12c75e3daad8cbdd9227b2d8feabb8ae09b3be35fc0c4d0d9bcc97",
+          "generated_token_ids_sha256": "a4db7558161f80184aab44d71dda82279fb518a174e22ce1d52efb9413d1f06e",
+          "teacher_forced_token_ids_sha256": "a4db7558161f80184aab44d71dda82279fb518a174e22ce1d52efb9413d1f06e",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0356",
+          "model_record_sha256": "56ddcfc929fb2f2473966f15af17cda35ed7e39684881d0135a8bcf64c742e25",
+          "raw_response_sha256": "4ac5b96c8f37c2e66ad0fe70f01998bcc2a4fa4aebf84306c14093d0a0e77f82",
+          "thinking_sha256": "521684f7bca27698f6de4d909bc07925f366110e5419d6c004240d8d37ec540e",
+          "output_sha256": "9fb863f75a072c8bab8c5a3c57b1ce2250d233a8d274026319fd4c829424ec2a",
+          "generated_token_ids_sha256": "cb24200fe30b33286e27b0afe8bccda057be122daec0aca22fbbb2212a07cdcf",
+          "teacher_forced_token_ids_sha256": "cb24200fe30b33286e27b0afe8bccda057be122daec0aca22fbbb2212a07cdcf",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0392",
+          "model_record_sha256": "3a917ec6a1b64b644cb19e37bd8317be19677855e7454e56e70b893f085aa8dc",
+          "raw_response_sha256": "3f4d38b08605b6ae12cdd9639ba37fe6c9787397821eaf33ef2fab6bbdc27327",
+          "thinking_sha256": "d159e065f56fc6e5180cece01c081bf256a40e9b293dd54a3cdc9adb3c374b48",
+          "output_sha256": "8a47e086beaf24df9f496ca9cb956639b1a0ee83364d1463b5a12936dc96f6be",
+          "generated_token_ids_sha256": "f6cfaf58e7ffb93aca86d6ab71b11c4404bac5eca686e4edf9ca1babb0702b07",
+          "teacher_forced_token_ids_sha256": "f6cfaf58e7ffb93aca86d6ab71b11c4404bac5eca686e4edf9ca1babb0702b07",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0408",
+          "model_record_sha256": "2c5e5db361345a1b9554e530ddad985499c10f66241aaffb2a708fb57c1e348f",
+          "raw_response_sha256": "da590c442e569425c701d05a38930bdcc671535587f9fae7d0466d3767c38084",
+          "thinking_sha256": "a0fa8161162d8b2ff7e54204b0f58a8f6b585935c8ac050b4ff61a9e5c61773f",
+          "output_sha256": "d3556994546d8e853dab930dc039760ccecb04578ad241194ea86b5607bee73d",
+          "generated_token_ids_sha256": "4e1fb280aa78999c755f98975309f7d419b33860722b1250f159abbd68f680ee",
+          "teacher_forced_token_ids_sha256": "4e1fb280aa78999c755f98975309f7d419b33860722b1250f159abbd68f680ee",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0465",
+          "model_record_sha256": "38d20ea65f2c51e9a3b352047b66f8ff984cd509915bcbdcacdd66194233e3f0",
+          "raw_response_sha256": "1963607d2a196717eeed8f1c1f93703d915b864ab920739fa847644ee876d7d6",
+          "thinking_sha256": "60669c3ee4a02db80129dbdddf8a8dcdf0746fdae221f88bd9be0e1974757e23",
+          "output_sha256": "96da37e95d5cc34fe3bef6c89428df859b8a217630d0c664da1daf1539caacf5",
+          "generated_token_ids_sha256": "23603ee3272583d3b9d868bc69fd78523f1516e9650fb64741f65e59e9349ea9",
+          "teacher_forced_token_ids_sha256": "23603ee3272583d3b9d868bc69fd78523f1516e9650fb64741f65e59e9349ea9",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0471",
+          "model_record_sha256": "ae2f11748ae919856e543e1d8cb619773a79c346c0de9e352d5d022cdb1d3aec",
+          "raw_response_sha256": "01d285aefe71575190c8a64b1be40106ce3e07318f670e76b91e93afade18ca2",
+          "thinking_sha256": "11b207d5c706cf2024ad3504bf612f0731e60beeacd58134ce6112d875806c35",
+          "output_sha256": "a9206500ea0682a1c6ae851d2db8591792a71b18bb0e96d017fa6404fce1e2a6",
+          "generated_token_ids_sha256": "f6d8811cddf0c9d3f0a898ac4ac9e93064945c38e8f8c94f753c37c98d110fda",
+          "teacher_forced_token_ids_sha256": "f6d8811cddf0c9d3f0a898ac4ac9e93064945c38e8f8c94f753c37c98d110fda",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0509",
+          "model_record_sha256": "e34e9116bf249ad9455742095db0b9285ec523404418a0bd9e754da97cb61eec",
+          "raw_response_sha256": "c0b8cb5738bbe93af18a11a9f6932e90b290745d8eb89ac9e17f352383aac773",
+          "thinking_sha256": "854bf2195326c2b5be7cc9a4c97195878d8f875f6c7d83bfc827024deaae9a50",
+          "output_sha256": "0916da83a99de3a2d9f7883afbc0bd93cfc16eaa0bb849c2057b493a4fe1e595",
+          "generated_token_ids_sha256": "e95162dde2ae75dbe650f2ab3784ad2b37cff96fceba70cd648c7304a347e5b9",
+          "teacher_forced_token_ids_sha256": "e95162dde2ae75dbe650f2ab3784ad2b37cff96fceba70cd648c7304a347e5b9",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0556",
+          "model_record_sha256": "53e4754a17829e20e1f198cd9dcb97e2491dbe600f7cb9109d0c73f1ff7449a9",
+          "raw_response_sha256": "19ebe30a8d703f77c6c4da1d78033e49dbe5432440f3e8c9e339ba1e1a4e2ee0",
+          "thinking_sha256": "b535b7eee8c70c826f92899be905636e59158c761f9cc4a3e8dae8b6bf61cafa",
+          "output_sha256": "ab29ee523044fa81122a5727ef83c86178121fd17a697ec88c9b592aaabd3bfb",
+          "generated_token_ids_sha256": "74db8e91819cb3ee5be6f93d099fcae634317df09920f3c9a46c067d72db4a96",
+          "teacher_forced_token_ids_sha256": "74db8e91819cb3ee5be6f93d099fcae634317df09920f3c9a46c067d72db4a96",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0567",
+          "model_record_sha256": "ad4ab75ee717b70c92da4475ec8f8c8ca5e032b4b26a7eaa9c00795bc2cf5430",
+          "raw_response_sha256": "628334df4dd1eaaad671209a4ce761427d586837bd8d020402d1f5dedaccd047",
+          "thinking_sha256": "31e79fb6346592f42268e763d39888ea8540748f23dad316e4aa97e6d0d93c8c",
+          "output_sha256": "4c6d635896605308fc7930a8aae5c457f6a3091b15ddb9276e94b7cc0d57e89a",
+          "generated_token_ids_sha256": "d2f81da8af6ccdcce882bc7d170a855e5285e216307ce409bfc808daf64e4591",
+          "teacher_forced_token_ids_sha256": "d2f81da8af6ccdcce882bc7d170a855e5285e216307ce409bfc808daf64e4591",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0569",
+          "model_record_sha256": "0c470d786e6d1e6a9ce0364dd712097045c9ed508845a503fa60b817e5ea16a7",
+          "raw_response_sha256": "b9486297881c669e80f75fd6658eea3ab06ca5fdb6095e54b9c801ba19380b07",
+          "thinking_sha256": "9237ed6afda19f2406d6ee47a82913583d4d94352b5319d68072443b01fa9cd2",
+          "output_sha256": "f78fc54725e769e18a88ba7b667242d529a7a1027f5cb0e2777da87fbeec3d7e",
+          "generated_token_ids_sha256": "8e0b08a08c381143f07160abc7ece0f9e93f9d7c72da98f31ca84a8aa3953b31",
+          "teacher_forced_token_ids_sha256": "8e0b08a08c381143f07160abc7ece0f9e93f9d7c72da98f31ca84a8aa3953b31",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0581",
+          "model_record_sha256": "f07091c818d84ab36faab92014169f6d6c6fb732ed4568930967c50d49232753",
+          "raw_response_sha256": "08afec73850f017e5c54a13c754a59f8c2fc4697c62d416950d6eb694a08caa4",
+          "thinking_sha256": "9cfd6b211755fe725fa7250b1faf1fa0d68f310a82d06778de870bcf30dc24b9",
+          "output_sha256": "7b4a1978c7d7c26f56c202bcbbc4796ca8df8796dfec75de8b0be5beae6ff01a",
+          "generated_token_ids_sha256": "7a66e9703d4fcdeb0807c3a69eabe5017cd8d2cba67314b31608b934e472b4d2",
+          "teacher_forced_token_ids_sha256": "7a66e9703d4fcdeb0807c3a69eabe5017cd8d2cba67314b31608b934e472b4d2",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0631",
+          "model_record_sha256": "884c4a87f3218f1fee4cd62c29edfb53166a1d2a874ff9e8a538f96c627b6f54",
+          "raw_response_sha256": "9f5402560d284e607526e44d5b6e171b8b4aad106776e1884f51f23584060523",
+          "thinking_sha256": "d5d105d4c0aa8cd68e37b658d3dc18ea3bf8f6d33153ab1141f16a726d13e6a6",
+          "output_sha256": "364b80defc26157b68b17fce7a9a32d65a8d6cc5e5293cc6e165932786521a20",
+          "generated_token_ids_sha256": "8336e745bd0c6e3b29cc88a85fbc7582ca65de2995d6816a73583ead268506ec",
+          "teacher_forced_token_ids_sha256": "8336e745bd0c6e3b29cc88a85fbc7582ca65de2995d6816a73583ead268506ec",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0659",
+          "model_record_sha256": "2ca5d3f61589a75765547a871c1abdffa9d13851b32feb891845fbe357fa4213",
+          "raw_response_sha256": "b0567283c24ff37a6fd6a9e7d0b7a37a92b88cfe64f8841cd27f9ca2ab15a14a",
+          "thinking_sha256": "6032c58f38de77723ab272a384c09785decda340fd1cffc6210c5e7eaca7b6dd",
+          "output_sha256": "a07f97869a31947f75ae352a5753178bac90a2f4f3406e6a2fb6b84d310860ea",
+          "generated_token_ids_sha256": "7f31dc5fd65f7e43f2e5c21544f36582ecf960985f88fbaa3d8e162fc70a7129",
+          "teacher_forced_token_ids_sha256": "7f31dc5fd65f7e43f2e5c21544f36582ecf960985f88fbaa3d8e162fc70a7129",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0668",
+          "model_record_sha256": "1b530a4450d65ce99daab9de6388c6bc6c1c8eb6349cd155d5f2537c1c9b963b",
+          "raw_response_sha256": "0b72a18e4ef54ab79f1f71d329d95a4915a78b0438a7ffa7eb86cb49d05781f2",
+          "thinking_sha256": "77aed758cd5f2f38399c14d44d6d5e76d0aed14ef7980adab2ec1587c44a5f2e",
+          "output_sha256": "fa8ca1e0d330795d02f5c24fe3d2abdb45412e66d8d519dc26185b0d01092a39",
+          "generated_token_ids_sha256": "db799ad38c77672bad354eb0409f97e1d9ffd6403319d9e245b1faef6296c990",
+          "teacher_forced_token_ids_sha256": "db799ad38c77672bad354eb0409f97e1d9ffd6403319d9e245b1faef6296c990",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0721",
+          "model_record_sha256": "449d2011ce3b216209a308bc531a4c9c30fe61a0cc44591d722f0aaef82531bb",
+          "raw_response_sha256": "d9b049eb5c1c5d7abd0c3b435b260ba8514c0dee87ea74c7540dacef5e38366f",
+          "thinking_sha256": "8f81c94774f7a7acde13bf5f099837fe5cfea16f99239f1d00d6abd01c4d7ba6",
+          "output_sha256": "5d4160883ca4eef0faa2824912753e6fddd82fcc5f9fd786b42649449d379a8c",
+          "generated_token_ids_sha256": "99d3ebf793382d4052b04d43b240753f8b6fcd64a49e58ddea722df31dd9bdc3",
+          "teacher_forced_token_ids_sha256": "99d3ebf793382d4052b04d43b240753f8b6fcd64a49e58ddea722df31dd9bdc3",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0755",
+          "model_record_sha256": "191e0e100b27a57e6c3511333c47ab1624a45a3b5a32ba2a94792f5501b6f08f",
+          "raw_response_sha256": "9dc0fd6b308c97ee33c411c5b8a8a00d0a40286ee6b1a39010f0dc0630c9fb10",
+          "thinking_sha256": "3df06f53edee0527eb9fdc1fbdf18317de03f962d4a21aff79103dc18c90d97d",
+          "output_sha256": "6fc5d45906fcd81d68d1db65cce5f9ed6ec07e0924d782081f3df3de1f3f477d",
+          "generated_token_ids_sha256": "ccbc290a107cf5d47fed2daf7933b7cc91dd23ba0dc848384ab936e07f241328",
+          "teacher_forced_token_ids_sha256": "ccbc290a107cf5d47fed2daf7933b7cc91dd23ba0dc848384ab936e07f241328",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0762",
+          "model_record_sha256": "cc24b94117c0a4513f8decf59ad9432f974bc66648e68258dd5968799581deff",
+          "raw_response_sha256": "2a9f19c17a56cd2277c99c5db0ea8c46f5841f5f9c49b3fb56d23ab7ceb5589d",
+          "thinking_sha256": "0006a0369d4877c59a1940a6ae6a240ac282c6a5255cfc2ce4b34a7c06e7881c",
+          "output_sha256": "b8cdd253c1ad5a0ff74dae7dec596aa99ba7991f4ea13c055ee30f45754cc9a9",
+          "generated_token_ids_sha256": "eb305cfdd7f883f5e8787d70a7d906ed4240daac6e515d2a89612feebaa619dc",
+          "teacher_forced_token_ids_sha256": "eb305cfdd7f883f5e8787d70a7d906ed4240daac6e515d2a89612feebaa619dc",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0798",
+          "model_record_sha256": "7895372ebb7869f80e4f103a811102c9f7e429350c0ba1684802d863e5c180db",
+          "raw_response_sha256": "1c81992c2cbfbc464d269bb6f32a6476258071c1eb4a17b72653024fa58259eb",
+          "thinking_sha256": "b2300ffd08e1830a2e555af826aecdff7876c1b62f61392587b3295b01235c3d",
+          "output_sha256": "b4e788621155c9f46fe189bd8ce65ea0a428f109b4ebfafe6b92a65d9494a28a",
+          "generated_token_ids_sha256": "9d9fd8332803cf6bb336d087dd599922d0d9726f78f65549f0fe45e20e99b136",
+          "teacher_forced_token_ids_sha256": "9d9fd8332803cf6bb336d087dd599922d0d9726f78f65549f0fe45e20e99b136",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0817",
+          "model_record_sha256": "025a46c09da380a428a1320fe1035305be614a6d6a6603acc6f97ba68117e61e",
+          "raw_response_sha256": "f0165b3e1aa9cfe2da92cb7d517e43f70fe1dd19767bec7a7f59e7365258360c",
+          "thinking_sha256": "a39c6e9e6d9e928d5d18b5ee1ba30d922551fea0a60f16ba522fe912cda8d832",
+          "output_sha256": "e979f927a9be0396aff74c6b46e1e1ec905196f1c0d50ceef053f635bef04c5c",
+          "generated_token_ids_sha256": "b9b00b0c13af533e80d7b93d001b25c56b902a9eeb87fa84655e09a14c2f5f29",
+          "teacher_forced_token_ids_sha256": "b9b00b0c13af533e80d7b93d001b25c56b902a9eeb87fa84655e09a14c2f5f29",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0830",
+          "model_record_sha256": "22744060efc2ad66cad3b1205909c94b754fae9854104e7d8ecd14b18cbc85a6",
+          "raw_response_sha256": "80f61ee4fa148f3b69988171bafeeacb5e570a6cf6e6cd1c0f4d33467940c3cb",
+          "thinking_sha256": "1fb06800641f1b74b44469066cb59757f0be52b35812159867ed1607ed7eb3de",
+          "output_sha256": "60dd28718cd818d18cca1328dc511528a262ca8563e7f233be455a5013830552",
+          "generated_token_ids_sha256": "cd1365e3932e6c991168a981ca444688dc9009303a86cd56ead1417f53c9d104",
+          "teacher_forced_token_ids_sha256": "cd1365e3932e6c991168a981ca444688dc9009303a86cd56ead1417f53c9d104",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0839",
+          "model_record_sha256": "af964cb4adb4b924beee37188c37a4ba187284e9018a7f48a44af16e023d11cb",
+          "raw_response_sha256": "a507fdbf45d927026de52aaf19e7de8dc7ede74527b3e4dd295ec41d6f2cdb41",
+          "thinking_sha256": "7eee1d52141ab72d658ce16a6176537cb9af79422fd1e3ad62b57fad611f46fd",
+          "output_sha256": "a34981756f293a5ed0bc9e40d6be2b15f5342239f06e3a88bbaf745ce8bf42a8",
+          "generated_token_ids_sha256": "d83568217066e3d480920ddd5d31c0882e37a46fcf15bea5bd5809bda04e6436",
+          "teacher_forced_token_ids_sha256": "d83568217066e3d480920ddd5d31c0882e37a46fcf15bea5bd5809bda04e6436",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0872",
+          "model_record_sha256": "943f8f58f63deb84a1db7ed1606e228d4bcfee445a6d16d358d340f1718ddc91",
+          "raw_response_sha256": "9486d0de207f8a230db191c6b971645a197cd7352f7c8e06cc3216999bb25ab4",
+          "thinking_sha256": "6a2490dbfc31dbb6253197209df0db29bb976884eed437310e2169c1a1173622",
+          "output_sha256": "dc0d99c18805bc430dc2d2a56d713a12d16a7f673aaa6c7549c7caf73ce7ea09",
+          "generated_token_ids_sha256": "c866f9c5590179318f656935605ad09fd1b0dba9aabe580de02d5b94a74e6056",
+          "teacher_forced_token_ids_sha256": "c866f9c5590179318f656935605ad09fd1b0dba9aabe580de02d5b94a74e6056",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0905",
+          "model_record_sha256": "609edd564490b4daa1c7a686b883a270d17b3e96ae326264e63bdb0ba7769c30",
+          "raw_response_sha256": "b0e7b127ccff4501002dea09c1a5e8df47f47d6038ce453ffaee6dd340bbd1c4",
+          "thinking_sha256": "af46e816209d250a8e7119167122999c6cd451819c3a0524a6304d0214c74f8f",
+          "output_sha256": "094adf704f17d2a85437f6787cb4cc83698b095ed1274d86921ec6546329dac4",
+          "generated_token_ids_sha256": "ea6ba26c5790881877bba78488c42e786f75ac49809bcc658418f2cdb1deb27a",
+          "teacher_forced_token_ids_sha256": "ea6ba26c5790881877bba78488c42e786f75ac49809bcc658418f2cdb1deb27a",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0908",
+          "model_record_sha256": "7cfa425f55fbe3ed11f700ac0a8eee283a8707d1023c656827b8a2a77f134ff2",
+          "raw_response_sha256": "3fd370fba8705d40a4ac2635e3d1f02fdddfb4d2efb14ab3cc90aaafebbb5478",
+          "thinking_sha256": "90063f074226bd5174ddfc4c1bcc205e6701b8f62cf2f5bdfa711064cc9e3c65",
+          "output_sha256": "cf5cd22a8713e2d3ea72fda88fea0ccc41a328ce472242d174968193518b08b9",
+          "generated_token_ids_sha256": "d8344d0d0c16152383b92835ff7eb8794893dc0e79cdebf1d2da35b1ba4c2b1d",
+          "teacher_forced_token_ids_sha256": "d8344d0d0c16152383b92835ff7eb8794893dc0e79cdebf1d2da35b1ba4c2b1d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0931",
+          "model_record_sha256": "f6426e4837a65357390e33855952f8a89f2f83f75405f2738ba767a9587691a8",
+          "raw_response_sha256": "3b3726934ab3286174f29ecd0881ca811017c4217a28332dcc7663badc4b76df",
+          "thinking_sha256": "8c64f8f5bc9d7019499fd63639732cc2fbc1dacd4882479ddd339af800fd4967",
+          "output_sha256": "0ba2677d748919661856878e3c570ea3ec7456e04e22f12008981acc2ed18996",
+          "generated_token_ids_sha256": "0eb607cbefb12591c2b3c70fccb4371d686be1d05c12ab47bf849e115804f091",
+          "teacher_forced_token_ids_sha256": "0eb607cbefb12591c2b3c70fccb4371d686be1d05c12ab47bf849e115804f091",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-0987",
+          "model_record_sha256": "c42a39ddb1063bd755a46c7356d090c8b205008a0c3b2bd35ab7c0afa1b9a346",
+          "raw_response_sha256": "dadc3fa8538ffc773b32e38be4cde91de7638dc036d1d01ce8bb8d611fe67ca4",
+          "thinking_sha256": "684b511b6cdfacc102d1b91c97279f6d39fc2310942851a28fa9562f949ad200",
+          "output_sha256": "be2728e9c45f744889e32450cba62f9a51138bbe7bd511d84634da5693925261",
+          "generated_token_ids_sha256": "bf2947a99eb44e9a6348a840a2d864995d992a172711cc28d45e508634f662d5",
+          "teacher_forced_token_ids_sha256": "bf2947a99eb44e9a6348a840a2d864995d992a172711cc28d45e508634f662d5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1008",
+          "model_record_sha256": "4b13044df49953e878a3b478d4c48cf5eea8fbf75ca12b20ec2a1fe7b30cc028",
+          "raw_response_sha256": "a20b53d8a24fc0af0ef9d6aed9ceb53148283028d79b9729ce284e4633f1f764",
+          "thinking_sha256": "672196748dfcd6806d1c8c40c9ef9c92bee05161decf5ee85b186d2bb90ca8ae",
+          "output_sha256": "2d0289e9f0bece5e0c90fc7b2d105bc78beaf0abbafdc8351583e9055e593756",
+          "generated_token_ids_sha256": "bb1f44f351cd0724dc464aa2f7e62009915712cca9f499bfc523ea8dd23af40d",
+          "teacher_forced_token_ids_sha256": "bb1f44f351cd0724dc464aa2f7e62009915712cca9f499bfc523ea8dd23af40d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1016",
+          "model_record_sha256": "4b3e8f8e74d3fae8a6259cd274ebe9bf659b35a4f321c4e64d5bf536bb05528e",
+          "raw_response_sha256": "90e6efa4f47ae12fd0aa04e6a2a115125a5e2688c431cfd48493e4bb2090729e",
+          "thinking_sha256": "cf9124cbcc809b2b844ebffb3a8f28de24fd9db90820dcbdf821d205b05ed79b",
+          "output_sha256": "80895add38ab570f82d4e25ce74ec030841ecb8ddd3decf1f891dbf3238dd3c9",
+          "generated_token_ids_sha256": "d18687beb25914f29078f483ba52d14d53eb2fc33421101f9411f8c9a883ef97",
+          "teacher_forced_token_ids_sha256": "d18687beb25914f29078f483ba52d14d53eb2fc33421101f9411f8c9a883ef97",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1028",
+          "model_record_sha256": "981f81afdb475530358c34bf32b251e422344fb2544593c1549bf07432cd8d3a",
+          "raw_response_sha256": "1f000715fa0117db84641c77c02e74bd12c9833602cd37f4cd06bac133004c11",
+          "thinking_sha256": "e1d045540dfae247f147a2134fdf929c664f1d5562a3ecd2837a8b435fb20fcd",
+          "output_sha256": "2f2be1b913bd6dc0fe000d3df7d203247b76c75cbc7e12bebd63e6eae5feedd5",
+          "generated_token_ids_sha256": "64a860eade7457da9747603185479c66b92f64f400d74ede5db1fdaa71bedc38",
+          "teacher_forced_token_ids_sha256": "64a860eade7457da9747603185479c66b92f64f400d74ede5db1fdaa71bedc38",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1036",
+          "model_record_sha256": "bd6dce9da9345ffec475285b2329db029834111759e664cd4a9893f09ce7de2e",
+          "raw_response_sha256": "8d4c16434c119c80e8649af5561755655be28e597c8a42e4323d3b8da97ee08c",
+          "thinking_sha256": "86342f6bfab444e0b3e62fea8e5f21d0ab3dd542d9d5fae1a969d2b63648ae66",
+          "output_sha256": "e8f55a681157f94a547b086d8ffe31c8205834a8180c3490897d7f024e53e373",
+          "generated_token_ids_sha256": "ad7da73b7e26cffcd7a1688997af70948f93581adf22d7096e6ca28667429bc9",
+          "teacher_forced_token_ids_sha256": "ad7da73b7e26cffcd7a1688997af70948f93581adf22d7096e6ca28667429bc9",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1050",
+          "model_record_sha256": "e717ad1cec53a719f7c57de94383b87429701c5e576273c363094dc32e8d18d2",
+          "raw_response_sha256": "6c9e23f6635ca4523ee7dc154539d02958632101493ad77c7a94b0c065f8649f",
+          "thinking_sha256": "7fe61d6c4a1455ccb4575ff77a66e021189dbe22a2feedec5867873d111a287e",
+          "output_sha256": "dc306dad22e970bc574fddabe21d12aae7361b67caa2836667f86bd64070dca8",
+          "generated_token_ids_sha256": "9b6390b9afe99cf03d43672b812eb0d01cb49e1e5bb37854d168990a5ba07f79",
+          "teacher_forced_token_ids_sha256": "9b6390b9afe99cf03d43672b812eb0d01cb49e1e5bb37854d168990a5ba07f79",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1069",
+          "model_record_sha256": "1be95604415ec1000a9c393eb9d6aabf74a9587fb42c32936e19996ac8871c27",
+          "raw_response_sha256": "d69b560fa654d84c16f2a013b6666ced6fa79913a26654a95e69c07a93af29e1",
+          "thinking_sha256": "6a3b3ea0f6c96b07b6ae11a35e0043e9eb47e0d1acb81d7cddab7d94da035805",
+          "output_sha256": "f6d10e6a5eb70a0fdae4cecb560ef4c62d56a31a828a067ff68b5f68e1bf1e49",
+          "generated_token_ids_sha256": "c7fec7bf238b01ee2a1d961671c006cd1ee57390ae3570d1b9ccfb7a06753e44",
+          "teacher_forced_token_ids_sha256": "c7fec7bf238b01ee2a1d961671c006cd1ee57390ae3570d1b9ccfb7a06753e44",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1095",
+          "model_record_sha256": "c4c55104c5379de09ef50e6bb636cdd9fe3a31c5abe2ef8b1806574fb77dc9a8",
+          "raw_response_sha256": "ecbb0cd1f4b5553eac0744dc2800ad66a3d715efac9d3573ae1323b3ab889a97",
+          "thinking_sha256": "4e3fb6ad62e4c522496c04f35daa878c25c633f3c5b02d611a34d66293b0f7d7",
+          "output_sha256": "85a39ab345d672ff8ca9b9c6876f3adcacf45ee7c1e2dbd2408fd338bd55e07e",
+          "generated_token_ids_sha256": "ba3d35fe7f7fb6823950fa9dffd755cce798fe4d6e574dc60ec4f6e7b387d60d",
+          "teacher_forced_token_ids_sha256": "ba3d35fe7f7fb6823950fa9dffd755cce798fe4d6e574dc60ec4f6e7b387d60d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1113",
+          "model_record_sha256": "92d0eb3d3ba495b55f3b243bfa54a87308347f659738eab8e6cdce82192ed236",
+          "raw_response_sha256": "1e3e87944c7149dd00fb1de26df345ba5224dc081f7eacd89dd6ef781ec8db1a",
+          "thinking_sha256": "53a4569cbf789c67d3effe26e2affa171e45cc7f0e15645660314b338c5b578b",
+          "output_sha256": "4cac5a91c359521b1736763a6275d32995f6a898492574ca53c477b58d6d8405",
+          "generated_token_ids_sha256": "08491ec3780500d7281dc971224a4beb2fb6dd20d02693449aec6d147c718af2",
+          "teacher_forced_token_ids_sha256": "08491ec3780500d7281dc971224a4beb2fb6dd20d02693449aec6d147c718af2",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1118",
+          "model_record_sha256": "8dea50d77425f04523fd7142d3940a71c16fa15c56c61a5e5e0da8ad67e20646",
+          "raw_response_sha256": "cb21d08f97fde7fb5bedfb64c5b74a43da266d2aaa601b70701adaa05ab8ebd6",
+          "thinking_sha256": "7fb37a057471bb814327b66ec10ad6b9928affe5b19fb801d4e7e5142773b050",
+          "output_sha256": "1c68334b9f6c9a75eff9231db3eeea9e5cc519dd9d98a3d13bf5fbd98b480384",
+          "generated_token_ids_sha256": "4334bfbe40f26934b3227eaaa5d39fc7f5e96e79050d9d49ad4c47eb506ad422",
+          "teacher_forced_token_ids_sha256": "4334bfbe40f26934b3227eaaa5d39fc7f5e96e79050d9d49ad4c47eb506ad422",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1128",
+          "model_record_sha256": "0954468e7686654c5e7cb2cf37da892773d1dc674bb711ec2196a0c4cce5ef06",
+          "raw_response_sha256": "76c359324e7162cc149a095b0886a753f0228cf7d5eadd4060e7f033fb4c69ea",
+          "thinking_sha256": "4c5142b56357c7ef6c44a47f02ebba27ff6b8130797bb5700ec4b078b00398d1",
+          "output_sha256": "5e76282441fcaa4e16b32b070dae747d5137e1b0c498c1d02feaeb98fd2b5f30",
+          "generated_token_ids_sha256": "ce6cdcd60a9347d3f8f38cdb5d1bfd5a659c0eadeb46eb2c35c06bf8f10b9fc4",
+          "teacher_forced_token_ids_sha256": "ce6cdcd60a9347d3f8f38cdb5d1bfd5a659c0eadeb46eb2c35c06bf8f10b9fc4",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1140",
+          "model_record_sha256": "8decafe38c596f8708086e4bc155c8085e87a861c5eae1f74efa6fe329c9f345",
+          "raw_response_sha256": "155e2253bf827854115037270f9bda0064e97f439e31744a8ff4a0928d909149",
+          "thinking_sha256": "665360f47249788c9768e2b4845289bd8e5449629c9149cceebdcf01e344f542",
+          "output_sha256": "e38ab7d3075c2759fc079276fc667a4963ffe572d0ae90b4b87fb7813872b540",
+          "generated_token_ids_sha256": "9c7f38350fbb8a063d23788a836d35b4eaecf2a8d2363226c24bfbaee81e4989",
+          "teacher_forced_token_ids_sha256": "9c7f38350fbb8a063d23788a836d35b4eaecf2a8d2363226c24bfbaee81e4989",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1148",
+          "model_record_sha256": "58e648907abe5179fa1926bea9039ee4f0ee2b8c9ad8e764b5de9d2a90d73f79",
+          "raw_response_sha256": "21566c307c466634e1660cbbd016d823cc1b23fa4e6627527b5577eda01e368e",
+          "thinking_sha256": "58328885bb46c11ddead78341514d54835b98484b63e1ed02f978b8155e27754",
+          "output_sha256": "5aecf6f59ddea64cd289d94474ce3469c57b28edc6f349fd6aa13d9908e59fdf",
+          "generated_token_ids_sha256": "108570adddb07ee9ab85fd45e4b71008b629e5f10649b92238e7056cad775710",
+          "teacher_forced_token_ids_sha256": "108570adddb07ee9ab85fd45e4b71008b629e5f10649b92238e7056cad775710",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1174",
+          "model_record_sha256": "827550119bedffb5f5a1ca0427599427eaa0a26a62b1dacfff36d2572417c8fd",
+          "raw_response_sha256": "4d201e1dff77bf010beb2ad820604f133feea99e325dc229bc03e5adf9ebc19c",
+          "thinking_sha256": "81da35f734510f0b6b4427d31f001dd2b753cbec37d4d352c47def6580106646",
+          "output_sha256": "929e0919ef1c36967b7f4941c320c4261a72f317bda87666759a5425ac13e5f4",
+          "generated_token_ids_sha256": "a62955738b8547a492a20197745466c253e63e5c82e8e749e81ac1158e946583",
+          "teacher_forced_token_ids_sha256": "a62955738b8547a492a20197745466c253e63e5c82e8e749e81ac1158e946583",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1187",
+          "model_record_sha256": "adce74187ecea046fd5abeaaf3720c442f9e1e8daedf650774776ecb586b4472",
+          "raw_response_sha256": "8eb53935e47239ea56c061d5dc51d4fc8a6d13b576f7f7986476d3e200712f4a",
+          "thinking_sha256": "f742f87cf2ec3ba5a1f47bf2597ec34af13cd66e8b1e35fca41b23bc58bb38df",
+          "output_sha256": "17194da4baa38b8b86b6a09a0b2bc353bbd3958979fab5a269156ab6c9bfc992",
+          "generated_token_ids_sha256": "2c8170ac5aae62fd0be7880d0fd2b8affdeca6afd415133469f0d700e133b1b4",
+          "teacher_forced_token_ids_sha256": "2c8170ac5aae62fd0be7880d0fd2b8affdeca6afd415133469f0d700e133b1b4",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1232",
+          "model_record_sha256": "6f909ccf4ec924ab41cb1f5fef16fe1211c408012ebd5bde4ec8d040a8bbc9d2",
+          "raw_response_sha256": "004270a2cf7ebca7792dbd1e306992892cbec4c0f4f25d8ba171a17845c7e7e0",
+          "thinking_sha256": "35814a51aba3dc51b5405e73429b655b9ec09b195c17a9d0d9026d96d7efd6c7",
+          "output_sha256": "40456d65be36b0a070b96acdc4e8e7fb3ef7aea02a115b60f783c0d17971709c",
+          "generated_token_ids_sha256": "a386022a5fe1891d142d4178971dbb6bbff422a74240fb00c1a34d16d8565600",
+          "teacher_forced_token_ids_sha256": "a386022a5fe1891d142d4178971dbb6bbff422a74240fb00c1a34d16d8565600",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1245",
+          "model_record_sha256": "8c9f63081390eecfc7187225d9fe3a8d7f3371de90ceaf780ef753ca241b9375",
+          "raw_response_sha256": "93de959670bcb76cb7ef5f25194780212616c777cee2caf5aa46b9922f8fbcda",
+          "thinking_sha256": "9d2df563976ec457fa7625169aa80057973ec8215fe1b121755ed397d62c1f2b",
+          "output_sha256": "e587aacb9e8154935e2d04a26e57127ae66acfd17d241c9c27932debda04cc70",
+          "generated_token_ids_sha256": "d7c3e795b3b806f804834eaa88bb8c2d34664abacab707146e665feba78d55d7",
+          "teacher_forced_token_ids_sha256": "d7c3e795b3b806f804834eaa88bb8c2d34664abacab707146e665feba78d55d7",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1326",
+          "model_record_sha256": "cf955dd0030ae1f2c227b15e23afce8ed82e848ef8488d50ab83315fa246d5ee",
+          "raw_response_sha256": "97d17bc636ac6ef28ec0707d61ff100e8e7981f7a96399e0193c0b429baed628",
+          "thinking_sha256": "836a55fd16da52b30c24c2b134bbd2e19696a1c9a36b1fb15f474f1da16a5689",
+          "output_sha256": "1e70ebd45b2f68cf4e0e0e1441fe1e4801db10f8d1deff0c5ab451d029b6092a",
+          "generated_token_ids_sha256": "675d5daa27fca248a638a0cd6ad448ad68a4b2abbb44f542f80b1d7080876a2d",
+          "teacher_forced_token_ids_sha256": "675d5daa27fca248a638a0cd6ad448ad68a4b2abbb44f542f80b1d7080876a2d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1330",
+          "model_record_sha256": "743eddd7ee6ada6e3085eca86192c472ea884d928c90e041d37dbd1ce03c5baa",
+          "raw_response_sha256": "0dae4c7f8b7a79a417b0dc6b2807fd89c4fec0acb7552aad5d3cbdb39d3ff380",
+          "thinking_sha256": "169e2bf9773f5839f4f9b0235fff6b6a494ef4e60d12260695b29ec417cee618",
+          "output_sha256": "82183687ffb6b435f687dc81fdb1335e7a89c99ea92de75267964e8fbd740d03",
+          "generated_token_ids_sha256": "284930930538441cd16cd56b3064245835701434a443a07be6710f7b7e43be15",
+          "teacher_forced_token_ids_sha256": "284930930538441cd16cd56b3064245835701434a443a07be6710f7b7e43be15",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1361",
+          "model_record_sha256": "c067104969608101396c7bbcd5f2cab01236f42b4f7b25d0abf77b90ae34ab14",
+          "raw_response_sha256": "cecdb3ced6ece3a5520e984818cd3bbbd0a39d4c02eb7c1cff9e960ab3d82262",
+          "thinking_sha256": "e95e8ee09aeeb6e8fc88658e8974df4d3a7bc7fccd9f907c4f221c279af4b7c0",
+          "output_sha256": "12f5aedc5d39035cfd80b4569a521de7b4b577cf206326a6fced1572006c4b04",
+          "generated_token_ids_sha256": "25c9bb3c7c00c09e01fa8acc0c56f03ed595018ad9e54c3c8917ef18aeafaac1",
+          "teacher_forced_token_ids_sha256": "25c9bb3c7c00c09e01fa8acc0c56f03ed595018ad9e54c3c8917ef18aeafaac1",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1363",
+          "model_record_sha256": "70873e6aacdaa3cd828cd9141e757473ee3dca4fbed7c58d3dfb77d946b1fe5a",
+          "raw_response_sha256": "b4c5e5027304a25cf3b581f05feae6d7ed681dacdfa9f6418368c7fabb54c039",
+          "thinking_sha256": "558e449f275e2c94a88dc528942d6e0af7dd238d8b763bd97d76f12333352a76",
+          "output_sha256": "a45e740f57c241a2496c5471663f4106700e49d1e2d6cfe27cc21f5ba05f08d5",
+          "generated_token_ids_sha256": "362396ab74afb2bce51e57658e42705ff21f5358d3eeb6d74f503115c9165527",
+          "teacher_forced_token_ids_sha256": "362396ab74afb2bce51e57658e42705ff21f5358d3eeb6d74f503115c9165527",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1383",
+          "model_record_sha256": "0e5888efab281130d51594021989d877b13433b207167ecd4dcf2aaa00410401",
+          "raw_response_sha256": "91776ad5ea2760da824a254e62fbb624e737706a25521415a75bbba47fa5e8ba",
+          "thinking_sha256": "5f1fdb9cb1b46f8293b254754493f80c9c7a6eb443d8f2f45e01099d3ce3481f",
+          "output_sha256": "5d5d01d2d490dd62f2f01460fc396f204f898dc77098f041788dd0c3965f4dc2",
+          "generated_token_ids_sha256": "1c1e0713dbb461ed1eb457168935a94e69d5ffd295d56572af6d6cf3f899326a",
+          "teacher_forced_token_ids_sha256": "1c1e0713dbb461ed1eb457168935a94e69d5ffd295d56572af6d6cf3f899326a",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1428",
+          "model_record_sha256": "0cfd02b8e281b9c8b0e2a154a5bf91546e055906145a63551261aebc384e7dfc",
+          "raw_response_sha256": "7b200e4c4799ac71c5ed19bd01ca3b5556862f2274d99aa7762eeddaef6a2cf3",
+          "thinking_sha256": "a80c99f4a961ff32bda1c9d6f5b06ad2e28716d76386baef10e63c73d8cee1c4",
+          "output_sha256": "1a75f7abefe2eaeb7ddecff4d9c1fce23980b512e24d2169d4c85075d7b3f661",
+          "generated_token_ids_sha256": "72980924d36b1c26244f72669d20fbc5601e7733e54e55887e6ef67c0a80b168",
+          "teacher_forced_token_ids_sha256": "72980924d36b1c26244f72669d20fbc5601e7733e54e55887e6ef67c0a80b168",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1450",
+          "model_record_sha256": "d00f0afde239cf242892fe98efa17fab88c0268cf3b923564233593c496ec791",
+          "raw_response_sha256": "6ee765b31af740dd003c24ae0d38784b35a4eb89f77a787df4e9cad46e3bfc33",
+          "thinking_sha256": "2c1fb599be17068ba0fc655825cf6dc8a1456f3d8e2b0a26de792f9dc3c2e5b3",
+          "output_sha256": "052afe8eb025f4b605338b321a39ead38c17be3984e978490cc58d5be67cff82",
+          "generated_token_ids_sha256": "26ccc10f4cd3c10553dfc8d22067d325092b172353d0456b6d591cfee73fae59",
+          "teacher_forced_token_ids_sha256": "26ccc10f4cd3c10553dfc8d22067d325092b172353d0456b6d591cfee73fae59",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1466",
+          "model_record_sha256": "1d8a0e9822bb2674cd7d49994883aa208da147550edfb9db6501cbd5a3942072",
+          "raw_response_sha256": "cf090bc5d8cbd3400e3b2ca680d96b35a70a9fd8165947bfe46c554a5205743f",
+          "thinking_sha256": "7e7ebcffaac5c6794299dc757943d1c9e3a6876f343d78ace25ff95bb8dfe5ea",
+          "output_sha256": "7eeb2eec70da5561de092af27191034ba992222de7bee9369af329b02b2cb6a4",
+          "generated_token_ids_sha256": "f76a462df6289d5ed242522bf745c338015875763fc81bc153138228179d7203",
+          "teacher_forced_token_ids_sha256": "f76a462df6289d5ed242522bf745c338015875763fc81bc153138228179d7203",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1486",
+          "model_record_sha256": "b1071ff108bf3a30de5ae40043ac12196a2ae6a69ff4b80d2a88974d1c5a037f",
+          "raw_response_sha256": "22e4716faf9eb10f344e6bce0f9b952c31efab1f05a8fedbf0d130c6ae66077d",
+          "thinking_sha256": "6b7595f326f8535337168558025136b1eebb3de0db5be2fed59aeb9d06473e17",
+          "output_sha256": "fd21cc3cb5062bc4ac714c489e1ca0e37a577c19ba23b0d00e9767f598d37636",
+          "generated_token_ids_sha256": "aef8cf84cce35d97aae2a74bdfe55c5bfebd20328cd0a7e678d38e63d6c6c6a9",
+          "teacher_forced_token_ids_sha256": "aef8cf84cce35d97aae2a74bdfe55c5bfebd20328cd0a7e678d38e63d6c6c6a9",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1539",
+          "model_record_sha256": "14aa151c61c55a34ad1e4693eff3c9d59a9b67bb96b43be660f7374895b80591",
+          "raw_response_sha256": "4daeea104c420be6ab8deb15fc55934beff3332cc57ffba8d3d85210ee95d834",
+          "thinking_sha256": "1253030858287ad038fd520e00c13ddd303740ef5a019ab4366f024cdfa4d9f4",
+          "output_sha256": "367d2822fb4086c537732febafb6c32e80eaed702a30b4b43b2d074fff95ddb4",
+          "generated_token_ids_sha256": "2c59b4a2bf1f826da53ab82238f76e6aaee5d865f3a65736f22a13a953e2a1b3",
+          "teacher_forced_token_ids_sha256": "2c59b4a2bf1f826da53ab82238f76e6aaee5d865f3a65736f22a13a953e2a1b3",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1608",
+          "model_record_sha256": "fe4826fb89c8305ad8f8880b2c565542376ecd8dd4903be48c3138472a95ea61",
+          "raw_response_sha256": "f1f2fd2e08ec1f11a86857bd4a40d500a34290799a34d58f485d7baa46c64b43",
+          "thinking_sha256": "ff17164979b68c39014a8e4e225a220f68321062a5fc37a164dc5af39e1f0d5b",
+          "output_sha256": "667f7531170793ab625a779be201c0c75a0becfd59b0dcd54c0bf044842db4dc",
+          "generated_token_ids_sha256": "519dd0daa5a4657773d3e42248a149b631ffa4cf3e7881960d36d50fe53ffe5b",
+          "teacher_forced_token_ids_sha256": "519dd0daa5a4657773d3e42248a149b631ffa4cf3e7881960d36d50fe53ffe5b",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1622",
+          "model_record_sha256": "dd6e92342c6d2768b1c7e31d49ef6bd66c08e162ef1a3f921878e9a2c84d5c2c",
+          "raw_response_sha256": "8a9f3abf931f60ff88b4b47e8b4764ae4ac9ecee1fbc4aa620d37b98646089d7",
+          "thinking_sha256": "3094807582e315f9eff0d51b59e723b6219b96261b096453ee8628a30401f6e8",
+          "output_sha256": "8815e4b1af1f7a42850afdbc04ff8e642b2cf37206984c487f1d3cb1c82fedb8",
+          "generated_token_ids_sha256": "c7a929be1a19c537cd350c4b070f933e0be4a497d6b2e42bc19d4ee24012b97c",
+          "teacher_forced_token_ids_sha256": "c7a929be1a19c537cd350c4b070f933e0be4a497d6b2e42bc19d4ee24012b97c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1743",
+          "model_record_sha256": "994545ab6381e87bc2e29d2c202926d75932193cde57ca11a464b731c08c1ce4",
+          "raw_response_sha256": "a6eb65c262e991c586898e0ff6a18646d76c0bc85831304b1260426360e5fcc8",
+          "thinking_sha256": "85cdaa6406ab5d778059585cf25f2cc4f0ab518232a49b6a9253f2c7a6435f6c",
+          "output_sha256": "eb861137efa007794537eac2795cec2e0f87e13e4dce41b303cc45d9794761ed",
+          "generated_token_ids_sha256": "6ee330796938c2d28ee9ae4b67158186205dbce3bf9716186496c0718f518d8f",
+          "teacher_forced_token_ids_sha256": "6ee330796938c2d28ee9ae4b67158186205dbce3bf9716186496c0718f518d8f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1744",
+          "model_record_sha256": "8e00798a2bd09a78debbe7a4592a4294f969816bf7c5819cc58cf5445635d71c",
+          "raw_response_sha256": "2abb3aaee09ad4bec9ce87c2817a9e1a82d0c9de329b0f54d22d2d3c6e60f073",
+          "thinking_sha256": "bf2552050058b98b981ed2b75f07242afe86e451846d3d39c72f266eb5fd6caf",
+          "output_sha256": "80fbdbe8c062c42961e131111e81b47a61d2e7c47eef8beb08cee75610ffd6a1",
+          "generated_token_ids_sha256": "3acba20ef3617a518d02bcd3eb1c799c836199c6d3b87bc7a98ef72897b5a559",
+          "teacher_forced_token_ids_sha256": "3acba20ef3617a518d02bcd3eb1c799c836199c6d3b87bc7a98ef72897b5a559",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1767",
+          "model_record_sha256": "2c6294ede4594930d37b7eadddacddd6400bc6f1bcc74fc09388a6560f80e7ee",
+          "raw_response_sha256": "1477956a87a26e16432774131e3e3945c061e465dc6bc9955870eda3b0ba63ea",
+          "thinking_sha256": "b8ccb919042a28639d415391a3a2fe748d96c02a2b3a5cec4e3674197ec72bef",
+          "output_sha256": "6937cb0709d921b6ff77f0874212e2b8c351160f503bc5141bf848675173858c",
+          "generated_token_ids_sha256": "abdb6cf955351382162299d5507dbdfb55ab75ad44434c6c129205c273455c38",
+          "teacher_forced_token_ids_sha256": "abdb6cf955351382162299d5507dbdfb55ab75ad44434c6c129205c273455c38",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1772",
+          "model_record_sha256": "e00ff1deddb63b1246c58840a6c74b0c6d0fbfc065148f03dd7a9b28535538fa",
+          "raw_response_sha256": "745e85b69cd770b37e6c1755c56b1ce30315d1822d9347b06808ef2c000aafe6",
+          "thinking_sha256": "9513f12ea8b50bd771113b2b894a6b95c11fcc2d9bdad4d4d03dc6637181dab8",
+          "output_sha256": "22aeb7d77eddaaa38bf5e8f7d8d8fccd18c49b61cc8628b02dbe41c64a3e7e13",
+          "generated_token_ids_sha256": "75a2b7a8cdebade4f41b4ddb4f2d3411007e31531160af8189b91a8b85b5af41",
+          "teacher_forced_token_ids_sha256": "75a2b7a8cdebade4f41b4ddb4f2d3411007e31531160af8189b91a8b85b5af41",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1780",
+          "model_record_sha256": "5694a662d1ee5a1d7004c4f66b6226b06359011ca07c9f32d6d962cff44f8199",
+          "raw_response_sha256": "0b380c6d8604410ccf92d2abfd8b66fecbf417543bc44a276ad7e9b88e5115b8",
+          "thinking_sha256": "f11188ffc31d6970e5b7a75d4880ff7c9ce717c0654de61ec87f996797a1d9d6",
+          "output_sha256": "bde479a6e3dd9a155a7c125c1b8e317ce588f72bb09831703ccaaf4b5c37f0b8",
+          "generated_token_ids_sha256": "4bef398844232492f3756965bc1135ba617498919e54b2f71e7631ba8798aca9",
+          "teacher_forced_token_ids_sha256": "4bef398844232492f3756965bc1135ba617498919e54b2f71e7631ba8798aca9",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1848",
+          "model_record_sha256": "288eac4861df5f0eef7c75a9f3f0ef5660da65a893b60623fa57e57a320029d4",
+          "raw_response_sha256": "991de409addce6efd16b262d822a2ffe8422cf63a131c6187a14fc911587f2b7",
+          "thinking_sha256": "8698468bd751a5c861cb4f4facf239b2e763c727d6fb2cf1928f006f47000491",
+          "output_sha256": "e3abb2cc0bfd9f8dc1d048b32ced2ac3481cb986223b3b911fa42f5e0f806026",
+          "generated_token_ids_sha256": "5f0d76825762de94debf1b1a87b6facd01d070931ee71a7ba0bb0de7e4d2a2ac",
+          "teacher_forced_token_ids_sha256": "5f0d76825762de94debf1b1a87b6facd01d070931ee71a7ba0bb0de7e4d2a2ac",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1857",
+          "model_record_sha256": "a244c638fc4715ab0b1d9b7a53319ee24c869af687ad25104261ec1db1b1ca50",
+          "raw_response_sha256": "107ed531f6a296b48b61c3e878d75f2f0fb4ca8744a99943b0653081b9d05f48",
+          "thinking_sha256": "d933a4651ae32b859d80161b0bc3d657894db038da7738343681fe862bdeb9d5",
+          "output_sha256": "d666ea35263e49dc728c2305cc2bab2b9fb3c19d54f2aec2259db06caee63f95",
+          "generated_token_ids_sha256": "f4ce5d9b402244cdd62789c681f309cd329863120292f0b90396bb002efb4c88",
+          "teacher_forced_token_ids_sha256": "f4ce5d9b402244cdd62789c681f309cd329863120292f0b90396bb002efb4c88",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1858",
+          "model_record_sha256": "fe86101932233a8298cba41cb8947943c566d5188f0af3ac83c7fde609aa4f4b",
+          "raw_response_sha256": "f599cc26d50366d394ce759c6d81ccad11ae0df1f08d16ba537676805818b05b",
+          "thinking_sha256": "cbc3bce9067e9a30654bd9867371b625fd236e943abc5156900f7d072d352524",
+          "output_sha256": "f1cfa5ebb149e8099d561aae57beed6c68f990f45a910ea9d7b460dbcc5350be",
+          "generated_token_ids_sha256": "456f452491e7d8dd96960192d2018d7260b93ff856f8154480a21d664f989165",
+          "teacher_forced_token_ids_sha256": "456f452491e7d8dd96960192d2018d7260b93ff856f8154480a21d664f989165",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1871",
+          "model_record_sha256": "b9e7f30574a5cc58ed171ebbc94e2db7ae1410f6e543e200f32350904a30e4d8",
+          "raw_response_sha256": "c60cd2d98a4db36df31eb3bd8caac6009e29f20d0997cd901eeb93a83167f54e",
+          "thinking_sha256": "046045de236cd2a469bc3865caeb875094e59ed71ada4e078d0c56f387dd87df",
+          "output_sha256": "e875d3fd14f9a3ed08c4ecf7e1a32dd2de4790c1ca59df98370670f7deb52b16",
+          "generated_token_ids_sha256": "b223d53bd1abfa6d75635f799abc3867b7596aa3987bb37cb028ddc68bf681c7",
+          "teacher_forced_token_ids_sha256": "b223d53bd1abfa6d75635f799abc3867b7596aa3987bb37cb028ddc68bf681c7",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1930",
+          "model_record_sha256": "ac5a0492cd9143dd980dcd6479d29277dc7c76f8be2381583b1ba99c0e5020ad",
+          "raw_response_sha256": "78dce3929812a164d55fbd6ac99dd35d5ed7f2fa27b7db7c788467ab3d8c7636",
+          "thinking_sha256": "abb4c95b6a271aba74c2c8d10afd17e089809f502dff93ff61e5bd82ac72db9b",
+          "output_sha256": "b675f5df5fe68da179f367852f25b42aa16fd84b05d9b05da50cd723635dfd02",
+          "generated_token_ids_sha256": "4f326c160e9ed014f07ab6589d47786b9ea122bf36299280dd6dcf0690743331",
+          "teacher_forced_token_ids_sha256": "4f326c160e9ed014f07ab6589d47786b9ea122bf36299280dd6dcf0690743331",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1953",
+          "model_record_sha256": "8a5052d565687c3ad7b6c4a487c29e7d374e46db983b44071d660003604e0e35",
+          "raw_response_sha256": "6af93861a226962afe2764c2812bccf0d00733a369e5af720a8a3eabf61c7e22",
+          "thinking_sha256": "e062946a5a258319bd12298a5380cd8a5a8b4db0b106960fd411bf6ba32af68f",
+          "output_sha256": "192836aaf8acf3deb05c95a65976444b73632d10ae5f2ceb740bf8d43bdec170",
+          "generated_token_ids_sha256": "131df7e2367adce53e87c06edef2f5aec0fcf3a71e6475350025b82dc616ebb0",
+          "teacher_forced_token_ids_sha256": "131df7e2367adce53e87c06edef2f5aec0fcf3a71e6475350025b82dc616ebb0",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-1982",
+          "model_record_sha256": "f497c63e97db95da78e3490ae48000b903b608adf9ace3056faab7c03f541adc",
+          "raw_response_sha256": "c1773a43829de89c85595dd5ee387b85efce780e77bc1c9f0089ee52e4fc75bd",
+          "thinking_sha256": "4ba976ca3b81788d55acdaf45df5283c1a5f457aeea3ad3ceeaf4f699be14416",
+          "output_sha256": "670f6c565c7aef9de2bae69a8e96b6832915087d8c1fb2a980d96ae7c7959774",
+          "generated_token_ids_sha256": "c11c8281e4b3f5e1bd632578836213f77d7689697ca8113e2a2a95173801bdf8",
+          "teacher_forced_token_ids_sha256": "c11c8281e4b3f5e1bd632578836213f77d7689697ca8113e2a2a95173801bdf8",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2018",
+          "model_record_sha256": "601564941887b76dcd938ab6d2585e407cbfe61a7c6550644122c242ce2ab18a",
+          "raw_response_sha256": "56a22d49c960bb782f40ecc544d33ca1e363754684cb321702793062cb0a8985",
+          "thinking_sha256": "f10da0ebb1a496e5807af9dbda0150e50246d2191cc4acc2221833b771bdfc0f",
+          "output_sha256": "7fa57945ac6008a22a7ed0f41a33266a0656ca087c9b6ab718961f6e39a88052",
+          "generated_token_ids_sha256": "5150875ed4ec025386754826a6857b806f20ba20a1395ada731d61974a97e150",
+          "teacher_forced_token_ids_sha256": "5150875ed4ec025386754826a6857b806f20ba20a1395ada731d61974a97e150",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2026",
+          "model_record_sha256": "878e0d2bf3d262e52f7b21ad0d8707a3fde2f16d856230243e517283c8e56f31",
+          "raw_response_sha256": "0c4e8036f1cc8c369d0415035cc64f6fe946f8f308a33dba7d23fb3c872a3d68",
+          "thinking_sha256": "112dbdcfafc2f8b81d30b623854ee8c3b69f25b960cb788f52d2802ab7bbaee7",
+          "output_sha256": "53682acb659d1e8d5efbb93f053624aa753bc240c4111280a1f652ac4bb5c7a8",
+          "generated_token_ids_sha256": "27a9f90c15403bafddd2d46d9062bf71445b7d2246f99f33804eef0d78294710",
+          "teacher_forced_token_ids_sha256": "27a9f90c15403bafddd2d46d9062bf71445b7d2246f99f33804eef0d78294710",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2048",
+          "model_record_sha256": "9ca580d14a0bb6a54b668bceddbe93b6910bdb02b6e6938e835a8b5190a6d161",
+          "raw_response_sha256": "cca8f44c7926b8315d25b83d8a865831eb35d1ed40292270dcd4727428a2818f",
+          "thinking_sha256": "2f8c4bcfab2470e5624e015844b72769f3244b132989f39e33ea761a335a0859",
+          "output_sha256": "107e1b6c694188aeb74e9367bfa77c15283c08f59ae906c5476a483a8febc918",
+          "generated_token_ids_sha256": "1edcbc63221c4ccce70d7400bb25e23fe7316ec7e9d82dc3fd6d5327820d8a13",
+          "teacher_forced_token_ids_sha256": "1edcbc63221c4ccce70d7400bb25e23fe7316ec7e9d82dc3fd6d5327820d8a13",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2083",
+          "model_record_sha256": "563e69818fb1c44d634b2b34793b17bdac50ba62479892ad4b0c425bec3485e9",
+          "raw_response_sha256": "2244cda2120e68bf04a050482730f61c80e3f363cd0e1d4d01ba7b1f05998255",
+          "thinking_sha256": "77e8b08b9630afed42ea80757749b85fcc79ae1e90da7e7341cc863d7078c197",
+          "output_sha256": "16da3e85b8c6054d11e2508038a76aa6aeb18b7d4ed02cb6630481be13e10667",
+          "generated_token_ids_sha256": "f761931095b2208543b7c54737ad51fd20037c3c69d6265f864b563dc7de282c",
+          "teacher_forced_token_ids_sha256": "f761931095b2208543b7c54737ad51fd20037c3c69d6265f864b563dc7de282c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2112",
+          "model_record_sha256": "214e1d0dcf077038031322cb46ca548fab79976ce15081443816d1f314a2dfeb",
+          "raw_response_sha256": "3a3ec15464bc70de709319fe73cc945f8c78047e04903d8ae9943b465d1a14d3",
+          "thinking_sha256": "ec7b471dc9450229073361f847d018634e61fdd9711d448285aea864dc21a5b0",
+          "output_sha256": "595d6d914950b8a20f65bebf7a6278b0bde5973de85c4be47950b14a3e8f74be",
+          "generated_token_ids_sha256": "65039381b59b7e3035bed0bf11d947f7c6ee5f1ac25088255f49373ffe7bbc83",
+          "teacher_forced_token_ids_sha256": "65039381b59b7e3035bed0bf11d947f7c6ee5f1ac25088255f49373ffe7bbc83",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2123",
+          "model_record_sha256": "7a7628af6da41319d59e40fa02a7195d9c48642b06f2783275c12b00ba413054",
+          "raw_response_sha256": "bc4da1a85cf53bf4ce22c41a6063f0a1ce19f71583ba7697e3249b8ce67519d6",
+          "thinking_sha256": "5feddc791bc090beac040518b4376c9d0e361cc68b46ce1e67f95e322f48e227",
+          "output_sha256": "181637c6ac679d91061ef0881e2da835271f1e70e7adc737197e45850aa288e7",
+          "generated_token_ids_sha256": "630add4ef2160d2c8cb052a97fa182c76ff4c1488d8a1b828c0d2d84f637898c",
+          "teacher_forced_token_ids_sha256": "630add4ef2160d2c8cb052a97fa182c76ff4c1488d8a1b828c0d2d84f637898c",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2180",
+          "model_record_sha256": "681f4375d84c264a92a81ebbb10e86ad12b41dbc15c6b74db8ef4a599d7de515",
+          "raw_response_sha256": "5e6262e59d46c991e92b21fc75c3b8a04a34a36db4ad13fc3fd270e762b7df32",
+          "thinking_sha256": "59308ad5d9e49ef03ca113b6c0d79ae363802172626a39b253012d8d6afdf89c",
+          "output_sha256": "e50d8595b87c23c9789aa5f7306f6f5486fbdc50a2f147a2c7bc7870a813dbd2",
+          "generated_token_ids_sha256": "050b9b299daaad1b96b884606621ceb2fa549eae49e384df8c467d964c095103",
+          "teacher_forced_token_ids_sha256": "050b9b299daaad1b96b884606621ceb2fa549eae49e384df8c467d964c095103",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2198",
+          "model_record_sha256": "3f6cf01eab7c84f3784398e65024e94b3fd6a4ab1257f4de5ac3e55c81ba78f4",
+          "raw_response_sha256": "4951c5c41f0045ddaaf0fd944b104998f02f31c9d5662f5ebfeacc89b6d9640b",
+          "thinking_sha256": "543fbf2928f8071835091fa27193de262a7a5441c61691dd9c0f914cf4243a4c",
+          "output_sha256": "535d126b9d01d0769c97ae97802b93a445c628e7759484d57f6cc1706e61557b",
+          "generated_token_ids_sha256": "7dbc29f53e07012402bad7bd29867db51a87bb0262737fed8cad6e0b8d029ae7",
+          "teacher_forced_token_ids_sha256": "7dbc29f53e07012402bad7bd29867db51a87bb0262737fed8cad6e0b8d029ae7",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2227",
+          "model_record_sha256": "5a488f39648cb99b1dbe9d28a6792a1110e5caee2ff71548a83fb4dcd8324514",
+          "raw_response_sha256": "9729342de030ee2ade79bfc010371dd074a12f1b6f47efb04458ae19e80ad117",
+          "thinking_sha256": "cfe206c0beb0490991d16b4b7164c44bf2febf827d295eb1648bb3e51311395c",
+          "output_sha256": "ae9104d5955c79fa7c5729b6e59e2eb09285ea0d50d95063e319c18ef2249ec2",
+          "generated_token_ids_sha256": "eaaf43096dc6b4af1c39b50d2e3c7c1e80b2d7426127f1ec1a61dd72866d8ab0",
+          "teacher_forced_token_ids_sha256": "eaaf43096dc6b4af1c39b50d2e3c7c1e80b2d7426127f1ec1a61dd72866d8ab0",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2239",
+          "model_record_sha256": "d1eddc818071543556a27cb95d6c34579430f2ef50de33ef28ef0841b9405acf",
+          "raw_response_sha256": "9f689a046aea4b3c844734ca750bb8ef8ff072db55bd7bab7c06ae54e92765d1",
+          "thinking_sha256": "0ca873828c59b55088e40c1e67bb9ae200e1e62882ffc6fbed4481a99c49b3c4",
+          "output_sha256": "d5797af38d3f969092f7313d1789bf5d9c088feee944dd87805ecab619ddf8f8",
+          "generated_token_ids_sha256": "419c5019a0b53bd12012a23ac7e5f0cc1c023773a28f772f33575ec9429f536d",
+          "teacher_forced_token_ids_sha256": "419c5019a0b53bd12012a23ac7e5f0cc1c023773a28f772f33575ec9429f536d",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2270",
+          "model_record_sha256": "dd50318778201b43c3abd8caaef4d019a9a21b09ad1da315eaca99b39ff38980",
+          "raw_response_sha256": "7538366042d9992f46a8292e112001342bafea96c5308d27a9b5d78fadd26e65",
+          "thinking_sha256": "0e45e3e640a93adc2624a9b72bbac587a48c7f12d866ece2e350de04790b23c9",
+          "output_sha256": "eebca753bdce7941c69394405d2574b863a72fe8898e3d9da05ad87583568195",
+          "generated_token_ids_sha256": "53bc90cd372abab6ed9026de4ded05cf2ec71027980f8cc01141927ec4e65a38",
+          "teacher_forced_token_ids_sha256": "53bc90cd372abab6ed9026de4ded05cf2ec71027980f8cc01141927ec4e65a38",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2278",
+          "model_record_sha256": "d9c90fceaf8405188d330fe2dc5cd2d07c3277c1e972da737c04d25d06609b15",
+          "raw_response_sha256": "bf0714de435c6116f24afc60e273422d897139efebc1811ef5adc5956f3eafb3",
+          "thinking_sha256": "282ca2fedec55440b20e8f0389c0cdd446102d336ff2eeaad94f102cbedda9c7",
+          "output_sha256": "ff363e7d0584a25a3702ec621b128388da68c8f9c710ffcb9ad648e3751a1a19",
+          "generated_token_ids_sha256": "4635f4321f6dc161b91b8ed91ada1a8ae3bbfb95f46b86e73047b3478d6503b1",
+          "teacher_forced_token_ids_sha256": "4635f4321f6dc161b91b8ed91ada1a8ae3bbfb95f46b86e73047b3478d6503b1",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2309",
+          "model_record_sha256": "55c331a3df7b047b0fe8a4cb299b91608a478065bb4e2cbe4931cedc44ad91e5",
+          "raw_response_sha256": "3c18598afd1f810883b381683e63438201f9f0ade67a3bf21d35c37d10166a73",
+          "thinking_sha256": "545ce5416e568a79f177b82963299a45588b26b99209bbacf21a3f6ca0d8e633",
+          "output_sha256": "b70c6d7bbb4b25748adeb28ebc276c2eb6555da2cfd565068d3d015259303fab",
+          "generated_token_ids_sha256": "11be80efa5de76a512f91ea5640502e8e42e9f07b9e06aabf33419199000aba2",
+          "teacher_forced_token_ids_sha256": "11be80efa5de76a512f91ea5640502e8e42e9f07b9e06aabf33419199000aba2",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2312",
+          "model_record_sha256": "e8039a742c4ab1c5587bd747e47469522af6c390ef7f6079881456cc739a66e4",
+          "raw_response_sha256": "8e0f3281711f3fc6c176b6772ae3217862fb4feffcbb47f14dc60684f48714a4",
+          "thinking_sha256": "6e55629383e2bb8167631f939b800fee3dad8fe587a1761e42f7538f4bd152df",
+          "output_sha256": "d029f334d7d5ddbac9f30b6af0afcbd1f56c644659c35c5f510e0e5f1d27e586",
+          "generated_token_ids_sha256": "335caa4a4d001f0d7b1c7646982ba7e120ccf220c829ac705fbd6e49f167fbd6",
+          "teacher_forced_token_ids_sha256": "335caa4a4d001f0d7b1c7646982ba7e120ccf220c829ac705fbd6e49f167fbd6",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2325",
+          "model_record_sha256": "6c8d59368a5ad3e004f886add328c3f9691837b257b6714c5f130873ced300dc",
+          "raw_response_sha256": "6fb9c34a831a235c80e323d9e60dffba720622b74e6800068fbfd8a588f63f03",
+          "thinking_sha256": "b3e98338951cf72bfbc47bb329ddc969f2f519ce4fd40045d41c00648c47a1f3",
+          "output_sha256": "e6689e59bc3db393597809839c236cc00b8251035d483bf1fe70eff39e7f4502",
+          "generated_token_ids_sha256": "15354fbfb8fdb6f42e1dd268b707f83b0759b37d7603fe741832449f783b0b77",
+          "teacher_forced_token_ids_sha256": "15354fbfb8fdb6f42e1dd268b707f83b0759b37d7603fe741832449f783b0b77",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2381",
+          "model_record_sha256": "4f23e31abafa8182e1c8454e6e1095899112e7cb70b60bcfc104de7a075fc5ba",
+          "raw_response_sha256": "3b438cb345bc563f130b4df08ad8d8c61fac556a0baf7127c7171761cacc2ad3",
+          "thinking_sha256": "65251a02b6cf0cbfa85ca89972ae6d99789685e32fbf31adfc5182361168ec6e",
+          "output_sha256": "44f5e54dccd7f3bd5ef0a92a03a7e5ee73a1ef2fc0aea414e8efd64b920e878a",
+          "generated_token_ids_sha256": "d73fcc5a61e9d27364caed62c0d85397cd05616e4dc1892d13aa16560d35ed80",
+          "teacher_forced_token_ids_sha256": "d73fcc5a61e9d27364caed62c0d85397cd05616e4dc1892d13aa16560d35ed80",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2410",
+          "model_record_sha256": "f39f59f2fa4d13db76dc231149f3b5da4a4f885374f46ca9df0df46ad9b12d80",
+          "raw_response_sha256": "2411283fb9b8fba6df6de79457e408fa6eb525fe1debd3b136368b68971978e3",
+          "thinking_sha256": "fbcd05ec2b1a307a79717609d27d3f65f156f996fbfa19b98b9f040b867eba48",
+          "output_sha256": "5b56d22fe455e20d9fba16bcc704eb07e0e6b1bf9fd01e6ea1f564658dd69476",
+          "generated_token_ids_sha256": "3370332c9c3ea758587cba8ef0ab6edb56324422d87b5d200fce2e37e137a202",
+          "teacher_forced_token_ids_sha256": "3370332c9c3ea758587cba8ef0ab6edb56324422d87b5d200fce2e37e137a202",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2413",
+          "model_record_sha256": "a4d18a6b7d3537ff6db1109fd16b3654b86200e70c91efffef357c19fdb8add7",
+          "raw_response_sha256": "c292169e56a55a56c3a98051681293b5e7e13169238d9ecd345ee825b31f039a",
+          "thinking_sha256": "8d3e0e34e12fa6aaf3480d8819b5e43fd3f9d9a53dc1ba5a5ba42e0d1434cebf",
+          "output_sha256": "2ad2c9eedce32235dd77a4a3afd98ac86bc063d4db13c03336373aca28740c44",
+          "generated_token_ids_sha256": "746d460ae1c0ba3862adf84fa90f93f0d48e52b597a0e74549a7470bb95ab9b6",
+          "teacher_forced_token_ids_sha256": "746d460ae1c0ba3862adf84fa90f93f0d48e52b597a0e74549a7470bb95ab9b6",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2545",
+          "model_record_sha256": "14fb433c1bfb569063e377beda31580d94fe8f1e07cfd1108cd45a27c4909732",
+          "raw_response_sha256": "9d49520057ac582f0707e7f89e60d3f3ebaafe26508b30ce4782a4b02475abf8",
+          "thinking_sha256": "b806c1d63c4fd669d9020c7e01d6af5108de42aa972f250e008bc9ec425a9962",
+          "output_sha256": "395644fa982d3fe0b03d61dd62b041cec67d84fd0804f165cd377be2a1e75f9b",
+          "generated_token_ids_sha256": "6dc70aa619f18ad4f2c54e89f0142b6ab334826024853695d80658c4f23f5f8f",
+          "teacher_forced_token_ids_sha256": "6dc70aa619f18ad4f2c54e89f0142b6ab334826024853695d80658c4f23f5f8f",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2589",
+          "model_record_sha256": "e6d0f5ff490b32a5cd86118413bcc67651203b26fc48b109507fec63c5d7bd24",
+          "raw_response_sha256": "a95ece23b1674b5b0cf77d11c81b3ece5c61b1dd981bb69136ea92722ec00a79",
+          "thinking_sha256": "c751a8848086b9ff3bac6ea89ae1c8ed5bcce47d4e3a11fdda7d0317bebf733c",
+          "output_sha256": "cabf433b21c3e67a65ae54f1e72d0a731ac8383418bcdacb1719e720d2f25434",
+          "generated_token_ids_sha256": "1ad23bd5b48014c28c810d54abaf01cc4bab0d2a48cccc926349ce12b7d25559",
+          "teacher_forced_token_ids_sha256": "1ad23bd5b48014c28c810d54abaf01cc4bab0d2a48cccc926349ce12b7d25559",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2604",
+          "model_record_sha256": "38f8a86c4fb838ce17b1a586adf8efd9ed3b3a801efa103ccffce3b89b7a49e2",
+          "raw_response_sha256": "786c50a1cde2e6ba07ffea491498a0d1a1268261309aeae17d5048230c5ba281",
+          "thinking_sha256": "422c83ad3ed87536b6f4623c1c39f7ddd52733a93375d27e6be75abe52c8775e",
+          "output_sha256": "bdfb5cfa79be2a1d073033c229136d990ed0a812c21825f905c0523a29fb988d",
+          "generated_token_ids_sha256": "6a9bece6eac902e4c5b35d3e61acb5a0a6e4af78eda1dd1f1a3363f5c650e31b",
+          "teacher_forced_token_ids_sha256": "6a9bece6eac902e4c5b35d3e61acb5a0a6e4af78eda1dd1f1a3363f5c650e31b",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2614",
+          "model_record_sha256": "9922bf2562f727d6b03de47aee72a1065f34cebc3097f5d17e22487722da3a8a",
+          "raw_response_sha256": "ecc4a66316eb613338cac1283acd65c83a951d368d64c57e2636c78ccab800b1",
+          "thinking_sha256": "b34e8ceaedaddc04b129f4aaa07b0384b1ddef764281e45695bf53729ddf3215",
+          "output_sha256": "6f6a4e56098cfd9af29e3ae549503b370211a4e94421457fe4cfd39a38a1fa08",
+          "generated_token_ids_sha256": "eb410c781684ccce98de18d66c0319c07b61893c81ab106f269877cb55ccbed5",
+          "teacher_forced_token_ids_sha256": "eb410c781684ccce98de18d66c0319c07b61893c81ab106f269877cb55ccbed5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2618",
+          "model_record_sha256": "f1cebeadc8873f8cc1314ec1849d6fe1b4114275a189b63ff67d61fc02aa2cff",
+          "raw_response_sha256": "eaff86aae11f6928748976ecfb57d58f06d5623f9cf78e0ea4da89269602af82",
+          "thinking_sha256": "4283a992894db6166b76913879bf5678d89d84b2e9a73067791b30e0fffe4d1d",
+          "output_sha256": "646479788ce40f3f57cf961084f6c82bbfa7e2a1d9a96146b0ca53752a47996d",
+          "generated_token_ids_sha256": "e7da6955ad9e065073fbf0ab076fb78c30cd795669f9e6bbef49a91ea06ecb6b",
+          "teacher_forced_token_ids_sha256": "e7da6955ad9e065073fbf0ab076fb78c30cd795669f9e6bbef49a91ea06ecb6b",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2620",
+          "model_record_sha256": "9ee2b6c881005f10364cf9b73deb0e194d62ab3fe08e96373eb924a177f3c564",
+          "raw_response_sha256": "9ca5866836ad72b6ee870f9e048011edae3599dc3f82906a446114283d569743",
+          "thinking_sha256": "1f09bb3111ff9815391fed01532858680114cbaa6f9daffee20f664721e3b5ed",
+          "output_sha256": "7d96ff2085b23129c54ac50b90add8b82fa36cf58632ee0fc6bd5db58cb64709",
+          "generated_token_ids_sha256": "cebfc1b87c0594ed69eab6942e7b414e4c926c42938f1b92b9ff55bb01059377",
+          "teacher_forced_token_ids_sha256": "cebfc1b87c0594ed69eab6942e7b414e4c926c42938f1b92b9ff55bb01059377",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2679",
+          "model_record_sha256": "cdf2fddc7fa075320073f0b46275da7979e78e62d18888fb39529c6e67839352",
+          "raw_response_sha256": "c35902120bdc24480f794f174d813d6a6d6c0b31c1661fceac9c0b98cc4a731d",
+          "thinking_sha256": "289dea6bc6313ae28c5824b6ae62cbe573bbe6d86184c63b0e5315b4a9f204f6",
+          "output_sha256": "e5e4feebb9ac1f2eedbc94fc9659e33d1f9275fc9e1a9710b4e8ae4b3bd687d9",
+          "generated_token_ids_sha256": "f965f6f926ff2cbc4b06c6496572597e0f3eea666b3869faa22e0bfe27632182",
+          "teacher_forced_token_ids_sha256": "f965f6f926ff2cbc4b06c6496572597e0f3eea666b3869faa22e0bfe27632182",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2702",
+          "model_record_sha256": "1e82d836ed4395cce601378e37a444935c8a11750d98b7c8e01f71c411711382",
+          "raw_response_sha256": "cc9bcc840d201ff71e6f46942b75135836c115942bd3dbd0c5dae35200faea17",
+          "thinking_sha256": "7548b1a78676b8a6fb2d92e128015ad9b88be6d8dd1fc78174110bf4d58b901e",
+          "output_sha256": "e0cdf92d391e273e3b33155205d78ad2659e819a17dbefb5a11591e6588b99f7",
+          "generated_token_ids_sha256": "143dd67b792b63992a7f6e38e68337be669234ef27f3ba78a28d30bfb63614e5",
+          "teacher_forced_token_ids_sha256": "143dd67b792b63992a7f6e38e68337be669234ef27f3ba78a28d30bfb63614e5",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2705",
+          "model_record_sha256": "841b64822cb69f5345dc91280d86be534fe60aa01236dc5fa579ba5435d6defe",
+          "raw_response_sha256": "7fca7a1060abefdfa1675d57611c447d9d7565e820a9d1dba0b883cf6a0fdeae",
+          "thinking_sha256": "5f1b87f59a51a6a1ab34a8e162f157bae8e106ee04c11d4bc6f278d8105ad707",
+          "output_sha256": "848660f6ec4101f49e3f6725375c09dedec5f3228f5423d3f8aa41b14bc3455d",
+          "generated_token_ids_sha256": "580a8b03423ad78ef9bdfcdf64a69bb3a253b802c859720cf869893ce1be37ba",
+          "teacher_forced_token_ids_sha256": "580a8b03423ad78ef9bdfcdf64a69bb3a253b802c859720cf869893ce1be37ba",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2734",
+          "model_record_sha256": "3d0be139ae74580c559bc0d7d69f8fda17912863c1f924731dc8e3698d3c36d2",
+          "raw_response_sha256": "e78bdc8d373fba04694a28d734619fc03a73344073414fc9291abfee674905ce",
+          "thinking_sha256": "af56e8efbf35afaba1324ff49a60c90ad5ea5d0c3f41d1c58e3b96016435a135",
+          "output_sha256": "e0de8fabc78e86749dfe6c7ef1c4943b0a7fbacc578fa728113faa7a319266f6",
+          "generated_token_ids_sha256": "69d8f840fcb127f87889c9545052f129719ad740ba69fc9daa05350021f6ec90",
+          "teacher_forced_token_ids_sha256": "69d8f840fcb127f87889c9545052f129719ad740ba69fc9daa05350021f6ec90",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2741",
+          "model_record_sha256": "62496c17e507792150e28560d51f84a4a2cbdc371dba533418bcc20ceb27a7d5",
+          "raw_response_sha256": "a232457b1f5c505d7108ebedc41e0497f458998e878b9e59d141991631c66e97",
+          "thinking_sha256": "5aa08d2b1fa5038a220e0626dfda7ae7e22cd6baef80ab96d9362e4798e960b9",
+          "output_sha256": "c27f590b58f69311457992660dc3f53b1bedbe925d6e62fc09f16073a3a92dd6",
+          "generated_token_ids_sha256": "75422189ab94f84d210d4ba457edc1a43d1bb95fb2ccb687f39124b02cd2ab23",
+          "teacher_forced_token_ids_sha256": "75422189ab94f84d210d4ba457edc1a43d1bb95fb2ccb687f39124b02cd2ab23",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2802",
+          "model_record_sha256": "8854ca68c31864bb748500b918a0def5a61ede993ffdd9fec457172303af9006",
+          "raw_response_sha256": "5f1d7b043f0e64499f4e68fe3145d9b0a679cadc70a5ea793a156caaf65eabb9",
+          "thinking_sha256": "b49c7fa074594fe330320bf51118ae2644e480a661aa5b30c1d527990bc3a3b4",
+          "output_sha256": "e58ceb5bc320f3d7c383b385dd2f9dadac937b554fbcfd14da1f7800c05af290",
+          "generated_token_ids_sha256": "96e47833fafc4dec2c846ecd3180465ff26f3d8212f00c734f9cfdfb635d32d0",
+          "teacher_forced_token_ids_sha256": "96e47833fafc4dec2c846ecd3180465ff26f3d8212f00c734f9cfdfb635d32d0",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2820",
+          "model_record_sha256": "44d59f94d8830ba305683d86b4bc4563be4d402ae1ae59a2eabe90799f68cadb",
+          "raw_response_sha256": "c825fa38a40232252e33d64a97d4ae944e0195a369b548a00dba752b496e2578",
+          "thinking_sha256": "122ea7e71329d22d9ff76fc70825213e681bf3399cafc96e75b2ac8a115d34e2",
+          "output_sha256": "d606ae3e2f4a7d0e2055ff239c14a4bfaaee7b34d3b946458ba1cdaf7b172352",
+          "generated_token_ids_sha256": "a1ca6a94b6df1a5f818a6939b3a0ff3f57fb6f339fcacf51ed2a7e672934f258",
+          "teacher_forced_token_ids_sha256": "a1ca6a94b6df1a5f818a6939b3a0ff3f57fb6f339fcacf51ed2a7e672934f258",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2866",
+          "model_record_sha256": "23b80d6b4b80f99bc09c5409dbd0aca80f4ad180757eaa3aedf1f24768ab959b",
+          "raw_response_sha256": "a5710ccc47cf92f5bcb1f12b56c65befe401b0c7202952d3a74cfde1492beece",
+          "thinking_sha256": "78789a74e1e882db1dda30577be769c94cea37823ec3556b8ce27159f26b7d30",
+          "output_sha256": "e4d8d4b1dbc75e53a22e16489ac2b035eac532007f0841f041424771a92ec1a7",
+          "generated_token_ids_sha256": "c60e6add3a7e989e28dc62ca4ef2fd530db3982385ad4735eab563d661f21e19",
+          "teacher_forced_token_ids_sha256": "c60e6add3a7e989e28dc62ca4ef2fd530db3982385ad4735eab563d661f21e19",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2879",
+          "model_record_sha256": "03e60275e6c7c009c2cf68899f207e868e0764f84e48d5d47840ba52b87310e1",
+          "raw_response_sha256": "24ae0f6e12b66fbed92e7670bd1a4912d9257faef03c4be3baaa995f39db60ff",
+          "thinking_sha256": "21cd2c863de2763be4392b87f10661b0f241ac41215c846b5367cb8fcba7b816",
+          "output_sha256": "591aac02793b3725b0e45247ef80a590edfd2937b36a446ad539e82604e93afc",
+          "generated_token_ids_sha256": "3a1aad77dd02a38b3568eef862f4db75a27019360998c5d58bc6f5d3564eb627",
+          "teacher_forced_token_ids_sha256": "3a1aad77dd02a38b3568eef862f4db75a27019360998c5d58bc6f5d3564eb627",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2880",
+          "model_record_sha256": "436782a8ddacab3a106a01cdf5c009a7b03d3adcc75f6c0570ff883bea7f3dd7",
+          "raw_response_sha256": "fcb67b6f4a68582af5d9cc60da2ef3aaf2b9b9b3366f9e582fe22591a944a29d",
+          "thinking_sha256": "faa0759d76ca3b3b6e1ed7ac5d5c1e4423b8e7ac8e4f114158438ebad13682d9",
+          "output_sha256": "7b2b3b623b251c7a417773e97a8154c48f5e5894a4530973ca0ced80dec18152",
+          "generated_token_ids_sha256": "d038fce558398ffc9e4a3d57a979dadc728a997173daf2b51b4a92b1c1ea4851",
+          "teacher_forced_token_ids_sha256": "d038fce558398ffc9e4a3d57a979dadc728a997173daf2b51b4a92b1c1ea4851",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2893",
+          "model_record_sha256": "7da6742470313822ad2fde65c6e8b81f533aaf779c09037f1ecda58dfe8613f3",
+          "raw_response_sha256": "01bb106eab2657d8d36faedba643bf58d9535c59b4fb7bf89ddca04fffc71e17",
+          "thinking_sha256": "25b87c453520f219c74c07a99cc75a425074ea289898cbd1457057b2cde0f561",
+          "output_sha256": "44dfca126d7323e4350a0b5d495d12dda9a24b5d17c2bd63b955fc898976b633",
+          "generated_token_ids_sha256": "665c755e3589872e84a9aff2403842d32b33d466ea1dfdc6d275f3c81b49e7a3",
+          "teacher_forced_token_ids_sha256": "665c755e3589872e84a9aff2403842d32b33d466ea1dfdc6d275f3c81b49e7a3",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2899",
+          "model_record_sha256": "47506edbdf035f8332f0f5bab84557cddc34211e73817a2cd77ed8c0f766985a",
+          "raw_response_sha256": "518c32c62a4a226c5c0d4f99f93ce3c9fcf0c13ac4228e47524bd801735e850d",
+          "thinking_sha256": "f534e1306cbbaa0e0d59b61969fff8c64b797d20caaa1fd1bcf94d1b9a003aaa",
+          "output_sha256": "221d81cb8764e8441b7e6d34a02c82d63301b9d4a6121ef0fa515e08502044f2",
+          "generated_token_ids_sha256": "80ce990efaea7ce0e4cc9100ab07689f139df7fa819d95d7de331a1e84cef4e4",
+          "teacher_forced_token_ids_sha256": "80ce990efaea7ce0e4cc9100ab07689f139df7fa819d95d7de331a1e84cef4e4",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2961",
+          "model_record_sha256": "0daf60011ef564aa141106e52622339ca9c76b3115499b77535230549b9bbd1c",
+          "raw_response_sha256": "80c771ac6bf19ac319b0b59aea9ae277e2724549fc44f93873760094bfa4f8c4",
+          "thinking_sha256": "de7db7d47b23fbc2975eb22209a99c7448f4c7c2e2790dc22a2da14a79406ab8",
+          "output_sha256": "c55868ad8b04e4d6eb5af80b6fd461897cf24a88a35391550891e701a73c7cc1",
+          "generated_token_ids_sha256": "6918c88cbb10f25d25b68590dd311b3756aabf718c06153f3cc7a4b54995c306",
+          "teacher_forced_token_ids_sha256": "6918c88cbb10f25d25b68590dd311b3756aabf718c06153f3cc7a4b54995c306",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2965",
+          "model_record_sha256": "5b1e2a3da3602bac74afd41f44f5feeba41762c20adcae254f3c1d8b45de178e",
+          "raw_response_sha256": "9b73a3c059cea01802a3855e9c85689509d7f2e8b854f709edb4caf05f5c74f5",
+          "thinking_sha256": "b58343d2b0c6bf4a434c264a9f186419ac1de51a369db457578a419d3cce13cb",
+          "output_sha256": "887296e9e8932d688d12f363362a7dc3d13274cf7f4f5c105e103957256a17fe",
+          "generated_token_ids_sha256": "535bda43068b809d9c379be897d98b5d8ee275b845c7b9e51344d67a3b84a0a3",
+          "teacher_forced_token_ids_sha256": "535bda43068b809d9c379be897d98b5d8ee275b845c7b9e51344d67a3b84a0a3",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2966",
+          "model_record_sha256": "0c640c257394e9e7fce7d4a5991b660a9ee6233400b0196e1808241c790c9306",
+          "raw_response_sha256": "dace287739e83cc845e6d7c5ca7a858af8a6e75f5d29015f0975f1a3d5808c23",
+          "thinking_sha256": "a9d4b8c5ac41b43d35eda6fcb6e8ab30c50d8b6f50be23328229d875854f1302",
+          "output_sha256": "f14fbe7e559ea8cbdb4ec44f7d1390c64fe7b27cb2f3cd0c51030df77ed4055c",
+          "generated_token_ids_sha256": "d1ce9036877eb50951e540dee0318ce571a4d44f25160e20186c97d6b858a390",
+          "teacher_forced_token_ids_sha256": "d1ce9036877eb50951e540dee0318ce571a4d44f25160e20186c97d6b858a390",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        },
+        {
+          "sample_id": "wiki-visa-2997",
+          "model_record_sha256": "67a3c6ffcf9a9e418060f06a1ed828eac21c7b09f0e3c5b75dce9453a24585db",
+          "raw_response_sha256": "8ab287c4e49056d9e1305c7f06598a26c969dc844c3b0358aee03f59ddc6d9e0",
+          "thinking_sha256": "9de3c77de62b8aedb6e0abffb8f845905a1c5dd6e71e6d0a0d3c4a3d0d233ed9",
+          "output_sha256": "1eb522965ca0be0f154f684dc9988ff9790b4addc590b3c992529ac58d023004",
+          "generated_token_ids_sha256": "ff85d8bcd0d71f7840a061acb38987c176b5bb0305e8d3bed35a73ec956d9210",
+          "teacher_forced_token_ids_sha256": "ff85d8bcd0d71f7840a061acb38987c176b5bb0305e8d3bed35a73ec956d9210",
+          "resolved_revision": "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "eligible_samples": 100,
+  "judged_eligible_samples": 100,
+  "label_counts": {
+    "fully": 58,
+    "partial": 22,
+    "wrong": 20
+  },
+  "audit_fraction": 0.1,
+  "audit_seed": 17,
+  "audit_sample_ids": [
+    "vizwiz-lf-066",
+    "vizwiz-lf-102",
+    "vizwiz-lf-111",
+    "vizwiz-lf-197",
+    "vizwiz-lf-204",
+    "vizwiz-lf-298",
+    "vizwiz-lf-301",
+    "vizwiz-lf-323",
+    "vizwiz-lf-449",
+    "vizwiz-lf-516"
+  ],
+  "audit_reviewed": 10,
+  "eligible_missing": [],
+  "audit_missing": [],
+  "complete": true
+}

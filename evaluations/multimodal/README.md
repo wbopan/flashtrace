@@ -67,6 +67,104 @@ The later native-dataset fit check for Wiki-VISA, VISTAQA, and VizWiz-LF is in
 It uses whole-patch tie-aware metrics and the same cumulative
 direct-plus-weighted-hops FlashTrace definition as the paper.
 
+## Formal v2 main-experiment workflow
+
+The frozen formal plan is [`EVAL_PLAN.md`](EVAL_PLAN.md), and the
+machine-readable contract is [`protocol.json`](protocol.json). The formal
+scope is E1-E5 only. CLI defaults now pin the Qwen revision, use the validated
+2,007,040-pixel ceiling, select the frozen eight-method panel, and use 64
+regions with ten faithfulness steps.
+
+Create the two candidate manifests. The VizWiz-LF *candidate pool* is
+deterministic and balanced across the four native question types; missing
+official images are downloaded into the local cache and verified as decodable
+before use. The final frozen VizWiz sample is not forced to be question-type
+balanced.
+
+```bash
+python -m evaluations.multimodal.strict_datasets \
+  --dataset wiki-visa --sample-size 240 --seed 17 \
+  --output evaluations/multimodal/results/strict/formal/wiki_visa_candidates.dataset.jsonl
+
+python -m evaluations.multimodal.strict_datasets \
+  --dataset vizwiz-lf --sample-size 200 --seed 17 \
+  --output evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.dataset.jsonl
+```
+
+Run `strict_generation` and `strict_ablation_audit` for each manifest. The
+gate is benchmark-aware: Wiki-VISA requires whole-output correctness, whereas
+VizWiz-LF treats correctness as a pending `fully/partial/wrong` annotation and
+instead requires a usable non-refusal output of at least 16 tokens. Both
+require stable generation, exact token identity, positive blur log-probability
+drop, a closed THINKING span, and an output-changing blur/gray ablation.
+Generation budgets are dataset-aware and frozen to the validated pilot
+settings: 1,024 new tokens for Wiki-VISA and 2,048 for VizWiz-LF.
+
+After both ablation audits, materialize Wiki with 40 samples per stratum and
+VizWiz by fixed-seed sampling from the full strict-eligible pool. These
+commands also write each full gate funnel and merge the chosen IDs into the
+single frozen artifact:
+
+```bash
+python -m evaluations.multimodal.select_strict_subset \
+  --dataset-manifest <wiki-candidate.dataset.jsonl> \
+  --model-output <wiki-candidate.model.jsonl> \
+  --generation-evaluation <wiki-candidate.strict.generation_eval.jsonl> \
+  --sample-size 120 --balance-key stratum --seed 17 \
+  --output-dataset <formal/wiki_visa_n120.dataset.jsonl> \
+  --output-model <formal/wiki_visa_n120.model.jsonl> \
+  --output-evaluation <formal/wiki_visa_n120.generation_eval.jsonl> \
+  --funnel-output <formal/wiki_visa_funnel.json> \
+  --frozen-ids-output evaluations/multimodal/results/strict/formal/frozen_ids.json
+
+python -m evaluations.multimodal.select_strict_subset \
+  --dataset-manifest <vizwiz-candidate.dataset.jsonl> \
+  --model-output <vizwiz-candidate.model.jsonl> \
+  --generation-evaluation <vizwiz-candidate.strict.generation_eval.jsonl> \
+  --sample-size 100 --seed 17 \
+  --output-dataset <formal/vizwiz_lf_n100.dataset.jsonl> \
+  --output-model <formal/vizwiz_lf_n100.model.jsonl> \
+  --output-evaluation <formal/vizwiz_lf_n100.generation_eval.jsonl> \
+  --funnel-output <formal/vizwiz_lf_funnel.json> \
+  --frozen-ids-output evaluations/multimodal/results/strict/formal/frozen_ids.json
+```
+
+The frozen VizWiz dataset and ID record include output-token terciles and
+question types for stratified reporting; neither field is a selection gate.
+Attribution must use only the frozen dataset/model/evaluation bundles. Pass
+`--allow-missing-evidence` for VizWiz-LF, since it has no native localization
+ground truth, then run `strict_visual_faithfulness` with its default
+`--target-regions 64 --steps 10`.
+
+The resume-safe single-GPU runners
+`run_formal_e1.sh`, `run_formal_e2.sh`, and `run_formal_e3_e5.sh` enforce
+upstream row counts and complete paired matrices. The final read-only
+`audit_formal_results` command checks frozen IDs, pilot disjointness, typed
+gate funnels, eight-method intersections, 64/10 perturbation budgets, 50k
+bootstrap analyses, semantic review, generated paper tables, processor pixel
+budgets, and input/response SHA-256 hashes for the core artifacts. Completed
+faithfulness matrices support `--summary-only`, which compacts and rebuilds
+their summary metadata without loading the model and rejects incomplete
+sample-method products.
+
+Before the full freeze, `run_formal_preview_n20.sh` executed a pilot-disjoint
+20-sample slice of both formal datasets through the same eight methods,
+64-region/10-step faithfulness protocol, and 50k analyses. Its isolated
+artifacts and provisional results are in
+`results/strict/formal_preview_n20/`; they are never merged into
+`formal/frozen_ids.json` or pooled as estimates. If fixed-seed formal
+selection independently chooses the same sample, `reuse_preview_checkpoints`
+may reuse its deterministic GPU record only after exact frozen-response,
+token-ID, image/question, and revision identity checks; formal summaries and
+bootstraps are always recomputed over the full n=120/n=100 intersection.
+E2 applies the same rule one stage earlier to the 40-candidate VizWiz preview:
+`reuse_preview_ablation_checkpoints` seeds only complete blur/gray ablation
+records whose dataset input, complete primary response, generated and
+teacher-forced IDs, resolved revision, and ablation generation configuration
+all match. Its source hash and record accounting are saved in
+`vizwiz_lf_candidates.preview_ablation_reuse.json` and verified by the final
+auditor.
+
 ```bash
 python -m evaluations.multimodal.verify_strict_data \
   --output evaluations/multimodal/results/strict/data_integrity.json

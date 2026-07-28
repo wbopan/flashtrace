@@ -1,0 +1,10 @@
+{"sample_id": "vizwiz-lf-066", "llm_label": "fully", "human_label": "fully", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "图片虽过曝但足以识别为美元纸币；问题只问物体是什么，未辨认出20美元面额不影响核心正确性。"}
+{"sample_id": "vizwiz-lf-102", "llm_label": "fully", "human_label": "fully", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "模型准确描述黄色瓶盖、透明小瓶和浅色液体，并明确没有可读标签，未武断猜测内容物。"}
+{"sample_id": "vizwiz-lf-111", "llm_label": "fully", "human_label": "fully", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "Iodides Tincture与瓶身标签、专家参考和多数众包答案一致。"}
+{"sample_id": "vizwiz-lf-197", "llm_label": "partial", "human_label": "partial", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "浅橙色与图片中的金黄色接近，但没有准确命中专家和多数众包答案所标的黄色。"}
+{"sample_id": "vizwiz-lf-204", "llm_label": "fully", "human_label": "fully", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "light brown准确概括了浅色木质柜体的主色，与专家描述及多数众包答案一致。"}
+{"sample_id": "vizwiz-lf-298", "llm_label": "fully", "human_label": "fully", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "模型完整识别鞋底的红、白、黑和亮绿色，与专家对鞋底结构颜色的描述一致。"}
+{"sample_id": "vizwiz-lf-301", "llm_label": "wrong", "human_label": "wrong", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "图片文字不可可靠读取，模型却声称看清说明并编造425°F、50分钟和短时冷却等与真实说明冲突的步骤。"}
+{"sample_id": "vizwiz-lf-323", "llm_label": "wrong", "human_label": "wrong", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "屏幕严重模糊且参考与众包均认为无法读取，模型给出的具体句子没有视觉依据。"}
+{"sample_id": "vizwiz-lf-449", "llm_label": "partial", "human_label": "partial", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "模型正确读出BODY WASH、BLOSSOM SCENT、BAMBOO ESSENCE和ENERGIZING，但漏掉ORANGE并误补FRESHNESS OF。"}
+{"sample_id": "vizwiz-lf-516", "llm_label": "partial", "human_label": "partial", "human_reviewer": "project-owner-approved (Codex-assisted)", "human_reason": "正确识别为膳食补充剂且标签部分可见，但把2500 mcg误读为2500 mg，并加入没有可靠依据的成分细节。"}

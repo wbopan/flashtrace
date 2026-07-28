@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "benchmark": "wiki_visa",
+  "complete": true,
+  "audit_seed": 17,
+  "audit_fraction": 0.1,
+  "frozen_sample_count": 120,
+  "reviewed_count": 12,
+  "audit_sample_ids": [
+    "wiki-visa-0567",
+    "wiki-visa-0872",
+    "wiki-visa-0908",
+    "wiki-visa-0931",
+    "wiki-visa-1095",
+    "wiki-visa-1187",
+    "wiki-visa-1608",
+    "wiki-visa-1744",
+    "wiki-visa-2112",
+    "wiki-visa-2270",
+    "wiki-visa-2545",
+    "wiki-visa-2620"
+  ],
+  "image_dependence_counts": {
+    "borderline": 1,
+    "supported": 11
+  },
+  "thinking_quality_counts": {
+    "good": 11,
+    "mixed": 1
+  },
+  "selection_effect": "caveat_only_no_frozen_id_changes"
+}

@@ -8,9 +8,12 @@ must never be populated from dataset rationales or functional programs.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import io
 import json
 import random
+import urllib.parse
+import urllib.request
 from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
@@ -90,6 +93,8 @@ WIKI_METADATA_COLUMNS = (
     "pos_idx",
     "bounding_box",
 )
+
+VIZWIZ_QUESTION_TYPES = ("Identification", "Description", "Reading", "Others")
 
 
 def _input_record(*, image_path: Path, question: str) -> dict[str, Any]:
@@ -505,6 +510,166 @@ def select_wiki_visa(
     return records
 
 
+def _vizwiz_image_path(
+    images_root: Path,
+    record_id: str,
+    image_url: str,
+    *,
+    download_missing: bool,
+) -> Path:
+    """Resolve one official VizWiz-LF image, downloading it when requested."""
+
+    numeric_id = int(record_id)
+    candidates = sorted(images_root.glob(f"{numeric_id:03d}.*"))
+    if len(candidates) > 1:
+        raise ValueError(
+            f"expected at most one local image for VizWiz-LF {record_id}, "
+            f"found {candidates}"
+        )
+    if candidates:
+        image_path = candidates[0]
+    else:
+        if not download_missing:
+            raise FileNotFoundError(
+                f"no local image for VizWiz-LF {record_id} beneath {images_root}"
+            )
+        suffix = Path(urllib.parse.urlparse(image_url).path).suffix.casefold()
+        if suffix not in {".jpg", ".jpeg", ".png", ".webp"}:
+            suffix = ".jpg"
+        image_path = images_root / f"{numeric_id:03d}{suffix}"
+        images_root.mkdir(parents=True, exist_ok=True)
+        request = urllib.request.Request(
+            image_url,
+            headers={"User-Agent": "FlashTrace multimodal evaluation"},
+        )
+        with urllib.request.urlopen(request, timeout=60) as response:
+            image_bytes = response.read()
+        # Decode before persisting so interrupted or invalid downloads never
+        # become apparently complete candidates on a resumed run.
+        from PIL import Image
+
+        with Image.open(io.BytesIO(image_bytes)) as image:
+            image.verify()
+        temporary_path = images_root / f".{numeric_id:03d}.download"
+        temporary_path.write_bytes(image_bytes)
+        temporary_path.replace(image_path)
+
+    from PIL import Image
+
+    with Image.open(image_path) as image:
+        image.verify()
+    return image_path
+
+
+def select_vizwiz_lf(
+    *,
+    expert_json: Path,
+    images_root: Path,
+    sample_size: int = 200,
+    seed: int = 17,
+    exclude_record_ids: set[str] | None = None,
+    download_missing: bool = True,
+) -> list[dict[str, Any]]:
+    """Materialize a deterministic question-type-balanced VizWiz-LF pool.
+
+    The expert paragraph is retained only as evaluation metadata. Formal
+    faithfulness does not exact-match against it: the frozen model response is
+    the evaluation target, while semantic correctness is annotated later.
+    """
+
+    if sample_size <= 0:
+        raise ValueError("sample_size must be positive")
+    source = json.loads(expert_json.read_text(encoding="utf-8"))
+    if not isinstance(source, Mapping):
+        raise ValueError("VizWiz-LF expert annotations must be keyed by record ID")
+
+    excluded = {str(int(value)) for value in (exclude_record_ids or set())}
+    grouped: dict[str, list[tuple[str, Mapping[str, Any]]]] = defaultdict(list)
+    for raw_id, raw_item in source.items():
+        record_id = str(int(raw_id))
+        if record_id in excluded or not isinstance(raw_item, Mapping):
+            continue
+        if raw_item.get("model") != "Expert":
+            continue
+        question_type = str(raw_item.get("question_type", ""))
+        if question_type not in VIZWIZ_QUESTION_TYPES:
+            raise ValueError(
+                f"VizWiz-LF record {record_id} has unknown question type "
+                f"{question_type!r}"
+            )
+        grouped[question_type].append((record_id, raw_item))
+
+    base, remainder = divmod(sample_size, len(VIZWIZ_QUESTION_TYPES))
+    rng = random.Random(seed)
+    selected: list[tuple[str, Mapping[str, Any]]] = []
+    for index, question_type in enumerate(VIZWIZ_QUESTION_TYPES):
+        count = base + int(index < remainder)
+        pool = list(grouped[question_type])
+        rng.shuffle(pool)
+        if len(pool) < count:
+            raise ValueError(
+                f"VizWiz-LF question type {question_type!r} has "
+                f"{len(pool)} records; needs {count}"
+            )
+        selected.extend(pool[:count])
+
+    records: list[dict[str, Any]] = []
+    for record_id, item in sorted(selected, key=lambda pair: int(pair[0])):
+        image_url = str(item.get("image_url", ""))
+        if not image_url:
+            raise ValueError(f"VizWiz-LF record {record_id} has no image URL")
+        image_path = _vizwiz_image_path(
+            images_root,
+            record_id,
+            image_url,
+            download_missing=download_missing,
+        )
+        from PIL import Image
+
+        with Image.open(image_path) as image:
+            image_size = {"width": image.width, "height": image.height}
+        image_sha256 = hashlib.sha256(image_path.read_bytes()).hexdigest()
+        crowd_answers = [str(value) for value in item.get("crowd_answers", [])]
+        record = {
+            "schema_version": SCHEMA_VERSION,
+            "benchmark": "vizwiz_lf",
+            "sample_id": f"vizwiz-lf-{int(record_id):03d}",
+            "input": _input_record(
+                image_path=image_path,
+                question=str(item["question"]),
+            ),
+            "evaluation": _evaluation_record(
+                reference_output=str(item["answer_paragraph"]),
+                evidence_boxes=None,
+                evidence_masks=None,
+                metadata={
+                    "source_dataset": "VizWiz-LF",
+                    "official_record_id": record_id,
+                    "source_model": "Expert",
+                    "image_url": image_url,
+                    "image_size": image_size,
+                    "image_sha256": image_sha256,
+                    "question_type": str(item["question_type"]),
+                    "answerability": str(item["answerability"]),
+                    "crowd_answers": crowd_answers,
+                    "crowd_majority": str(item.get("crowd_majority", "")),
+                    "answer_sentences": [
+                        str(value) for value in item.get("answer_sentences", [])
+                    ],
+                    "prompt_profile": "long_form",
+                    "semantic_correctness": {
+                        "status": "unreviewed",
+                        "label": None,
+                        "allowed_labels": ["fully", "partial", "wrong"],
+                    },
+                },
+            ),
+        }
+        validate_dataset_record(record)
+        records.append(record)
+    return records
+
+
 def write_jsonl(records: Iterable[Mapping[str, Any]], path: Path) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     count = 0
@@ -529,7 +694,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--dataset",
         required=True,
-        choices=("clevr-xai-complex", "wiki-visa"),
+        choices=("clevr-xai-complex", "wiki-visa", "vizwiz-lf"),
     )
     parser.add_argument("--data-root", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, required=True)
@@ -557,6 +722,23 @@ def _parse_args() -> argparse.Namespace:
             "excludes their image indices to avoid reusing a visual scene."
         ),
     )
+    parser.add_argument(
+        "--vizwiz-expert-json",
+        type=Path,
+        default=Path("data/external/lfvqa/data/expert.json"),
+        help="VizWiz-LF only: official Expert annotation JSON.",
+    )
+    parser.add_argument(
+        "--vizwiz-images-root",
+        type=Path,
+        default=Path("data/vizwiz_lf/images"),
+        help="VizWiz-LF only: image cache populated from official image URLs.",
+    )
+    parser.add_argument(
+        "--no-download",
+        action="store_true",
+        help="VizWiz-LF only: require every selected image to exist locally.",
+    )
     return parser.parse_args()
 
 
@@ -565,6 +747,7 @@ def main() -> None:
     excluded_question_indices: set[int] = set()
     excluded_image_indices: set[int] = set()
     excluded_wiki_rows: set[int] = set()
+    excluded_vizwiz_ids: set[str] = set()
     for manifest in args.exclude_manifest:
         for line in manifest.read_text(encoding="utf-8").splitlines():
             if not line.strip():
@@ -576,6 +759,8 @@ def main() -> None:
                 excluded_image_indices.add(int(metadata["image_index"]))
             elif record.get("benchmark") == "wiki_visa":
                 excluded_wiki_rows.add(int(metadata["hf_row_index"]))
+            elif record.get("benchmark") == "vizwiz_lf":
+                excluded_vizwiz_ids.add(str(metadata["official_record_id"]))
     if args.dataset == "clevr-xai-complex":
         dataset_root = args.data_root / "clevr_xai" / "CLEVR-XAI_v1.0"
         images_root = (
@@ -597,7 +782,7 @@ def main() -> None:
             exclude_question_indices=excluded_question_indices,
             exclude_image_indices=excluded_image_indices,
         )
-    else:
+    elif args.dataset == "wiki-visa":
         records = select_wiki_visa(
             parquet_root=args.data_root / "wiki_visa" / "test_parquet",
             images_root=args.data_root / "wiki_visa" / "images",
@@ -606,6 +791,15 @@ def main() -> None:
             max_reference_words=args.max_reference_words,
             strata=set(args.wiki_stratum or []),
             exclude_row_indices=excluded_wiki_rows,
+        )
+    else:
+        records = select_vizwiz_lf(
+            expert_json=args.vizwiz_expert_json,
+            images_root=args.vizwiz_images_root,
+            sample_size=args.sample_size,
+            seed=args.seed,
+            exclude_record_ids=excluded_vizwiz_ids,
+            download_missing=not args.no_download,
         )
 
     count = write_jsonl(records, args.output)
@@ -619,11 +813,20 @@ def main() -> None:
         for record in records:
             family_counts[record["evaluation"]["metadata"]["reasoning_family"]] += 1
         summary["reasoning_families"] = dict(family_counts)
-    else:
+    elif args.dataset == "wiki-visa":
         stratum_counts: dict[str, int] = defaultdict(int)
         for record in records:
             stratum_counts[record["evaluation"]["metadata"]["stratum"]] += 1
         summary["strata"] = dict(stratum_counts)
+    else:
+        question_type_counts: dict[str, int] = defaultdict(int)
+        answerability_counts: dict[str, int] = defaultdict(int)
+        for record in records:
+            metadata = record["evaluation"]["metadata"]
+            question_type_counts[metadata["question_type"]] += 1
+            answerability_counts[metadata["answerability"]] += 1
+        summary["question_types"] = dict(question_type_counts)
+        summary["answerability"] = dict(answerability_counts)
     print(json.dumps(summary, indent=2))
 
 

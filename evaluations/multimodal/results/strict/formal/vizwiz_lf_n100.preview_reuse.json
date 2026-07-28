@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "policy": "reuse_only_response_identical_deterministic_gpu_records",
+  "formal_samples": 100,
+  "preview_samples": 20,
+  "overlap_samples": 16,
+  "identity_matched_samples": 16,
+  "identity_mismatched_sample_ids": [],
+  "matched_sample_ids": [
+    "vizwiz-lf-042",
+    "vizwiz-lf-060",
+    "vizwiz-lf-073",
+    "vizwiz-lf-123",
+    "vizwiz-lf-142",
+    "vizwiz-lf-161",
+    "vizwiz-lf-169",
+    "vizwiz-lf-186",
+    "vizwiz-lf-192",
+    "vizwiz-lf-309",
+    "vizwiz-lf-378",
+    "vizwiz-lf-417",
+    "vizwiz-lf-475",
+    "vizwiz-lf-520",
+    "vizwiz-lf-550",
+    "vizwiz-lf-595"
+  ],
+  "newly_seeded_attribution_pairs": 0,
+  "newly_seeded_faithfulness_pairs": 0,
+  "reused_attribution_pairs": 128,
+  "reused_faithfulness_pairs": 128,
+  "expected_pairs_per_matched_sample": 8,
+  "source_sha256": {
+    "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_n20_methods/attribution_records.jsonl": "93e44f3807ed3b255b7aa8e9bfbc1e9712ceca434f0c59086fc825071a2986b8",
+    "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_n20_faithfulness/faithfulness_records.jsonl": "033c3759cd649388f61d312733c96415e576c7dbd4398667c672aa4582ef56f4"
+  }
+}

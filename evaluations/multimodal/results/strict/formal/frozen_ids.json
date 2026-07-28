@@ -1,0 +1,1329 @@
+{
+  "schema_version": 1,
+  "frozen_on": "2026-07-24",
+  "selection_seed": 17,
+  "datasets": {
+    "wiki_visa": {
+      "count": 120,
+      "balance_key": "stratum",
+      "selection_mode": "balanced_fixed_seed",
+      "output_token_tercile_cutpoints": [
+        3,
+        4
+      ],
+      "samples": [
+        {
+          "sample_id": "wiki-visa-0013",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0051",
+          "balance_group": "non_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-0054",
+          "balance_group": "non_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-0057",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0061",
+          "balance_group": "non_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-0070",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0081",
+          "balance_group": "non_passage",
+          "output_tokens": 8
+        },
+        {
+          "sample_id": "wiki-visa-0170",
+          "balance_group": "non_passage",
+          "output_tokens": 9
+        },
+        {
+          "sample_id": "wiki-visa-0179",
+          "balance_group": "non_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-0203",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0217",
+          "balance_group": "non_passage",
+          "output_tokens": 8
+        },
+        {
+          "sample_id": "wiki-visa-0250",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0256",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0276",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0320",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0356",
+          "balance_group": "non_passage",
+          "output_tokens": 7
+        },
+        {
+          "sample_id": "wiki-visa-0392",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0408",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0465",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0471",
+          "balance_group": "non_passage",
+          "output_tokens": 12
+        },
+        {
+          "sample_id": "wiki-visa-0509",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0556",
+          "balance_group": "non_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-0567",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0569",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0581",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0631",
+          "balance_group": "non_passage",
+          "output_tokens": 7
+        },
+        {
+          "sample_id": "wiki-visa-0659",
+          "balance_group": "non_passage",
+          "output_tokens": 12
+        },
+        {
+          "sample_id": "wiki-visa-0668",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0721",
+          "balance_group": "non_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-0755",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0762",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0798",
+          "balance_group": "non_passage",
+          "output_tokens": 9
+        },
+        {
+          "sample_id": "wiki-visa-0817",
+          "balance_group": "non_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-0830",
+          "balance_group": "non_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-0839",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0872",
+          "balance_group": "non_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-0905",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0908",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0931",
+          "balance_group": "non_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-0987",
+          "balance_group": "non_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-1008",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1016",
+          "balance_group": "later_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-1028",
+          "balance_group": "later_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-1036",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1050",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1069",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1095",
+          "balance_group": "later_page_passage",
+          "output_tokens": 1
+        },
+        {
+          "sample_id": "wiki-visa-1113",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1118",
+          "balance_group": "later_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-1128",
+          "balance_group": "later_page_passage",
+          "output_tokens": 20
+        },
+        {
+          "sample_id": "wiki-visa-1140",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1148",
+          "balance_group": "later_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-1174",
+          "balance_group": "later_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-1187",
+          "balance_group": "later_page_passage",
+          "output_tokens": 1
+        },
+        {
+          "sample_id": "wiki-visa-1232",
+          "balance_group": "later_page_passage",
+          "output_tokens": 9
+        },
+        {
+          "sample_id": "wiki-visa-1245",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1326",
+          "balance_group": "later_page_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-1330",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1361",
+          "balance_group": "later_page_passage",
+          "output_tokens": 1
+        },
+        {
+          "sample_id": "wiki-visa-1363",
+          "balance_group": "later_page_passage",
+          "output_tokens": 7
+        },
+        {
+          "sample_id": "wiki-visa-1383",
+          "balance_group": "later_page_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-1428",
+          "balance_group": "later_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-1450",
+          "balance_group": "later_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-1466",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1486",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1539",
+          "balance_group": "later_page_passage",
+          "output_tokens": 7
+        },
+        {
+          "sample_id": "wiki-visa-1608",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1622",
+          "balance_group": "later_page_passage",
+          "output_tokens": 11
+        },
+        {
+          "sample_id": "wiki-visa-1743",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1744",
+          "balance_group": "later_page_passage",
+          "output_tokens": 6
+        },
+        {
+          "sample_id": "wiki-visa-1767",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1772",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1780",
+          "balance_group": "later_page_passage",
+          "output_tokens": 6
+        },
+        {
+          "sample_id": "wiki-visa-1848",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1857",
+          "balance_group": "later_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-1858",
+          "balance_group": "later_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-1871",
+          "balance_group": "later_page_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-1930",
+          "balance_group": "later_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-1953",
+          "balance_group": "later_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-1982",
+          "balance_group": "later_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2018",
+          "balance_group": "first_page_passage",
+          "output_tokens": 10
+        },
+        {
+          "sample_id": "wiki-visa-2026",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2048",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2083",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2112",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2123",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2180",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2198",
+          "balance_group": "first_page_passage",
+          "output_tokens": 6
+        },
+        {
+          "sample_id": "wiki-visa-2227",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2239",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2270",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2278",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2309",
+          "balance_group": "first_page_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-2312",
+          "balance_group": "first_page_passage",
+          "output_tokens": 6
+        },
+        {
+          "sample_id": "wiki-visa-2325",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2381",
+          "balance_group": "first_page_passage",
+          "output_tokens": 6
+        },
+        {
+          "sample_id": "wiki-visa-2410",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2413",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2545",
+          "balance_group": "first_page_passage",
+          "output_tokens": 9
+        },
+        {
+          "sample_id": "wiki-visa-2589",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2604",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2614",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2618",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2620",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        },
+        {
+          "sample_id": "wiki-visa-2679",
+          "balance_group": "first_page_passage",
+          "output_tokens": 5
+        },
+        {
+          "sample_id": "wiki-visa-2702",
+          "balance_group": "first_page_passage",
+          "output_tokens": 8
+        },
+        {
+          "sample_id": "wiki-visa-2705",
+          "balance_group": "first_page_passage",
+          "output_tokens": 9
+        },
+        {
+          "sample_id": "wiki-visa-2734",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2741",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2802",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2820",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2866",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2879",
+          "balance_group": "first_page_passage",
+          "output_tokens": 8
+        },
+        {
+          "sample_id": "wiki-visa-2880",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2893",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2899",
+          "balance_group": "first_page_passage",
+          "output_tokens": 3
+        },
+        {
+          "sample_id": "wiki-visa-2961",
+          "balance_group": "first_page_passage",
+          "output_tokens": 9
+        },
+        {
+          "sample_id": "wiki-visa-2965",
+          "balance_group": "first_page_passage",
+          "output_tokens": 2
+        },
+        {
+          "sample_id": "wiki-visa-2966",
+          "balance_group": "first_page_passage",
+          "output_tokens": 7
+        },
+        {
+          "sample_id": "wiki-visa-2997",
+          "balance_group": "first_page_passage",
+          "output_tokens": 4
+        }
+      ]
+    },
+    "vizwiz_lf": {
+      "count": 100,
+      "balance_key": null,
+      "selection_mode": "unstratified_fixed_seed",
+      "output_token_tercile_cutpoints": [
+        39,
+        73
+      ],
+      "samples": [
+        {
+          "sample_id": "vizwiz-lf-005",
+          "balance_group": null,
+          "output_tokens": 64,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-006",
+          "balance_group": null,
+          "output_tokens": 43,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-010",
+          "balance_group": null,
+          "output_tokens": 25,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-012",
+          "balance_group": null,
+          "output_tokens": 64,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-014",
+          "balance_group": null,
+          "output_tokens": 61,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-021",
+          "balance_group": null,
+          "output_tokens": 39,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-037",
+          "balance_group": null,
+          "output_tokens": 43,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-042",
+          "balance_group": null,
+          "output_tokens": 34,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-050",
+          "balance_group": null,
+          "output_tokens": 70,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-057",
+          "balance_group": null,
+          "output_tokens": 52,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-058",
+          "balance_group": null,
+          "output_tokens": 27,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-060",
+          "balance_group": null,
+          "output_tokens": 96,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-066",
+          "balance_group": null,
+          "output_tokens": 77,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-073",
+          "balance_group": null,
+          "output_tokens": 47,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-079",
+          "balance_group": null,
+          "output_tokens": 92,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-080",
+          "balance_group": null,
+          "output_tokens": 126,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-081",
+          "balance_group": null,
+          "output_tokens": 40,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-087",
+          "balance_group": null,
+          "output_tokens": 76,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-102",
+          "balance_group": null,
+          "output_tokens": 100,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-109",
+          "balance_group": null,
+          "output_tokens": 31,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-111",
+          "balance_group": null,
+          "output_tokens": 39,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-115",
+          "balance_group": null,
+          "output_tokens": 117,
+          "question_type": "Identification",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-116",
+          "balance_group": null,
+          "output_tokens": 51,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-118",
+          "balance_group": null,
+          "output_tokens": 28,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-123",
+          "balance_group": null,
+          "output_tokens": 60,
+          "question_type": "Identification",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-126",
+          "balance_group": null,
+          "output_tokens": 30,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-130",
+          "balance_group": null,
+          "output_tokens": 36,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-136",
+          "balance_group": null,
+          "output_tokens": 20,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-142",
+          "balance_group": null,
+          "output_tokens": 24,
+          "question_type": "Identification",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-153",
+          "balance_group": null,
+          "output_tokens": 20,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-159",
+          "balance_group": null,
+          "output_tokens": 36,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-161",
+          "balance_group": null,
+          "output_tokens": 16,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-167",
+          "balance_group": null,
+          "output_tokens": 166,
+          "question_type": "Description",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-169",
+          "balance_group": null,
+          "output_tokens": 91,
+          "question_type": "Description",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-180",
+          "balance_group": null,
+          "output_tokens": 60,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-182",
+          "balance_group": null,
+          "output_tokens": 28,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-183",
+          "balance_group": null,
+          "output_tokens": 33,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-186",
+          "balance_group": null,
+          "output_tokens": 46,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-191",
+          "balance_group": null,
+          "output_tokens": 54,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-192",
+          "balance_group": null,
+          "output_tokens": 36,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-195",
+          "balance_group": null,
+          "output_tokens": 31,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-197",
+          "balance_group": null,
+          "output_tokens": 46,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-200",
+          "balance_group": null,
+          "output_tokens": 21,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-201",
+          "balance_group": null,
+          "output_tokens": 25,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-204",
+          "balance_group": null,
+          "output_tokens": 42,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-216",
+          "balance_group": null,
+          "output_tokens": 46,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-220",
+          "balance_group": null,
+          "output_tokens": 41,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-230",
+          "balance_group": null,
+          "output_tokens": 63,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-234",
+          "balance_group": null,
+          "output_tokens": 51,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-238",
+          "balance_group": null,
+          "output_tokens": 47,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-261",
+          "balance_group": null,
+          "output_tokens": 40,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-265",
+          "balance_group": null,
+          "output_tokens": 55,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-270",
+          "balance_group": null,
+          "output_tokens": 89,
+          "question_type": "Description",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-277",
+          "balance_group": null,
+          "output_tokens": 19,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-293",
+          "balance_group": null,
+          "output_tokens": 34,
+          "question_type": "Description",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-298",
+          "balance_group": null,
+          "output_tokens": 58,
+          "question_type": "Description",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-301",
+          "balance_group": null,
+          "output_tokens": 144,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-307",
+          "balance_group": null,
+          "output_tokens": 28,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-309",
+          "balance_group": null,
+          "output_tokens": 50,
+          "question_type": "Reading",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-316",
+          "balance_group": null,
+          "output_tokens": 36,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-318",
+          "balance_group": null,
+          "output_tokens": 29,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-323",
+          "balance_group": null,
+          "output_tokens": 28,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-329",
+          "balance_group": null,
+          "output_tokens": 858,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-336",
+          "balance_group": null,
+          "output_tokens": 79,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-347",
+          "balance_group": null,
+          "output_tokens": 140,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-359",
+          "balance_group": null,
+          "output_tokens": 26,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-362",
+          "balance_group": null,
+          "output_tokens": 36,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-368",
+          "balance_group": null,
+          "output_tokens": 19,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-371",
+          "balance_group": null,
+          "output_tokens": 159,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-378",
+          "balance_group": null,
+          "output_tokens": 55,
+          "question_type": "Reading",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-380",
+          "balance_group": null,
+          "output_tokens": 102,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-394",
+          "balance_group": null,
+          "output_tokens": 21,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-413",
+          "balance_group": null,
+          "output_tokens": 25,
+          "question_type": "Reading",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-417",
+          "balance_group": null,
+          "output_tokens": 418,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-420",
+          "balance_group": null,
+          "output_tokens": 85,
+          "question_type": "Reading",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-423",
+          "balance_group": null,
+          "output_tokens": 52,
+          "question_type": "Reading",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-424",
+          "balance_group": null,
+          "output_tokens": 43,
+          "question_type": "Reading",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-445",
+          "balance_group": null,
+          "output_tokens": 63,
+          "question_type": "Reading",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-449",
+          "balance_group": null,
+          "output_tokens": 73,
+          "question_type": "Reading",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-466",
+          "balance_group": null,
+          "output_tokens": 79,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-471",
+          "balance_group": null,
+          "output_tokens": 57,
+          "question_type": "Others",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-472",
+          "balance_group": null,
+          "output_tokens": 148,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-475",
+          "balance_group": null,
+          "output_tokens": 79,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-482",
+          "balance_group": null,
+          "output_tokens": 88,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-484",
+          "balance_group": null,
+          "output_tokens": 146,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-487",
+          "balance_group": null,
+          "output_tokens": 229,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-491",
+          "balance_group": null,
+          "output_tokens": 17,
+          "question_type": "Others",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-502",
+          "balance_group": null,
+          "output_tokens": 187,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-516",
+          "balance_group": null,
+          "output_tokens": 83,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-520",
+          "balance_group": null,
+          "output_tokens": 69,
+          "question_type": "Others",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-524",
+          "balance_group": null,
+          "output_tokens": 131,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-544",
+          "balance_group": null,
+          "output_tokens": 324,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-549",
+          "balance_group": null,
+          "output_tokens": 117,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-550",
+          "balance_group": null,
+          "output_tokens": 162,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-571",
+          "balance_group": null,
+          "output_tokens": 170,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-573",
+          "balance_group": null,
+          "output_tokens": 96,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-580",
+          "balance_group": null,
+          "output_tokens": 312,
+          "question_type": "Others",
+          "output_length_tercile": "long"
+        },
+        {
+          "sample_id": "vizwiz-lf-581",
+          "balance_group": null,
+          "output_tokens": 62,
+          "question_type": "Others",
+          "output_length_tercile": "medium"
+        },
+        {
+          "sample_id": "vizwiz-lf-589",
+          "balance_group": null,
+          "output_tokens": 30,
+          "question_type": "Others",
+          "output_length_tercile": "short"
+        },
+        {
+          "sample_id": "vizwiz-lf-595",
+          "balance_group": null,
+          "output_tokens": 39,
+          "question_type": "Others",
+          "output_length_tercile": "short"
+        }
+      ]
+    }
+  }
+}

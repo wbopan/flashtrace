@@ -594,24 +594,56 @@ def qwen3_vl_attnlrp(
         for feature in image_outputs.deepstack_features
     ]
     model.zero_grad(set_to_none=True)
-    with lrp_context(model, "qwen3_vl"):
-        outputs = model.model.language_model(
-            input_ids=None,
-            inputs_embeds=fused_leaf,
-            position_ids=position_ids,
-            attention_mask=attention_mask,
-            use_cache=False,
-            visual_pos_masks=visual_mask,
-            deepstack_visual_embeds=deepstack_leaves,
-            return_dict=True,
+    checkpointing_was_enabled = bool(
+        getattr(model, "is_gradient_checkpointing", False)
+    )
+    training_was_enabled = bool(model.training)
+    if not checkpointing_was_enabled:
+        model.gradient_checkpointing_enable(
+            gradient_checkpointing_kwargs={"use_reentrant": False}
         )
-        logits = model.lm_head(outputs.last_hidden_state)
-        objective = _selected_logits(logits, prepared).sum()
-        gradients = torch.autograd.grad(
-            objective,
-            [fused_leaf, *deepstack_leaves],
-            allow_unused=True,
-        )
+    # Decoder checkpointing is active only in training mode. The LRP context
+    # patches dropout to identity, so this remains deterministic.
+    model.train()
+    try:
+        with lrp_context(model, "qwen3_vl"):
+            outputs = model.model.language_model(
+                input_ids=None,
+                inputs_embeds=fused_leaf,
+                position_ids=position_ids,
+                attention_mask=attention_mask,
+                use_cache=False,
+                visual_pos_masks=visual_mask,
+                deepstack_visual_embeds=deepstack_leaves,
+                return_dict=True,
+            )
+            # Materializing [full_sequence, vocabulary] logits can add
+            # hundreds of MiB on long VizWiz responses. The registered
+            # objective uses only predictor rows, so project exactly those
+            # hidden states through the unchanged LM head.
+            predictor_positions = prepared.predictor_positions.to(
+                outputs.last_hidden_state.device
+            )
+            selected_hidden = outputs.last_hidden_state[
+                0, predictor_positions
+            ]
+            selected_logits = model.lm_head(selected_hidden)
+            target_ids = prepared.target_token_ids[
+                prepared.target_offsets
+            ].to(selected_logits.device)
+            objective = selected_logits.gather(
+                1, target_ids[:, None]
+            ).sum()
+            gradients = torch.autograd.grad(
+                objective,
+                [fused_leaf, *deepstack_leaves],
+                allow_unused=True,
+            )
+    finally:
+        if not checkpointing_was_enabled:
+            model.gradient_checkpointing_disable()
+        if not training_was_enabled:
+            model.eval()
 
     fused_gradient = gradients[0]
     if fused_gradient is None:

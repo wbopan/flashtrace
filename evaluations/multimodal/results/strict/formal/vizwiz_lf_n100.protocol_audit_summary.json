@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "benchmark": "vizwiz_lf",
+  "complete": true,
+  "audit_seed": 17,
+  "audit_fraction": 0.1,
+  "frozen_sample_count": 100,
+  "reviewed_count": 10,
+  "audit_sample_ids": [
+    "vizwiz-lf-116",
+    "vizwiz-lf-186",
+    "vizwiz-lf-191",
+    "vizwiz-lf-220",
+    "vizwiz-lf-277",
+    "vizwiz-lf-362",
+    "vizwiz-lf-378",
+    "vizwiz-lf-484",
+    "vizwiz-lf-524",
+    "vizwiz-lf-589"
+  ],
+  "image_dependence_counts": {
+    "borderline": 1,
+    "supported": 8,
+    "unsupported": 1
+  },
+  "thinking_quality_counts": {
+    "good": 6,
+    "mixed": 3,
+    "poor": 1
+  },
+  "selection_effect": "caveat_only_no_frozen_id_changes"
+}

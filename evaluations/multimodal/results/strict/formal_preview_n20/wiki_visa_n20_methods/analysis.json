@@ -1,0 +1,4106 @@
+{
+  "schema_version": 1,
+  "dataset_manifest": "evaluations/multimodal/results/strict/formal_preview_n20/wiki_visa_n20.dataset.jsonl",
+  "attribution_dir": "evaluations/multimodal/results/strict/formal_preview_n20/wiki_visa_n20_methods",
+  "common_samples": 20,
+  "bootstrap_draws": 50000,
+  "bootstrap_seed": 17,
+  "metric_prefix": "",
+  "methods": [
+    "random",
+    "center",
+    "visual-loo",
+    "ifr-span",
+    "visual-ig",
+    "attnlrp",
+    "flashtrace",
+    "flashtrace-all-gen"
+  ],
+  "estimates": {
+    "pointing_game": {
+      "random": {
+        "mean": 0.05,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.15
+      },
+      "center": {
+        "mean": 0.025,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.075
+      },
+      "visual-loo": {
+        "mean": 0.75,
+        "median": 1.0,
+        "ci95_low": 0.55,
+        "ci95_high": 0.9
+      },
+      "ifr-span": {
+        "mean": 0.65,
+        "median": 1.0,
+        "ci95_low": 0.45,
+        "ci95_high": 0.85
+      },
+      "visual-ig": {
+        "mean": 0.0,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      },
+      "attnlrp": {
+        "mean": 0.65,
+        "median": 1.0,
+        "ci95_low": 0.45,
+        "ci95_high": 0.85
+      },
+      "flashtrace": {
+        "mean": 0.7,
+        "median": 1.0,
+        "ci95_low": 0.5,
+        "ci95_high": 0.9
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.7,
+        "median": 1.0,
+        "ci95_low": 0.5,
+        "ci95_high": 0.9
+      }
+    },
+    "energy_in_mask": {
+      "random": {
+        "mean": 0.04389581224658786,
+        "median": 0.03860745832516232,
+        "ci95_low": 0.03130129564525858,
+        "ci95_high": 0.05842631994935199
+      },
+      "center": {
+        "mean": 0.03361174038230978,
+        "median": 0.01818637711532226,
+        "ci95_low": 0.01884734072370937,
+        "ci95_high": 0.050675829720745295
+      },
+      "visual-loo": {
+        "mean": 0.14534520357954137,
+        "median": 0.11718337173819604,
+        "ci95_low": 0.09720746042672342,
+        "ci95_high": 0.20080369733499004
+      },
+      "ifr-span": {
+        "mean": 0.20434153854237191,
+        "median": 0.19461647219573774,
+        "ci95_low": 0.16714043704713533,
+        "ci95_high": 0.24265878251911369
+      },
+      "visual-ig": {
+        "mean": 0.0448514703902944,
+        "median": 0.03646021822844557,
+        "ci95_low": 0.032278418187798544,
+        "ci95_high": 0.058361564545687285
+      },
+      "attnlrp": {
+        "mean": 0.3019892532966169,
+        "median": 0.2974149434571342,
+        "ci95_low": 0.2337999738592447,
+        "ci95_high": 0.3737218640596523
+      },
+      "flashtrace": {
+        "mean": 0.2423915402735807,
+        "median": 0.22238691251325404,
+        "ci95_low": 0.20135378933631398,
+        "ci95_high": 0.2856726921074551
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.2304650113038996,
+        "median": 0.20468733886914192,
+        "ci95_low": 0.19134945278510226,
+        "ci95_high": 0.2712566185455329
+      }
+    },
+    "evidence_rank_auc": {
+      "random": {
+        "mean": 0.5155854219136045,
+        "median": 0.5031333006960549,
+        "ci95_low": 0.4937676780042745,
+        "ci95_high": 0.5410295113687227
+      },
+      "center": {
+        "mean": 0.49289914769274856,
+        "median": 0.46015102879946634,
+        "ci95_low": 0.40289164216923445,
+        "ci95_high": 0.585614590684625
+      },
+      "visual-loo": {
+        "mean": 0.7362504123759016,
+        "median": 0.7565034942061947,
+        "ci95_low": 0.66064397616568,
+        "ci95_high": 0.8072771959103588
+      },
+      "ifr-span": {
+        "mean": 0.7546729926197385,
+        "median": 0.7680381901957394,
+        "ci95_low": 0.7024049913841417,
+        "ci95_high": 0.8029930358256345
+      },
+      "visual-ig": {
+        "mean": 0.5170714754279475,
+        "median": 0.5224936934534579,
+        "ci95_low": 0.4890831122978429,
+        "ci95_high": 0.5459350387586946
+      },
+      "attnlrp": {
+        "mean": 0.6483703592193847,
+        "median": 0.621680758893246,
+        "ci95_low": 0.598797291488253,
+        "ci95_high": 0.7012492408480435
+      },
+      "flashtrace": {
+        "mean": 0.8240215930105041,
+        "median": 0.8231231553274829,
+        "ci95_low": 0.7833063210696307,
+        "ci95_high": 0.863332929238629
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.8112130324293819,
+        "median": 0.8081406798537125,
+        "ci95_low": 0.7702017928584318,
+        "ci95_high": 0.8515355378214731
+      }
+    },
+    "top_evidence_iou": {
+      "random": {
+        "mean": 0.024185416319644278,
+        "median": 0.02250554243665013,
+        "ci95_low": 0.015075598819486726,
+        "ci95_high": 0.03389772126766317
+      },
+      "center": {
+        "mean": 0.01582692860004157,
+        "median": 0.0,
+        "ci95_low": 0.002906252910954004,
+        "ci95_high": 0.03283770418135173
+      },
+      "visual-loo": {
+        "mean": 0.12805072917831167,
+        "median": 0.09755469585539434,
+        "ci95_low": 0.07715854286809752,
+        "ci95_high": 0.1875357028019121
+      },
+      "ifr-span": {
+        "mean": 0.09724852003586218,
+        "median": 0.10536101288924375,
+        "ci95_low": 0.07742825404029798,
+        "ci95_high": 0.11676643469111525
+      },
+      "visual-ig": {
+        "mean": 0.0327813039890026,
+        "median": 0.0263965130555172,
+        "ci95_low": 0.020730260516965013,
+        "ci95_high": 0.04622393161301192
+      },
+      "attnlrp": {
+        "mean": 0.14100507149411778,
+        "median": 0.13034428345752241,
+        "ci95_low": 0.11524179532054393,
+        "ci95_high": 0.17006797774089066
+      },
+      "flashtrace": {
+        "mean": 0.1424402496417821,
+        "median": 0.1272108843537415,
+        "ci95_low": 0.11223559641840142,
+        "ci95_high": 0.1786875782232751
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.12751338530966003,
+        "median": 0.11397942826609672,
+        "ci95_low": 0.10106960150742769,
+        "ci95_high": 0.15696277481724266
+      }
+    },
+    "recovery_at_1pct": {
+      "random": {
+        "mean": 0.014030814528513735,
+        "median": 0.0021893814997263274,
+        "ci95_low": 0.0064796252635342015,
+        "ci95_high": 0.022453230286007698
+      },
+      "center": {
+        "mean": 0.00942190690046752,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.023773115569542265
+      },
+      "visual-loo": {
+        "mean": 0.2590042309267825,
+        "median": 0.26229508196721313,
+        "ci95_low": 0.1766251538830417,
+        "ci95_high": 0.3476836806566328
+      },
+      "ifr-span": {
+        "mean": 0.10251723232319161,
+        "median": 0.06832298136645962,
+        "ci95_low": 0.06388271006424646,
+        "ci95_high": 0.1476630771877191
+      },
+      "visual-ig": {
+        "mean": 0.01570249487351453,
+        "median": 0.0,
+        "ci95_low": 0.003390436955023187,
+        "ci95_high": 0.03333188614839643
+      },
+      "attnlrp": {
+        "mean": 0.14175842360463176,
+        "median": 0.0963718820861678,
+        "ci95_low": 0.08745456297962366,
+        "ci95_high": 0.20805455492686786
+      },
+      "flashtrace": {
+        "mean": 0.14068295857451268,
+        "median": 0.07936507936507936,
+        "ci95_low": 0.08737128402609629,
+        "ci95_high": 0.20141335558060192
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.13129675255053347,
+        "median": 0.06832298136645962,
+        "ci95_low": 0.08044308033656172,
+        "ci95_high": 0.18881570101444295
+      }
+    },
+    "recovery_at_5pct": {
+      "random": {
+        "mean": 0.05579413096838097,
+        "median": 0.05060975609756098,
+        "ci95_low": 0.03917993830463165,
+        "ci95_high": 0.0731174970798259
+      },
+      "center": {
+        "mean": 0.05797190650223066,
+        "median": 0.0,
+        "ci95_low": 0.016386007955094605,
+        "ci95_high": 0.10626175415098409
+      },
+      "visual-loo": {
+        "mean": 0.2590042309267825,
+        "median": 0.26229508196721313,
+        "ci95_low": 0.17441959657944758,
+        "ci95_high": 0.3484256629266332
+      },
+      "ifr-span": {
+        "mean": 0.23414213129699712,
+        "median": 0.17623236978075688,
+        "ci95_low": 0.1615833683578367,
+        "ci95_high": 0.31747505405841386
+      },
+      "visual-ig": {
+        "mean": 0.07741755880226989,
+        "median": 0.06835984817895502,
+        "ci95_low": 0.056913052418664366,
+        "ci95_high": 0.10072847413397412
+      },
+      "attnlrp": {
+        "mean": 0.30094145684449647,
+        "median": 0.2637713622034179,
+        "ci95_low": 0.23082420683297483,
+        "ci95_high": 0.3793344421799287
+      },
+      "flashtrace": {
+        "mean": 0.33149403379110165,
+        "median": 0.22215447154471546,
+        "ci95_low": 0.23777654158158357,
+        "ci95_high": 0.43414075470000935
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.3043083532113581,
+        "median": 0.20655534941249226,
+        "ci95_low": 0.21570519180986525,
+        "ci95_high": 0.40044452470939795
+      }
+    },
+    "recovery_at_10pct": {
+      "random": {
+        "mean": 0.09527049101782607,
+        "median": 0.09322521279043018,
+        "ci95_low": 0.0765769540338572,
+        "ci95_high": 0.11562485016567231
+      },
+      "center": {
+        "mean": 0.1023924414986436,
+        "median": 0.0,
+        "ci95_low": 0.0351605080986246,
+        "ci95_high": 0.17823757734667958
+      },
+      "visual-loo": {
+        "mean": 0.4665399974113911,
+        "median": 0.44950065950631246,
+        "ci95_low": 0.35810426401988793,
+        "ci95_high": 0.5765604008527448
+      },
+      "ifr-span": {
+        "mean": 0.3556612697646658,
+        "median": 0.3207098369049718,
+        "ci95_low": 0.2717769014720394,
+        "ci95_high": 0.44486550672489544
+      },
+      "visual-ig": {
+        "mean": 0.1478495265467332,
+        "median": 0.12690570299265952,
+        "ci95_low": 0.1111170355127287,
+        "ci95_high": 0.188110754276387
+      },
+      "attnlrp": {
+        "mean": 0.41516069900812597,
+        "median": 0.3938979963570127,
+        "ci95_low": 0.34149990885846854,
+        "ci95_high": 0.49229503568937133
+      },
+      "flashtrace": {
+        "mean": 0.4803596690841075,
+        "median": 0.42818868123746173,
+        "ci95_low": 0.38035588127026454,
+        "ci95_high": 0.5844599482012431
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.4437039137277112,
+        "median": 0.3947971898197243,
+        "ci95_low": 0.34991826712914886,
+        "ci95_high": 0.5428422949295159
+      }
+    },
+    "recovery_at_20pct": {
+      "random": {
+        "mean": 0.21056743983365672,
+        "median": 0.19501133786848074,
+        "ci95_low": 0.17755610895744794,
+        "ci95_high": 0.2471168772263187
+      },
+      "center": {
+        "mean": 0.17741014288014398,
+        "median": 0.0,
+        "ci95_low": 0.07567513358961767,
+        "ci95_high": 0.288214753892993
+      },
+      "visual-loo": {
+        "mean": 0.6592525810756384,
+        "median": 0.6940993788819876,
+        "ci95_low": 0.5284459100378728,
+        "ci95_high": 0.7838701480533412
+      },
+      "ifr-span": {
+        "mean": 0.5403942945570943,
+        "median": 0.5406548043308557,
+        "ci95_low": 0.4548725203415006,
+        "ci95_high": 0.6269048490436269
+      },
+      "visual-ig": {
+        "mean": 0.27584646135052215,
+        "median": 0.2672112560871343,
+        "ci95_low": 0.22845308488764213,
+        "ci95_high": 0.32660852781281685
+      },
+      "attnlrp": {
+        "mean": 0.540033680847719,
+        "median": 0.5138631210059781,
+        "ci95_low": 0.4696873864510863,
+        "ci95_high": 0.6099843711953715
+      },
+      "flashtrace": {
+        "mean": 0.6573210048998775,
+        "median": 0.6411657559198543,
+        "ci95_low": 0.5690322350963445,
+        "ci95_high": 0.7457805197903955
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.6354612092501428,
+        "median": 0.6171285454072339,
+        "ci95_low": 0.545685425322714,
+        "ci95_high": 0.7255023175790858
+      }
+    }
+  },
+  "ranks": {
+    "pointing_game": [
+      "visual-loo",
+      "flashtrace",
+      "flashtrace-all-gen",
+      "ifr-span",
+      "attnlrp",
+      "random",
+      "center",
+      "visual-ig"
+    ],
+    "energy_in_mask": [
+      "attnlrp",
+      "flashtrace",
+      "flashtrace-all-gen",
+      "ifr-span",
+      "visual-loo",
+      "visual-ig",
+      "random",
+      "center"
+    ],
+    "evidence_rank_auc": [
+      "flashtrace",
+      "flashtrace-all-gen",
+      "ifr-span",
+      "visual-loo",
+      "attnlrp",
+      "visual-ig",
+      "random",
+      "center"
+    ],
+    "top_evidence_iou": [
+      "flashtrace",
+      "attnlrp",
+      "visual-loo",
+      "flashtrace-all-gen",
+      "ifr-span",
+      "visual-ig",
+      "random",
+      "center"
+    ],
+    "recovery_at_1pct": [
+      "visual-loo",
+      "attnlrp",
+      "flashtrace",
+      "flashtrace-all-gen",
+      "ifr-span",
+      "visual-ig",
+      "random",
+      "center"
+    ],
+    "recovery_at_5pct": [
+      "flashtrace",
+      "flashtrace-all-gen",
+      "attnlrp",
+      "visual-loo",
+      "ifr-span",
+      "visual-ig",
+      "center",
+      "random"
+    ],
+    "recovery_at_10pct": [
+      "flashtrace",
+      "visual-loo",
+      "flashtrace-all-gen",
+      "attnlrp",
+      "ifr-span",
+      "visual-ig",
+      "center",
+      "random"
+    ],
+    "recovery_at_20pct": [
+      "visual-loo",
+      "flashtrace",
+      "flashtrace-all-gen",
+      "ifr-span",
+      "attnlrp",
+      "visual-ig",
+      "random",
+      "center"
+    ]
+  },
+  "flashtrace_minus_baseline": {
+    "pointing_game": {
+      "random": {
+        "mean": 0.65,
+        "median": 1.0,
+        "ci95_low": 0.45,
+        "ci95_high": 0.85,
+        "wins": 13,
+        "ties": 7,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.675,
+        "median": 1.0,
+        "ci95_low": 0.475,
+        "ci95_high": 0.875,
+        "wins": 14,
+        "ties": 6,
+        "losses": 0
+      },
+      "visual-loo": {
+        "mean": -0.05,
+        "median": 0.0,
+        "ci95_low": -0.35,
+        "ci95_high": 0.25,
+        "wins": 4,
+        "ties": 11,
+        "losses": 5
+      },
+      "ifr-span": {
+        "mean": 0.05,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.15,
+        "wins": 1,
+        "ties": 19,
+        "losses": 0
+      },
+      "visual-ig": {
+        "mean": 0.7,
+        "median": 1.0,
+        "ci95_low": 0.5,
+        "ci95_high": 0.9,
+        "wins": 14,
+        "ties": 6,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": 0.05,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.15,
+        "wins": 1,
+        "ties": 19,
+        "losses": 0
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.0,
+        "median": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0,
+        "wins": 0,
+        "ties": 20,
+        "losses": 0
+      }
+    },
+    "energy_in_mask": {
+      "random": {
+        "mean": 0.19849572802699283,
+        "median": 0.18226519492060006,
+        "ci95_low": 0.15367682878003178,
+        "ci95_high": 0.24494572792065872,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.2087797998912709,
+        "median": 0.19602234387773831,
+        "ci95_low": 0.1659601973819233,
+        "ci95_high": 0.2552615511346084,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "visual-loo": {
+        "mean": 0.09704633669403931,
+        "median": 0.0942706590658927,
+        "ci95_low": 0.03449409981385327,
+        "ci95_high": 0.1630137040413985,
+        "wins": 14,
+        "ties": 0,
+        "losses": 6
+      },
+      "ifr-span": {
+        "mean": 0.03805000173120879,
+        "median": 0.02868191145113967,
+        "ci95_low": 0.023018181928311045,
+        "ci95_high": 0.05415669325958926,
+        "wins": 18,
+        "ties": 0,
+        "losses": 2
+      },
+      "visual-ig": {
+        "mean": 0.19754006988328632,
+        "median": 0.16883864022222833,
+        "ci95_low": 0.15294083638824443,
+        "ci95_high": 0.2454370273131914,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": -0.05959771302303617,
+        "median": -0.04939531244154295,
+        "ci95_low": -0.09608550161634281,
+        "ci95_high": -0.023820598822135913,
+        "wins": 6,
+        "ties": 0,
+        "losses": 14
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.011926528969681122,
+        "median": 0.009761599279957525,
+        "ci95_low": 0.00493715752278511,
+        "ci95_high": 0.018608095059164508,
+        "wins": 18,
+        "ties": 0,
+        "losses": 2
+      }
+    },
+    "evidence_rank_auc": {
+      "random": {
+        "mean": 0.3084361710968998,
+        "median": 0.2754412377549945,
+        "ci95_low": 0.2600196370850415,
+        "ci95_high": 0.35715378171714984,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.3311224453177556,
+        "median": 0.3196373189803459,
+        "ci95_low": 0.2324278148444542,
+        "ci95_high": 0.42681828360421964,
+        "wins": 18,
+        "ties": 0,
+        "losses": 2
+      },
+      "visual-loo": {
+        "mean": 0.08777118063460264,
+        "median": 0.06155946162991133,
+        "ci95_low": 0.017020285666325564,
+        "ci95_high": 0.16491011368873626,
+        "wins": 15,
+        "ties": 0,
+        "losses": 5
+      },
+      "ifr-span": {
+        "mean": 0.06934860039076562,
+        "median": 0.05789292764821963,
+        "ci95_low": 0.04370544572372593,
+        "ci95_high": 0.09872557496617315,
+        "wins": 19,
+        "ties": 0,
+        "losses": 1
+      },
+      "visual-ig": {
+        "mean": 0.30695011758255664,
+        "median": 0.3023656034383584,
+        "ci95_low": 0.26172554857299085,
+        "ci95_high": 0.3552352873920348,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": 0.17565123379111952,
+        "median": 0.15721686622078918,
+        "ci95_low": 0.13589186359949554,
+        "ci95_high": 0.21509954000315232,
+        "wins": 19,
+        "ties": 0,
+        "losses": 1
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.012808560581122268,
+        "median": 0.010722475172907309,
+        "ci95_low": 0.006504545222534833,
+        "ci95_high": 0.019522889335132472,
+        "wins": 19,
+        "ties": 0,
+        "losses": 1
+      }
+    },
+    "top_evidence_iou": {
+      "random": {
+        "mean": 0.11825483332213782,
+        "median": 0.09752550894913109,
+        "ci95_low": 0.08346865882167122,
+        "ci95_high": 0.15985531925149046,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.12661332104174053,
+        "median": 0.12304221273171681,
+        "ci95_low": 0.09048131970239416,
+        "ci95_high": 0.16711142841167942,
+        "wins": 19,
+        "ties": 0,
+        "losses": 1
+      },
+      "visual-loo": {
+        "mean": 0.014389520463470435,
+        "median": -0.001375650596786758,
+        "ci95_low": -0.05832610533760137,
+        "ci95_high": 0.08356775826928872,
+        "wins": 10,
+        "ties": 0,
+        "losses": 10
+      },
+      "ifr-span": {
+        "mean": 0.0451917296059199,
+        "median": 0.028704516456999445,
+        "ci95_low": 0.025280214203000893,
+        "ci95_high": 0.07070576957912708,
+        "wins": 18,
+        "ties": 0,
+        "losses": 2
+      },
+      "visual-ig": {
+        "mean": 0.10965894565277952,
+        "median": 0.08109891363210293,
+        "ci95_low": 0.07685864360726807,
+        "ci95_high": 0.15031956023538598,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": 0.0014351781476643094,
+        "median": -0.01569131817595655,
+        "ci95_low": -0.02470577289793122,
+        "ci95_high": 0.030665353995752747,
+        "wins": 7,
+        "ties": 0,
+        "losses": 13
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.014926864332122054,
+        "median": 0.009006921677776107,
+        "ci95_low": 0.00694039823077365,
+        "ci95_high": 0.024784667775837387,
+        "wins": 15,
+        "ties": 2,
+        "losses": 3
+      }
+    },
+    "recovery_at_1pct": {
+      "random": {
+        "mean": 0.12665214404599895,
+        "median": 0.07083402466677728,
+        "ci95_low": 0.07081261846731074,
+        "ci95_high": 0.19028231276294696,
+        "wins": 16,
+        "ties": 0,
+        "losses": 4
+      },
+      "center": {
+        "mean": 0.13126105167404514,
+        "median": 0.07936507936507936,
+        "ci95_low": 0.0805305118904105,
+        "ci95_high": 0.18909039422520518,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "visual-loo": {
+        "mean": -0.11832127235226986,
+        "median": -0.16760994015092376,
+        "ci95_low": -0.2242282547210377,
+        "ci95_high": -0.010095730895578029,
+        "wins": 8,
+        "ties": 0,
+        "losses": 12
+      },
+      "ifr-span": {
+        "mean": 0.03816572625132104,
+        "median": 0.02066922148889362,
+        "ci95_low": 0.021182275291132056,
+        "ci95_high": 0.05718649907448859,
+        "wins": 16,
+        "ties": 3,
+        "losses": 1
+      },
+      "visual-ig": {
+        "mean": 0.1249804637009981,
+        "median": 0.07115744848664103,
+        "ci95_low": 0.07694612798570699,
+        "ci95_high": 0.17786289071717384,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": -0.0010754650301191104,
+        "median": -0.004065040650406505,
+        "ci95_low": -0.024644337882389775,
+        "ci95_high": 0.021402176816750693,
+        "wins": 8,
+        "ties": 2,
+        "losses": 10
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.009386206023979216,
+        "median": 0.0,
+        "ci95_low": 0.0018679274449358084,
+        "ci95_high": 0.02066927113319271,
+        "wins": 7,
+        "ties": 12,
+        "losses": 1
+      }
+    },
+    "recovery_at_5pct": {
+      "random": {
+        "mean": 0.2756999028227206,
+        "median": 0.18028455284552847,
+        "ci95_low": 0.18127902240638546,
+        "ci95_high": 0.3795651543566513,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.273522127288871,
+        "median": 0.20937769285526958,
+        "ci95_low": 0.17503936892195662,
+        "ci95_high": 0.3779838742218279,
+        "wins": 17,
+        "ties": 0,
+        "losses": 3
+      },
+      "visual-loo": {
+        "mean": 0.0724898028643191,
+        "median": 0.017327272879890526,
+        "ci95_low": -0.062349103436786436,
+        "ci95_high": 0.20879334660401377,
+        "wins": 10,
+        "ties": 0,
+        "losses": 10
+      },
+      "ifr-span": {
+        "mean": 0.0973519024941045,
+        "median": 0.054923608787777405,
+        "ci95_low": 0.058726714042031516,
+        "ci95_high": 0.14016469250412203,
+        "wins": 17,
+        "ties": 2,
+        "losses": 1
+      },
+      "visual-ig": {
+        "mean": 0.25407647498883174,
+        "median": 0.15231232182451696,
+        "ci95_low": 0.16677664802614564,
+        "ci95_high": 0.3493978810575849,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": 0.030552576946605126,
+        "median": 0.001152073732718889,
+        "ci95_low": -0.013967159007385852,
+        "ci95_high": 0.08196170163254826,
+        "wins": 10,
+        "ties": 1,
+        "losses": 9
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.027185680579743455,
+        "median": 0.020686963309914125,
+        "ci95_low": 0.014093592826453838,
+        "ci95_high": 0.04103833731669727,
+        "wins": 13,
+        "ties": 4,
+        "losses": 3
+      }
+    },
+    "recovery_at_10pct": {
+      "random": {
+        "mean": 0.38508917806628157,
+        "median": 0.32269325074203126,
+        "ci95_low": 0.28791426693329997,
+        "ci95_high": 0.486509546580509,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.3779672275854641,
+        "median": 0.3639359698681732,
+        "ci95_low": 0.25977326704252307,
+        "ci95_high": 0.4948288542071812,
+        "wins": 18,
+        "ties": 0,
+        "losses": 2
+      },
+      "visual-loo": {
+        "mean": 0.01381967167271649,
+        "median": -0.011076610910834533,
+        "ci95_low": -0.13835391141505948,
+        "ci95_high": 0.17316852204034677,
+        "wins": 8,
+        "ties": 1,
+        "losses": 11
+      },
+      "ifr-span": {
+        "mean": 0.12469839931944182,
+        "median": 0.08528730641192646,
+        "ci95_low": 0.07754383849163164,
+        "ci95_high": 0.17506881226344537,
+        "wins": 17,
+        "ties": 1,
+        "losses": 2
+      },
+      "visual-ig": {
+        "mean": 0.3325101425373744,
+        "median": 0.2907647907647908,
+        "ci95_low": 0.23230846384260298,
+        "ci95_high": 0.4365009266810866,
+        "wins": 19,
+        "ties": 0,
+        "losses": 1
+      },
+      "attnlrp": {
+        "mean": 0.06519897007598172,
+        "median": 0.05573593073593075,
+        "ci95_low": 0.009442465976396286,
+        "ci95_high": 0.12434079752028432,
+        "wins": 13,
+        "ties": 2,
+        "losses": 5
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.03665575535639639,
+        "median": 0.02956288898538137,
+        "ci95_low": 0.020725086007529182,
+        "ci95_high": 0.055731058613323725,
+        "wins": 17,
+        "ties": 2,
+        "losses": 1
+      }
+    },
+    "recovery_at_20pct": {
+      "random": {
+        "mean": 0.44675356506622066,
+        "median": 0.4285714285714286,
+        "ci95_low": 0.3545868826061913,
+        "ci95_high": 0.5403362191908638,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "center": {
+        "mean": 0.4799108620197335,
+        "median": 0.4877717391304348,
+        "ci95_low": 0.33789546892576927,
+        "ci95_high": 0.6173661795432626,
+        "wins": 18,
+        "ties": 0,
+        "losses": 2
+      },
+      "visual-loo": {
+        "mean": -0.0019315761757610016,
+        "median": -0.08082877959927137,
+        "ci95_low": -0.13144754828505556,
+        "ci95_high": 0.14798099904444326,
+        "wins": 8,
+        "ties": 0,
+        "losses": 12
+      },
+      "ifr-span": {
+        "mean": 0.11692671034278312,
+        "median": 0.09066010399714203,
+        "ci95_low": 0.07245801858972642,
+        "ci95_high": 0.16319101886507587,
+        "wins": 18,
+        "ties": 1,
+        "losses": 1
+      },
+      "visual-ig": {
+        "mean": 0.38147454354935534,
+        "median": 0.3525891230809264,
+        "ci95_low": 0.2908078750221555,
+        "ci95_high": 0.4765793730321537,
+        "wins": 20,
+        "ties": 0,
+        "losses": 0
+      },
+      "attnlrp": {
+        "mean": 0.11728732405215862,
+        "median": 0.10206696982224056,
+        "ci95_low": 0.0501775607477798,
+        "ci95_high": 0.18486747386580699,
+        "wins": 16,
+        "ties": 0,
+        "losses": 4
+      },
+      "flashtrace-all-gen": {
+        "mean": 0.02185979564973469,
+        "median": 0.0205727452271231,
+        "ci95_low": 0.009630849848775552,
+        "ci95_high": 0.03566563928096892,
+        "wins": 13,
+        "ties": 6,
+        "losses": 1
+      }
+    }
+  },
+  "per_group": {
+    "first_page_passage": {
+      "random": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.039524184105673675,
+        "evidence_rank_auc": 0.5557807562801461,
+        "top_evidence_iou": 0.0277243380526778,
+        "recovery_at_1pct": 0.026910715080889998,
+        "recovery_at_5pct": 0.07342714779761558,
+        "recovery_at_10pct": 0.11871646091879252,
+        "recovery_at_20pct": 0.24914752993556125,
+        "samples": 7
+      },
+      "center": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.009419944193556068,
+        "evidence_rank_auc": 0.338357829951145,
+        "top_evidence_iou": 0.0,
+        "recovery_at_1pct": 0.0,
+        "recovery_at_5pct": 0.0,
+        "recovery_at_10pct": 0.0,
+        "recovery_at_20pct": 0.0,
+        "samples": 7
+      },
+      "visual-loo": {
+        "pointing_game": 0.7142857142857143,
+        "energy_in_mask": 0.12918959861400228,
+        "evidence_rank_auc": 0.7619518456645415,
+        "top_evidence_iou": 0.09571036551920582,
+        "recovery_at_1pct": 0.2388530481463615,
+        "recovery_at_5pct": 0.2388530481463615,
+        "recovery_at_10pct": 0.5019986032931286,
+        "recovery_at_20pct": 0.7022640753356041,
+        "samples": 7
+      },
+      "ifr-span": {
+        "pointing_game": 0.2857142857142857,
+        "energy_in_mask": 0.17519167585529175,
+        "evidence_rank_auc": 0.7906277863072314,
+        "top_evidence_iou": 0.09386183830198853,
+        "recovery_at_1pct": 0.09032348899824094,
+        "recovery_at_5pct": 0.2212986024674691,
+        "recovery_at_10pct": 0.3950116562322757,
+        "recovery_at_20pct": 0.5886420251209071,
+        "samples": 7
+      },
+      "visual-ig": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.04698891516777822,
+        "evidence_rank_auc": 0.5030970406362535,
+        "top_evidence_iou": 0.031019517875950753,
+        "recovery_at_1pct": 0.018945390902230286,
+        "recovery_at_5pct": 0.08402168164350109,
+        "recovery_at_10pct": 0.17119935480753506,
+        "recovery_at_20pct": 0.29677086027228083,
+        "samples": 7
+      },
+      "attnlrp": {
+        "pointing_game": 0.2857142857142857,
+        "energy_in_mask": 0.22240650507029613,
+        "evidence_rank_auc": 0.6962176791172406,
+        "top_evidence_iou": 0.14932362948200906,
+        "recovery_at_1pct": 0.11183587133661435,
+        "recovery_at_5pct": 0.32759508169200136,
+        "recovery_at_10pct": 0.46626436763123646,
+        "recovery_at_20pct": 0.6205534464425116,
+        "samples": 7
+      },
+      "flashtrace": {
+        "pointing_game": 0.2857142857142857,
+        "energy_in_mask": 0.19511931181111652,
+        "evidence_rank_auc": 0.8530192976416711,
+        "top_evidence_iou": 0.11888023435753882,
+        "recovery_at_1pct": 0.11669773712103447,
+        "recovery_at_5pct": 0.3062828480206428,
+        "recovery_at_10pct": 0.4966348243815439,
+        "recovery_at_20pct": 0.7137652466084445,
+        "samples": 7
+      },
+      "flashtrace-all-gen": {
+        "pointing_game": 0.2857142857142857,
+        "energy_in_mask": 0.18680773904141112,
+        "evidence_rank_auc": 0.8401362601109524,
+        "top_evidence_iou": 0.1078602662616357,
+        "recovery_at_1pct": 0.11495557684228883,
+        "recovery_at_5pct": 0.2749535109264966,
+        "recovery_at_10pct": 0.4615783301746116,
+        "recovery_at_20pct": 0.6911466585855435,
+        "samples": 7
+      }
+    },
+    "later_page_passage": {
+      "random": {
+        "pointing_game": 0.14285714285714285,
+        "energy_in_mask": 0.03559248971294623,
+        "evidence_rank_auc": 0.4887812177309077,
+        "top_evidence_iou": 0.015940548728631647,
+        "recovery_at_1pct": 0.010105866668698501,
+        "recovery_at_5pct": 0.05164767940234506,
+        "recovery_at_10pct": 0.07743538477061394,
+        "recovery_at_20pct": 0.20196990991352928,
+        "samples": 7
+      },
+      "center": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.06348495271894253,
+        "evidence_rank_auc": 0.6706331667977465,
+        "top_evidence_iou": 0.03473341666786685,
+        "recovery_at_1pct": 0.008759927705936258,
+        "recovery_at_5pct": 0.1268930984809496,
+        "recovery_at_10pct": 0.23395765855641376,
+        "recovery_at_20pct": 0.41383931295212645,
+        "samples": 7
+      },
+      "visual-loo": {
+        "pointing_game": 0.8571428571428571,
+        "energy_in_mask": 0.09931774616113984,
+        "evidence_rank_auc": 0.7408595801986443,
+        "top_evidence_iou": 0.09458456087373858,
+        "recovery_at_1pct": 0.23551469258918312,
+        "recovery_at_5pct": 0.23551469258918312,
+        "recovery_at_10pct": 0.43040319681482203,
+        "recovery_at_20pct": 0.6130729860419883,
+        "samples": 7
+      },
+      "ifr-span": {
+        "pointing_game": 0.8571428571428571,
+        "energy_in_mask": 0.2174392748387742,
+        "evidence_rank_auc": 0.7136177912583236,
+        "top_evidence_iou": 0.07958702084060228,
+        "recovery_at_1pct": 0.08869778098253522,
+        "recovery_at_5pct": 0.2215681099850591,
+        "recovery_at_10pct": 0.3151780822297354,
+        "recovery_at_20pct": 0.5007849404568534,
+        "samples": 7
+      },
+      "visual-ig": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.03321791009216939,
+        "evidence_rank_auc": 0.5473084716710602,
+        "top_evidence_iou": 0.017465873322666005,
+        "recovery_at_1pct": 0.0006691201070592171,
+        "recovery_at_5pct": 0.07338630476458309,
+        "recovery_at_10pct": 0.1405620066307078,
+        "recovery_at_20pct": 0.27200166714345514,
+        "samples": 7
+      },
+      "attnlrp": {
+        "pointing_game": 0.8571428571428571,
+        "energy_in_mask": 0.375765387857462,
+        "evidence_rank_auc": 0.572262404675386,
+        "top_evidence_iou": 0.11219054816843006,
+        "recovery_at_1pct": 0.1323029737978754,
+        "recovery_at_5pct": 0.25363284250672063,
+        "recovery_at_10pct": 0.35975754555292566,
+        "recovery_at_20pct": 0.4591968630781233,
+        "samples": 7
+      },
+      "flashtrace": {
+        "pointing_game": 1.0,
+        "energy_in_mask": 0.2794373508911225,
+        "evidence_rank_auc": 0.8326576039927824,
+        "top_evidence_iou": 0.1607783137803626,
+        "recovery_at_1pct": 0.13344917099990047,
+        "recovery_at_5pct": 0.36143295776716144,
+        "recovery_at_10pct": 0.5111146408466655,
+        "recovery_at_20pct": 0.6828434908905693,
+        "samples": 7
+      },
+      "flashtrace-all-gen": {
+        "pointing_game": 1.0,
+        "energy_in_mask": 0.25547388178257024,
+        "evidence_rank_auc": 0.8098526491657453,
+        "top_evidence_iou": 0.13225166373819627,
+        "recovery_at_1pct": 0.12367125514971966,
+        "recovery_at_5pct": 0.32124635568513116,
+        "recovery_at_10pct": 0.45338559939469797,
+        "recovery_at_20pct": 0.6453918566374383,
+        "samples": 7
+      }
+    },
+    "non_passage": {
+      "random": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.058683254700236304,
+        "evidence_rank_auc": 0.4999624366991186,
+        "top_evidence_iou": 0.029675686487286575,
+        "recovery_at_1pct": 0.003583369720525861,
+        "recovery_at_5pct": 0.04005980482798253,
+        "recovery_at_10pct": 0.08872448342177934,
+        "recovery_at_20pct": 0.17558778628825025,
+        "samples": 6
+      },
+      "center": {
+        "pointing_game": 0.08333333333333333,
+        "energy_in_mask": 0.026983421543117614,
+        "evidence_rank_auc": 0.46584099610212176,
+        "top_evidence_iou": 0.012234109220960564,
+        "recovery_at_1pct": 0.0211864406779661,
+        "recovery_at_5pct": 0.04519774011299435,
+        "recovery_at_10pct": 0.06835753667966252,
+        "recovery_at_20pct": 0.10855461115633235,
+        "samples": 6
+      },
+      "visual-loo": {
+        "pointing_game": 0.6666666666666666,
+        "energy_in_mask": 0.21789210969413883,
+        "evidence_rank_auc": 0.7008880444126216,
+        "top_evidence_iou": 0.20482501646927043,
+        "recovery_at_1pct": 0.309918405564473,
+        "recovery_at_5pct": 0.309918405564473,
+        "recovery_at_10pct": 0.4673312245786947,
+        "recovery_at_20pct": 0.6629486986449372,
+        "samples": 6
+      },
+      "ifr-span": {
+        "pointing_game": 0.8333333333333334,
+        "energy_in_mask": 0.22306901933149612,
+        "evidence_rank_auc": 0.7606234682393144,
+        "top_evidence_iou": 0.12180473111985139,
+        "recovery_at_1pct": 0.13286595943306653,
+        "recovery_at_5pct": 0.2637959397953741,
+        "recovery_at_10pct": 0.3569828710098732,
+        "recovery_at_20pct": 0.5303161886829272,
+        "samples": 6
+      },
+      "visual-ig": {
+        "pointing_game": 0.0,
+        "energy_in_mask": 0.05593027183104241,
+        "evidence_rank_auc": 0.49809848706795884,
+        "top_evidence_iou": 0.052704723564955785,
+        "recovery_at_1pct": 0.029458053400877333,
+        "recovery_at_5pct": 0.07441587853146804,
+        "recovery_at_10pct": 0.12911016681116066,
+        "recovery_at_20pct": 0.25592025585004874,
+        "samples": 6
+      },
+      "attnlrp": {
+        "pointing_game": 0.8333333333333334,
+        "energy_in_mask": 0.30876363590633843,
+        "evidence_rank_auc": 0.6813410996398844,
+        "top_evidence_iou": 0.16491703105488031,
+        "recovery_at_1pct": 0.18769942602520118,
+        "recovery_at_5pct": 0.32503894458314586,
+        "recovery_at_10pct": 0.42017676464556386,
+        "recovery_at_20pct": 0.5404035750516551,
+        "samples": 6
+      },
+      "flashtrace": {
+        "pointing_game": 0.8333333333333334,
+        "energy_in_mask": 0.2543223610926569,
+        "evidence_rank_auc": 0.7801155914614849,
+        "top_evidence_iou": 0.14853252597838865,
+        "recovery_at_1pct": 0.17710513577395137,
+        "recovery_at_5pct": 0.3259783392179004,
+        "recovery_at_10pct": 0.42549118751411436,
+        "recovery_at_20pct": 0.5616931559174088,
+        "samples": 6
+      },
+      "flashtrace-all-gen": {
+        "pointing_game": 0.8333333333333334,
+        "energy_in_mask": 0.252221480051687,
+        "evidence_rank_auc": 0.779056380608459,
+        "top_evidence_iou": 0.1449140326990628,
+        "recovery_at_1pct": 0.1592578711777682,
+        "recovery_at_5pct": 0.3187946663242947,
+        "recovery_at_10pct": 0.4115551279281762,
+        "recovery_at_20pct": 0.5589090964069974,
+        "samples": 6
+      }
+    }
+  },
+  "per_group_paired": {
+    "first_page_passage": {
+      "samples": 7,
+      "sample_ids": [
+        "wiki-visa-2063",
+        "wiki-visa-2083",
+        "wiki-visa-2325",
+        "wiki-visa-2545",
+        "wiki-visa-2741",
+        "wiki-visa-2764",
+        "wiki-visa-2880"
+      ],
+      "estimates": {
+        "pointing_game": {
+          "random": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.7142857142857143,
+            "median": 1.0,
+            "ci95_low": 0.42857142857142855,
+            "ci95_high": 1.0
+          },
+          "ifr-span": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714
+          },
+          "visual-ig": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "attnlrp": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714
+          },
+          "flashtrace": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714
+          }
+        },
+        "energy_in_mask": {
+          "random": {
+            "mean": 0.039524184105673675,
+            "median": 0.043887953429549355,
+            "ci95_low": 0.028324041473622847,
+            "ci95_high": 0.05049964610671977
+          },
+          "center": {
+            "mean": 0.009419944193556068,
+            "median": 0.006385858598097339,
+            "ci95_low": 0.004418969118609507,
+            "ci95_high": 0.017471736205056966
+          },
+          "visual-loo": {
+            "mean": 0.12918959861400228,
+            "median": 0.15245853905536996,
+            "ci95_low": 0.07805191869935556,
+            "ci95_high": 0.17536078219567686
+          },
+          "ifr-span": {
+            "mean": 0.17519167585529175,
+            "median": 0.1540244421784594,
+            "ci95_low": 0.11311818498992264,
+            "ci95_high": 0.25307205602602906
+          },
+          "visual-ig": {
+            "mean": 0.04698891516777822,
+            "median": 0.04791404684979401,
+            "ci95_low": 0.02726737496632073,
+            "ci95_high": 0.06780667611536231
+          },
+          "attnlrp": {
+            "mean": 0.22240650507029613,
+            "median": 0.1585336151009515,
+            "ci95_low": 0.1299993545278161,
+            "ci95_high": 0.36057640388710815
+          },
+          "flashtrace": {
+            "mean": 0.19511931181111652,
+            "median": 0.16057866322418066,
+            "ci95_low": 0.13312004585718384,
+            "ci95_high": 0.27838362862626403
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.18680773904141112,
+            "median": 0.15244883163580517,
+            "ci95_low": 0.12445335192278557,
+            "ci95_high": 0.27077002153438373
+          }
+        },
+        "evidence_rank_auc": {
+          "random": {
+            "mean": 0.5557807562801461,
+            "median": 0.5623277318396017,
+            "ci95_low": 0.5078180511879142,
+            "ci95_high": 0.6076459167975269
+          },
+          "center": {
+            "mean": 0.338357829951145,
+            "median": 0.2847220706643983,
+            "ci95_low": 0.26210963238203266,
+            "ci95_high": 0.42690682391495943
+          },
+          "visual-loo": {
+            "mean": 0.7619518456645415,
+            "median": 0.8826798257313061,
+            "ci95_low": 0.614111245080443,
+            "ci95_high": 0.9046503974852185
+          },
+          "ifr-span": {
+            "mean": 0.7906277863072314,
+            "median": 0.7774678553905409,
+            "ci95_low": 0.7311596743517084,
+            "ci95_high": 0.8512084647906281
+          },
+          "visual-ig": {
+            "mean": 0.5030970406362535,
+            "median": 0.5224055982849728,
+            "ci95_low": 0.45284180943881197,
+            "ci95_high": 0.5526518987302466
+          },
+          "attnlrp": {
+            "mean": 0.6962176791172406,
+            "median": 0.7347259310102738,
+            "ci95_low": 0.6366460999559355,
+            "ci95_high": 0.7583230583755001
+          },
+          "flashtrace": {
+            "mean": 0.8530192976416711,
+            "median": 0.8679116405762038,
+            "ci95_low": 0.798143853287491,
+            "ci95_high": 0.9059733881109734
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.8401362601109524,
+            "median": 0.8517031172624756,
+            "ci95_low": 0.7846787579099119,
+            "ci95_high": 0.8943578881048179
+          }
+        },
+        "top_evidence_iou": {
+          "random": {
+            "mean": 0.0277243380526778,
+            "median": 0.02608695652173913,
+            "ci95_low": 0.012659400504512086,
+            "ci95_high": 0.04344478658637712
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.09571036551920582,
+            "median": 0.1248513674197384,
+            "ci95_low": 0.045112781954887216,
+            "ci95_high": 0.14269421201689148
+          },
+          "ifr-span": {
+            "mean": 0.09386183830198853,
+            "median": 0.08108108108108109,
+            "ci95_low": 0.06694141324823938,
+            "ci95_high": 0.12582487269576048
+          },
+          "visual-ig": {
+            "mean": 0.031019517875950753,
+            "median": 0.0314026517794836,
+            "ci95_low": 0.01300253519321091,
+            "ci95_high": 0.04956030133008423
+          },
+          "attnlrp": {
+            "mean": 0.14932362948200906,
+            "median": 0.12775665399239544,
+            "ci95_low": 0.10398806551956638,
+            "ci95_high": 0.20865538677557818
+          },
+          "flashtrace": {
+            "mean": 0.11888023435753882,
+            "median": 0.11869814932992981,
+            "ci95_low": 0.08967637645384298,
+            "ci95_high": 0.1503948406944909
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.1078602662616357,
+            "median": 0.10283159463487332,
+            "ci95_low": 0.07759236751553578,
+            "ci95_high": 0.1437180130437583
+          }
+        },
+        "recovery_at_1pct": {
+          "random": {
+            "mean": 0.026910715080889998,
+            "median": 0.03170731707317073,
+            "ci95_low": 0.012273425710783686,
+            "ci95_high": 0.041656606650190844
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.2388530481463615,
+            "median": 0.32608695652173914,
+            "ci95_low": 0.11570827489481066,
+            "ci95_high": 0.34678402541531783
+          },
+          "ifr-span": {
+            "mean": 0.09032348899824094,
+            "median": 0.056910569105691054,
+            "ci95_low": 0.03897667223767008,
+            "ci95_high": 0.16069150781508998
+          },
+          "visual-ig": {
+            "mean": 0.018945390902230286,
+            "median": 0.01097560975609756,
+            "ci95_low": 0.0033101045296167245,
+            "ci95_high": 0.039179338139661846
+          },
+          "attnlrp": {
+            "mean": 0.11183587133661435,
+            "median": 0.07723577235772358,
+            "ci95_low": 0.05256547282944798,
+            "ci95_high": 0.20055382214489156
+          },
+          "flashtrace": {
+            "mean": 0.11669773712103447,
+            "median": 0.06910569105691057,
+            "ci95_low": 0.04760589042326657,
+            "ci95_high": 0.20382160034839994
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.11495557684228883,
+            "median": 0.0587557603686636,
+            "ci95_low": 0.044961154579351494,
+            "ci95_high": 0.20234303882150753
+          }
+        },
+        "recovery_at_5pct": {
+          "random": {
+            "mean": 0.07342714779761558,
+            "median": 0.05434782608695652,
+            "ci95_low": 0.042388425177461005,
+            "ci95_high": 0.10469899863790702
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.2388530481463615,
+            "median": 0.32608695652173914,
+            "ci95_low": 0.12014483212639895,
+            "ci95_high": 0.3469148590575701
+          },
+          "ifr-span": {
+            "mean": 0.2212986024674691,
+            "median": 0.1728110599078341,
+            "ci95_low": 0.13932700786238375,
+            "ci95_high": 0.3070199565444197
+          },
+          "visual-ig": {
+            "mean": 0.08402168164350109,
+            "median": 0.08414634146341464,
+            "ci95_low": 0.05009542982907755,
+            "ci95_high": 0.12173522170138291
+          },
+          "attnlrp": {
+            "mean": 0.32759508169200136,
+            "median": 0.25203252032520324,
+            "ci95_low": 0.22907100125278818,
+            "ci95_high": 0.4419708790504681
+          },
+          "flashtrace": {
+            "mean": 0.3062828480206428,
+            "median": 0.21138211382113822,
+            "ci95_low": 0.18758165421018314,
+            "ci95_high": 0.44249476645873714
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.2749535109264966,
+            "median": 0.20562770562770563,
+            "ci95_low": 0.1682278724658667,
+            "ci95_high": 0.3854817248879078
+          }
+        },
+        "recovery_at_10pct": {
+          "random": {
+            "mean": 0.11871646091879252,
+            "median": 0.1,
+            "ci95_low": 0.08179688984112556,
+            "ci95_high": 0.1594067802287278
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.5019986032931286,
+            "median": 0.6739130434782609,
+            "ci95_low": 0.2885424891401503,
+            "ci95_high": 0.6874896299983407
+          },
+          "ifr-span": {
+            "mean": 0.3950116562322757,
+            "median": 0.34146341463414637,
+            "ci95_low": 0.2711765025107701,
+            "ci95_high": 0.5340393418361369
+          },
+          "visual-ig": {
+            "mean": 0.17119935480753506,
+            "median": 0.16463414634146342,
+            "ci95_low": 0.10211573568592332,
+            "ci95_high": 0.24907454577568097
+          },
+          "attnlrp": {
+            "mean": 0.46626436763123646,
+            "median": 0.4146341463414634,
+            "ci95_low": 0.3759412170102785,
+            "ci95_high": 0.5647359776473032
+          },
+          "flashtrace": {
+            "mean": 0.4966348243815439,
+            "median": 0.4451219512195122,
+            "ci95_low": 0.36389722510004974,
+            "ci95_high": 0.6416005294978139
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.4615783301746116,
+            "median": 0.41125541125541126,
+            "ci95_low": 0.3428622101757083,
+            "ci95_high": 0.5971791417882556
+          }
+        },
+        "recovery_at_20pct": {
+          "random": {
+            "mean": 0.24914752993556125,
+            "median": 0.19047619047619047,
+            "ci95_low": 0.18013618667686232,
+            "ci95_high": 0.3281974523524804
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.7022640753356041,
+            "median": 1.0,
+            "ci95_low": 0.38940092165898627,
+            "ci95_high": 0.953416149068323
+          },
+          "ifr-span": {
+            "mean": 0.5886420251209071,
+            "median": 0.5576036866359447,
+            "ci95_low": 0.46972861836555513,
+            "ci95_high": 0.7207371149620391
+          },
+          "visual-ig": {
+            "mean": 0.29677086027228083,
+            "median": 0.29634146341463413,
+            "ci95_low": 0.21214052476921388,
+            "ci95_high": 0.39474774832794274
+          },
+          "attnlrp": {
+            "mean": 0.6205534464425116,
+            "median": 0.6524390243902439,
+            "ci95_low": 0.5372496668866981,
+            "ci95_high": 0.7068619058823638
+          },
+          "flashtrace": {
+            "mean": 0.7137652466084445,
+            "median": 0.7439024390243902,
+            "ci95_low": 0.5822627599069097,
+            "ci95_high": 0.8445786343062259
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.6911466585855435,
+            "median": 0.6634146341463415,
+            "ci95_low": 0.5578186385372247,
+            "ci95_high": 0.8324886159160921
+          }
+        }
+      },
+      "flashtrace_minus_baseline": {
+        "pointing_game": {
+          "random": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714,
+            "wins": 2,
+            "ties": 5,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714,
+            "wins": 2,
+            "ties": 5,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.42857142857142855,
+            "median": -1.0,
+            "ci95_low": -0.8571428571428571,
+            "ci95_high": 0.14285714285714285,
+            "wins": 1,
+            "ties": 2,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 7,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.2857142857142857,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.5714285714285714,
+            "wins": 2,
+            "ties": 5,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 7,
+            "losses": 0
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 7,
+            "losses": 0
+          }
+        },
+        "energy_in_mask": {
+          "random": {
+            "mean": 0.15559512770544287,
+            "median": 0.13142841352197626,
+            "ci95_low": 0.09049614278954617,
+            "ci95_high": 0.24439707897946542,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.18569936761756048,
+            "median": 0.15899920645165308,
+            "ci95_low": 0.12346024231917736,
+            "ci95_high": 0.2697011643209411,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.06592971319711426,
+            "median": 0.0171372620630674,
+            "ci95_low": -0.020463881819410352,
+            "ci95_high": 0.19164043940535688,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.01992763595582483,
+            "median": 0.025613330728695066,
+            "ci95_low": 0.006353997509618997,
+            "ci95_high": 0.03131291320833017,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "visual-ig": {
+            "mean": 0.14813039664333832,
+            "median": 0.11266461637438666,
+            "ci95_low": 0.08527496793844878,
+            "ci95_high": 0.24260966916773902,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.027287193259179558,
+            "median": -0.010449438363515279,
+            "ci95_low": -0.08850266678288023,
+            "ci95_high": 0.017114772440684274,
+            "wins": 3,
+            "ties": 0,
+            "losses": 4
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.00831157276970541,
+            "median": 0.008129831588375491,
+            "ci95_low": 0.00483884869804375,
+            "ci95_high": 0.011797058180041316,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "evidence_rank_auc": {
+          "random": {
+            "mean": 0.297238541361525,
+            "median": 0.26776507213323575,
+            "ci95_low": 0.22583102564090887,
+            "ci95_high": 0.3725239552323777,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.514661467690526,
+            "median": 0.4622380727119929,
+            "ci95_low": 0.4323780791469557,
+            "ci95_high": 0.6005177807160795,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.09106745197712954,
+            "median": 0.010038252753383325,
+            "ci95_low": -0.07632180098379224,
+            "ci95_high": 0.2819432497402862,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.06239151133443973,
+            "median": 0.052589204538745826,
+            "ci95_low": 0.037772659972611415,
+            "ci95_high": 0.09172954665225583,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.34992225700541757,
+            "median": 0.3316500733282545,
+            "ci95_low": 0.29324495228701536,
+            "ci95_high": 0.4285244304340375,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.1568016185244304,
+            "median": 0.1451965448721565,
+            "ci95_low": 0.11405226825565774,
+            "ci95_high": 0.20582507436712563,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.012883037530718669,
+            "median": 0.010510018537541521,
+            "ci95_low": 0.007393431897226569,
+            "ci95_high": 0.019362550273823893,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "top_evidence_iou": {
+          "random": {
+            "mean": 0.09115589630486101,
+            "median": 0.10384501626737651,
+            "ci95_low": 0.054635825896655006,
+            "ci95_high": 0.1291925504688182,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.11888023435753882,
+            "median": 0.11869814932992981,
+            "ci95_low": 0.08967637645384298,
+            "ci95_high": 0.15088074934366486,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.023169868838332993,
+            "median": -0.006153218089808593,
+            "ci95_low": -0.0484593620931779,
+            "ci95_high": 0.10110651577787937,
+            "wins": 3,
+            "ties": 0,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.025018396055550285,
+            "median": 0.02192849568247235,
+            "ci95_low": 0.018302142530773287,
+            "ci95_high": 0.03452156655020889,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.08786071648158807,
+            "median": 0.07845528455284553,
+            "ci95_low": 0.059628484022607856,
+            "ci95_high": 0.12742009350168262,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.030443395124470255,
+            "median": -0.018136967191500583,
+            "ci95_low": -0.061076740904814915,
+            "ci95_high": -0.006168182041740051,
+            "wins": 1,
+            "ties": 0,
+            "losses": 6
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.011019968095903106,
+            "median": 0.006788092166021539,
+            "ci95_low": 0.004346284361307908,
+            "ci95_high": 0.018524714723116783,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          }
+        },
+        "recovery_at_1pct": {
+          "random": {
+            "mean": 0.08978702204014447,
+            "median": 0.06493506493506494,
+            "ci95_low": 0.01706463065256455,
+            "ci95_high": 0.17641668263285878,
+            "wins": 5,
+            "ties": 0,
+            "losses": 2
+          },
+          "center": {
+            "mean": 0.11669773712103447,
+            "median": 0.06910569105691057,
+            "ci95_low": 0.04760589042326657,
+            "ci95_high": 0.20314026917555722,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.12215531102532702,
+            "median": -0.18317972350230416,
+            "ci95_low": -0.26079914427217016,
+            "ci95_high": 0.05639350673057946,
+            "wins": 2,
+            "ties": 0,
+            "losses": 5
+          },
+          "ifr-span": {
+            "mean": 0.026374248122793535,
+            "median": 0.012195121951219516,
+            "ci95_low": 0.008276465582299011,
+            "ci95_high": 0.04703880891885932,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.09775234621880417,
+            "median": 0.05691056910569106,
+            "ci95_low": 0.03422771470644838,
+            "ci95_high": 0.18551458796473255,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.004861865784420125,
+            "median": -0.00813008130081301,
+            "ci95_low": -0.014847068088759392,
+            "ci95_high": 0.030056437137475692,
+            "wins": 3,
+            "ties": 0,
+            "losses": 4
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0017421602787456452,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.005226480836236935,
+            "wins": 1,
+            "ties": 6,
+            "losses": 0
+          }
+        },
+        "recovery_at_5pct": {
+          "random": {
+            "mean": 0.23285570022302718,
+            "median": 0.17886178861788618,
+            "ci95_low": 0.10994823228532932,
+            "ci95_high": 0.3725091384211578,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.3062828480206428,
+            "median": 0.21138211382113822,
+            "ci95_low": 0.18700896250564922,
+            "ci95_high": 0.43884425826175255,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.0674297998742813,
+            "median": -0.03456221198156684,
+            "ci95_low": -0.11284375940678015,
+            "ci95_high": 0.2855239047256916,
+            "wins": 3,
+            "ties": 0,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.08498424555317363,
+            "median": 0.04891304347826088,
+            "ci95_low": 0.04237748314403368,
+            "ci95_high": 0.13597098210688355,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.22226116637714172,
+            "median": 0.14878048780487807,
+            "ci95_low": 0.11059929333046555,
+            "ci95_high": 0.3636308036375765,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.02131223367135865,
+            "median": -0.04065040650406501,
+            "ci95_low": -0.05512930983509732,
+            "ci95_high": 0.02237142840506789,
+            "wins": 2,
+            "ties": 0,
+            "losses": 5
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.03132933709414617,
+            "median": 0.03571428571428581,
+            "ci95_low": 0.009862937269769572,
+            "ci95_high": 0.05689768382703369,
+            "wins": 5,
+            "ties": 1,
+            "losses": 1
+          }
+        },
+        "recovery_at_10pct": {
+          "random": {
+            "mean": 0.3779183634627515,
+            "median": 0.34512195121951217,
+            "ci95_low": 0.24316778374400336,
+            "ci95_high": 0.515561319460209,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.4966348243815439,
+            "median": 0.4451219512195122,
+            "ci95_low": 0.3645963675646678,
+            "ci95_high": 0.6431047195779187,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.0053637789115846745,
+            "median": 0.0,
+            "ci95_low": -0.2529940408150149,
+            "ci95_high": 0.308399537304148,
+            "wins": 3,
+            "ties": 1,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.10162316814926828,
+            "median": 0.0957446808510638,
+            "ci95_low": 0.05824959920949723,
+            "ci95_high": 0.1489667065580773,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.3254354695740088,
+            "median": 0.2878787878787879,
+            "ci95_low": 0.19343263524222176,
+            "ci95_high": 0.49815449557294167,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.030370456750307504,
+            "median": 0.051948051948051965,
+            "ci95_low": -0.025418801170795015,
+            "ci95_high": 0.0874390853148933,
+            "wins": 5,
+            "ties": 0,
+            "losses": 2
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.035056494206932305,
+            "median": 0.03191489361702127,
+            "ci95_low": 0.013000528611074397,
+            "ci95_high": 0.06076954890166621,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          }
+        },
+        "recovery_at_20pct": {
+          "random": {
+            "mean": 0.4646177166728833,
+            "median": 0.5319148936170213,
+            "ci95_low": 0.3102697767005756,
+            "ci95_high": 0.616075136632628,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.7137652466084445,
+            "median": 0.7439024390243902,
+            "ci95_low": 0.5811032768390769,
+            "ci95_high": 0.844964663133948,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.01150117127284048,
+            "median": -0.1983695652173913,
+            "ci95_low": -0.2745713705322097,
+            "ci95_high": 0.3783091052514885,
+            "wins": 2,
+            "ties": 0,
+            "losses": 5
+          },
+          "ifr-span": {
+            "mean": 0.12512322148753743,
+            "median": 0.12228260869565216,
+            "ci95_low": 0.05281225719051041,
+            "ci95_high": 0.2037048074455041,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.4169943863361638,
+            "median": 0.41666666666666663,
+            "ci95_low": 0.29157600669908185,
+            "ci95_high": 0.5786283959655811,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.09321180016593282,
+            "median": 0.10243902439024388,
+            "ci95_low": 0.010033807606939251,
+            "ci95_high": 0.1733596077134855,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.022618588022901145,
+            "median": 0.020737327188940058,
+            "ci95_low": 0.005924950625411445,
+            "ci95_high": 0.04822914695930024,
+            "wins": 4,
+            "ties": 3,
+            "losses": 0
+          }
+        }
+      }
+    },
+    "later_page_passage": {
+      "samples": 7,
+      "sample_ids": [
+        "wiki-visa-1076",
+        "wiki-visa-1187",
+        "wiki-visa-1200",
+        "wiki-visa-1539",
+        "wiki-visa-1848",
+        "wiki-visa-1930",
+        "wiki-visa-1982"
+      ],
+      "estimates": {
+        "pointing_game": {
+          "random": {
+            "mean": 0.14285714285714285,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.42857142857142855
+          },
+          "center": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "visual-loo": {
+            "mean": 0.8571428571428571,
+            "median": 1.0,
+            "ci95_low": 0.5714285714285714,
+            "ci95_high": 1.0
+          },
+          "ifr-span": {
+            "mean": 0.8571428571428571,
+            "median": 1.0,
+            "ci95_low": 0.5714285714285714,
+            "ci95_high": 1.0
+          },
+          "visual-ig": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "attnlrp": {
+            "mean": 0.8571428571428571,
+            "median": 1.0,
+            "ci95_low": 0.5714285714285714,
+            "ci95_high": 1.0
+          },
+          "flashtrace": {
+            "mean": 1.0,
+            "median": 1.0,
+            "ci95_low": 1.0,
+            "ci95_high": 1.0
+          },
+          "flashtrace-all-gen": {
+            "mean": 1.0,
+            "median": 1.0,
+            "ci95_low": 1.0,
+            "ci95_high": 1.0
+          }
+        },
+        "energy_in_mask": {
+          "random": {
+            "mean": 0.03559248971294623,
+            "median": 0.027143366930168302,
+            "ci95_low": 0.02167320077150984,
+            "ci95_high": 0.05319178630221321
+          },
+          "center": {
+            "mean": 0.06348495271894253,
+            "median": 0.06241410965819817,
+            "ci95_low": 0.03326168907676481,
+            "ci95_high": 0.09587351736440694
+          },
+          "visual-loo": {
+            "mean": 0.09931774616113984,
+            "median": 0.08118696473362019,
+            "ci95_low": 0.06428708585065032,
+            "ci95_high": 0.1472371724564651
+          },
+          "ifr-span": {
+            "mean": 0.2174392748387742,
+            "median": 0.22983497655791854,
+            "ci95_low": 0.14786314478026358,
+            "ci95_high": 0.2861434467598757
+          },
+          "visual-ig": {
+            "mean": 0.03321791009216939,
+            "median": 0.034573298710759065,
+            "ci95_low": 0.021239614923618783,
+            "ci95_high": 0.045906358965739046
+          },
+          "attnlrp": {
+            "mean": 0.375765387857462,
+            "median": 0.31077744920878136,
+            "ci95_low": 0.2537325176836781,
+            "ci95_high": 0.49105597647710414
+          },
+          "flashtrace": {
+            "mean": 0.2794373508911225,
+            "median": 0.24496651484927592,
+            "ci95_low": 0.21498555699140892,
+            "ci95_high": 0.3459880307795554
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.25547388178257024,
+            "median": 0.22917366912599896,
+            "ci95_low": 0.19032562891813876,
+            "ci95_high": 0.32323793877972756
+          }
+        },
+        "evidence_rank_auc": {
+          "random": {
+            "mean": 0.4887812177309077,
+            "median": 0.49097370021283065,
+            "ci95_low": 0.47336858717738156,
+            "ci95_high": 0.5039579190959576
+          },
+          "center": {
+            "mean": 0.6706331667977465,
+            "median": 0.7443537083307941,
+            "ci95_low": 0.5349353668184802,
+            "ci95_high": 0.7677749056803135
+          },
+          "visual-loo": {
+            "mean": 0.7408595801986443,
+            "median": 0.7662026760506815,
+            "ci95_low": 0.6392435147677509,
+            "ci95_high": 0.8152361223527256
+          },
+          "ifr-span": {
+            "mean": 0.7136177912583236,
+            "median": 0.7319946102079279,
+            "ci95_low": 0.6024200553605297,
+            "ci95_high": 0.8180107595252843
+          },
+          "visual-ig": {
+            "mean": 0.5473084716710602,
+            "median": 0.549546122574142,
+            "ci95_low": 0.48753010358542737,
+            "ci95_high": 0.6041961522468393
+          },
+          "attnlrp": {
+            "mean": 0.572262404675386,
+            "median": 0.5406497751414016,
+            "ci95_low": 0.5213976232444498,
+            "ci95_high": 0.6309698314972916
+          },
+          "flashtrace": {
+            "mean": 0.8326576039927824,
+            "median": 0.8340672221445773,
+            "ci95_low": 0.766526247017959,
+            "ci95_high": 0.8981912566912439
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.8098526491657453,
+            "median": 0.8151979975648235,
+            "ci95_low": 0.7332383739845302,
+            "ci95_high": 0.8847765557268722
+          }
+        },
+        "top_evidence_iou": {
+          "random": {
+            "mean": 0.015940548728631647,
+            "median": 0.013774104683195593,
+            "ci95_low": 0.004656706207466608,
+            "ci95_high": 0.02887000742856854
+          },
+          "center": {
+            "mean": 0.03473341666786685,
+            "median": 0.0,
+            "ci95_low": 0.006733615835606896,
+            "ci95_high": 0.0736600984516915
+          },
+          "visual-loo": {
+            "mean": 0.09458456087373858,
+            "median": 0.09433962264150944,
+            "ci95_low": 0.04973538340303212,
+            "ci95_high": 0.15091662321924273
+          },
+          "ifr-span": {
+            "mean": 0.07958702084060228,
+            "median": 0.0772238514173998,
+            "ci95_low": 0.04106192346619577,
+            "ci95_high": 0.11971553427621683
+          },
+          "visual-ig": {
+            "mean": 0.017465873322666005,
+            "median": 0.019067796610169493,
+            "ci95_low": 0.0073836755316705706,
+            "ci95_high": 0.029251202920965745
+          },
+          "attnlrp": {
+            "mean": 0.11219054816843006,
+            "median": 0.10820094461142121,
+            "ci95_low": 0.08166674233107606,
+            "ci95_high": 0.149654850649829
+          },
+          "flashtrace": {
+            "mean": 0.1607783137803626,
+            "median": 0.12448979591836734,
+            "ci95_low": 0.09031180291102402,
+            "ci95_high": 0.24899995918721166
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.13225166373819627,
+            "median": 0.10483870967741936,
+            "ci95_low": 0.07454252510826878,
+            "ci95_high": 0.20248600244802933
+          }
+        },
+        "recovery_at_1pct": {
+          "random": {
+            "mean": 0.010105866668698501,
+            "median": 0.0,
+            "ci95_low": 0.0006478781988986071,
+            "ci95_high": 0.02230400356864057
+          },
+          "center": {
+            "mean": 0.008759927705936258,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.01873536299765808
+          },
+          "visual-loo": {
+            "mean": 0.23551469258918312,
+            "median": 0.26229508196721313,
+            "ci95_low": 0.15146011566218995,
+            "ci95_high": 0.29304343670061445
+          },
+          "ifr-span": {
+            "mean": 0.08869778098253522,
+            "median": 0.06521739130434782,
+            "ci95_low": 0.03872399857679215,
+            "ci95_high": 0.14536634325861492
+          },
+          "visual-ig": {
+            "mean": 0.0006691201070592171,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0020073603211776514
+          },
+          "attnlrp": {
+            "mean": 0.1323029737978754,
+            "median": 0.13043478260869565,
+            "ci95_low": 0.07469093600852077,
+            "ci95_high": 0.1959506010767339
+          },
+          "flashtrace": {
+            "mean": 0.13344917099990047,
+            "median": 0.07709750566893424,
+            "ci95_low": 0.06285699970515309,
+            "ci95_high": 0.20981694785642596
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.12367125514971966,
+            "median": 0.06521739130434782,
+            "ci95_low": 0.05065837216331056,
+            "ci95_high": 0.20206982769349127
+          }
+        },
+        "recovery_at_5pct": {
+          "random": {
+            "mean": 0.05164767940234506,
+            "median": 0.0624512099921936,
+            "ci95_low": 0.024067081945971208,
+            "ci95_high": 0.07910284569993357
+          },
+          "center": {
+            "mean": 0.1268930984809496,
+            "median": 0.14512471655328799,
+            "ci95_low": 0.04460194626674619,
+            "ci95_high": 0.21074403015796822
+          },
+          "visual-loo": {
+            "mean": 0.23551469258918312,
+            "median": 0.26229508196721313,
+            "ci95_low": 0.15146011566218995,
+            "ci95_high": 0.29125842374420496
+          },
+          "ifr-span": {
+            "mean": 0.2215681099850591,
+            "median": 0.14363778298204527,
+            "ci95_low": 0.09863160551190575,
+            "ci95_high": 0.3644199423651618
+          },
+          "visual-ig": {
+            "mean": 0.07338630476458309,
+            "median": 0.0585480093676815,
+            "ci95_low": 0.03854774268937795,
+            "ci95_high": 0.12197236427748304
+          },
+          "attnlrp": {
+            "mean": 0.25363284250672063,
+            "median": 0.21315192743764172,
+            "ci95_low": 0.17113277785743491,
+            "ci95_high": 0.3456740305666441
+          },
+          "flashtrace": {
+            "mean": 0.36143295776716144,
+            "median": 0.2798913043478261,
+            "ci95_low": 0.20283745137738768,
+            "ci95_high": 0.542196285736913
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.32124635568513116,
+            "median": 0.1875,
+            "ci95_low": 0.1703272448714068,
+            "ci95_high": 0.4907833351920003
+          }
+        },
+        "recovery_at_10pct": {
+          "random": {
+            "mean": 0.07743538477061394,
+            "median": 0.07650273224043716,
+            "ci95_low": 0.048898872585724375,
+            "ci95_high": 0.1059718969555035
+          },
+          "center": {
+            "mean": 0.23395765855641376,
+            "median": 0.32786885245901637,
+            "ci95_low": 0.1108209721878773,
+            "ci95_high": 0.35217612526122355
+          },
+          "visual-loo": {
+            "mean": 0.43040319681482203,
+            "median": 0.5081967213114754,
+            "ci95_low": 0.3231850117096019,
+            "ci95_high": 0.5440891966194888
+          },
+          "ifr-span": {
+            "mean": 0.3151780822297354,
+            "median": 0.2888368462138954,
+            "ci95_low": 0.16690148210796382,
+            "ci95_high": 0.4811717036541392
+          },
+          "visual-ig": {
+            "mean": 0.1405620066307078,
+            "median": 0.11943793911007025,
+            "ci95_low": 0.08451156656532889,
+            "ci95_high": 0.20675811308129807
+          },
+          "attnlrp": {
+            "mean": 0.35975754555292566,
+            "median": 0.32065217391304346,
+            "ci95_low": 0.2589176185696761,
+            "ci95_high": 0.48781101212843697
+          },
+          "flashtrace": {
+            "mean": 0.5111146408466655,
+            "median": 0.5063752276867031,
+            "ci95_low": 0.33039777955101535,
+            "ci95_high": 0.7004572320731571
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.45338559939469797,
+            "median": 0.41032608695652173,
+            "ci95_low": 0.28259269206783283,
+            "ci95_high": 0.6430058362142671
+          }
+        },
+        "recovery_at_20pct": {
+          "random": {
+            "mean": 0.20196990991352928,
+            "median": 0.21129326047358835,
+            "ci95_low": 0.15688927031967456,
+            "ci95_high": 0.24340040465835044
+          },
+          "center": {
+            "mean": 0.41383931295212645,
+            "median": 0.5122950819672131,
+            "ci95_low": 0.24446913816268115,
+            "ci95_high": 0.5588879782070144
+          },
+          "visual-loo": {
+            "mean": 0.6130729860419883,
+            "median": 0.6739130434782609,
+            "ci95_low": 0.427854514171008,
+            "ci95_high": 0.7946746767131657
+          },
+          "ifr-span": {
+            "mean": 0.5007849404568534,
+            "median": 0.5323965651834505,
+            "ci95_low": 0.3264536103278158,
+            "ci95_high": 0.6781957123208378
+          },
+          "visual-ig": {
+            "mean": 0.27200166714345514,
+            "median": 0.27478532396565186,
+            "ci95_low": 0.19184170460771624,
+            "ci95_high": 0.3572401341149432
+          },
+          "attnlrp": {
+            "mean": 0.4591968630781233,
+            "median": 0.4517304189435337,
+            "ci95_low": 0.3709151810607147,
+            "ci95_high": 0.5541215535869848
+          },
+          "flashtrace": {
+            "mean": 0.6828434908905693,
+            "median": 0.6703096539162113,
+            "ci95_low": 0.5269077542431289,
+            "ci95_high": 0.8367450983719694
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.6453918566374383,
+            "median": 0.6429872495446266,
+            "ci95_low": 0.469671865623689,
+            "ci95_high": 0.8106220392647436
+          }
+        }
+      },
+      "flashtrace_minus_baseline": {
+        "pointing_game": {
+          "random": {
+            "mean": 0.8571428571428571,
+            "median": 1.0,
+            "ci95_low": 0.5714285714285714,
+            "ci95_high": 1.0,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          },
+          "center": {
+            "mean": 1.0,
+            "median": 1.0,
+            "ci95_low": 1.0,
+            "ci95_high": 1.0,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.14285714285714285,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.42857142857142855,
+            "wins": 1,
+            "ties": 6,
+            "losses": 0
+          },
+          "ifr-span": {
+            "mean": 0.14285714285714285,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.42857142857142855,
+            "wins": 1,
+            "ties": 6,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 1.0,
+            "median": 1.0,
+            "ci95_low": 1.0,
+            "ci95_high": 1.0,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.14285714285714285,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.42857142857142855,
+            "wins": 1,
+            "ties": 6,
+            "losses": 0
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 7,
+            "losses": 0
+          }
+        },
+        "energy_in_mask": {
+          "random": {
+            "mean": 0.24384486117817625,
+            "median": 0.21257056510910607,
+            "ci95_low": 0.17930526582026848,
+            "ci95_high": 0.316223383996274,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.21595239817217995,
+            "median": 0.20221593580782232,
+            "ci95_low": 0.1367743494966589,
+            "ci95_high": 0.3014902582347837,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.18011960472998265,
+            "median": 0.14810898391548372,
+            "ci95_low": 0.10689035225466001,
+            "ci95_high": 0.26049469752352594,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "ifr-span": {
+            "mean": 0.06199807605234823,
+            "median": 0.07052428765674534,
+            "ci95_low": 0.04005655541625069,
+            "ci95_high": 0.08338104069064219,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.24621944079895305,
+            "median": 0.21039321613851686,
+            "ci95_low": 0.18378711610271803,
+            "ci95_high": 0.31384843054288336,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.09632803696633958,
+            "median": -0.11957370750914892,
+            "ci95_low": -0.1593880209058416,
+            "ci95_high": -0.021111146448748563,
+            "wins": 1,
+            "ties": 0,
+            "losses": 6
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.02396346910855221,
+            "median": 0.022613584843780454,
+            "ci95_low": 0.015617229388045566,
+            "ci95_high": 0.03258159739438112,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "evidence_rank_auc": {
+          "random": {
+            "mean": 0.3438763862618747,
+            "median": 0.3513428267257459,
+            "ci95_low": 0.2660773406238532,
+            "ci95_high": 0.4232703129607151,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.16202443719503584,
+            "median": 0.09403410657694089,
+            "ci95_low": 0.021267852740042583,
+            "ci95_high": 0.3429161756542877,
+            "wins": 5,
+            "ties": 0,
+            "losses": 2
+          },
+          "visual-loo": {
+            "mean": 0.09179802379413815,
+            "median": 0.06214830420496442,
+            "ci95_low": 0.03400426848332957,
+            "ci95_high": 0.15834773972786145,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "ifr-span": {
+            "mean": 0.11903981273445886,
+            "median": 0.10334787298715176,
+            "ci95_low": 0.07401581570042715,
+            "ci95_high": 0.1718700619521932,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.2853491323217222,
+            "median": 0.26244611582444877,
+            "ci95_low": 0.2103141233040058,
+            "ci95_high": 0.3672532429278279,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.26039519931739635,
+            "median": 0.23877711926381862,
+            "ci95_low": 0.22039780023518682,
+            "ci95_high": 0.30227903763467184,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.022804954827037132,
+            "median": 0.018523426301958912,
+            "ci95_low": 0.012572277431294457,
+            "ci95_high": 0.034667099580251444,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "top_evidence_iou": {
+          "random": {
+            "mean": 0.14483776505173093,
+            "median": 0.09093900374688552,
+            "ci95_low": 0.07281393505398673,
+            "ci95_high": 0.23855052761255796,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.12604489711249572,
+            "median": 0.12159462954506628,
+            "ci95_low": 0.03402878866701427,
+            "ci95_high": 0.23264500813357644,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "visual-loo": {
+            "mean": 0.06619375290662399,
+            "median": 0.023720026849088124,
+            "ci95_low": -0.021977891830938512,
+            "ci95_high": 0.17172053627397002,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.08119129293976032,
+            "median": 0.047265944500967536,
+            "ci95_low": 0.04091517422573262,
+            "ci95_high": 0.13729615155797595,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.1433124404576966,
+            "median": 0.11093966041701232,
+            "ci95_low": 0.07386937650448926,
+            "ci95_high": 0.2357463776343917,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.04858776561193255,
+            "median": 0.039022527534299155,
+            "ci95_low": 0.001469432740035932,
+            "ci95_high": 0.10422910735990913,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.028526650042166306,
+            "median": 0.019651086240947982,
+            "ci95_low": 0.014208871045436377,
+            "ci95_high": 0.04885966048419289,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "recovery_at_1pct": {
+          "random": {
+            "mean": 0.12334330433120198,
+            "median": 0.07256235827664399,
+            "ci95_low": 0.04584220240721615,
+            "ci95_high": 0.21015947362551576,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "center": {
+            "mean": 0.12468924329396423,
+            "median": 0.07709750566893424,
+            "ci95_low": 0.04919094882293277,
+            "ci95_high": 0.20981694785642596,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.10206552158928263,
+            "median": -0.15664845173041897,
+            "ci95_low": -0.19638563737615328,
+            "ci95_high": 0.004218365892329843,
+            "wins": 3,
+            "ties": 0,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.04475139001736526,
+            "median": 0.04081632653061224,
+            "ci95_low": 0.019547865984801415,
+            "ci95_high": 0.07338017174082748,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.13278005089284126,
+            "median": 0.07709750566893424,
+            "ci95_low": 0.06180240823207062,
+            "ci95_high": 0.2104617090361923,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.001146197202025095,
+            "median": 0.0,
+            "ci95_low": -0.02917218205885347,
+            "ci95_high": 0.037395051697493985,
+            "wins": 3,
+            "ties": 1,
+            "losses": 3
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.009777915850180825,
+            "median": 0.010928961748633878,
+            "ci95_low": 0.0031225604996096795,
+            "ci95_high": 0.01842868294858927,
+            "wins": 4,
+            "ties": 3,
+            "losses": 0
+          }
+        },
+        "recovery_at_5pct": {
+          "random": {
+            "mean": 0.3097852783648164,
+            "median": 0.18206521739130438,
+            "ci95_low": 0.1545387925729977,
+            "ci95_high": 0.4819098599627205,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.23453985928621182,
+            "median": 0.18032786885245902,
+            "ci95_low": 0.04113492629173313,
+            "ci95_high": 0.44406473090542947,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "visual-loo": {
+            "mean": 0.1259182651779783,
+            "median": 0.06921675774134789,
+            "ci95_low": -0.03774378264356009,
+            "ci95_high": 0.3037805286048846,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.13986484778210234,
+            "median": 0.1405152224824356,
+            "ci95_low": 0.09232545731865703,
+            "ci95_high": 0.1878793672035559,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.28804665300257837,
+            "median": 0.2554347826086957,
+            "ci95_low": 0.14285662335395416,
+            "ci95_high": 0.4515031362984728,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.10780011526044082,
+            "median": 0.063231850117096,
+            "ci95_low": 0.015864120823973715,
+            "ci95_high": 0.20686175396744583,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.04018660208203025,
+            "median": 0.0491803278688524,
+            "ci95_low": 0.019962083193933326,
+            "ci95_high": 0.061526321148559215,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          }
+        },
+        "recovery_at_10pct": {
+          "random": {
+            "mean": 0.43367925607605157,
+            "median": 0.42987249544626593,
+            "ci95_low": 0.2661579016810201,
+            "ci95_high": 0.60689459234123,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.27715698229025176,
+            "median": 0.18169398907103826,
+            "ci95_low": 0.03544849489536168,
+            "ci95_high": 0.5283137708635377,
+            "wins": 5,
+            "ties": 0,
+            "losses": 2
+          },
+          "visual-loo": {
+            "mean": 0.08071144403184347,
+            "median": -0.0018214936247723523,
+            "ci95_low": -0.09552868511895816,
+            "ci95_high": 0.2816798095201153,
+            "wins": 3,
+            "ties": 0,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.19593655861693013,
+            "median": 0.20843091334894615,
+            "ci95_low": 0.12322563685895903,
+            "ci95_high": 0.2726461397103389,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.3705526342159577,
+            "median": 0.35336976320582875,
+            "ci95_low": 0.1823161374314516,
+            "ci95_high": 0.5539560918213804,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "attnlrp": {
+            "mean": 0.15135709529373978,
+            "median": 0.12021857923497264,
+            "ci95_low": 0.039501983463174475,
+            "ci95_high": 0.2603949990545042,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.05772904145196755,
+            "median": 0.03688524590163933,
+            "ci95_low": 0.026468745187380176,
+            "ci95_high": 0.09689150072003143,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "recovery_at_20pct": {
+          "random": {
+            "mean": 0.4808735809770401,
+            "median": 0.459016393442623,
+            "ci95_low": 0.3249892462839937,
+            "ci95_high": 0.6421380205681704,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.26900417793844283,
+            "median": 0.19633099141295862,
+            "ci95_low": 0.018550823920512795,
+            "ci95_high": 0.5468589576333028,
+            "wins": 5,
+            "ties": 0,
+            "losses": 2
+          },
+          "visual-loo": {
+            "mean": 0.06977050484858098,
+            "median": 0.03401360544217685,
+            "ci95_low": -0.06190555847631792,
+            "ci95_high": 0.2207103236366331,
+            "wins": 4,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.18205855043371585,
+            "median": 0.21857923497267762,
+            "ci95_low": 0.11414285956720535,
+            "ci95_high": 0.24465119841593103,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.4108418237471142,
+            "median": 0.36794171220400734,
+            "ci95_low": 0.24373761995040014,
+            "ci95_high": 0.5768433531645016,
+            "wins": 7,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.22364662781244596,
+            "median": 0.24180327868852458,
+            "ci95_low": 0.07481387066587149,
+            "ci95_high": 0.34204371342264633,
+            "wins": 6,
+            "ties": 0,
+            "losses": 1
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.03745163425313105,
+            "median": 0.02732240437158473,
+            "ci95_low": 0.01910659131792417,
+            "ci95_high": 0.060666889706702365,
+            "wins": 6,
+            "ties": 1,
+            "losses": 0
+          }
+        }
+      }
+    },
+    "non_passage": {
+      "samples": 6,
+      "sample_ids": [
+        "wiki-visa-0051",
+        "wiki-visa-0217",
+        "wiki-visa-0494",
+        "wiki-visa-0498",
+        "wiki-visa-0556",
+        "wiki-visa-0567"
+      ],
+      "estimates": {
+        "pointing_game": {
+          "random": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "center": {
+            "mean": 0.08333333333333333,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.25
+          },
+          "visual-loo": {
+            "mean": 0.6666666666666666,
+            "median": 1.0,
+            "ci95_low": 0.3333333333333333,
+            "ci95_high": 1.0
+          },
+          "ifr-span": {
+            "mean": 0.8333333333333334,
+            "median": 1.0,
+            "ci95_low": 0.5,
+            "ci95_high": 1.0
+          },
+          "visual-ig": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "attnlrp": {
+            "mean": 0.8333333333333334,
+            "median": 1.0,
+            "ci95_low": 0.5,
+            "ci95_high": 1.0
+          },
+          "flashtrace": {
+            "mean": 0.8333333333333334,
+            "median": 1.0,
+            "ci95_low": 0.5,
+            "ci95_high": 1.0
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.8333333333333334,
+            "median": 1.0,
+            "ci95_low": 0.5,
+            "ci95_high": 1.0
+          }
+        },
+        "energy_in_mask": {
+          "random": {
+            "mean": 0.058683254700236304,
+            "median": 0.0492237612291623,
+            "ci95_low": 0.022662811943680996,
+            "ci95_high": 0.09554325015335392
+          },
+          "center": {
+            "mean": 0.026983421543117614,
+            "median": 0.01818637711532226,
+            "ci95_low": 0.01083031110063079,
+            "ci95_high": 0.044397378924498576
+          },
+          "visual-loo": {
+            "mean": 0.21789210969413883,
+            "median": 0.18501231250510417,
+            "ci95_low": 0.07917850792622795,
+            "ci95_high": 0.3613303645930495
+          },
+          "ifr-span": {
+            "mean": 0.22306901933149612,
+            "median": 0.23993150951573877,
+            "ci95_low": 0.1898418322945019,
+            "ci95_high": 0.25547254279794557
+          },
+          "visual-ig": {
+            "mean": 0.05593027183104241,
+            "median": 0.047060969413010925,
+            "ci95_low": 0.027315616598272825,
+            "ci95_high": 0.08850237317047897
+          },
+          "attnlrp": {
+            "mean": 0.30876363590633843,
+            "median": 0.3020215530030175,
+            "ci95_low": 0.23504097909944152,
+            "ci95_high": 0.3809977749381528
+          },
+          "flashtrace": {
+            "mean": 0.2543223610926569,
+            "median": 0.25945365217521305,
+            "ci95_low": 0.19547974913219443,
+            "ci95_high": 0.31316497305311924
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.252221480051687,
+            "median": 0.25905526894772557,
+            "ci95_low": 0.21038613424402938,
+            "ci95_high": 0.29586874193727836
+          }
+        },
+        "evidence_rank_auc": {
+          "random": {
+            "mean": 0.4999624366991186,
+            "median": 0.5033129744610033,
+            "ci95_low": 0.4760808906580601,
+            "ci95_high": 0.5235903444514438
+          },
+          "center": {
+            "mean": 0.46584099610212176,
+            "median": 0.42344890804202096,
+            "ci95_low": 0.32929754171144293,
+            "ci95_high": 0.6172958042072668
+          },
+          "visual-loo": {
+            "mean": 0.7008880444126216,
+            "median": 0.6784258934761446,
+            "ci95_low": 0.6087072972817386,
+            "ci95_high": 0.8173246623473766
+          },
+          "ifr-span": {
+            "mean": 0.7606234682393144,
+            "median": 0.7591666424491006,
+            "ci95_low": 0.695472992415802,
+            "ci95_high": 0.8277783300317786
+          },
+          "visual-ig": {
+            "mean": 0.49809848706795884,
+            "median": 0.49480911101217406,
+            "ci95_low": 0.48475889891482843,
+            "ci95_high": 0.5127376336872751
+          },
+          "attnlrp": {
+            "mean": 0.6813410996398844,
+            "median": 0.6717427461994372,
+            "ci95_low": 0.5760224860953281,
+            "ci95_high": 0.8008512318716426
+          },
+          "flashtrace": {
+            "mean": 0.7801155914614849,
+            "median": 0.7710817543124804,
+            "ci95_low": 0.7037605588761009,
+            "ci95_high": 0.856274046871906
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.779056380608459,
+            "median": 0.767764972794831,
+            "ci95_low": 0.7093663771573274,
+            "ci95_high": 0.8505336236767365
+          }
+        },
+        "top_evidence_iou": {
+          "random": {
+            "mean": 0.029675686487286575,
+            "median": 0.03224465754329564,
+            "ci95_low": 0.010748219181098547,
+            "ci95_high": 0.0491785619793948
+          },
+          "center": {
+            "mean": 0.012234109220960564,
+            "median": 0.000546000546000546,
+            "ci95_low": 0.00018200018200018202,
+            "ci95_high": 0.03524051483606184
+          },
+          "visual-loo": {
+            "mean": 0.20482501646927043,
+            "median": 0.15247062381312187,
+            "ci95_low": 0.06258824715339356,
+            "ci95_high": 0.3587885120800481
+          },
+          "ifr-span": {
+            "mean": 0.12180473111985139,
+            "median": 0.11907542432679316,
+            "ci95_low": 0.10496072869386848,
+            "ci95_high": 0.14147046478064326
+          },
+          "visual-ig": {
+            "mean": 0.052704723564955785,
+            "median": 0.04648426442273172,
+            "ci95_low": 0.026444576538338333,
+            "ci95_high": 0.08049898020802128
+          },
+          "attnlrp": {
+            "mean": 0.16491703105488031,
+            "median": 0.15335314880178338,
+            "ci95_low": 0.12695089583626695,
+            "ci95_high": 0.2111000619448714
+          },
+          "flashtrace": {
+            "mean": 0.14853252597838865,
+            "median": 0.13851837819971624,
+            "ci95_low": 0.1102102718331112,
+            "ci95_high": 0.18775253756482427
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.1449140326990628,
+            "median": 0.13644349981475723,
+            "ci95_low": 0.11466590018016909,
+            "ci95_high": 0.17874490690932032
+          }
+        },
+        "recovery_at_1pct": {
+          "random": {
+            "mean": 0.003583369720525861,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.009290521495093365
+          },
+          "center": {
+            "mean": 0.0211864406779661,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0635593220338983
+          },
+          "visual-loo": {
+            "mean": 0.309918405564473,
+            "median": 0.23927902621722846,
+            "ci95_low": 0.07975967540574282,
+            "ci95_high": 0.5480136436597111
+          },
+          "ifr-span": {
+            "mean": 0.13286595943306653,
+            "median": 0.08333333333333333,
+            "ci95_low": 0.04734691241859005,
+            "ci95_high": 0.24021407109152304
+          },
+          "visual-ig": {
+            "mean": 0.029458053400877333,
+            "median": 0.004870758842087784,
+            "ci95_low": 0.0016420361247947454,
+            "ci95_high": 0.07863703533847997
+          },
+          "attnlrp": {
+            "mean": 0.18769942602520118,
+            "median": 0.11649659863945579,
+            "ci95_low": 0.056491885143570536,
+            "ci95_high": 0.36740855105452325
+          },
+          "flashtrace": {
+            "mean": 0.17710513577395137,
+            "median": 0.10629251700680273,
+            "ci95_low": 0.053915715840772566,
+            "ci95_high": 0.3138932720298174
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.1592578711777682,
+            "median": 0.10119047619047619,
+            "ci95_low": 0.05243445692883895,
+            "ci95_high": 0.291182405165456
+          }
+        },
+        "recovery_at_5pct": {
+          "random": {
+            "mean": 0.04005980482798253,
+            "median": 0.044549967302776286,
+            "ci95_low": 0.019698351882259928,
+            "ci95_high": 0.058798781900292946
+          },
+          "center": {
+            "mean": 0.04519774011299435,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.13559322033898305
+          },
+          "visual-loo": {
+            "mean": 0.309918405564473,
+            "median": 0.23927902621722846,
+            "ci95_low": 0.07975967540574282,
+            "ci95_high": 0.5480136436597111
+          },
+          "ifr-span": {
+            "mean": 0.2637959397953741,
+            "median": 0.21598639455782312,
+            "ci95_low": 0.12028375860223983,
+            "ci95_high": 0.46868651025576796
+          },
+          "visual-ig": {
+            "mean": 0.07441587853146804,
+            "median": 0.06855500821018062,
+            "ci95_low": 0.049704926089016194,
+            "ci95_high": 0.10689313909861627
+          },
+          "attnlrp": {
+            "mean": 0.32503894458314586,
+            "median": 0.298469387755102,
+            "ci95_low": 0.15369543788069276,
+            "ci95_high": 0.5176170994405944
+          },
+          "flashtrace": {
+            "mean": 0.3259783392179004,
+            "median": 0.22647392290249435,
+            "ci95_low": 0.1331551971600126,
+            "ci95_high": 0.5363644516186888
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.3187946663242947,
+            "median": 0.22874149659863946,
+            "ci95_low": 0.13763737446418578,
+            "ci95_high": 0.5248508715779318
+          }
+        },
+        "recovery_at_10pct": {
+          "random": {
+            "mean": 0.08872448342177934,
+            "median": 0.09407139884667974,
+            "ci95_low": 0.06956151553852703,
+            "ci95_high": 0.10643675351500181
+          },
+          "center": {
+            "mean": 0.06835753667966252,
+            "median": 0.0004789272030651341,
+            "ci95_low": 0.00015964240102171135,
+            "ci95_high": 0.2037911146176239
+          },
+          "visual-loo": {
+            "mean": 0.4673312245786947,
+            "median": 0.35790229885057473,
+            "ci95_low": 0.25024645916742,
+            "ci95_high": 0.7209048825062853
+          },
+          "ifr-span": {
+            "mean": 0.3569828710098732,
+            "median": 0.3112244897959183,
+            "ci95_low": 0.22463102508212376,
+            "ci95_high": 0.5269274376417233
+          },
+          "visual-ig": {
+            "mean": 0.12911016681116066,
+            "median": 0.1054421768707483,
+            "ci95_low": 0.0783137732970418,
+            "ci95_high": 0.191921768707483
+          },
+          "attnlrp": {
+            "mean": 0.42017676464556386,
+            "median": 0.4344517468004151,
+            "ci95_low": 0.2588208777850112,
+            "ci95_high": 0.5871530221283916
+          },
+          "flashtrace": {
+            "mean": 0.42549118751411436,
+            "median": 0.3577097505668934,
+            "ci95_low": 0.2424305121764578,
+            "ci95_high": 0.6185303688330323
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.4115551279281762,
+            "median": 0.3381519274376417,
+            "ci95_low": 0.23403250188964475,
+            "ci95_high": 0.5981190027800197
+          }
+        },
+        "recovery_at_20pct": {
+          "random": {
+            "mean": 0.17558778628825025,
+            "median": 0.18461177574478066,
+            "ci95_low": 0.13733468757273745,
+            "ci95_high": 0.21076297768379096
+          },
+          "center": {
+            "mean": 0.10855461115633235,
+            "median": 0.023946360153256706,
+            "ci95_low": 0.007982120051085569,
+            "ci95_high": 0.2871506807801372
+          },
+          "visual-loo": {
+            "mean": 0.6629486986449372,
+            "median": 0.6502463054187192,
+            "ci95_low": 0.5304378531073447,
+            "ci95_high": 0.8166599785981808
+          },
+          "ifr-span": {
+            "mean": 0.5303161886829272,
+            "median": 0.5070861678004536,
+            "ci95_low": 0.4140055893646342,
+            "ci95_high": 0.6514952269627898
+          },
+          "visual-ig": {
+            "mean": 0.25592025585004874,
+            "median": 0.23254732604652345,
+            "ci95_low": 0.18920979382252065,
+            "ci95_high": 0.33292073144602996
+          },
+          "attnlrp": {
+            "mean": 0.5404035750516551,
+            "median": 0.5615079365079365,
+            "ci95_low": 0.38537050361924446,
+            "ci95_high": 0.6863340467273051
+          },
+          "flashtrace": {
+            "mean": 0.5616931559174088,
+            "median": 0.5515873015873016,
+            "ci95_low": 0.4239871548085419,
+            "ci95_high": 0.6994019279774374
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.5589090964069974,
+            "median": 0.5354308390022675,
+            "ci95_low": 0.4273099204811719,
+            "ci95_high": 0.6952998648644471
+          }
+        }
+      },
+      "flashtrace_minus_baseline": {
+        "pointing_game": {
+          "random": {
+            "mean": 0.8333333333333334,
+            "median": 1.0,
+            "ci95_low": 0.5,
+            "ci95_high": 1.0,
+            "wins": 5,
+            "ties": 1,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.75,
+            "median": 1.0,
+            "ci95_low": 0.4166666666666667,
+            "ci95_high": 1.0,
+            "wins": 5,
+            "ties": 1,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.16666666666666666,
+            "median": 0.0,
+            "ci95_low": -0.3333333333333333,
+            "ci95_high": 0.6666666666666666,
+            "wins": 2,
+            "ties": 3,
+            "losses": 1
+          },
+          "ifr-span": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 6,
+            "losses": 0
+          },
+          "visual-ig": {
+            "mean": 0.8333333333333334,
+            "median": 1.0,
+            "ci95_low": 0.5,
+            "ci95_high": 1.0,
+            "wins": 5,
+            "ties": 1,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 6,
+            "losses": 0
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0,
+            "median": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 6,
+            "losses": 0
+          }
+        },
+        "energy_in_mask": {
+          "random": {
+            "mean": 0.19563910639242052,
+            "median": 0.20771887242429818,
+            "ci95_low": 0.11721518313028127,
+            "ci95_high": 0.2629784111507661,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.2273389395495392,
+            "median": 0.22563012277378178,
+            "ci95_low": 0.15939561806336225,
+            "ci95_high": 0.29517353434487653,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.03643025139851801,
+            "median": 0.03219573651864406,
+            "ci95_low": -0.0786004269474871,
+            "ci95_high": 0.14404824409438624,
+            "wins": 3,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.03125334176116072,
+            "median": 0.02135578579432701,
+            "ci95_low": 0.0017974285266704054,
+            "ci95_high": 0.06910280051231642,
+            "wins": 5,
+            "ties": 0,
+            "losses": 1
+          },
+          "visual-ig": {
+            "mean": 0.19839208926161442,
+            "median": 0.19116333785835177,
+            "ci95_low": 0.1322269754970999,
+            "ci95_high": 0.2679927310440087,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.054441274813681585,
+            "median": -0.0548875207018628,
+            "ci95_low": -0.10029850895660637,
+            "ci95_high": -0.009346120091640287,
+            "wins": 2,
+            "ties": 0,
+            "losses": 4
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0021008810409698514,
+            "median": 0.005332771918551735,
+            "ci95_low": -0.013659516420615908,
+            "ci95_high": 0.01642374938671905,
+            "wins": 4,
+            "ties": 0,
+            "losses": 2
+          }
+        },
+        "evidence_rank_auc": {
+          "random": {
+            "mean": 0.2801531547623662,
+            "median": 0.27480360445710095,
+            "ci95_low": 0.1866405732932572,
+            "ci95_high": 0.3728995222627846,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.3142745953593631,
+            "median": 0.2884921647724666,
+            "ci95_low": 0.20263609381353453,
+            "ci95_high": 0.426560269890132,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.07922754704886315,
+            "median": 0.09654682773581996,
+            "ci95_low": -0.03747099914916143,
+            "ci95_high": 0.1770279090656721,
+            "wins": 5,
+            "ties": 0,
+            "losses": 1
+          },
+          "ifr-span": {
+            "mean": 0.01949212322217042,
+            "median": 0.01191511186337979,
+            "ci95_low": -0.00122141571941962,
+            "ci95_high": 0.04450016820088171,
+            "wins": 5,
+            "ties": 0,
+            "losses": 1
+          },
+          "visual-ig": {
+            "mean": 0.28201710439352595,
+            "median": 0.27435723817980695,
+            "ci95_low": 0.19854043123267673,
+            "ci95_high": 0.3654937775543752,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.09877449182160046,
+            "median": 0.1286922653675272,
+            "ci95_low": 0.040760240506944635,
+            "ci95_high": 0.14033522454452588,
+            "wins": 5,
+            "ties": 0,
+            "losses": 1
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0010592108530257938,
+            "median": 0.0033167815176493587,
+            "ci95_low": -0.009187574702263798,
+            "ci95_high": 0.008468682904345251,
+            "wins": 5,
+            "ties": 0,
+            "losses": 1
+          }
+        },
+        "top_evidence_iou": {
+          "random": {
+            "mean": 0.11885683949110208,
+            "median": 0.10395400411760129,
+            "ci95_low": 0.061633772847765646,
+            "ci95_high": 0.17679419184872425,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.13629841675742807,
+            "median": 0.13797237765371573,
+            "ci95_low": 0.10457174923845969,
+            "ci95_high": 0.171090410539044,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.05629249049088173,
+            "median": -0.042823464291282316,
+            "ci95_low": -0.22797435843088784,
+            "ci95_high": 0.11186496261155736,
+            "wins": 3,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.026727794858537282,
+            "median": 0.015227780868994394,
+            "ci95_low": -0.001151544613566607,
+            "ci95_high": 0.060348949876083934,
+            "wins": 4,
+            "ties": 0,
+            "losses": 2
+          },
+          "visual-ig": {
+            "mean": 0.09582780241343287,
+            "median": 0.08343487061649324,
+            "ci95_low": 0.048389435833489224,
+            "ci95_high": 0.1499037610792606,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.016384505076491637,
+            "median": -0.02926713323692312,
+            "ci95_low": -0.04669329423604526,
+            "ci95_high": 0.020971556996814692,
+            "wins": 2,
+            "ties": 0,
+            "losses": 4
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.0036184932793258523,
+            "median": -0.00015636548156154617,
+            "ci95_low": -0.006161502235633012,
+            "ci95_high": 0.01740252623100844,
+            "wins": 2,
+            "ties": 1,
+            "losses": 3
+          }
+        },
+        "recovery_at_1pct": {
+          "random": {
+            "mean": 0.1735217660534255,
+            "median": 0.10629251700680273,
+            "ci95_low": 0.045290962827078396,
+            "ci95_high": 0.3122948614474038,
+            "wins": 5,
+            "ties": 0,
+            "losses": 1
+          },
+          "center": {
+            "mean": 0.1559186950959853,
+            "median": 0.10629251700680273,
+            "ci95_low": 0.053915715840772566,
+            "ci95_high": 0.2865661264823329,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.13281326979052163,
+            "median": -0.05472223759709229,
+            "ci95_low": -0.4194194627003343,
+            "ci95_high": 0.14206998859757938,
+            "wins": 3,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.04423917634088486,
+            "median": 0.022959183673469392,
+            "ci95_low": 0.005340900405105862,
+            "ci95_high": 0.09217254698489565,
+            "wins": 4,
+            "ties": 1,
+            "losses": 1
+          },
+          "visual-ig": {
+            "mean": 0.14764708237307403,
+            "median": 0.0977891156462585,
+            "ci95_low": 0.04577505159367118,
+            "ci95_high": 0.26012460211660365,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": -0.010594290251249791,
+            "median": -0.004815409309791332,
+            "ci95_low": -0.07593830635702556,
+            "ci95_high": 0.047446097082900957,
+            "wins": 2,
+            "ties": 1,
+            "losses": 3
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.01784726459618317,
+            "median": 0.0,
+            "ci95_low": -0.001605136436597111,
+            "ci95_high": 0.05254813789922749,
+            "wins": 2,
+            "ties": 3,
+            "losses": 1
+          }
+        },
+        "recovery_at_5pct": {
+          "random": {
+            "mean": 0.2859185343899179,
+            "median": 0.1636432350718065,
+            "ci95_low": 0.0862158774282167,
+            "ci95_high": 0.5034178015211106,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.2807805991049061,
+            "median": 0.22647392290249435,
+            "ci95_low": 0.12872525780728583,
+            "ci95_high": 0.48181273609763425,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": 0.01605993365342746,
+            "median": 0.0030718990424530926,
+            "ci95_low": -0.30831087870164636,
+            "ci95_high": 0.3404307460085014,
+            "wins": 3,
+            "ties": 0,
+            "losses": 3
+          },
+          "ifr-span": {
+            "mean": 0.06218239942252634,
+            "median": 0.006568144499178981,
+            "ci95_low": -0.008014700132926727,
+            "ci95_high": 0.1780894090216124,
+            "wins": 3,
+            "ties": 2,
+            "losses": 1
+          },
+          "visual-ig": {
+            "mean": 0.2515624606864324,
+            "median": 0.15334467120181405,
+            "ci95_low": 0.07485061483373323,
+            "ci95_high": 0.43600125549278096,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.0009393946347545599,
+            "median": -0.008025682182985553,
+            "ci95_low": -0.052243369257815454,
+            "ci95_high": 0.0670119271814187,
+            "wins": 2,
+            "ties": 1,
+            "losses": 3
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.007183672893605692,
+            "median": 0.0,
+            "ci95_low": -0.008093624466016117,
+            "ci95_high": 0.027313373560346913,
+            "wins": 2,
+            "ties": 2,
+            "losses": 2
+          }
+        },
+        "recovery_at_10pct": {
+          "random": {
+            "mean": 0.33676670409233506,
+            "median": 0.25217309145880573,
+            "ci95_low": 0.14729037682488724,
+            "ci95_high": 0.5387887483932682,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.35713365083445187,
+            "median": 0.33275683154617774,
+            "ci95_low": 0.22131808865452376,
+            "ci95_high": 0.5288333724294315,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.04184003706458026,
+            "median": -0.10129886902455675,
+            "ci95_low": -0.36672169405882804,
+            "ci95_high": 0.28304161992966753,
+            "wins": 2,
+            "ties": 0,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.06850831650424127,
+            "median": 0.018707482993197272,
+            "ci95_low": -0.0009189047352549801,
+            "ci95_high": 0.18177633947419292,
+            "wins": 3,
+            "ties": 1,
+            "losses": 2
+          },
+          "visual-ig": {
+            "mean": 0.29638102070295375,
+            "median": 0.2522675736961451,
+            "ci95_low": 0.11958669127817301,
+            "ci95_high": 0.4846618658678266,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.005314422868550504,
+            "median": 0.0,
+            "ci95_low": -0.07535577449370551,
+            "ci95_high": 0.09687950594444596,
+            "wins": 2,
+            "ties": 2,
+            "losses": 2
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.01393605958593814,
+            "median": 0.0075944170771757025,
+            "ci95_low": -0.0006788005141356487,
+            "ci95_high": 0.0305579306565515,
+            "wins": 4,
+            "ties": 1,
+            "losses": 1
+          }
+        },
+        "recovery_at_20pct": {
+          "random": {
+            "mean": 0.3861053696291585,
+            "median": 0.3360733182161753,
+            "ci95_low": 0.22318065013541108,
+            "ci95_high": 0.5508662473149962,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "center": {
+            "mean": 0.45313854476107646,
+            "median": 0.4329501915708812,
+            "ci95_low": 0.3109021579403247,
+            "ci95_high": 0.601235315218366,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "visual-loo": {
+            "mean": -0.10125554272752836,
+            "median": -0.16325344550838544,
+            "ci95_low": -0.25869594964422554,
+            "ci95_high": 0.08851273226868352,
+            "wins": 2,
+            "ties": 0,
+            "losses": 4
+          },
+          "ifr-span": {
+            "mean": 0.03137696723448157,
+            "median": 0.035948862303542106,
+            "ci95_low": -0.003625357758584099,
+            "ci95_high": 0.06543908231517812,
+            "wins": 4,
+            "ties": 1,
+            "losses": 1
+          },
+          "visual-ig": {
+            "mean": 0.3057729000673601,
+            "median": 0.28268140589569163,
+            "ci95_low": 0.16241775908779285,
+            "ci95_high": 0.4634756910035573,
+            "wins": 6,
+            "ties": 0,
+            "losses": 0
+          },
+          "attnlrp": {
+            "mean": 0.021289580865753527,
+            "median": 0.03754235776707687,
+            "ci95_low": -0.021612864871291864,
+            "ci95_high": 0.06475428212716344,
+            "wins": 4,
+            "ties": 0,
+            "losses": 2
+          },
+          "flashtrace-all-gen": {
+            "mean": 0.002784059510411413,
+            "median": 0.005952380952380931,
+            "ci95_low": -0.014255140258350535,
+            "ci95_high": 0.015472280866369537,
+            "wins": 3,
+            "ties": 2,
+            "losses": 1
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2085 @@
+{
+  "schema_version": 1,
+  "complete": true,
+  "protocol_violations": 0,
+  "incomplete_checks": 0,
+  "passed_checks": 189,
+  "total_checks": 189,
+  "checks": [
+    {
+      "name": "protocol: file",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/protocol.json"
+    },
+    {
+      "name": "protocol: exact v2 frozen scope",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "protocol: schema v2",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "protocol: revision",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "protocol: frozen eight methods",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "protocol: faithfulness budget",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "protocol: caveat-only 10% manual audit",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "wiki_visa_n120: dataset",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120.dataset.jsonl"
+    },
+    {
+      "name": "wiki_visa_n120: model",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120.model.jsonl"
+    },
+    {
+      "name": "wiki_visa_n120: generation evaluation",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120.generation_eval.jsonl"
+    },
+    {
+      "name": "wiki_visa_n120: exact sample count",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 120
+    },
+    {
+      "name": "wiki_visa_n120: unique IDs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "dataset": [],
+        "model": [],
+        "evaluation": []
+      }
+    },
+    {
+      "name": "wiki_visa_n120: artifact ID joins",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "dataset": 120,
+        "model": 120,
+        "evaluation": 120
+      }
+    },
+    {
+      "name": "wiki_visa_n120: exact frozen inputs, generation config, and hard gates",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "wiki_visa_n120: separated raw ablation provenance reproduces gates",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "paths": [
+          "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_candidates.ablation.model.jsonl",
+          "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_candidates_extension_seed31_n600.ablation.model.jsonl",
+          "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600.ablation.model.jsonl"
+        ],
+        "issues": []
+      }
+    },
+    {
+      "name": "wiki_visa_n120: benchmark",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "wiki_visa_n120: every row strict eligible",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 120
+    },
+    {
+      "name": "wiki_visa_n120: frozen model revision",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+      ]
+    },
+    {
+      "name": "wiki_visa_n120: disjoint from pilots",
+      "passed": true,
+      "failure_kind": null,
+      "detail": []
+    },
+    {
+      "name": "wiki_visa_n120: balanced Wiki strata",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "first_page_passage": 40,
+        "later_page_passage": 40,
+        "non_passage": 40
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: dataset",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.dataset.jsonl"
+    },
+    {
+      "name": "vizwiz_lf_n100: model",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.model.jsonl"
+    },
+    {
+      "name": "vizwiz_lf_n100: generation evaluation",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.generation_eval.jsonl"
+    },
+    {
+      "name": "vizwiz_lf_n100: exact sample count",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 100
+    },
+    {
+      "name": "vizwiz_lf_n100: unique IDs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "dataset": [],
+        "model": [],
+        "evaluation": []
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: artifact ID joins",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "dataset": 100,
+        "model": 100,
+        "evaluation": 100
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: exact frozen inputs, generation config, and hard gates",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: separated raw ablation provenance reproduces gates",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "paths": [
+          "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.ablation.model.jsonl"
+        ],
+        "issues": []
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: benchmark",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "vizwiz_lf_n100: every row strict eligible",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 100
+    },
+    {
+      "name": "vizwiz_lf_n100: frozen model revision",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "92f3c4b4feadd3a016ef468d103bb5f58b2a2c6b"
+      ]
+    },
+    {
+      "name": "vizwiz_lf_n100: disjoint from pilots",
+      "passed": true,
+      "failure_kind": null,
+      "detail": []
+    },
+    {
+      "name": "vizwiz_lf_n100: output-length terciles recorded",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "long": 33,
+        "medium": 33,
+        "short": 34
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: question types recorded",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "Description": 27,
+        "Identification": 29,
+        "Others": 21,
+        "Reading": 23
+      }
+    },
+    {
+      "name": "frozen IDs: artifact",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/frozen_ids.json"
+    },
+    {
+      "name": "frozen IDs: exact protocol metadata",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "frozen IDs: Wiki join",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "frozen IDs: VizWiz join",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "frozen input hashes: artifact",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/frozen_input_hashes.json"
+    },
+    {
+      "name": "frozen input hashes: schema and exact formal manifests",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "manifests": [
+          "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.dataset.jsonl",
+          "evaluations/multimodal/results/strict/formal/wiki_visa_n120.dataset.jsonl"
+        ]
+      }
+    },
+    {
+      "name": "frozen input hashes: wiki_visa_n120.dataset",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "expected_samples": 120,
+        "hashed_samples": 120,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "frozen input hashes: vizwiz_lf_n100.dataset",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "expected_samples": 100,
+        "hashed_samples": 100,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "frozen response hashes: artifact",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/frozen_response_hashes.json"
+    },
+    {
+      "name": "frozen response hashes: schema and exact formal model outputs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "model_outputs": [
+          "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.model.jsonl",
+          "evaluations/multimodal/results/strict/formal/wiki_visa_n120.model.jsonl"
+        ]
+      }
+    },
+    {
+      "name": "frozen response hashes: wiki_visa_n120.model",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "expected_samples": 120,
+        "hashed_samples": 120,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "frozen response hashes: vizwiz_lf_n100.model",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "expected_samples": 100,
+        "hashed_samples": 100,
+        "mismatches": []
+      }
+    },
+    {
+      "name": "gate funnel: wiki_visa_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_funnel.json"
+    },
+    {
+      "name": "gate funnel conserves stage populations: wiki_visa_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "gate funnel reaches frozen n: wiki_visa_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "frozen_sample_count": 120,
+        "last_stage": {
+          "stage": "unique_image_and_fixed_seed_freeze",
+          "passed": 120,
+          "eliminated_at_stage": 60
+        }
+      }
+    },
+    {
+      "name": "gate funnel has typed marginal counts: wiki_visa_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "gate funnel fully evaluates every reached gate: wiki_visa_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "thinking_closed": 0,
+        "generated_teacher_forced_ids_match": 0,
+        "generation_stable": 0,
+        "whole_output_correct": 0,
+        "positive_blur_logprob_drop": 0,
+        "generation_ablation_changes_output": 0
+      }
+    },
+    {
+      "name": "gate funnel: vizwiz_lf_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_funnel.json"
+    },
+    {
+      "name": "gate funnel conserves stage populations: vizwiz_lf_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "gate funnel reaches frozen n: vizwiz_lf_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "frozen_sample_count": 100,
+        "last_stage": {
+          "stage": "unique_image_and_fixed_seed_freeze",
+          "passed": 100,
+          "eliminated_at_stage": 44
+        }
+      }
+    },
+    {
+      "name": "gate funnel has typed marginal counts: vizwiz_lf_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "gate funnel fully evaluates every reached gate: vizwiz_lf_funnel.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "thinking_closed": 0,
+        "generated_teacher_forced_ids_match": 0,
+        "thinking_within_token_limit": 0,
+        "output_meets_min_tokens": 0,
+        "output_non_refusal": 0,
+        "generation_stable": 0,
+        "positive_blur_logprob_drop": 0,
+        "generation_ablation_changes_output": 0
+      }
+    },
+    {
+      "name": "E1 Wiki: fixed-seed selection and funnel exactly replay candidates",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": [],
+        "missing": []
+      }
+    },
+    {
+      "name": "E2 VizWiz: fixed-seed selection and funnel exactly replay candidates",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": [],
+        "missing": []
+      }
+    },
+    {
+      "name": "E3 Wiki: attribution summary",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/summary.json"
+    },
+    {
+      "name": "E3 Wiki: attribution records",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/attribution_records.jsonl"
+    },
+    {
+      "name": "E3 Wiki: exact frozen input and model provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 Wiki: frozen eight methods",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "attnlrp",
+        "center",
+        "flashtrace",
+        "flashtrace-all-gen",
+        "ifr-span",
+        "random",
+        "visual-ig",
+        "visual-loo"
+      ]
+    },
+    {
+      "name": "E3 Wiki: common success equals frozen set",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "common": 120,
+        "expected": 120
+      }
+    },
+    {
+      "name": "E3 Wiki: no duplicate successful pairs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 Wiki: complete successful matrix",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "successful_pairs": 960,
+        "expected_pairs": 960
+      }
+    },
+    {
+      "name": "E3 Wiki: nearest whole-patch protocol",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 Wiki: native grid resolution disclosed",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "flashtrace": {
+          "88x22": 120
+        },
+        "flashtrace-all-gen": {
+          "88x22": 120
+        },
+        "center": {
+          "32x32": 120
+        },
+        "random": {
+          "32x32": 120
+        },
+        "visual-ig": {
+          "88x22": 120
+        },
+        "visual-loo": {
+          "4x4": 120
+        },
+        "ifr-span": {
+          "88x22": 120
+        },
+        "attnlrp": {
+          "88x22": 120
+        }
+      }
+    },
+    {
+      "name": "E3 Wiki: learned methods share native grid per sample",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {}
+    },
+    {
+      "name": "E3 Wiki: formal timing and VRAM evidence complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 Wiki: finite native attribution grids and localization values",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 Wiki: localization metrics present",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 960
+    },
+    {
+      "name": "E4 VizWiz maps: attribution summary",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/summary.json"
+    },
+    {
+      "name": "E4 VizWiz maps: attribution records",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/attribution_records.jsonl"
+    },
+    {
+      "name": "E4 VizWiz maps: exact frozen input and model provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz maps: frozen eight methods",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "attnlrp",
+        "center",
+        "flashtrace",
+        "flashtrace-all-gen",
+        "ifr-span",
+        "random",
+        "visual-ig",
+        "visual-loo"
+      ]
+    },
+    {
+      "name": "E4 VizWiz maps: common success equals frozen set",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "common": 100,
+        "expected": 100
+      }
+    },
+    {
+      "name": "E4 VizWiz maps: no duplicate successful pairs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz maps: complete successful matrix",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "successful_pairs": 800,
+        "expected_pairs": 800
+      }
+    },
+    {
+      "name": "E4 VizWiz maps: nearest whole-patch protocol",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz maps: native grid resolution disclosed",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "flashtrace": {
+          "14x14": 1,
+          "17x13": 10,
+          "20x15": 1,
+          "22x30": 4,
+          "26x19": 2,
+          "32x24": 3,
+          "38x51": 3,
+          "40x30": 33,
+          "51x38": 43
+        },
+        "flashtrace-all-gen": {
+          "14x14": 1,
+          "17x13": 10,
+          "20x15": 1,
+          "22x30": 4,
+          "26x19": 2,
+          "32x24": 3,
+          "38x51": 3,
+          "40x30": 33,
+          "51x38": 43
+        },
+        "center": {
+          "32x32": 100
+        },
+        "random": {
+          "32x32": 100
+        },
+        "visual-ig": {
+          "14x14": 1,
+          "17x13": 10,
+          "20x15": 1,
+          "22x30": 4,
+          "26x19": 2,
+          "32x24": 3,
+          "38x51": 3,
+          "40x30": 33,
+          "51x38": 43
+        },
+        "visual-loo": {
+          "4x4": 100
+        },
+        "ifr-span": {
+          "14x14": 1,
+          "17x13": 10,
+          "20x15": 1,
+          "22x30": 4,
+          "26x19": 2,
+          "32x24": 3,
+          "38x51": 3,
+          "40x30": 33,
+          "51x38": 43
+        },
+        "attnlrp": {
+          "14x14": 1,
+          "17x13": 10,
+          "20x15": 1,
+          "22x30": 4,
+          "26x19": 2,
+          "32x24": 3,
+          "38x51": 3,
+          "40x30": 33,
+          "51x38": 43
+        }
+      }
+    },
+    {
+      "name": "E4 VizWiz maps: learned methods share native grid per sample",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {}
+    },
+    {
+      "name": "E4 VizWiz maps: formal timing and VRAM evidence complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz maps: finite native attribution grids and localization values",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz: faithfulness summary",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/summary.json"
+    },
+    {
+      "name": "E4 VizWiz: faithfulness records",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/faithfulness_records.jsonl"
+    },
+    {
+      "name": "E4 VizWiz: exact frozen input and model provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz: frozen eight methods",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "attnlrp",
+        "center",
+        "flashtrace",
+        "flashtrace-all-gen",
+        "ifr-span",
+        "random",
+        "visual-ig",
+        "visual-loo"
+      ]
+    },
+    {
+      "name": "E4 VizWiz: common success equals frozen set",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "common": 100,
+        "expected": 100
+      }
+    },
+    {
+      "name": "E4 VizWiz: 64-region/10-step budget",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "target_regions": 64,
+        "steps": 10
+      }
+    },
+    {
+      "name": "E4 VizWiz: complete successful matrix",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "successful_pairs": 800,
+        "expected_pairs": 800
+      }
+    },
+    {
+      "name": "E4 VizWiz: common perturbation resolution disclosed",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "flashtrace": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "flashtrace-all-gen": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "center": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "random": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "visual-ig": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "visual-loo": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "ifr-span": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        },
+        "attnlrp": {
+          "7x9": 7,
+          "8x8": 1,
+          "9x7": 92
+        }
+      }
+    },
+    {
+      "name": "E4 VizWiz: methods share perturbation layout per sample",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {}
+    },
+    {
+      "name": "E4 VizWiz: curves, degenerate counts, and sign sensitivity saved",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4 VizWiz: exact 10-step curve protocol and shared frozen endpoints",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "valid_endpoint_samples": 100,
+        "expected_endpoint_samples": 100,
+        "curve_protocol_failures": [],
+        "endpoint_mismatches": {}
+      }
+    },
+    {
+      "name": "E4 VizWiz: formal perturbation timing evidence complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E5 Wiki: faithfulness summary",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/summary.json"
+    },
+    {
+      "name": "E5 Wiki: faithfulness records",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/faithfulness_records.jsonl"
+    },
+    {
+      "name": "E5 Wiki: exact frozen input and model provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E5 Wiki: frozen eight methods",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "attnlrp",
+        "center",
+        "flashtrace",
+        "flashtrace-all-gen",
+        "ifr-span",
+        "random",
+        "visual-ig",
+        "visual-loo"
+      ]
+    },
+    {
+      "name": "E5 Wiki: common success equals frozen set",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "common": 120,
+        "expected": 120
+      }
+    },
+    {
+      "name": "E5 Wiki: 64-region/10-step budget",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "target_regions": 64,
+        "steps": 10
+      }
+    },
+    {
+      "name": "E5 Wiki: complete successful matrix",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "successful_pairs": 960,
+        "expected_pairs": 960
+      }
+    },
+    {
+      "name": "E5 Wiki: common perturbation resolution disclosed",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "flashtrace": {
+          "16x4": 120
+        },
+        "flashtrace-all-gen": {
+          "16x4": 120
+        },
+        "center": {
+          "16x4": 120
+        },
+        "random": {
+          "16x4": 120
+        },
+        "visual-ig": {
+          "16x4": 120
+        },
+        "visual-loo": {
+          "16x4": 120
+        },
+        "ifr-span": {
+          "16x4": 120
+        },
+        "attnlrp": {
+          "16x4": 120
+        }
+      }
+    },
+    {
+      "name": "E5 Wiki: methods share perturbation layout per sample",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {}
+    },
+    {
+      "name": "E5 Wiki: curves, degenerate counts, and sign sensitivity saved",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E5 Wiki: exact 10-step curve protocol and shared frozen endpoints",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "valid_endpoint_samples": 120,
+        "expected_endpoint_samples": 120,
+        "curve_protocol_failures": [],
+        "endpoint_mismatches": {}
+      }
+    },
+    {
+      "name": "E5 Wiki: formal perturbation timing evidence complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "wiki_visa_n120: deterministic protocol review packet is reproducible",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "missing": [],
+        "issues": []
+      }
+    },
+    {
+      "name": "wiki_visa_n120: protocol manual audit",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120.protocol_audit_summary.json"
+    },
+    {
+      "name": "wiki_visa_n120: deterministic 10% protocol review complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "schema_version": 1,
+        "benchmark": "wiki_visa",
+        "complete": true,
+        "audit_seed": 17,
+        "audit_fraction": 0.1,
+        "frozen_sample_count": 120,
+        "reviewed_count": 12,
+        "audit_sample_ids": [
+          "wiki-visa-0567",
+          "wiki-visa-0872",
+          "wiki-visa-0908",
+          "wiki-visa-0931",
+          "wiki-visa-1095",
+          "wiki-visa-1187",
+          "wiki-visa-1608",
+          "wiki-visa-1744",
+          "wiki-visa-2112",
+          "wiki-visa-2270",
+          "wiki-visa-2545",
+          "wiki-visa-2620"
+        ],
+        "image_dependence_counts": {
+          "borderline": 1,
+          "supported": 11
+        },
+        "thinking_quality_counts": {
+          "good": 11,
+          "mixed": 1
+        },
+        "selection_effect": "caveat_only_no_frozen_id_changes"
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: deterministic protocol review packet is reproducible",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "missing": [],
+        "issues": []
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: protocol manual audit",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.protocol_audit_summary.json"
+    },
+    {
+      "name": "vizwiz_lf_n100: deterministic 10% protocol review complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "schema_version": 1,
+        "benchmark": "vizwiz_lf",
+        "complete": true,
+        "audit_seed": 17,
+        "audit_fraction": 0.1,
+        "frozen_sample_count": 100,
+        "reviewed_count": 10,
+        "audit_sample_ids": [
+          "vizwiz-lf-116",
+          "vizwiz-lf-186",
+          "vizwiz-lf-191",
+          "vizwiz-lf-220",
+          "vizwiz-lf-277",
+          "vizwiz-lf-362",
+          "vizwiz-lf-378",
+          "vizwiz-lf-484",
+          "vizwiz-lf-524",
+          "vizwiz-lf-589"
+        ],
+        "image_dependence_counts": {
+          "borderline": 1,
+          "supported": 8,
+          "unsupported": 1
+        },
+        "thinking_quality_counts": {
+          "good": 6,
+          "mixed": 3,
+          "poor": 1
+        },
+        "selection_effect": "caveat_only_no_frozen_id_changes"
+      }
+    },
+    {
+      "name": "A5 localization: paired n=120 and 50k bootstrap",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 localization: all registered metrics and methods",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E3 localization: three balanced stratum analyses",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A5 localization: primary paired deltas and W/T/L",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A5 localization: exact sample partition and complete finite statistics",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A2 Wiki: cosine, recursive mass, and 50k bootstrap",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A3/A4 Wiki: complete method geometry and signed diagnostics",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A2–A4 Wiki: exact sample IDs, buckets, and finite diagnostics",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A1 Wiki: recursion gain in all THINKING buckets",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A3 Wiki: GT centroid distance by stratum",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A2 VizWiz: cosine, recursive mass, and 50k bootstrap",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A3/A4 VizWiz: complete method geometry and signed diagnostics",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A2–A4 VizWiz: exact sample IDs, buckets, and finite diagnostics",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4/E5 Wiki: paired faithfulness analysis and 50k bootstrap",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A4 Wiki: complete positive-only ordering sensitivity",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A1 Wiki: faithfulness recursion in all THINKING buckets",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4/E5 Wiki: exact paired IDs, finite intervals, and W/T/L",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4/E5 VizWiz: paired faithfulness analysis and 50k bootstrap",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A4 VizWiz: complete positive-only ordering sensitivity",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A1 VizWiz: faithfulness recursion in all THINKING buckets",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "E4/E5 VizWiz: exact paired IDs, finite intervals, and W/T/L",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A8 VizWiz: fully-correct paired sensitivity",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "samples": 58,
+        "reviewed_evaluation_ready": true,
+        "recorded_generation_evaluation": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.reviewed.generation_eval.jsonl"
+      }
+    },
+    {
+      "name": "E2 VizWiz: response-identical preview ablation provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.preview_ablation_reuse.json"
+    },
+    {
+      "name": "E2 VizWiz: preview ablation identity and record accounting",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "overlap": 40,
+        "identity_matched": 38,
+        "identity_mismatched": 2,
+        "reusable": 28,
+        "reused": 28,
+        "provenance_records": 28
+      }
+    },
+    {
+      "name": "wiki_visa_n120: response-identical preview checkpoint provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120.preview_reuse.json"
+    },
+    {
+      "name": "wiki_visa_n120: preview reuse identity and pair accounting",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "matched_samples": 14,
+        "expected_pairs": 112,
+        "attribution_pairs": 112,
+        "faithfulness_pairs": 112,
+        "mismatched": []
+      }
+    },
+    {
+      "name": "vizwiz_lf_n100: response-identical preview checkpoint provenance",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.preview_reuse.json"
+    },
+    {
+      "name": "vizwiz_lf_n100: preview reuse identity and pair accounting",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "matched_samples": 16,
+        "expected_pairs": 128,
+        "attribution_pairs": 128,
+        "faithfulness_pairs": 128,
+        "mismatched": []
+      }
+    },
+    {
+      "name": "analysis/report: analysis.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/analysis.json"
+    },
+    {
+      "name": "analysis/report: diagnostics.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/diagnostics.json"
+    },
+    {
+      "name": "analysis/report: diagnostics.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/diagnostics.json"
+    },
+    {
+      "name": "analysis/report: analysis.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/analysis.json"
+    },
+    {
+      "name": "analysis/report: analysis.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/analysis.json"
+    },
+    {
+      "name": "analysis/report: vizwiz_lf_n100.semantic_summary.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_summary.json"
+    },
+    {
+      "name": "analysis/report: A6_LEGACY_DIAGNOSTICS.json",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/A6_LEGACY_DIAGNOSTICS.json"
+    },
+    {
+      "name": "analysis/report: RESULTS.md",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/RESULTS.md"
+    },
+    {
+      "name": "analysis/report: COMPUTE_BUDGET.md",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/COMPUTE_BUDGET.md"
+    },
+    {
+      "name": "paper table: visual_localization_rows.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/paper/generated/visual_localization_rows.tex"
+    },
+    {
+      "name": "paper table populated: visual_localization_rows.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper table: visual_faithfulness_rows.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/paper/generated/visual_faithfulness_rows.tex"
+    },
+    {
+      "name": "paper table populated: visual_faithfulness_rows.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper table: visual_appendix_results.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/paper/generated/visual_appendix_results.tex"
+    },
+    {
+      "name": "paper table populated: visual_appendix_results.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper table: visual_results_discussion.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/paper/generated/visual_results_discussion.tex"
+    },
+    {
+      "name": "paper table populated: visual_results_discussion.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper integration: main.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/paper/main.tex"
+    },
+    {
+      "name": "paper integration: frozen visual protocol in main text",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper integration: visual limitations preserve frozen scope",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper integration: appendix.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/paper/appendix.tex"
+    },
+    {
+      "name": "paper integration: retained diagnostics and formal appendix hook",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper generated coverage: visual_localization_rows.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper main localization table has eight four-metric rows",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper generated coverage: visual_faithfulness_rows.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper main faithfulness panel excludes cost-insensitive rows",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper main faithfulness table has three three-metric rows",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper generated coverage: visual_appendix_results.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper generated coverage: visual_results_discussion.tex",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "paper generated primary artifacts exactly match analysis payloads",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "mismatched": []
+      }
+    },
+    {
+      "name": "RESULTS: complete E1–E5/A1–A8 and disclosure sections",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "RESULTS and all paper fragments exactly match deterministic renderer",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "mismatched": []
+      }
+    },
+    {
+      "name": "A8: semantic judgment tasks exactly replay frozen inputs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "missing": [],
+        "issues": []
+      }
+    },
+    {
+      "name": "A8: complete LLM semantic judgments",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_judgments.llm.jsonl"
+    },
+    {
+      "name": "A8: LLM semantic judgment IDs and labels",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "rows": 100,
+        "missing": [],
+        "extra": [],
+        "duplicates": []
+      }
+    },
+    {
+      "name": "A8: deterministic human audit packet",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.human_audit.md"
+    },
+    {
+      "name": "A8: human audit packet contains all deterministic samples",
+      "passed": true,
+      "failure_kind": null,
+      "detail": [
+        "vizwiz-lf-066",
+        "vizwiz-lf-102",
+        "vizwiz-lf-111",
+        "vizwiz-lf-197",
+        "vizwiz-lf-204",
+        "vizwiz-lf-298",
+        "vizwiz-lf-301",
+        "vizwiz-lf-323",
+        "vizwiz-lf-449",
+        "vizwiz-lf-516"
+      ]
+    },
+    {
+      "name": "A8: 10% human semantic reviews",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.human_reviews.jsonl"
+    },
+    {
+      "name": "A8: deterministic semantic human packet is reproducible",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "issues": []
+      }
+    },
+    {
+      "name": "A8: deterministic 10% human semantic review complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "expected_ids": [
+          "vizwiz-lf-066",
+          "vizwiz-lf-102",
+          "vizwiz-lf-111",
+          "vizwiz-lf-197",
+          "vizwiz-lf-204",
+          "vizwiz-lf-298",
+          "vizwiz-lf-301",
+          "vizwiz-lf-323",
+          "vizwiz-lf-449",
+          "vizwiz-lf-516"
+        ],
+        "review_ids": [
+          "vizwiz-lf-066",
+          "vizwiz-lf-102",
+          "vizwiz-lf-111",
+          "vizwiz-lf-197",
+          "vizwiz-lf-204",
+          "vizwiz-lf-298",
+          "vizwiz-lf-301",
+          "vizwiz-lf-323",
+          "vizwiz-lf-449",
+          "vizwiz-lf-516"
+        ],
+        "complete_rows": 10
+      }
+    },
+    {
+      "name": "A8: adjudicated semantic judgments",
+      "passed": true,
+      "failure_kind": null,
+      "detail": "/home/v-wenbopan/Repos/flashtrace/evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_judgments.jsonl"
+    },
+    {
+      "name": "A8: adjudication preserves LLM provenance and exact audit IDs",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "rows": 100,
+        "human_ids": [
+          "vizwiz-lf-066",
+          "vizwiz-lf-102",
+          "vizwiz-lf-111",
+          "vizwiz-lf-197",
+          "vizwiz-lf-204",
+          "vizwiz-lf-298",
+          "vizwiz-lf-301",
+          "vizwiz-lf-323",
+          "vizwiz-lf-449",
+          "vizwiz-lf-516"
+        ],
+        "expected_human_ids": [
+          "vizwiz-lf-066",
+          "vizwiz-lf-102",
+          "vizwiz-lf-111",
+          "vizwiz-lf-197",
+          "vizwiz-lf-204",
+          "vizwiz-lf-298",
+          "vizwiz-lf-301",
+          "vizwiz-lf-323",
+          "vizwiz-lf-449",
+          "vizwiz-lf-516"
+        ]
+      }
+    },
+    {
+      "name": "A8: semantic labels and 10% review complete",
+      "passed": true,
+      "failure_kind": null,
+      "detail": {
+        "eligible_samples": 100,
+        "judged_eligible_samples": 100,
+        "label_counts": {
+          "fully": 58,
+          "partial": 22,
+          "wrong": 20
+        },
+        "audit_fraction": 0.1,
+        "audit_seed": 17,
+        "audit_sample_ids": [
+          "vizwiz-lf-066",
+          "vizwiz-lf-102",
+          "vizwiz-lf-111",
+          "vizwiz-lf-197",
+          "vizwiz-lf-204",
+          "vizwiz-lf-298",
+          "vizwiz-lf-301",
+          "vizwiz-lf-323",
+          "vizwiz-lf-449",
+          "vizwiz-lf-516"
+        ],
+        "audit_reviewed": 10,
+        "eligible_missing": [],
+        "audit_missing": [],
+        "complete": true
+      }
+    },
+    {
+      "name": "A6: legacy diagnostics reused without new GPU inference",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "A7: measured preview timing and A100 schedule documented",
+      "passed": true,
+      "failure_kind": null,
+      "detail": null
+    },
+    {
+      "name": "statistics: 50k paired bootstrap (wiki_visa_n120_methods)",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 50000
+    },
+    {
+      "name": "statistics: 50k paired bootstrap (vizwiz_lf_n100_faithfulness)",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 50000
+    },
+    {
+      "name": "statistics: 50k paired bootstrap (wiki_visa_n120_faithfulness)",
+      "passed": true,
+      "failure_kind": null,
+      "detail": 50000
+    }
+  ],
+  "artifact_manifest": [
+    {
+      "path": "evaluations/multimodal/protocol.json",
+      "bytes": 6246,
+      "sha256": "7ee2bc4fc0c498e1dc00a9dbef55a0deaaa2fabf07c71ba00cb4f165f92e425e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/A6_LEGACY_DIAGNOSTICS.json",
+      "bytes": 26856,
+      "sha256": "2b1ce65c6a545353c7d0f1c38b0954ac5eaea0cedf0d525abb2fcbbb00c3c3d2"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/A6_LEGACY_DIAGNOSTICS.md",
+      "bytes": 2274,
+      "sha256": "73763d1db21c812d0afef24e8ed3fb86ab29af9c5f9f843fac3f2a2b338e41c0"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/COMPUTE_BUDGET.md",
+      "bytes": 5789,
+      "sha256": "3f5a0d009bf77d944ba1dbd1ff18a6c2873c4940e813eec8f6455553cb1f50d1"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/RESULTS.md",
+      "bytes": 22575,
+      "sha256": "2ab190b28a6c1559a6d00af1e1cd9618ada2cc5874a0f7e045041a111133016d"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/RUNBOOK.md",
+      "bytes": 19767,
+      "sha256": "45aebfa0ee6358a3810b10848f9fe1492c5bd6fadb5abc8b79f4c034823bacd1"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/frozen_ids.json",
+      "bytes": 37987,
+      "sha256": "7900e1c94720e419b2f131eff22166d99f1f230fb2f52b5c36371630c0670d85"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/frozen_input_hashes.json",
+      "bytes": 91355,
+      "sha256": "7c2cce6de8306fb291221f7100460f680cedf09239d0e9a7e4b9f53079fdf360"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/frozen_response_hashes.json",
+      "bytes": 166069,
+      "sha256": "4eaa753d0900be245124fe92d01fe25e41249f189088f4934941d770a0152b44"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.ablation.model.jsonl",
+      "bytes": 786850,
+      "sha256": "338badc18dae19d08f0e561d56eee1a9b37c047571f64fdedcabe843eb468a3e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.dataset.jsonl",
+      "bytes": 299329,
+      "sha256": "4682147c30d2428041d8faa66615a25bcd0e3f64affff5362c5dde35e3924813"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.generation_eval.jsonl",
+      "bytes": 332581,
+      "sha256": "8107e1bfe78688a683825562372d3ab6483fa6dcaa9c4b456c45084144036f86"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.model.jsonl",
+      "bytes": 1408862,
+      "sha256": "2be5df1d8c550ae347d7a931ec4e16750f5c0cea6b8e83b65961ddad1ceaa872"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.preview_ablation_reuse.json",
+      "bytes": 1244,
+      "sha256": "12b336630ae6f58dfa9c6e80d68c32b5e9f760e2ab53cbf5433fe5b6c4336d31"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_candidates.strict.generation_eval.jsonl",
+      "bytes": 461310,
+      "sha256": "e6788e302afe21f65e29b361cce7cd1829e1142b3832dd642eaf9e3cdf22980f"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_funnel.json",
+      "bytes": 2784,
+      "sha256": "fc0f05e926ba7cda66cac3c5c685c14fcc3db3350a57ab20bd1e8ebe1e9da883"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.dataset.jsonl",
+      "bytes": 159085,
+      "sha256": "9aa9903c5ab3e09cfc3f86ca6770cf06ccc8e903032c717b47c52ce3ea7d36b3"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.generation_eval.jsonl",
+      "bytes": 258533,
+      "sha256": "9cc304ba491b6ecc341a3d6924415a3e596932136c493d3b8cd93761fc3b604a"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.human_audit.md",
+      "bytes": 11513,
+      "sha256": "0acb4d7af83a62b0f667b4521429c818f1ef8c4a899c52fab2b55c0ddda53332"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.human_reviews.jsonl",
+      "bytes": 2725,
+      "sha256": "b9b8198d5855489bedefac3c5108c863cf6a9c633227f4af0fbc0d13df10200d"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.model.jsonl",
+      "bytes": 795081,
+      "sha256": "fdddf6f751aabbfd25d477df84c53376e6edacbbb4fa57f794ea3a2ce1c5001e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.preview_reuse.json",
+      "bytes": 1195,
+      "sha256": "414e3698da0cf077b3cddda58ca9a0ebaf5cb5db0141aa6aeb1d1fa07c553ab0"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.protocol_audit.md",
+      "bytes": 27980,
+      "sha256": "10549bb2dcf395582215a5b6d95371cc7b1031579b14f5491b162b0b9a063a78"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.protocol_audit_summary.json",
+      "bytes": 648,
+      "sha256": "42be1a67a22f8328df510713ad81da3c52505e5f25f97086d7753e99542898f4"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.protocol_reviews.jsonl",
+      "bytes": 2910,
+      "sha256": "f6f8ea7a2f7da21b68e226f5ae7ae1a72a35a3302fccb9e3c402b962b74b081d"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.reviewed.generation_eval.jsonl",
+      "bytes": 292374,
+      "sha256": "bb8c3689b8e13e5bbdf1f6c09938149c4025c5cc016cfcdf373bfb9220fa1167"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_judgments.jsonl",
+      "bytes": 23408,
+      "sha256": "10e920c8ecbf217bcf20f633b891f104797358a397072287b33082e4e15c11ad"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_judgments.llm.jsonl",
+      "bytes": 20119,
+      "sha256": "b74275e302bdc7b226cb98e4752c2341378ba294356680d16dcd1583bfa9eb6c"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_summary.json",
+      "bytes": 517,
+      "sha256": "055e2fcae204693311735205a3f7cfae23a00ad1e399697a6d042e2fa90415f3"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100.semantic_tasks.jsonl",
+      "bytes": 139296,
+      "sha256": "36fc9474e81798cfd74b47bb756986513bb94f377be5a6fed41d0d75aafcb25b"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/analysis.json",
+      "bytes": 42855,
+      "sha256": "df237f6cd7bd62b99f3bb8ced76a877710edc78c8b5ed3d08906c503118b4d5f"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/analysis.md",
+      "bytes": 500,
+      "sha256": "93f3882cfc5cdea91bcbba534aedcf7ed3a0518a06fed8f43b88c37a39b2cc18"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/faithfulness_records.jsonl",
+      "bytes": 4682212,
+      "sha256": "c329c16e7028ce483b5b013a406a18606d92e0340599ac60be03b390d278de63"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_faithfulness/summary.json",
+      "bytes": 9749,
+      "sha256": "26701b517e8e8709f425c0c2af62b04f4cc486d45381b8ca1c4d20b1818880af"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/attribution_records.jsonl",
+      "bytes": 869263363,
+      "sha256": "68e84d7392b19c2a5816265d0919212833e22dd1e6c4a4ffad9d5b19e9486233"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/diagnostics.json",
+      "bytes": 399871,
+      "sha256": "55e425a65c203033df518ddbc6d30fba1d0d3220a1ba3b956db525324862b1f8"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/diagnostics.md",
+      "bytes": 726,
+      "sha256": "38507160ccf0d2aa10c57b1313cacffe28baf7ff38514d35353e9eb735c0d5d9"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/summary.json",
+      "bytes": 7963,
+      "sha256": "9daf857664a21a84aef0cd2786fd4468b1d91d80699901c9b5763ec51eef7abb"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates.ablation.model.jsonl",
+      "bytes": 621513,
+      "sha256": "07c589b34402c12b22becbff8c2303c19fb719050b437351792acb202d76542d"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates.dataset.jsonl",
+      "bytes": 158261,
+      "sha256": "a0eba8242193d29b09f7e599de85fc6d0cbae7a0ffdbc779f93d4c68e538fdff"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates.generation_eval.jsonl",
+      "bytes": 195375,
+      "sha256": "ed372ba4cd0551a829bf79cad05ee4a5accbb324db4e7a957363807bb5dfa1cd"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates.model.jsonl",
+      "bytes": 1223534,
+      "sha256": "54576263071d9f99dc60db8fd7530e55818e1e92c57736928f064fee2dd74917"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates.strict.generation_eval.jsonl",
+      "bytes": 249453,
+      "sha256": "8f0dd62976ad4672842859c75c96e77308952c46d1a6d43b4acb76228c64cf92"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_extension_seed31_n600.ablation.model.jsonl",
+      "bytes": 1718844,
+      "sha256": "72f0fed210c4e3b5197e5ee1809ee2a433c71ea6ce18a8262fe7534c6ee7c104"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_extension_seed31_n600.dataset.jsonl",
+      "bytes": 397730,
+      "sha256": "4a7fb2b1a2c98b3f71dd45e1cf9eb8901db849932960e9deba4b3c2776940e92"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_extension_seed31_n600.generation_eval.jsonl",
+      "bytes": 506612,
+      "sha256": "431179c048059ea3367d0e7e93b9562b6c5aaae7fce71bc3ddea027f831eb1c3"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_extension_seed31_n600.model.jsonl",
+      "bytes": 3140241,
+      "sha256": "eb1a1cfb5e07509e6ada8973a8444252a07fe0a3635f1d477dfe01fdceca3d6a"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_extension_seed31_n600.strict.generation_eval.jsonl",
+      "bytes": 640532,
+      "sha256": "b2225fc9d1f3ceb3a04a94364a998908873ec3b5963f740b48e82d45a991d506"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600.ablation.model.jsonl",
+      "bytes": 204804,
+      "sha256": "406f6ecbe4d499a7744eda91fc89f2b498588c74a9ee88936a2e11a75c81e65e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600.dataset.jsonl",
+      "bytes": 400592,
+      "sha256": "ac8845709ae364526719f6414264002172b693001385ea69a5eae1d4e930a6aa"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600.generation_eval.jsonl",
+      "bytes": 87092,
+      "sha256": "c2bce32fcb5e18164ea9299a6526d9a9c5c48db3e3928b13da65ceb789909644"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600.model.jsonl",
+      "bytes": 630504,
+      "sha256": "052ac689de823063cbc5d6a19c56cc156da24ff4ab5ca6296d612fe7c83ef11a"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600.strict.generation_eval.jsonl",
+      "bytes": 105268,
+      "sha256": "988d570dfa2cf93211f917e9a887987759808d3f409200e43d581e741949cdb0"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_candidates_later_extension_seed47_n600_prefix_n100.dataset.jsonl",
+      "bytes": 67469,
+      "sha256": "a4eb1a09e1d1f2c8da271766dfbc6e47140451f77652bece5748295be8b1e7d7"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_funnel.json",
+      "bytes": 2305,
+      "sha256": "589b18f09338892522f1a29250e6464de9ab73702de6d6132ec963ed7e0c34b8"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.dataset.jsonl",
+      "bytes": 78495,
+      "sha256": "99225cb42e004d8df744e3b1bba0028babd3fba311eadb3d1f713b51ff0093c1"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.generation_eval.jsonl",
+      "bytes": 162270,
+      "sha256": "b40ead6405613dc831b46407b952cf7316f859d9e18147aa1362d83de9740f7e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.model.jsonl",
+      "bytes": 525015,
+      "sha256": "f5b1746ccb0b9c3865c1904bfbdb6ca28d2a9728f0a657f563ffb3d8fa992902"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.preview_reuse.json",
+      "bytes": 1167,
+      "sha256": "6af6b763c1a29ce71f4c9e6fc2b4e5f95ecb72b078e1659bca27d460cd12804c"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.protocol_audit.md",
+      "bytes": 19290,
+      "sha256": "1a24eaeafe4b2a682a44918cfe18123341305848a2587b62c9fb83352ad786af"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.protocol_audit_summary.json",
+      "bytes": 667,
+      "sha256": "3aa9517507d7c9d090fc73222b29525a58e5c8dc513e90c477224a276b3253ac"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120.protocol_reviews.jsonl",
+      "bytes": 3373,
+      "sha256": "6676babac7d3ae443a075639f1ee640db11ccaaa5b0c81815413296f4074c061"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/analysis.json",
+      "bytes": 33855,
+      "sha256": "8656f4e3aee8f824dd3045fb041b1ea8e4a3b26de5f7e31d6ec557b61fcc934e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/analysis.md",
+      "bytes": 500,
+      "sha256": "31b1db97cf8c311843a0cda1184a76d7644962794d5b6a029f8a89d5512af0c2"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/faithfulness_records.jsonl",
+      "bytes": 5408212,
+      "sha256": "61f787536fc9f9cf63272de18ff6a4a98bbd98bcce153d0adeb8a7a6482c3b63"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_faithfulness/summary.json",
+      "bytes": 10009,
+      "sha256": "ea2b0ca0f6477d586f0bda7c5f585fbf4099ba6d28337be4e28d4875e33203c7"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/analysis.json",
+      "bytes": 129024,
+      "sha256": "24863993384fb8f55f94117473ad16a714e2bd1250759a1c4f1bc444f48b3496"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/analysis.md",
+      "bytes": 10689,
+      "sha256": "c6591b1f35a60b3c1341364df22ad03a2fbac3b03ba77587da8c73452e9ad646"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/attribution_records.jsonl",
+      "bytes": 1241882112,
+      "sha256": "806d5d0bc52430a6d98244b169a59ed41c24609055fe0f98ebd2e9b19a47b1eb"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/diagnostics.json",
+      "bytes": 742333,
+      "sha256": "cdc65b216a2cdf77dc675b27eb7821291ff3eeba58894b44a04a00dfc16c880e"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/diagnostics.md",
+      "bytes": 726,
+      "sha256": "d0d0c3a5fed6c5944d9cc9e059dbdb861c41397f68d594eed1724a0bb0b40107"
+    },
+    {
+      "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/summary.json",
+      "bytes": 8614,
+      "sha256": "a09de535a667c03b4815164c736ffc26ac8b3eb3e9ee26e7e2dc31b2bef0a553"
+    },
+    {
+      "path": "paper/appendix.tex",
+      "bytes": 52392,
+      "sha256": "2532190d9b73eb43b0b40a16a25679bc754c60126f106764169d512c34e59c72"
+    },
+    {
+      "path": "paper/generated/visual_appendix_results.tex",
+      "bytes": 25613,
+      "sha256": "2a4cb7eeb6d3ee46351049498aa91ab54384aade0bb486f0402ed5893e8feb38"
+    },
+    {
+      "path": "paper/generated/visual_faithfulness_rows.tex",
+      "bytes": 527,
+      "sha256": "d1ab106df7821ec1fbf90937c1c5a996ae7b442c8508284f7730ea230bca83ae"
+    },
+    {
+      "path": "paper/generated/visual_localization_rows.tex",
+      "bytes": 1775,
+      "sha256": "58ef84339078ae16cd30d8fa1a7dd30d49f14087d6bd5f61b762051793b891e2"
+    },
+    {
+      "path": "paper/generated/visual_results_discussion.tex",
+      "bytes": 1363,
+      "sha256": "da91a0c260c951ff78704f8a3b7873e4461e26e03c6c95411f248b5817751cd6"
+    },
+    {
+      "path": "paper/main.tex",
+      "bytes": 57954,
+      "sha256": "454a46463cc9e2ba31990ff95b717daa5b0a236f79069d7e63e21ce524b3232f"
+    }
+  ]
+}

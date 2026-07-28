@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "policy": "reuse_only_response_identical_deterministic_gpu_records",
+  "formal_samples": 120,
+  "preview_samples": 20,
+  "overlap_samples": 14,
+  "identity_matched_samples": 14,
+  "identity_mismatched_sample_ids": [],
+  "matched_sample_ids": [
+    "wiki-visa-0051",
+    "wiki-visa-0217",
+    "wiki-visa-0556",
+    "wiki-visa-0567",
+    "wiki-visa-1187",
+    "wiki-visa-1539",
+    "wiki-visa-1848",
+    "wiki-visa-1930",
+    "wiki-visa-1982",
+    "wiki-visa-2083",
+    "wiki-visa-2325",
+    "wiki-visa-2545",
+    "wiki-visa-2741",
+    "wiki-visa-2880"
+  ],
+  "newly_seeded_attribution_pairs": 0,
+  "newly_seeded_faithfulness_pairs": 0,
+  "reused_attribution_pairs": 112,
+  "reused_faithfulness_pairs": 112,
+  "expected_pairs_per_matched_sample": 8,
+  "source_sha256": {
+    "evaluations/multimodal/results/strict/formal_preview_n20/wiki_visa_n20_methods/attribution_records.jsonl": "bd5cacd5c87ea8b17863bca71e844d6bec32af60197d8dbca0ada542dd463aa0",
+    "evaluations/multimodal/results/strict/formal_preview_n20/wiki_visa_n20_faithfulness/faithfulness_records.jsonl": "bb69dd7b6a57fa4e76b6878ffc4f9bdd721e045007b305700eef0cecca0443e7"
+  }
+}

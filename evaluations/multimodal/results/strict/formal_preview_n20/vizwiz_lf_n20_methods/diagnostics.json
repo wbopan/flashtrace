@@ -1,0 +1,2036 @@
+{
+  "schema_version": 1,
+  "manifest": "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_n20.dataset.jsonl",
+  "model_output": "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_n20.model.jsonl",
+  "attribution_dir": "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_n20_methods",
+  "common_samples": 20,
+  "bootstrap_draws": 50000,
+  "bootstrap_seed": 17,
+  "exact_all_gen_cosine": {
+    "mean": 0.9964329210934608,
+    "ci95_low": 0.995443014692117,
+    "ci95_high": 0.9972966506959527
+  },
+  "recursive_positive_fraction": {
+    "mean": 0.3396685073261163,
+    "ci95_low": 0.3194468607548105,
+    "ci95_high": 0.361941441308205
+  },
+  "direct_positive_fraction": {
+    "mean": 0.6603314926738839,
+    "ci95_low": 0.638396566071555,
+    "ci95_high": 0.6806247825279966
+  },
+  "recursive_absolute_fraction": {
+    "mean": 0.3396685073261163,
+    "ci95_low": 0.31939867559386254,
+    "ci95_high": 0.36172445934313696
+  },
+  "direct_absolute_fraction": {
+    "mean": 0.6603314926738839,
+    "ci95_low": 0.638144300645297,
+    "ci95_high": 0.6806053005247669
+  },
+  "recursion_by_thinking_bucket": {},
+  "geometry": {
+    "random": {
+      "border_mass_ratio": {
+        "mean": 0.12283895025291362,
+        "ci95_low": 0.12082437095759026,
+        "ci95_high": 0.12510984964378255
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.03159131671891645,
+        "ci95_low": 0.03043153464583961,
+        "ci95_high": 0.03280218560142146
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.03284687099146669,
+        "ci95_low": 0.031122372068223086,
+        "ci95_high": 0.034528790016879626
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.0066506260552735355,
+        "ci95_low": 0.005045754105074375,
+        "ci95_high": 0.008378934283981728
+      },
+      "negative_cell_fraction": {
+        "mean": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      }
+    },
+    "center": {
+      "border_mass_ratio": {
+        "mean": 0.004974682916611987,
+        "ci95_low": 0.004974682916611987,
+        "ci95_high": 0.004974682916611987
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.0012452213051603015,
+        "ci95_low": 0.0012452213051603015,
+        "ci95_high": 0.0012452213051603015
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.0012452213051603015,
+        "ci95_low": 0.0012452213051603015,
+        "ci95_high": 0.0012452213051603015
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      },
+      "negative_cell_fraction": {
+        "mean": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      }
+    },
+    "visual-loo": {
+      "border_mass_ratio": {
+        "mean": 0.6606777216456382,
+        "ci95_low": 0.549095870419063,
+        "ci95_high": 0.7678718209049429
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.1482839306277906,
+        "ci95_low": 0.08819641777969103,
+        "ci95_high": 0.2209555394111984
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.21832434975191015,
+        "ci95_low": 0.13588539525010976,
+        "ci95_high": 0.31378511248740765
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.2213467446396923,
+        "ci95_low": 0.1551818164165672,
+        "ci95_high": 0.2994750378549641
+      },
+      "negative_cell_fraction": {
+        "mean": 0.31875,
+        "ci95_low": 0.196875,
+        "ci95_high": 0.446875
+      }
+    },
+    "ifr-span": {
+      "border_mass_ratio": {
+        "mean": 0.16507788081122346,
+        "ci95_low": 0.1356870953745586,
+        "ci95_high": 0.19821913115468212
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.09582765504293439,
+        "ci95_low": 0.07967049350351332,
+        "ci95_high": 0.11206176604414264
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.03136702387043305,
+        "ci95_low": 0.020701390917294334,
+        "ci95_high": 0.04426482386928886
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.10697592924719405,
+        "ci95_low": 0.08526029214848133,
+        "ci95_high": 0.13399334053928105
+      },
+      "negative_cell_fraction": {
+        "mean": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      }
+    },
+    "visual-ig": {
+      "border_mass_ratio": {
+        "mean": 0.10207358569838101,
+        "ci95_low": 0.07736473606526865,
+        "ci95_high": 0.13088334749091443
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.024838615089460187,
+        "ci95_low": 0.01937235765372942,
+        "ci95_high": 0.030770767070072275
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.024249277964413812,
+        "ci95_low": 0.014594261066121038,
+        "ci95_high": 0.03634730437175838
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.10331921223800322,
+        "ci95_low": 0.07540383466916821,
+        "ci95_high": 0.13245598761637165
+      },
+      "negative_cell_fraction": {
+        "mean": 0.4937768732999273,
+        "ci95_low": 0.484185320094637,
+        "ci95_high": 0.5023370349404945
+      }
+    },
+    "attnlrp": {
+      "border_mass_ratio": {
+        "mean": 0.18171483681753592,
+        "ci95_low": 0.14784774073793772,
+        "ci95_high": 0.21767954688015573
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.12099572433382082,
+        "ci95_low": 0.09624864410982108,
+        "ci95_high": 0.15036452925520308
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.03802059789852953,
+        "ci95_low": 0.021394172730380804,
+        "ci95_high": 0.05733381545460425
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.14421198396974866,
+        "ci95_low": 0.11322043566839729,
+        "ci95_high": 0.18047533748297326
+      },
+      "negative_cell_fraction": {
+        "mean": 0.2474171439830993,
+        "ci95_low": 0.21801393118482207,
+        "ci95_high": 0.2755719375351355
+      }
+    },
+    "flashtrace": {
+      "border_mass_ratio": {
+        "mean": 0.1576723201689963,
+        "ci95_low": 0.13098137423025355,
+        "ci95_high": 0.18766690687439624
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.08787791195130688,
+        "ci95_low": 0.07448455099807319,
+        "ci95_high": 0.10094775011384938
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.029644947578989268,
+        "ci95_low": 0.020347300669864038,
+        "ci95_high": 0.040646063903475575
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.10223894230595516,
+        "ci95_low": 0.07964511879562902,
+        "ci95_high": 0.13030494970587808
+      },
+      "negative_cell_fraction": {
+        "mean": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      }
+    },
+    "flashtrace-all-gen": {
+      "border_mass_ratio": {
+        "mean": 0.16131556457170415,
+        "ci95_low": 0.13438171763133802,
+        "ci95_high": 0.1913937919615748
+      },
+      "top_row_mass_ratio": {
+        "mean": 0.09383364894412718,
+        "ci95_low": 0.07952690292436077,
+        "ci95_high": 0.10811908253654569
+      },
+      "left_column_mass_ratio": {
+        "mean": 0.030083901326825264,
+        "ci95_low": 0.02005224825213892,
+        "ci95_high": 0.04193292253627081
+      },
+      "heatmap_centroid_distance_to_center": {
+        "mean": 0.10592118795452617,
+        "ci95_low": 0.08340877720668567,
+        "ci95_high": 0.13405734631687788
+      },
+      "negative_cell_fraction": {
+        "mean": 0.0,
+        "ci95_low": 0.0,
+        "ci95_high": 0.0
+      }
+    }
+  },
+  "ground_truth_centroid_distance": {},
+  "samples": [
+    {
+      "sample_id": "vizwiz-lf-042",
+      "thinking_tokens": 93,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.9978824779015582,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.7767979316167839,
+        "recursive_positive_mass": 0.30658436857720517,
+        "recursive_positive_fraction": 0.2829881644940189,
+        "direct_absolute_mass": 0.7767979316167839,
+        "recursive_absolute_mass": 0.30658436857720517,
+        "recursive_absolute_fraction": 0.2829881644940189
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12018709074229153,
+          "top_row_mass_ratio": 0.029426873212087302,
+          "left_column_mass_ratio": 0.035037986402565106,
+          "heatmap_centroid_row": 0.5016085273071762,
+          "heatmap_centroid_column": 0.4974820162777984,
+          "heatmap_centroid_distance_to_center": 0.002987909323122713,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.9614231790087043,
+          "top_row_mass_ratio": 0.05505082816086401,
+          "left_column_mass_ratio": 0.31082820359370994,
+          "heatmap_centroid_row": 0.5307003690025804,
+          "heatmap_centroid_column": 0.6394537609689702,
+          "heatmap_centroid_distance_to_center": 0.14279308143353894,
+          "negative_cell_fraction": 0.3125
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.14372932309874137,
+          "top_row_mass_ratio": 0.0728657208282817,
+          "left_column_mass_ratio": 0.020857625962552768,
+          "heatmap_centroid_row": 0.4337781029363378,
+          "heatmap_centroid_column": 0.5065936655500951,
+          "heatmap_centroid_distance_to_center": 0.06654935068125598,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.04893843624004664,
+          "top_row_mass_ratio": 0.010309400837548915,
+          "left_column_mass_ratio": 0.013105571592387174,
+          "heatmap_centroid_row": 0.5805837175087512,
+          "heatmap_centroid_column": 0.49162978145366687,
+          "heatmap_centroid_distance_to_center": 0.0810172579518931,
+          "negative_cell_fraction": 0.48813209494324045
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.18039328384708297,
+          "top_row_mass_ratio": 0.10054305624089808,
+          "left_column_mass_ratio": 0.02543415153777068,
+          "heatmap_centroid_row": 0.3477096149609172,
+          "heatmap_centroid_column": 0.5772095086348505,
+          "heatmap_centroid_distance_to_center": 0.17074445700808902,
+          "negative_cell_fraction": 0.28586171310629516
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.1457495770360579,
+          "top_row_mass_ratio": 0.0681093457721815,
+          "left_column_mass_ratio": 0.022291947897582917,
+          "heatmap_centroid_row": 0.4360759203833987,
+          "heatmap_centroid_column": 0.517956997611747,
+          "heatmap_centroid_distance_to_center": 0.06639835629033197,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.14903903803906354,
+          "top_row_mass_ratio": 0.07278574505141294,
+          "left_column_mass_ratio": 0.022106854565317108,
+          "heatmap_centroid_row": 0.4330114414888706,
+          "heatmap_centroid_column": 0.511590043506545,
+          "heatmap_centroid_distance_to_center": 0.06798379277359136,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-060",
+      "thinking_tokens": 152,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.9972289634268668,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.401365399487986,
+        "recursive_positive_mass": 0.23481937399219532,
+        "recursive_positive_fraction": 0.369105618022954,
+        "direct_absolute_mass": 0.401365399487986,
+        "recursive_absolute_mass": 0.23481937399219532,
+        "recursive_absolute_fraction": 0.369105618022954
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12984451773436878,
+          "top_row_mass_ratio": 0.02690456177969818,
+          "left_column_mass_ratio": 0.036597700712208955,
+          "heatmap_centroid_row": 0.5109107123859684,
+          "heatmap_centroid_column": 0.5024777512455402,
+          "heatmap_centroid_distance_to_center": 0.011188516255701665,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.7570096566130505,
+          "top_row_mass_ratio": 0.18095602443225844,
+          "left_column_mass_ratio": 0.16126101596063785,
+          "heatmap_centroid_row": 0.5732686896873798,
+          "heatmap_centroid_column": 0.591785107187887,
+          "heatmap_centroid_distance_to_center": 0.11744278091903929,
+          "negative_cell_fraction": 0.0
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.2032586661553516,
+          "top_row_mass_ratio": 0.1409650045238794,
+          "left_column_mass_ratio": 0.016338385898637692,
+          "heatmap_centroid_row": 0.38720590785435727,
+          "heatmap_centroid_column": 0.5210519725208429,
+          "heatmap_centroid_distance_to_center": 0.11474185273899871,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.10901653687536836,
+          "top_row_mass_ratio": 0.05488816934620328,
+          "left_column_mass_ratio": 0.014368579274289174,
+          "heatmap_centroid_row": 0.3958936813428585,
+          "heatmap_centroid_column": 0.5521354563749954,
+          "heatmap_centroid_distance_to_center": 0.1164312303283416,
+          "negative_cell_fraction": 0.5206398348813209
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.3525341845467551,
+          "top_row_mass_ratio": 0.3080340536838862,
+          "left_column_mass_ratio": 0.10471094747033198,
+          "heatmap_centroid_row": 0.3076030274873789,
+          "heatmap_centroid_column": 0.46205324175067836,
+          "heatmap_centroid_distance_to_center": 0.19610342040274245,
+          "negative_cell_fraction": 0.26212590299277605
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.19946124730648085,
+          "top_row_mass_ratio": 0.13876958262755518,
+          "left_column_mass_ratio": 0.014357401967518474,
+          "heatmap_centroid_row": 0.39972361008410967,
+          "heatmap_centroid_column": 0.5293235050800911,
+          "heatmap_centroid_distance_to_center": 0.1044759413680767,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.2106610464147632,
+          "top_row_mass_ratio": 0.15199930576973425,
+          "left_column_mass_ratio": 0.014531420404966003,
+          "heatmap_centroid_row": 0.38878265064302253,
+          "heatmap_centroid_column": 0.5209837597661856,
+          "heatmap_centroid_distance_to_center": 0.1131795784225978,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-073",
+      "thinking_tokens": 81,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.9960568193373932,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.9487652838670328,
+        "recursive_positive_mass": 0.36506861597172247,
+        "recursive_positive_fraction": 0.277865121319009,
+        "direct_absolute_mass": 0.9487652838670328,
+        "recursive_absolute_mass": 0.36506861597172247,
+        "recursive_absolute_fraction": 0.277865121319009
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12025084732701606,
+          "top_row_mass_ratio": 0.029836120326987355,
+          "left_column_mass_ratio": 0.02826876098166176,
+          "heatmap_centroid_row": 0.4962214511566637,
+          "heatmap_centroid_column": 0.49850438636456834,
+          "heatmap_centroid_distance_to_center": 0.004063777984581227,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.4507373981702003,
+          "top_row_mass_ratio": 0.04894893235368834,
+          "left_column_mass_ratio": 0.2956729542476768,
+          "heatmap_centroid_row": 0.6857221930717156,
+          "heatmap_centroid_column": 0.28452340237445206,
+          "heatmap_centroid_distance_to_center": 0.28446950121875964,
+          "negative_cell_fraction": 0.6875
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.08830530469405845,
+          "top_row_mass_ratio": 0.05133481251814489,
+          "left_column_mass_ratio": 0.015068531999134238,
+          "heatmap_centroid_row": 0.5185573321485666,
+          "heatmap_centroid_column": 0.4208216772445614,
+          "heatmap_centroid_distance_to_center": 0.08132392864856341,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.09397289097343066,
+          "top_row_mass_ratio": 0.01153375332382952,
+          "left_column_mass_ratio": 0.022567209986551227,
+          "heatmap_centroid_row": 0.6717479223414861,
+          "heatmap_centroid_column": 0.5632363208390595,
+          "heatmap_centroid_distance_to_center": 0.18301961944523215,
+          "negative_cell_fraction": 0.49666666666666665
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.08959330601949442,
+          "top_row_mass_ratio": 0.07083469095713103,
+          "left_column_mass_ratio": 0.005403673185665908,
+          "heatmap_centroid_row": 0.5314017437563447,
+          "heatmap_centroid_column": 0.3927784765135605,
+          "heatmap_centroid_distance_to_center": 0.11172521921970988,
+          "negative_cell_fraction": 0.21333333333333335
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.08703270192667639,
+          "top_row_mass_ratio": 0.050474971049895706,
+          "left_column_mass_ratio": 0.015274193417450219,
+          "heatmap_centroid_row": 0.5250785819255301,
+          "heatmap_centroid_column": 0.4264038517146445,
+          "heatmap_centroid_distance_to_center": 0.07775170939494232,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.08737233820248289,
+          "top_row_mass_ratio": 0.05311346145084259,
+          "left_column_mass_ratio": 0.014515103704956282,
+          "heatmap_centroid_row": 0.5232854341316842,
+          "heatmap_centroid_column": 0.419621246228419,
+          "heatmap_centroid_distance_to_center": 0.08368366328366277,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-123",
+      "thinking_tokens": 238,
+      "thinking_bucket": "long",
+      "exact_all_gen_cosine": 0.9968678569051145,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.9025759753021703,
+        "recursive_positive_mass": 0.4690746955384384,
+        "recursive_positive_fraction": 0.34197824964498325,
+        "direct_absolute_mass": 0.9025759753021703,
+        "recursive_absolute_mass": 0.4690746955384384,
+        "recursive_absolute_fraction": 0.34197824964498325
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12053922680608493,
+          "top_row_mass_ratio": 0.03108621968531649,
+          "left_column_mass_ratio": 0.026822321451526753,
+          "heatmap_centroid_row": 0.4978036738935806,
+          "heatmap_centroid_column": 0.5063436469710884,
+          "heatmap_centroid_distance_to_center": 0.006713099527009702,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.5937886981412551,
+          "top_row_mass_ratio": 0.2418470250726697,
+          "left_column_mass_ratio": 0.12105470153933136,
+          "heatmap_centroid_row": 0.4570381268143454,
+          "heatmap_centroid_column": 0.584169478569273,
+          "heatmap_centroid_distance_to_center": 0.09449986068901678,
+          "negative_cell_fraction": 0.0
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.11753191304719471,
+          "top_row_mass_ratio": 0.06782639300175315,
+          "left_column_mass_ratio": 0.023717035281687587,
+          "heatmap_centroid_row": 0.4553662675914648,
+          "heatmap_centroid_column": 0.47227763052938604,
+          "heatmap_centroid_distance_to_center": 0.05254236231634388,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.06885787419120268,
+          "top_row_mass_ratio": 0.01111344198400576,
+          "left_column_mass_ratio": 0.022267670604667743,
+          "heatmap_centroid_row": 0.39356435814724394,
+          "heatmap_centroid_column": 0.4574498409929732,
+          "heatmap_centroid_distance_to_center": 0.114625747055936,
+          "negative_cell_fraction": 0.5033333333333333
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.14994459852980124,
+          "top_row_mass_ratio": 0.10174649457268863,
+          "left_column_mass_ratio": 0.02313919419762689,
+          "heatmap_centroid_row": 0.42948548307918366,
+          "heatmap_centroid_column": 0.4759211127564836,
+          "heatmap_centroid_distance_to_center": 0.07451234734902713,
+          "negative_cell_fraction": 0.19333333333333333
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.12324042402713456,
+          "top_row_mass_ratio": 0.07261836854023561,
+          "left_column_mass_ratio": 0.024615776043493885,
+          "heatmap_centroid_row": 0.4542315928897265,
+          "heatmap_centroid_column": 0.47832050890427336,
+          "heatmap_centroid_distance_to_center": 0.05064333543104588,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.1263053741760414,
+          "top_row_mass_ratio": 0.07635531720705792,
+          "left_column_mass_ratio": 0.025043740785079337,
+          "heatmap_centroid_row": 0.4477115494598102,
+          "heatmap_centroid_column": 0.46948739651922017,
+          "heatmap_centroid_distance_to_center": 0.060540077891172016,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-142",
+      "thinking_tokens": 125,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.9954160031621011,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.3882359133654063,
+        "recursive_positive_mass": 0.27305094737403124,
+        "recursive_positive_fraction": 0.4129084722305101,
+        "direct_absolute_mass": 0.3882359133654063,
+        "recursive_absolute_mass": 0.27305094737403124,
+        "recursive_absolute_fraction": 0.4129084722305101
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12186331190014124,
+          "top_row_mass_ratio": 0.03750048530083862,
+          "left_column_mass_ratio": 0.03411187438035043,
+          "heatmap_centroid_row": 0.5073931428544585,
+          "heatmap_centroid_column": 0.492911793562582,
+          "heatmap_centroid_distance_to_center": 0.010242130235741193,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.6758883677526373,
+          "top_row_mass_ratio": 0.08881660152906116,
+          "left_column_mass_ratio": 0.16823763950137519,
+          "heatmap_centroid_row": 0.6565717983730563,
+          "heatmap_centroid_column": 0.49308714215585314,
+          "heatmap_centroid_distance_to_center": 0.15672433011292916,
+          "negative_cell_fraction": 0.125
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.177866165914067,
+          "top_row_mass_ratio": 0.12368385436208726,
+          "left_column_mass_ratio": 0.03801426905660426,
+          "heatmap_centroid_row": 0.3748723817795686,
+          "heatmap_centroid_column": 0.38459935102453346,
+          "heatmap_centroid_distance_to_center": 0.17021818535478775,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.0536530212140426,
+          "top_row_mass_ratio": 0.01444045387681799,
+          "left_column_mass_ratio": 0.006715844134601885,
+          "heatmap_centroid_row": 0.5099861668818654,
+          "heatmap_centroid_column": 0.47338063184805135,
+          "heatmap_centroid_distance_to_center": 0.028430868607931117,
+          "negative_cell_fraction": 0.5061919504643962
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.1717591820466614,
+          "top_row_mass_ratio": 0.11644172191470976,
+          "left_column_mass_ratio": 0.021345881802118154,
+          "heatmap_centroid_row": 0.3374916615538682,
+          "heatmap_centroid_column": 0.30170180742564157,
+          "heatmap_centroid_distance_to_center": 0.256380836340745,
+          "negative_cell_fraction": 0.34726522187822495
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.1533027425312311,
+          "top_row_mass_ratio": 0.10096594823951463,
+          "left_column_mass_ratio": 0.03644482542874747,
+          "heatmap_centroid_row": 0.3841938632156632,
+          "heatmap_centroid_column": 0.3592220352858423,
+          "heatmap_centroid_distance_to_center": 0.18228959560538052,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.1628548846556113,
+          "top_row_mass_ratio": 0.11321912907244011,
+          "left_column_mass_ratio": 0.03601681975363631,
+          "heatmap_centroid_row": 0.3769311427525641,
+          "heatmap_centroid_column": 0.35765338019854975,
+          "heatmap_centroid_distance_to_center": 0.1881714744404379,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-161",
+      "thinking_tokens": 86,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.9991600850599581,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.6216234099729263,
+        "recursive_positive_mass": 0.2803464338185222,
+        "recursive_positive_fraction": 0.31081575038039,
+        "direct_absolute_mass": 0.6216234099729263,
+        "recursive_absolute_mass": 0.2803464338185222,
+        "recursive_absolute_fraction": 0.31081575038039
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.11981955073954421,
+          "top_row_mass_ratio": 0.03140968963114222,
+          "left_column_mass_ratio": 0.02774422432853696,
+          "heatmap_centroid_row": 0.5011210082685333,
+          "heatmap_centroid_column": 0.5073504881421289,
+          "heatmap_centroid_distance_to_center": 0.007435478159856151,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.9339713549849652,
+          "top_row_mass_ratio": 0.011796427176887714,
+          "left_column_mass_ratio": 0.7418477999321723,
+          "heatmap_centroid_row": 0.6115390129533727,
+          "heatmap_centroid_column": 0.11419103558851193,
+          "heatmap_centroid_distance_to_center": 0.4016086508416838,
+          "negative_cell_fraction": 0.4375
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.1664191342927485,
+          "top_row_mass_ratio": 0.11424821571898179,
+          "left_column_mass_ratio": 0.02983008520770183,
+          "heatmap_centroid_row": 0.2813608302667287,
+          "heatmap_centroid_column": 0.29959298838723836,
+          "heatmap_centroid_distance_to_center": 0.29659072279019755,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.08459245598562892,
+          "top_row_mass_ratio": 0.036041219779473777,
+          "left_column_mass_ratio": 0.019330320506084808,
+          "heatmap_centroid_row": 0.4698084024322313,
+          "heatmap_centroid_column": 0.42070327450151407,
+          "heatmap_centroid_distance_to_center": 0.08484988649654356,
+          "negative_cell_fraction": 0.4841666666666667
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.22192190086829255,
+          "top_row_mass_ratio": 0.15715448953847014,
+          "left_column_mass_ratio": 0.04255160427231641,
+          "heatmap_centroid_row": 0.23243004245252874,
+          "heatmap_centroid_column": 0.2233435631904232,
+          "heatmap_centroid_distance_to_center": 0.38487980748556677,
+          "negative_cell_fraction": 0.31666666666666665
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.15935885008363454,
+          "top_row_mass_ratio": 0.1048910918550315,
+          "left_column_mass_ratio": 0.03324450583771238,
+          "heatmap_centroid_row": 0.2867222427442735,
+          "heatmap_centroid_column": 0.2951961202846599,
+          "heatmap_centroid_distance_to_center": 0.2956890780642533,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.16053032591249777,
+          "top_row_mass_ratio": 0.10916477194669744,
+          "left_column_mass_ratio": 0.03204653097596867,
+          "heatmap_centroid_row": 0.28245906871660253,
+          "heatmap_centroid_column": 0.2901189853237789,
+          "heatmap_centroid_distance_to_center": 0.3022814865405554,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-169",
+      "thinking_tokens": 179,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.998825404547287,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.49727597952005453,
+        "recursive_positive_mass": 0.27958637258416275,
+        "recursive_positive_fraction": 0.3598917772587026,
+        "direct_absolute_mass": 0.49727597952005453,
+        "recursive_absolute_mass": 0.27958637258416275,
+        "recursive_absolute_fraction": 0.3598917772587026
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12385661389842834,
+          "top_row_mass_ratio": 0.02840607618613953,
+          "left_column_mass_ratio": 0.037601662730960585,
+          "heatmap_centroid_row": 0.5058811603381382,
+          "heatmap_centroid_column": 0.4995526259476459,
+          "heatmap_centroid_distance_to_center": 0.005898151444784204,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.7396737638237467,
+          "top_row_mass_ratio": 0.0737021175418286,
+          "left_column_mass_ratio": 0.0737021175418286,
+          "heatmap_centroid_row": 0.750306290164465,
+          "heatmap_centroid_column": 0.6017403461397297,
+          "heatmap_centroid_distance_to_center": 0.2701931474492449,
+          "negative_cell_fraction": 0.5625
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.310213403040521,
+          "top_row_mass_ratio": 0.12343202034264929,
+          "left_column_mass_ratio": 0.09573529917049503,
+          "heatmap_centroid_row": 0.39433443057356016,
+          "heatmap_centroid_column": 0.44128853047372585,
+          "heatmap_centroid_distance_to_center": 0.12088113672591103,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.2587081628268378,
+          "top_row_mass_ratio": 0.03194926989975475,
+          "left_column_mass_ratio": 0.03677882986998098,
+          "heatmap_centroid_row": 0.5393914616029931,
+          "heatmap_centroid_column": 0.4972661818772859,
+          "heatmap_centroid_distance_to_center": 0.039486212894479525,
+          "negative_cell_fraction": 0.4744897959183674
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.3058047570357417,
+          "top_row_mass_ratio": 0.10823153629386183,
+          "left_column_mass_ratio": 0.08407827669166594,
+          "heatmap_centroid_row": 0.35045951813516074,
+          "heatmap_centroid_column": 0.5010159520661961,
+          "heatmap_centroid_distance_to_center": 0.14954393292597706,
+          "negative_cell_fraction": 0.09693877551020408
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.303013380105529,
+          "top_row_mass_ratio": 0.11846754843368225,
+          "left_column_mass_ratio": 0.09148262243875085,
+          "heatmap_centroid_row": 0.4035062790919055,
+          "heatmap_centroid_column": 0.44198089638764193,
+          "heatmap_centroid_distance_to_center": 0.1125933148933398,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.30900279138150455,
+          "top_row_mass_ratio": 0.12392924183024658,
+          "left_column_mass_ratio": 0.09372030030452698,
+          "heatmap_centroid_row": 0.4012136289080541,
+          "heatmap_centroid_column": 0.43810577498929715,
+          "heatmap_centroid_distance_to_center": 0.11657462075079272,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-186",
+      "thinking_tokens": 302,
+      "thinking_bucket": "long",
+      "exact_all_gen_cosine": 0.9977969992801036,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.49943608439753007,
+        "recursive_positive_mass": 0.21915215033823188,
+        "recursive_positive_fraction": 0.30497597893293943,
+        "direct_absolute_mass": 0.49943608439753007,
+        "recursive_absolute_mass": 0.21915215033823188,
+        "recursive_absolute_fraction": 0.30497597893293943
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.1249871026247134,
+          "top_row_mass_ratio": 0.0340068367597674,
+          "left_column_mass_ratio": 0.027161356456257453,
+          "heatmap_centroid_row": 0.5015327825904355,
+          "heatmap_centroid_column": 0.49959613519119317,
+          "heatmap_centroid_distance_to_center": 0.0015850959760641862,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.3912060600206558,
+          "top_row_mass_ratio": 0.08878930627502184,
+          "left_column_mass_ratio": 0.12375666207574192,
+          "heatmap_centroid_row": 0.48165592711499816,
+          "heatmap_centroid_column": 0.49658140470588924,
+          "heatmap_centroid_distance_to_center": 0.01865989827933625,
+          "negative_cell_fraction": 0.125
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.10371307807713444,
+          "top_row_mass_ratio": 0.07647998531901422,
+          "left_column_mass_ratio": 0.01182072582294051,
+          "heatmap_centroid_row": 0.3629458611685179,
+          "heatmap_centroid_column": 0.4630604627931429,
+          "heatmap_centroid_distance_to_center": 0.14194494136775693,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.04489582987873106,
+          "top_row_mass_ratio": 0.012467168323955122,
+          "left_column_mass_ratio": 0.003574428464780265,
+          "heatmap_centroid_row": 0.5585500188169981,
+          "heatmap_centroid_column": 0.48863348595702927,
+          "heatmap_centroid_distance_to_center": 0.05964312487588052,
+          "negative_cell_fraction": 0.5330237358101135
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.13392570509298943,
+          "top_row_mass_ratio": 0.1063378827436756,
+          "left_column_mass_ratio": 0.00799417350986978,
+          "heatmap_centroid_row": 0.38305282887190495,
+          "heatmap_centroid_column": 0.4731172965147702,
+          "heatmap_centroid_distance_to_center": 0.11999716905635206,
+          "negative_cell_fraction": 0.21981424148606812
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.1055956104205575,
+          "top_row_mass_ratio": 0.07671826591450553,
+          "left_column_mass_ratio": 0.012624544598356229,
+          "heatmap_centroid_row": 0.3661601495775838,
+          "heatmap_centroid_column": 0.4627688083671594,
+          "heatmap_centroid_distance_to_center": 0.13892180243394497,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.10679330168188077,
+          "top_row_mass_ratio": 0.08105521620791967,
+          "left_column_mass_ratio": 0.01120320333552453,
+          "heatmap_centroid_row": 0.36121875013226484,
+          "heatmap_centroid_column": 0.46010707718524985,
+          "heatmap_centroid_distance_to_center": 0.14440111012576862,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-192",
+      "thinking_tokens": 90,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.9958671868031284,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.4366475777424057,
+        "recursive_positive_mass": 0.21955704856463854,
+        "recursive_positive_fraction": 0.33458625520556107,
+        "direct_absolute_mass": 0.4366475777424057,
+        "recursive_absolute_mass": 0.21955704856463854,
+        "recursive_absolute_fraction": 0.33458625520556107
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.11720060637272875,
+          "top_row_mass_ratio": 0.028389222384095865,
+          "left_column_mass_ratio": 0.03541962470223371,
+          "heatmap_centroid_row": 0.49767863851741934,
+          "heatmap_centroid_column": 0.4998589727819642,
+          "heatmap_centroid_distance_to_center": 0.0023256413758436668,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.7876891587462113,
+          "top_row_mass_ratio": 0.3392653135871162,
+          "left_column_mass_ratio": 0.34192463430113557,
+          "heatmap_centroid_row": 0.38771540549238154,
+          "heatmap_centroid_column": 0.42266026584517025,
+          "heatmap_centroid_distance_to_center": 0.13634245356043745,
+          "negative_cell_fraction": 0.0
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.16654416649930862,
+          "top_row_mass_ratio": 0.12608012208651187,
+          "left_column_mass_ratio": 0.015343172864375303,
+          "heatmap_centroid_row": 0.3724679401984409,
+          "heatmap_centroid_column": 0.4566014119182962,
+          "heatmap_centroid_distance_to_center": 0.13471400715854995,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.08563109233003526,
+          "top_row_mass_ratio": 0.037682967077850314,
+          "left_column_mass_ratio": 0.01399981409166073,
+          "heatmap_centroid_row": 0.28774314320507915,
+          "heatmap_centroid_column": 0.40017804770528215,
+          "heatmap_centroid_distance_to_center": 0.23455787221150448,
+          "negative_cell_fraction": 0.48348813209494323
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.13545744847637087,
+          "top_row_mass_ratio": 0.10924083846870442,
+          "left_column_mass_ratio": 0.006898059502652856,
+          "heatmap_centroid_row": 0.3944960456332196,
+          "heatmap_centroid_column": 0.46073693276865696,
+          "heatmap_centroid_distance_to_center": 0.11257296671688387,
+          "negative_cell_fraction": 0.26986584107327144
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.15230224627838668,
+          "top_row_mass_ratio": 0.11309761647896086,
+          "left_column_mass_ratio": 0.014353747790348433,
+          "heatmap_centroid_row": 0.3834277153167147,
+          "heatmap_centroid_column": 0.4582356406920405,
+          "heatmap_centroid_distance_to_center": 0.12382794218061308,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.1594621389435488,
+          "top_row_mass_ratio": 0.12473003422939545,
+          "left_column_mass_ratio": 0.012507531279091197,
+          "heatmap_centroid_row": 0.3749457564916894,
+          "heatmap_centroid_column": 0.45452915739760014,
+          "heatmap_centroid_distance_to_center": 0.13306450069950315,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-227",
+      "thinking_tokens": 80,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.999371139567406,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.3275783280992073,
+        "recursive_positive_mass": 0.20871167746508945,
+        "recursive_positive_fraction": 0.3891768917928616,
+        "direct_absolute_mass": 0.3275783280992073,
+        "recursive_absolute_mass": 0.20871167746508945,
+        "recursive_absolute_fraction": 0.3891768917928616
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12474535047269492,
+          "top_row_mass_ratio": 0.03280215412384263,
+          "left_column_mass_ratio": 0.03667813341700506,
+          "heatmap_centroid_row": 0.49379683063839397,
+          "heatmap_centroid_column": 0.4967285586719378,
+          "heatmap_centroid_distance_to_center": 0.007012962176692598,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.6830767637076387,
+          "top_row_mass_ratio": 0.32997063397101345,
+          "left_column_mass_ratio": 0.5041860849484843,
+          "heatmap_centroid_row": 0.512564462487992,
+          "heatmap_centroid_column": 0.28935470779850614,
+          "heatmap_centroid_distance_to_center": 0.21101967880807915,
+          "negative_cell_fraction": 0.5625
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.22628388296667634,
+          "top_row_mass_ratio": 0.1560750779436387,
+          "left_column_mass_ratio": 0.025209332802253015,
+          "heatmap_centroid_row": 0.33830253465402554,
+          "heatmap_centroid_column": 0.42537928650190304,
+          "heatmap_centroid_distance_to_center": 0.17808515149298013,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.06252699453153797,
+          "top_row_mass_ratio": 0.018765678071253122,
+          "left_column_mass_ratio": 0.011714120091805579,
+          "heatmap_centroid_row": 0.4508052599339809,
+          "heatmap_centroid_column": 0.4689032598341432,
+          "heatmap_centroid_distance_to_center": 0.058199052390103354,
+          "negative_cell_fraction": 0.5108333333333334
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.2688000757367564,
+          "top_row_mass_ratio": 0.19594186060025864,
+          "left_column_mass_ratio": 0.016556296542163163,
+          "heatmap_centroid_row": 0.383826350370558,
+          "heatmap_centroid_column": 0.4112540520737756,
+          "heatmap_centroid_distance_to_center": 0.1461922027385472,
+          "negative_cell_fraction": 0.17
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.20626692804430924,
+          "top_row_mass_ratio": 0.1380126040129852,
+          "left_column_mass_ratio": 0.02237826156006133,
+          "heatmap_centroid_row": 0.35213692564028537,
+          "heatmap_centroid_column": 0.4287396919274688,
+          "heatmap_centroid_distance_to_center": 0.16413872262722942,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.20961810161405808,
+          "top_row_mass_ratio": 0.14313999793555462,
+          "left_column_mass_ratio": 0.021651461229727328,
+          "heatmap_centroid_row": 0.34997657071128685,
+          "heatmap_centroid_column": 0.4260643361957795,
+          "heatmap_centroid_distance_to_center": 0.16725283769705146,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-250",
+      "thinking_tokens": 93,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.9980725780638269,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.632662621331292,
+        "recursive_positive_mass": 0.2793533105350434,
+        "recursive_positive_fraction": 0.30630310367865954,
+        "direct_absolute_mass": 0.632662621331292,
+        "recursive_absolute_mass": 0.2793533105350434,
+        "recursive_absolute_fraction": 0.30630310367865954
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12085015337213698,
+          "top_row_mass_ratio": 0.030495469275551742,
+          "left_column_mass_ratio": 0.02940436975949507,
+          "heatmap_centroid_row": 0.49213565946849624,
+          "heatmap_centroid_column": 0.4978791847971704,
+          "heatmap_centroid_distance_to_center": 0.008145287540658455,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.43544455571435176,
+          "top_row_mass_ratio": 0.08708551545801135,
+          "left_column_mass_ratio": 0.22563432286767374,
+          "heatmap_centroid_row": 0.60594728718869,
+          "heatmap_centroid_column": 0.4370462201691898,
+          "heatmap_centroid_distance_to_center": 0.12323962860066104,
+          "negative_cell_fraction": 0.4375
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.12211854251383039,
+          "top_row_mass_ratio": 0.06994423424530934,
+          "left_column_mass_ratio": 0.030396097241455998,
+          "heatmap_centroid_row": 0.4616927322143921,
+          "heatmap_centroid_column": 0.4315925734728898,
+          "heatmap_centroid_distance_to_center": 0.07840295127901914,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.06026272695743987,
+          "top_row_mass_ratio": 0.012255483088597216,
+          "left_column_mass_ratio": 0.014898258454200796,
+          "heatmap_centroid_row": 0.6343781270269695,
+          "heatmap_centroid_column": 0.4549487223587411,
+          "heatmap_centroid_distance_to_center": 0.14172896189694661,
+          "negative_cell_fraction": 0.48658410732714136
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.1843068201560033,
+          "top_row_mass_ratio": 0.141165114064086,
+          "left_column_mass_ratio": 0.07905228909422643,
+          "heatmap_centroid_row": 0.45251962967771286,
+          "heatmap_centroid_column": 0.3851705758883848,
+          "heatmap_centroid_distance_to_center": 0.12425852971827211,
+          "negative_cell_fraction": 0.2982456140350877
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.11571976420455615,
+          "top_row_mass_ratio": 0.06570922947411502,
+          "left_column_mass_ratio": 0.029186701253014157,
+          "heatmap_centroid_row": 0.4769577815033468,
+          "heatmap_centroid_column": 0.42961702497124143,
+          "heatmap_centroid_distance_to_center": 0.07405880776211807,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.11757632514603533,
+          "top_row_mass_ratio": 0.06941591759819915,
+          "left_column_mass_ratio": 0.028339203047452445,
+          "heatmap_centroid_row": 0.4712839896082135,
+          "heatmap_centroid_column": 0.42903571456865486,
+          "heatmap_centroid_distance_to_center": 0.07655415768985127,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-309",
+      "thinking_tokens": 989,
+      "thinking_bucket": "long",
+      "exact_all_gen_cosine": 0.9949855724044695,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.9341802555727554,
+        "recursive_positive_mass": 0.45096743503017933,
+        "recursive_positive_fraction": 0.32557353854005255,
+        "direct_absolute_mass": 0.9341802555727554,
+        "recursive_absolute_mass": 0.45096743503017933,
+        "recursive_absolute_fraction": 0.32557353854005255
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12363956838832346,
+          "top_row_mass_ratio": 0.03100690654449171,
+          "left_column_mass_ratio": 0.03712839375454356,
+          "heatmap_centroid_row": 0.5011902414645101,
+          "heatmap_centroid_column": 0.4991394648187017,
+          "heatmap_centroid_distance_to_center": 0.0014687394398228714,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.12327496965069297,
+          "top_row_mass_ratio": 0.03080156343497412,
+          "left_column_mass_ratio": 0.08393511071970058,
+          "heatmap_centroid_row": 0.38205813825921403,
+          "heatmap_centroid_column": 0.4535225181026561,
+          "heatmap_centroid_distance_to_center": 0.12676923552029729,
+          "negative_cell_fraction": 0.4375
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.06539755841908793,
+          "top_row_mass_ratio": 0.04595955894506621,
+          "left_column_mass_ratio": 0.00904419601801835,
+          "heatmap_centroid_row": 0.4403052826605075,
+          "heatmap_centroid_column": 0.48855699808212744,
+          "heatmap_centroid_distance_to_center": 0.06078158908036496,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.06991483629485234,
+          "top_row_mass_ratio": 0.025090056220792526,
+          "left_column_mass_ratio": 0.01213071415316924,
+          "heatmap_centroid_row": 0.5332067764178672,
+          "heatmap_centroid_column": 0.5001696267424489,
+          "heatmap_centroid_distance_to_center": 0.03320720965841565,
+          "negative_cell_fraction": 0.4762641898864809
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.08664318373461578,
+          "top_row_mass_ratio": 0.0653048541567006,
+          "left_column_mass_ratio": 0.007621957627353818,
+          "heatmap_centroid_row": 0.3790869788235403,
+          "heatmap_centroid_column": 0.474864877797311,
+          "heatmap_centroid_distance_to_center": 0.12349790710033551,
+          "negative_cell_fraction": 0.19298245614035087
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.06719671200464203,
+          "top_row_mass_ratio": 0.044548739806690246,
+          "left_column_mass_ratio": 0.010803389312185005,
+          "heatmap_centroid_row": 0.4437170084373736,
+          "heatmap_centroid_column": 0.4858834456130464,
+          "heatmap_centroid_distance_to_center": 0.05802630650832855,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.07249551995771254,
+          "top_row_mass_ratio": 0.04969511138835275,
+          "left_column_mass_ratio": 0.01123359756433741,
+          "heatmap_centroid_row": 0.437535903146182,
+          "heatmap_centroid_column": 0.47980228106513745,
+          "heatmap_centroid_distance_to_center": 0.06564839103843186,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-376",
+      "thinking_tokens": 1191,
+      "thinking_bucket": "long",
+      "exact_all_gen_cosine": 0.9968629599663864,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.3279844239159502,
+        "recursive_positive_mass": 0.2242922486821044,
+        "recursive_positive_fraction": 0.4061229811264248,
+        "direct_absolute_mass": 0.3279844239159502,
+        "recursive_absolute_mass": 0.2242922486821044,
+        "recursive_absolute_fraction": 0.4061229811264248
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.11918660078807594,
+          "top_row_mass_ratio": 0.03179690388461659,
+          "left_column_mass_ratio": 0.032237773877618746,
+          "heatmap_centroid_row": 0.4927715442466501,
+          "heatmap_centroid_column": 0.4904528549230803,
+          "heatmap_centroid_distance_to_center": 0.011974913431749305,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.3336312682694118,
+          "top_row_mass_ratio": 0.10804713743836564,
+          "left_column_mass_ratio": 0.08228677564355702,
+          "heatmap_centroid_row": 0.47857065171361246,
+          "heatmap_centroid_column": 0.5625026926482116,
+          "heatmap_centroid_distance_to_center": 0.06607422762511952,
+          "negative_cell_fraction": 0.0625
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.13376038989857114,
+          "top_row_mass_ratio": 0.09526408980533767,
+          "left_column_mass_ratio": 0.013354042803531004,
+          "heatmap_centroid_row": 0.41793318678255664,
+          "heatmap_centroid_column": 0.4776606577459991,
+          "heatmap_centroid_distance_to_center": 0.08505297198809766,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.07707545525884348,
+          "top_row_mass_ratio": 0.029647487093415466,
+          "left_column_mass_ratio": 0.011049454430918114,
+          "heatmap_centroid_row": 0.29842628515485536,
+          "heatmap_centroid_column": 0.44942140728117375,
+          "heatmap_centroid_distance_to_center": 0.20782241591774595,
+          "negative_cell_fraction": 0.5141666666666667
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.09606372300685725,
+          "top_row_mass_ratio": 0.06718208732043945,
+          "left_column_mass_ratio": 0.004976756031143254,
+          "heatmap_centroid_row": 0.43590828016368816,
+          "heatmap_centroid_column": 0.5057861190328845,
+          "heatmap_centroid_distance_to_center": 0.06435237155722388,
+          "negative_cell_fraction": 0.305
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.12810067921298485,
+          "top_row_mass_ratio": 0.08730955985837707,
+          "left_column_mass_ratio": 0.012149985276765276,
+          "heatmap_centroid_row": 0.4314264794807191,
+          "heatmap_centroid_column": 0.4909385162221114,
+          "heatmap_centroid_distance_to_center": 0.06916963354438982,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.12881727493069092,
+          "top_row_mass_ratio": 0.09160809602741075,
+          "left_column_mass_ratio": 0.012587726296807912,
+          "heatmap_centroid_row": 0.4280411988369239,
+          "heatmap_centroid_column": 0.48274773689658057,
+          "heatmap_centroid_distance_to_center": 0.07399803812951214,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-378",
+      "thinking_tokens": 204,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.997578383764567,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.6607469465125178,
+        "recursive_positive_mass": 0.3174607891796768,
+        "recursive_positive_fraction": 0.32453310027755683,
+        "direct_absolute_mass": 0.6607469465125178,
+        "recursive_absolute_mass": 0.3174607891796768,
+        "recursive_absolute_fraction": 0.32453310027755683
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12455395503221094,
+          "top_row_mass_ratio": 0.03448648115762409,
+          "left_column_mass_ratio": 0.030546777405763226,
+          "heatmap_centroid_row": 0.49482677590046764,
+          "heatmap_centroid_column": 0.4994447444101293,
+          "heatmap_centroid_distance_to_center": 0.005202937281388756,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 1.0,
+          "top_row_mass_ratio": 0.0,
+          "left_column_mass_ratio": 0.0,
+          "heatmap_centroid_row": 1.0,
+          "heatmap_centroid_column": 1.0,
+          "heatmap_centroid_distance_to_center": 0.7071067811865476,
+          "negative_cell_fraction": 0.9375
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.1417429797926931,
+          "top_row_mass_ratio": 0.06852001477072268,
+          "left_column_mass_ratio": 0.024247988927182034,
+          "heatmap_centroid_row": 0.5262577051321539,
+          "heatmap_centroid_column": 0.4370196712515782,
+          "heatmap_centroid_distance_to_center": 0.06823480701274405,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.16101022131642378,
+          "top_row_mass_ratio": 0.02864955677519946,
+          "left_column_mass_ratio": 0.0449771511730883,
+          "heatmap_centroid_row": 0.4966671852511786,
+          "heatmap_centroid_column": 0.6501462111578655,
+          "heatmap_centroid_distance_to_center": 0.15018319606138467,
+          "negative_cell_fraction": 0.5
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.09197847551118285,
+          "top_row_mass_ratio": 0.0599579605361383,
+          "left_column_mass_ratio": 0.02682294496565584,
+          "heatmap_centroid_row": 0.3740188117001453,
+          "heatmap_centroid_column": 0.4903584615775566,
+          "heatmap_centroid_distance_to_center": 0.126349590694212,
+          "negative_cell_fraction": 0.22469635627530365
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.13964471095241085,
+          "top_row_mass_ratio": 0.06488008784241898,
+          "left_column_mass_ratio": 0.024126214637051495,
+          "heatmap_centroid_row": 0.5365474263450842,
+          "heatmap_centroid_column": 0.43632467761050847,
+          "heatmap_centroid_distance_to_center": 0.07341839724384508,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.14238965015613675,
+          "top_row_mass_ratio": 0.06919747590989361,
+          "left_column_mass_ratio": 0.024397677619948946,
+          "heatmap_centroid_row": 0.5332424051890556,
+          "heatmap_centroid_column": 0.4396348130639036,
+          "heatmap_centroid_distance_to_center": 0.06891308508972163,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-417",
+      "thinking_tokens": 362,
+      "thinking_bucket": "long",
+      "exact_all_gen_cosine": 0.992065813753792,
+      "flashtrace_mass": {
+        "direct_positive_mass": 1.4338465877517592,
+        "recursive_positive_mass": 0.6217871851322343,
+        "recursive_positive_fraction": 0.30247955318416725,
+        "direct_absolute_mass": 1.4338465877517592,
+        "recursive_absolute_mass": 0.6217871851322343,
+        "recursive_absolute_fraction": 0.30247955318416725
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.13766858533925644,
+          "top_row_mass_ratio": 0.03452019141826046,
+          "left_column_mass_ratio": 0.03610167617598552,
+          "heatmap_centroid_row": 0.5055824205242858,
+          "heatmap_centroid_column": 0.4946105232560127,
+          "heatmap_centroid_distance_to_center": 0.007759502463685907,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.4463446043802337,
+          "top_row_mass_ratio": 0.00922332283542623,
+          "left_column_mass_ratio": 0.09418274173688296,
+          "heatmap_centroid_row": 0.7823337492596861,
+          "heatmap_centroid_column": 0.49048443966423116,
+          "heatmap_centroid_distance_to_center": 0.28249405632603136,
+          "negative_cell_fraction": 0.125
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.07615545844543836,
+          "top_row_mass_ratio": 0.02375578631144342,
+          "left_column_mass_ratio": 0.005792904106668196,
+          "heatmap_centroid_row": 0.5783160682838921,
+          "heatmap_centroid_column": 0.5408514506981025,
+          "heatmap_centroid_distance_to_center": 0.08833033213787184,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.081884005184445,
+          "top_row_mass_ratio": 0.03805356157089009,
+          "left_column_mass_ratio": 0.006796235004271388,
+          "heatmap_centroid_row": 0.30901169459571665,
+          "heatmap_centroid_column": 0.4429706649230939,
+          "heatmap_centroid_distance_to_center": 0.19932104219202207,
+          "negative_cell_fraction": 0.49638802889576883
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.10408794049499379,
+          "top_row_mass_ratio": 0.07796217299383626,
+          "left_column_mass_ratio": 0.01701472412239644,
+          "heatmap_centroid_row": 0.46997227479425663,
+          "heatmap_centroid_column": 0.48768000525591365,
+          "heatmap_centroid_distance_to_center": 0.032456841367051584,
+          "negative_cell_fraction": 0.18627450980392157
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.07608054949602333,
+          "top_row_mass_ratio": 0.024344753727183362,
+          "left_column_mass_ratio": 0.005671064310365828,
+          "heatmap_centroid_row": 0.5792397794907379,
+          "heatmap_centroid_column": 0.5497039241769144,
+          "heatmap_centroid_distance_to_center": 0.09353834899294097,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.07451949258574785,
+          "top_row_mass_ratio": 0.025109065054230082,
+          "left_column_mass_ratio": 0.005665217296651069,
+          "heatmap_centroid_row": 0.5813198078917778,
+          "heatmap_centroid_column": 0.5290890418653911,
+          "heatmap_centroid_distance_to_center": 0.08636598585208258,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-475",
+      "thinking_tokens": 258,
+      "thinking_bucket": "long",
+      "exact_all_gen_cosine": 0.9961654966696708,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.4475681864496437,
+        "recursive_positive_mass": 0.2434799641259815,
+        "recursive_positive_fraction": 0.3523342967102495,
+        "direct_absolute_mass": 0.4475681864496437,
+        "recursive_absolute_mass": 0.2434799641259815,
+        "recursive_absolute_fraction": 0.3523342967102495
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12714491600239144,
+          "top_row_mass_ratio": 0.03553671329538945,
+          "left_column_mass_ratio": 0.03296573668867657,
+          "heatmap_centroid_row": 0.5012950677305206,
+          "heatmap_centroid_column": 0.4985688055960284,
+          "heatmap_centroid_distance_to_center": 0.0019301600577660226,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.9694385992929454,
+          "top_row_mass_ratio": 0.6289028128747812,
+          "left_column_mass_ratio": 0.6672158238688849,
+          "heatmap_centroid_row": 0.24827672408484236,
+          "heatmap_centroid_column": 0.21331410696000974,
+          "heatmap_centroid_distance_to_center": 0.38151462475977943,
+          "negative_cell_fraction": 0.5
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.1629068902103527,
+          "top_row_mass_ratio": 0.10190332153320557,
+          "left_column_mass_ratio": 0.03363906672413648,
+          "heatmap_centroid_row": 0.427249606415967,
+          "heatmap_centroid_column": 0.47897283479706215,
+          "heatmap_centroid_distance_to_center": 0.0757282077108877,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.07057739373157126,
+          "top_row_mass_ratio": 0.02024128418773436,
+          "left_column_mass_ratio": 0.01094136263508068,
+          "heatmap_centroid_row": 0.590743658327974,
+          "heatmap_centroid_column": 0.6202879764714989,
+          "heatmap_centroid_distance_to_center": 0.15067716751502852,
+          "negative_cell_fraction": 0.49083333333333334
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.234259826267946,
+          "top_row_mass_ratio": 0.19774793835508217,
+          "left_column_mass_ratio": 0.01465079949913191,
+          "heatmap_centroid_row": 0.3638702401126833,
+          "heatmap_centroid_column": 0.3947428357144666,
+          "heatmap_centroid_distance_to_center": 0.17207667523639064,
+          "negative_cell_fraction": 0.31083333333333335
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.15855814563426301,
+          "top_row_mass_ratio": 0.09844524872299948,
+          "left_column_mass_ratio": 0.03263461006355575,
+          "heatmap_centroid_row": 0.44211183783255026,
+          "heatmap_centroid_column": 0.4691112965515682,
+          "heatmap_centroid_distance_to_center": 0.06561365193197315,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.16169986022624439,
+          "top_row_mass_ratio": 0.10191111376744694,
+          "left_column_mass_ratio": 0.03301485382625851,
+          "heatmap_centroid_row": 0.43812113354950255,
+          "heatmap_centroid_column": 0.47334076267017955,
+          "heatmap_centroid_distance_to_center": 0.06737736302502638,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-520",
+      "thinking_tokens": 120,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.9962632472835325,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.376667092248681,
+        "recursive_positive_mass": 0.17811398843332427,
+        "recursive_positive_fraction": 0.3210527442903507,
+        "direct_absolute_mass": 0.376667092248681,
+        "recursive_absolute_mass": 0.17811398843332427,
+        "recursive_absolute_fraction": 0.3210527442903507
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12247294447426062,
+          "top_row_mass_ratio": 0.03127387776984817,
+          "left_column_mass_ratio": 0.03892747891125738,
+          "heatmap_centroid_row": 0.49001906520806204,
+          "heatmap_centroid_column": 0.4874028909634709,
+          "heatmap_centroid_distance_to_center": 0.01607190764654653,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.36268162012848243,
+          "top_row_mass_ratio": 0.15517049115487425,
+          "left_column_mass_ratio": 0.03987190037830217,
+          "heatmap_centroid_row": 0.5028673986037482,
+          "heatmap_centroid_column": 0.5502503769199526,
+          "heatmap_centroid_distance_to_center": 0.05033212051314828,
+          "negative_cell_fraction": 0.0625
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.24871723879262736,
+          "top_row_mass_ratio": 0.1242259782285001,
+          "left_column_mass_ratio": 0.0755366566661897,
+          "heatmap_centroid_row": 0.39689061328736686,
+          "heatmap_centroid_column": 0.46807767162356295,
+          "heatmap_centroid_distance_to_center": 0.10793785562641314,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.2048096788701907,
+          "top_row_mass_ratio": 0.021906914581034942,
+          "left_column_mass_ratio": 0.0920966163688708,
+          "heatmap_centroid_row": 0.5047122126528103,
+          "heatmap_centroid_column": 0.5230918060270929,
+          "heatmap_centroid_distance_to_center": 0.023567699371771333,
+          "negative_cell_fraction": 0.4796380090497738
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.2939980872416767,
+          "top_row_mass_ratio": 0.20777473375774413,
+          "left_column_mass_ratio": 0.15081996138818574,
+          "heatmap_centroid_row": 0.3220965351668783,
+          "heatmap_centroid_column": 0.41084420405133093,
+          "heatmap_centroid_distance_to_center": 0.19899346409083513,
+          "negative_cell_fraction": 0.15384615384615385
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.23613885740295779,
+          "top_row_mass_ratio": 0.11651725999589778,
+          "left_column_mass_ratio": 0.06968492359476482,
+          "heatmap_centroid_row": 0.4103469401674775,
+          "heatmap_centroid_column": 0.46607160921778107,
+          "heatmap_centroid_distance_to_center": 0.09585826431980089,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.24493988952926274,
+          "top_row_mass_ratio": 0.1239639413225859,
+          "left_column_mass_ratio": 0.07442984067620449,
+          "heatmap_centroid_row": 0.4070105545160523,
+          "heatmap_centroid_column": 0.4558588855130128,
+          "heatmap_centroid_distance_to_center": 0.10293432352507786,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-543",
+      "thinking_tokens": 175,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.9957269903185176,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.3708184695624368,
+        "recursive_positive_mass": 0.19061044468844557,
+        "recursive_positive_fraction": 0.3395094906053745,
+        "direct_absolute_mass": 0.3708184695624368,
+        "recursive_absolute_mass": 0.19061044468844557,
+        "recursive_absolute_fraction": 0.3395094906053745
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.11412927051475105,
+          "top_row_mass_ratio": 0.029396812321325377,
+          "left_column_mass_ratio": 0.028711263325270107,
+          "heatmap_centroid_row": 0.5039526758110779,
+          "heatmap_centroid_column": 0.4971797257474939,
+          "heatmap_centroid_distance_to_center": 0.004855676361417575,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.9274546785380948,
+          "top_row_mass_ratio": 0.0,
+          "left_column_mass_ratio": 0.0,
+          "heatmap_centroid_row": 0.975818226179365,
+          "heatmap_centroid_column": 0.4896802744009098,
+          "heatmap_centroid_distance_to_center": 0.4759301220777246,
+          "negative_cell_fraction": 0.8125
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.1325560434917083,
+          "top_row_mass_ratio": 0.0795914254217419,
+          "left_column_mass_ratio": 0.015166645961541863,
+          "heatmap_centroid_row": 0.46202891713050276,
+          "heatmap_centroid_column": 0.4536797929936672,
+          "heatmap_centroid_distance_to_center": 0.05989461337542593,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.05618094981935176,
+          "top_row_mass_ratio": 0.011724554796838328,
+          "left_column_mass_ratio": 0.008810488574968323,
+          "heatmap_centroid_row": 0.4655661632720295,
+          "heatmap_centroid_column": 0.4677181480848892,
+          "heatmap_centroid_distance_to_center": 0.04719965121563584,
+          "negative_cell_fraction": 0.4975
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.11503136406556365,
+          "top_row_mass_ratio": 0.06572551102001453,
+          "left_column_mass_ratio": 0.014232231501131771,
+          "heatmap_centroid_row": 0.4463647697141437,
+          "heatmap_centroid_column": 0.46431449387639506,
+          "heatmap_centroid_distance_to_center": 0.06442199372197886,
+          "negative_cell_fraction": 0.27166666666666667
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.12192228216281646,
+          "top_row_mass_ratio": 0.07118630904064217,
+          "left_column_mass_ratio": 0.014591467064220261,
+          "heatmap_centroid_row": 0.4765012783527407,
+          "heatmap_centroid_column": 0.45767598666265663,
+          "heatmap_centroid_distance_to_center": 0.048409833960002306,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.12960163387711768,
+          "top_row_mass_ratio": 0.08053080489614904,
+          "left_column_mass_ratio": 0.014369864241569101,
+          "heatmap_centroid_row": 0.46886797877600433,
+          "heatmap_centroid_column": 0.4550320137678716,
+          "heatmap_centroid_distance_to_center": 0.05469298429656408,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-550",
+      "thinking_tokens": 163,
+      "thinking_bucket": "medium",
+      "exact_all_gen_cosine": 0.9904596501791205,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.29785514979448635,
+        "recursive_positive_mass": 0.2587296980418614,
+        "recursive_positive_fraction": 0.4648522126458166,
+        "direct_absolute_mass": 0.29785514979448635,
+        "recursive_absolute_mass": 0.2587296980418614,
+        "recursive_absolute_fraction": 0.4648522126458166
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.11833259754737242,
+          "top_row_mass_ratio": 0.029201212949335115,
+          "left_column_mass_ratio": 0.02943109915977314,
+          "heatmap_centroid_row": 0.5103135838181873,
+          "heatmap_centroid_column": 0.5028060653678118,
+          "heatmap_centroid_distance_to_center": 0.010688499147364274,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.7736461417388381,
+          "top_row_mass_ratio": 0.22060801391513446,
+          "left_column_mass_ratio": 0.08456268872218266,
+          "heatmap_centroid_row": 0.37371538885165023,
+          "heatmap_centroid_column": 0.7524535298699793,
+          "heatmap_centroid_distance_to_center": 0.2822775013292813,
+          "negative_cell_fraction": 0.1875
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.3512070267859155,
+          "top_row_mass_ratio": 0.16719015906834553,
+          "left_column_mass_ratio": 0.10395572488632775,
+          "heatmap_centroid_row": 0.4158142110450037,
+          "heatmap_centroid_column": 0.5519084750938799,
+          "heatmap_centroid_distance_to_center": 0.0989026635058284,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.24104633548289417,
+          "top_row_mass_ratio": 0.05075172975026097,
+          "left_column_mass_ratio": 0.09471686828521479,
+          "heatmap_centroid_row": 0.44458579059359504,
+          "heatmap_centroid_column": 0.4400507553978503,
+          "heatmap_centroid_distance_to_center": 0.08163728641071598,
+          "negative_cell_fraction": 0.4298642533936652
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.27628079442083037,
+          "top_row_mass_ratio": 0.08793978218294668,
+          "left_column_mass_ratio": 0.10258267501381751,
+          "heatmap_centroid_row": 0.3505336184718255,
+          "heatmap_centroid_column": 0.6078363169184869,
+          "heatmap_centroid_distance_to_center": 0.1843064579814559,
+          "negative_cell_fraction": 0.2895927601809955
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.31293162497307925,
+          "top_row_mass_ratio": 0.11921900201155058,
+          "left_column_mass_ratio": 0.08241889630305894,
+          "heatmap_centroid_row": 0.4458951641660398,
+          "heatmap_centroid_column": 0.5883649251060489,
+          "heatmap_centroid_distance_to_center": 0.10361319051943826,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.31214735631342677,
+          "top_row_mass_ratio": 0.1290880758858868,
+          "left_column_mass_ratio": 0.09104305095244475,
+          "heatmap_centroid_row": 0.4397341470551783,
+          "heatmap_centroid_column": 0.5647274538689847,
+          "heatmap_centroid_distance_to_center": 0.08843990228131425,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    },
+    {
+      "sample_id": "vizwiz-lf-595",
+      "thinking_tokens": 91,
+      "thinking_bucket": "short",
+      "exact_all_gen_cosine": 0.9960047934744202,
+      "flashtrace_mass": {
+        "direct_positive_mass": 0.6224775810242136,
+        "recursive_positive_mass": 0.22595075999015535,
+        "recursive_positive_fraction": 0.2663168461817433,
+        "direct_absolute_mass": 0.6224775810242136,
+        "recursive_absolute_mass": 0.22595075999015535,
+        "recursive_absolute_fraction": 0.2663168461817433
+      },
+      "ground_truth_centroid": null,
+      "methods": {
+        "random": {
+          "border_mass_ratio": 0.12550619498148088,
+          "top_row_mass_ratio": 0.03434352637197067,
+          "left_column_mass_ratio": 0.03603920520764367,
+          "heatmap_centroid_row": 0.4987811984949957,
+          "heatmap_centroid_column": 0.4946755803451307,
+          "heatmap_centroid_distance_to_center": 0.00546213527567372,
+          "negative_cell_fraction": 0.0
+        },
+        "center": {
+          "border_mass_ratio": 0.004974682916611986,
+          "top_row_mass_ratio": 0.0012452213051603015,
+          "left_column_mass_ratio": 0.0012452213051603015,
+          "heatmap_centroid_row": 0.5,
+          "heatmap_centroid_column": 0.5,
+          "heatmap_centroid_distance_to_center": 0.0,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-loo": {
+          "border_mass_ratio": 0.8671735942306473,
+          "top_row_mass_ratio": 0.26669654534383563,
+          "left_column_mass_ratio": 0.246325817458925,
+          "heatmap_centroid_row": 0.527200879235386,
+          "heatmap_centroid_column": 0.5935697154247731,
+          "heatmap_centroid_distance_to_center": 0.09744321154319104,
+          "negative_cell_fraction": 0.0
+        },
+        "ifr-span": {
+          "border_mass_ratio": 0.16313045008844218,
+          "top_row_mass_ratio": 0.08720732588407303,
+          "left_column_mass_ratio": 0.024272690007227433,
+          "heatmap_centroid_row": 0.44157686260650425,
+          "heatmap_centroid_column": 0.4947232078261821,
+          "heatmap_centroid_distance_to_center": 0.05866095395188308,
+          "negative_cell_fraction": 0.0
+        },
+        "visual-ig": {
+          "border_mass_ratio": 0.10791681600474551,
+          "top_row_mass_ratio": 0.019260151203747786,
+          "left_column_mass_ratio": 0.024146021591684212,
+          "heatmap_centroid_row": 0.5169513651143556,
+          "heatmap_centroid_column": 0.5256901186455889,
+          "heatmap_centroid_distance_to_center": 0.030778742262552342,
+          "negative_cell_fraction": 0.5033333333333333
+        },
+        "attnlrp": {
+          "border_mass_ratio": 0.14151207925110237,
+          "top_row_mass_ratio": 0.07464770727514372,
+          "left_column_mass_ratio": 0.004525360015366214,
+          "heatmap_centroid_row": 0.4358911460818789,
+          "heatmap_centroid_column": 0.5302176479476179,
+          "heatmap_centroid_distance_to_center": 0.07087348868357737,
+          "negative_cell_fraction": 0.34
+        },
+        "flashtrace": {
+          "border_mass_ratio": 0.1618293695761939,
+          "top_row_mass_ratio": 0.08327270562171504,
+          "left_column_mass_ratio": 0.024563872784781577,
+          "heatmap_centroid_row": 0.453815118278858,
+          "heatmap_centroid_column": 0.5038202728224705,
+          "heatmap_centroid_distance_to_center": 0.04634261304710798,
+          "negative_cell_fraction": 0.0
+        },
+        "flashtrace-all-gen": {
+          "border_mass_ratio": 0.16048494769025573,
+          "top_row_mass_ratio": 0.08666115633108706,
+          "left_column_mass_ratio": 0.023254028676036872,
+          "heatmap_centroid_row": 0.4437028871816138,
+          "heatmap_centroid_column": 0.49720634524130425,
+          "heatmap_centroid_distance_to_center": 0.05636638553780865,
+          "negative_cell_fraction": 0.0
+        }
+      }
+    }
+  ]
+}

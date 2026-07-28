@@ -36,3 +36,6 @@ exp/**/out-*/
 .DS_Store
 repomix-output.xml
 paper/
+
+# Multimodal evaluation runtime locks
+evaluations/multimodal/results/strict/formal/*.lock
