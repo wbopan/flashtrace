@@ -1,0 +1,1638 @@
+tp_fp_label,representative_candidate_id,representative_route_id,member_candidate_id,member_route_id,cosine_similarity,representative_flow,member_flow,shared_directed_edges,shared_span_ids,span_set_jaccard,shorter_route_coverage,representative_path,member_path,representative_text,member_text
+,M13,R28,M39,R60,0.913867,0.0058093003,0.0027355810,S1->S5,S1; S5,0.285714,0.666667,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S5 -> S17 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: Also, they might be struggling with self-acceptance."
+,M13,R28,M55,R76,0.905913,0.0058093003,0.0023966194,S1->S5; S5->S6,S1; S5; S6,0.375000,0.600000,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S5 -> S6 -> S17 -> S18 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Also, they might be struggling with self-acceptance.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help."
+,M13,R28,M101,R123,0.916595,0.0058093003,0.0012702872,S1->S5,S1; S5,0.285714,0.666667,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S5 -> S22 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: Make sure the response is empathetic, non-judgmental, and practical."
+,M13,R28,M131,R153,0.923393,0.0058093003,0.0008369766,S5->S6,S1; S5; S6,0.333333,0.500000,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S3 -> S5 -> S6 -> S8 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: They might feel isolated, so emphasizing that they're not alone is key.
+Step 6: Check for any harmful thoughts and ensure the advice is safe."
+,M13,R28,M157,R179,0.949134,0.0058093003,0.0005508425,S1->S5,S1; S5; S12,0.333333,0.500000,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S5 -> S7 -> S12 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Next, the bullying.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M13,R28,M227,R249,0.952713,0.0058093003,0.0000045044,S1->S5; S5->S6,S1; S5; S6,0.272727,0.500000,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S5 -> S6 -> S7 -> S17 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M13,R28,M255,R277,0.952413,0.0058093003,0.0000000723,S1->S5,S1; S5; S12; S14,0.333333,0.666667,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S1 -> S5 -> S8 -> S12 -> S14 -> S17 -> S18 -> S20 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M13,R28,M276,R298,0.909233,0.0058093003,0.0000000000,S5->S6,S5; S6; S12,0.375000,0.600000,Q -> S1 -> S5 -> S6 -> S12 -> S13 -> S14 -> O,Q -> S5 -> S6 -> S7 -> S10 -> S12 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Next, the bullying.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: First, I need to validate their feelings.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Next, the bullying."
+,M14,R29,M24,R42,0.944889,0.0055667245,0.0042431197,S1->S3,S1; S3,0.500000,0.666667,Q -> S1 -> S3 -> S13 -> O,Q -> S1 -> S3 -> S7 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem."
+,M14,R29,M67,R89,0.935909,0.0055667245,0.0018100492,S1->S3,S1; S3,0.400000,0.666667,Q -> S1 -> S3 -> S13 -> O,Q -> S1 -> S3 -> S7 -> S14 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Maybe suggest talking to a trusted teacher or counselor."
+,M14,R29,M80,R102,0.913675,0.0055667245,0.0016198115,S1->S3,S1; S3,0.333333,0.666667,Q -> S1 -> S3 -> S13 -> O,Q -> S1 -> S3 -> S7 -> S21 -> S22 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical."
+,M14,R29,M85,R107,0.946072,0.0055667245,0.0015392495,S1->S3,S1; S3,0.333333,0.666667,Q -> S1 -> S3 -> S13 -> O,Q -> S1 -> S3 -> S17 -> S19 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Also, they might be struggling with self-acceptance.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: They need to know it's okay to seek help and that they deserve support."
+,M14,R29,M107,R129,0.933818,0.0055667245,0.0011912297,S1->S3,S1; S3,0.285714,0.666667,Q -> S1 -> S3 -> S13 -> O,Q -> S1 -> S3 -> S7 -> S19 -> S20 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: They need to know it's okay to seek help and that they deserve support.
+Step 6: Check for any harmful thoughts and ensure the advice is safe."
+,M14,R29,M139,R161,0.967689,0.0055667245,0.0007437930,S1->S3,S1; S3,0.500000,0.666667,Q -> S1 -> S3 -> S13 -> O,Q -> S1 -> S3 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Finally, offer to help them find resources or support if they're open to it."
+,M15,R30,M43,R64,0.941664,0.0055305492,0.0026845632,S1->S3,S1; S3,0.181818,0.333333,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S8 -> S12 -> S15 -> S17 -> S18 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Next, the bullying.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help."
+,M15,R30,M45,R66,0.941685,0.0055305492,0.0026768709,S1->S3; S3->S5,S1; S3; S5; S16,0.444444,0.666667,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S5 -> S10 -> S16 -> S17 -> S18 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help."
+,M15,R30,M54,R75,0.928859,0.0055305492,0.0024111706,S1->S3,S1; S3; S16,0.333333,0.500000,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S4 -> S15 -> S16 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: They need to know it's okay to seek help and that they deserve support."
+,M15,R30,M82,R104,0.921192,0.0055305492,0.0015891358,S3->S5; S5->S7,S3; S5; S7,0.375000,0.600000,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S3 -> S5 -> S7 -> S15 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: They need to know it's okay to seek help and that they deserve support."
+,M15,R30,M174,R196,0.944150,0.0055305492,0.0002343610,S1->S3,S1; S3; S7; S16,0.400000,0.666667,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S6 -> S7 -> S9 -> S16 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: First, I need to validate their feelings.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: Then, address the body image issue.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: I should avoid giving medical advice and focus on emotional support.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M15,R30,M204,R226,0.930002,0.0055305492,0.0000326120,S1->S3,S1; S3; S7,0.300000,0.500000,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S7 -> S17 -> S18 -> S20 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Also, they might be struggling with self-acceptance.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help.
+Step 6: They need to know it's okay to seek help and that they deserve support.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M15,R30,M233,R255,0.924389,0.0055305492,0.0000022595,S5->S7,S1; S5; S7; S16,0.307692,0.666667,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S2 -> S5 -> S7 -> S10 -> S12 -> S14 -> S16 -> S19 -> S20 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: Next, the bullying.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 9: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 10: They need to know it's okay to seek help and that they deserve support.
+Step 11: Finally, offer to help them find resources or support if they're open to it."
+,M15,R30,M237,R259,0.923892,0.0055305492,0.0000014904,S1->S3,S1; S3; S16,0.250000,0.500000,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S4 -> S9 -> S14 -> S16 -> S17 -> S18 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Then, address the body image issue.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: Encouraging self-compassion and challenging negative thoughts could help.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M15,R30,M256,R278,0.910156,0.0055305492,0.0000000626,S1->S3,S1; S3; S16,0.250000,0.500000,Q -> S1 -> S3 -> S5 -> S7 -> S13 -> S16 -> O,Q -> S1 -> S3 -> S4 -> S9 -> S14 -> S16 -> S19 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Then, address the body image issue.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 8: Make sure the response is empathetic, non-judgmental, and practical.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M17,R34,M22,R40,0.966500,0.0047475194,0.0042814325,S1->S5,S1; S5; S16,0.600000,1.000000,Q -> S1 -> S5 -> S16 -> O,Q -> S1 -> S5 -> S13 -> S15 -> S16 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills."
+,M17,R34,M199,R221,0.925067,0.0047475194,0.0000504235,S1->S5,S1; S5; S16,0.428571,1.000000,Q -> S1 -> S5 -> S16 -> O,Q -> S1 -> S5 -> S14 -> S16 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M21,R39,M48,R69,0.929317,0.0043241507,0.0025234781,S1->S2; S2->S5,S1; S2; S5,0.600000,0.750000,Q -> S1 -> S2 -> S5 -> S8 -> O,Q -> S1 -> S2 -> S5 -> S18 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help."
+,M21,R39,M64,R86,0.919454,0.0043241507,0.0020160993,S1->S2,S1; S2; S5,0.500000,0.750000,Q -> S1 -> S2 -> S5 -> S8 -> O,Q -> S1 -> S2 -> S4 -> S5 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: They need to know it's okay to seek help and that they deserve support."
+,M21,R39,M66,R88,0.938562,0.0043241507,0.0018243377,S1->S2; S2->S5,S1; S2; S5,0.600000,0.750000,Q -> S1 -> S2 -> S5 -> S8 -> O,Q -> S1 -> S2 -> S5 -> S21 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: I should avoid giving medical advice and focus on emotional support."
+,M21,R39,M99,R121,0.916428,0.0043241507,0.0013355848,S1->S2; S2->S5,S1; S2; S5,0.428571,0.750000,Q -> S1 -> S2 -> S5 -> S8 -> O,Q -> S1 -> S2 -> S5 -> S10 -> S14 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: They need to know it's okay to seek help and that they deserve support."
+,M21,R39,M168,R190,0.918752,0.0043241507,0.0003329353,S1->S2; S2->S5,S1; S2; S5,0.333333,0.750000,Q -> S1 -> S2 -> S5 -> S8 -> O,Q -> S1 -> S2 -> S5 -> S9 -> S17 -> S20 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Then, address the body image issue.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: They need to know it's okay to seek help and that they deserve support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M23,R41,M57,R79,0.945116,0.0042510844,0.0023040791,S1->S2; S2->S3,S1; S2; S3,0.375000,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S14 -> S17 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: They need to know it's okay to seek help and that they deserve support."
+,M23,R41,M69,R91,0.906907,0.0042510844,0.0017970594,S1->S2; S2->S3,S1; S2; S3,0.428571,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S16 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M23,R41,M81,R103,0.921540,0.0042510844,0.0016135902,S2->S3,S2; S3; S21,0.428571,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S2 -> S3 -> S12 -> S21 -> S22 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Next, the bullying.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical."
+,M23,R41,M93,R115,0.946749,0.0042510844,0.0014887793,S1->S2; S2->S3,S1; S2; S3,0.375000,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S8 -> S14 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M23,R41,M118,R140,0.906738,0.0042510844,0.0010308132,S1->S2; S2->S3,S1; S2; S3,0.428571,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S15 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M23,R41,M119,R141,0.911867,0.0042510844,0.0009954365,S1->S2,S1; S2,0.181818,0.400000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S4 -> S7 -> S10 -> S20 -> S22 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: They need to know it's okay to seek help and that they deserve support.
+Step 7: Make sure the response is empathetic, non-judgmental, and practical.
+Step 8: Check for any harmful thoughts and ensure the advice is safe."
+,M23,R41,M181,R203,0.907885,0.0042510844,0.0001665367,S1->S2; S2->S3,S1; S2; S3; S21,0.444444,0.800000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S8 -> S14 -> S16 -> S17 -> S21 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: I should avoid giving medical advice and focus on emotional support."
+,M23,R41,M249,R271,0.930646,0.0042510844,0.0000002159,S1->S2; S2->S3,S1; S2; S3,0.428571,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S8 -> S12 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: They might feel isolated, so emphasizing that they're not alone is key.
+Step 5: Next, the bullying."
+,M23,R41,M257,R279,0.917991,0.0042510844,0.0000000388,S1->S2; S2->S3,S1; S2; S3,0.428571,0.600000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S15 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Check for any harmful thoughts and ensure the advice is safe."
+,M23,R41,M268,R290,0.924831,0.0042510844,0.0000000028,S1->S2; S2->S3,S1; S2; S3; S6; S21,0.357143,1.000000,Q -> S1 -> S2 -> S3 -> S6 -> S21 -> O,Q -> S1 -> S2 -> S3 -> S4 -> S5 -> S6 -> S7 -> S10 -> S12 -> S14 -> S17 -> S20 -> S21 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: First, I need to validate their feelings.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 4: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 5: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 6: First, I need to validate their feelings.
+Step 7: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 8: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 9: Next, the bullying.
+Step 10: Maybe suggest talking to a trusted teacher or counselor.
+Step 11: Also, they might be struggling with self-acceptance.
+Step 12: They need to know it's okay to seek help and that they deserve support.
+Step 13: I should avoid giving medical advice and focus on emotional support.
+Step 14: Check for any harmful thoughts and ensure the advice is safe."
+,M26,R44,M102,R124,0.929902,0.0041495428,0.0012485312,S5->S11,S3; S5; S11,0.428571,0.750000,Q -> S3 -> S5 -> S11 -> S17 -> O,Q -> S1 -> S3 -> S4 -> S5 -> S11 -> S23 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 4: Also, they might be struggling with self-acceptance.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 6: Check for any harmful thoughts and ensure the advice is safe."
+,M27,R47,M202,R224,0.945203,0.0038741966,0.0000368346,S1->S10; S10->S13,S1; S10; S13,0.750000,1.000000,Q -> S1 -> S10 -> S13 -> S18 -> O,Q -> S1 -> S10 -> S13 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support."
+,M29,R49,M236,R258,0.912322,0.0036603952,0.0000015580,S14->S16,S5; S14; S16,0.375000,0.750000,Q -> S5 -> S12 -> S14 -> S16 -> O,Q -> S5 -> S14 -> S16 -> S19 -> S21 -> S22 -> S24 -> O,"Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: Next, the bullying.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: Maybe suggest talking to a trusted teacher or counselor.
+Step 3: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M29,R49,M262,R284,0.945498,0.0036603952,0.0000000189,S12->S14; S14->S16,S5; S12; S14; S16,0.444444,1.000000,Q -> S5 -> S12 -> S14 -> S16 -> O,Q -> S5 -> S8 -> S12 -> S14 -> S16 -> S19 -> S21 -> S23 -> S24 -> O,"Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: Next, the bullying.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: Next, the bullying.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 7: I should avoid giving medical advice and focus on emotional support.
+Step 8: Check for any harmful thoughts and ensure the advice is safe.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M30,R50,M49,R70,0.916659,0.0035484560,0.0025136563,S2->S3,S2; S3; S6; S19,0.444444,0.666667,Q -> S2 -> S3 -> S4 -> S6 -> S8 -> S13 -> S19 -> O,Q -> S2 -> S3 -> S6 -> S10 -> S11 -> S19 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: First, I need to validate their feelings.
+Step 5: They might feel isolated, so emphasizing that they're not alone is key.
+Step 6: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: First, I need to validate their feelings.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports."
+,M30,R50,M269,R291,0.903477,0.0035484560,0.0000000013,S4->S6,S2; S4; S6; S13,0.333333,0.571429,Q -> S2 -> S3 -> S4 -> S6 -> S8 -> S13 -> S19 -> O,Q -> S2 -> S4 -> S6 -> S13 -> S14 -> S17 -> S20 -> S21 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: First, I need to validate their feelings.
+Step 5: They might feel isolated, so emphasizing that they're not alone is key.
+Step 6: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: They need to know it's okay to seek help and that they deserve support.
+Step 8: I should avoid giving medical advice and focus on emotional support.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M31,R51,M184,R206,0.946164,0.0034348867,0.0001449263,S1->S2,S1; S2; S11,0.375000,0.600000,Q -> S1 -> S2 -> S6 -> S11 -> S18 -> O,Q -> S1 -> S2 -> S11 -> S20 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M31,R51,M216,R238,0.909689,0.0034348867,0.0000130296,S1->S2,S1; S2; S11,0.500000,0.750000,Q -> S1 -> S2 -> S6 -> S11 -> S18 -> O,Q -> S1 -> S2 -> S4 -> S11 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance."
+,M32,R53,M33,R54,0.959251,0.0031817091,0.0031618462,S15->S16,S1; S15; S16,0.750000,1.000000,Q -> S1 -> S14 -> S15 -> S16 -> O,Q -> S1 -> S15 -> S16 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Maybe suggest talking to a trusted teacher or counselor.
+Step 3: The parents' resistance to therapy is a barrier.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The parents' resistance to therapy is a barrier.
+Step 3: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills."
+,M36,R57,M41,R62,0.944902,0.0028170804,0.0027156666,S1->S7,S1; S7; S16,0.500000,1.000000,Q -> S1 -> S7 -> S16 -> O,Q -> S1 -> S7 -> S10 -> S12 -> S16 -> S18 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Next, the bullying.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Encouraging self-compassion and challenging negative thoughts could help."
+,M37,R58,M109,R131,0.933356,0.0027993869,0.0011817464,S2->S5; S5->S7; S7->S9,S2; S5; S7; S9,0.571429,1.000000,Q -> S2 -> S5 -> S7 -> S9 -> O,Q -> S1 -> S2 -> S5 -> S7 -> S9 -> S18 -> S23 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: Then, address the body image issue.
+Step 6: Encouraging self-compassion and challenging negative thoughts could help.
+Step 7: Check for any harmful thoughts and ensure the advice is safe."
+,M37,R58,M203,R225,0.927068,0.0027993869,0.0000352690,S2->S5,S2; S5,0.250000,0.500000,Q -> S2 -> S5 -> S7 -> S9 -> O,Q -> S1 -> S2 -> S5 -> S10 -> S12 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Next, the bullying.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M37,R58,M213,R235,0.936607,0.0027993869,0.0000148459,S2->S5; S5->S7,S2; S5; S7,0.375000,0.750000,Q -> S2 -> S5 -> S7 -> S9 -> O,Q -> S1 -> S2 -> S5 -> S7 -> S10 -> S15 -> S20 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: The parents' resistance to therapy is a barrier.
+Step 7: They need to know it's okay to seek help and that they deserve support."
+,M37,R58,M221,R243,0.928878,0.0027993869,0.0000076986,S2->S5; S5->S7,S2; S5; S7,0.375000,0.750000,Q -> S2 -> S5 -> S7 -> S9 -> O,Q -> S1 -> S2 -> S5 -> S7 -> S10 -> S11 -> S12 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 7: Next, the bullying."
+,M40,R61,M76,R98,0.902845,0.0027160902,0.0016718420,S1->S4,S1; S4; S11,0.428571,0.600000,Q -> S1 -> S4 -> S11 -> S14 -> S15 -> O,Q -> S1 -> S4 -> S6 -> S11 -> S20 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: The parents' resistance to therapy is a barrier.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 5: They need to know it's okay to seek help and that they deserve support."
+,M47,R68,M104,R126,0.927676,0.0025578177,0.0012301581,S2->S11,S2; S11,0.500000,0.666667,Q -> S2 -> S11 -> S21 -> O,Q -> S2 -> S11 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 3: I should avoid giving medical advice and focus on emotional support.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 3: Finally, offer to help them find resources or support if they're open to it."
+,M50,R71,M98,R120,0.947262,0.0024673403,0.0013412045,S1->S4,S1; S4,0.500000,0.666667,Q -> S1 -> S4 -> S10 -> O,Q -> S1 -> S4 -> S17 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Also, they might be struggling with self-acceptance."
+,M51,R72,M152,R174,0.964387,0.0024478713,0.0006103737,S5->S9,S5; S9,0.400000,0.666667,Q -> S5 -> S9 -> S13 -> S20 -> O,Q -> S5 -> S9 -> S24 -> O,"Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: Then, address the body image issue.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 4: They need to know it's okay to seek help and that they deserve support.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: Then, address the body image issue.
+Step 3: Finally, offer to help them find resources or support if they're open to it."
+,M58,R80,M65,R87,0.941440,0.0022658088,0.0019031762,S15->S16,S3; S15; S16,0.375000,0.600000,Q -> S3 -> S11 -> S15 -> S16 -> S21 -> O,Q -> S3 -> S4 -> S6 -> S15 -> S16 -> S22 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 3: The parents' resistance to therapy is a barrier.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical."
+,M59,R81,M148,R170,0.956026,0.0022565724,0.0006559059,S1->S4,S1; S4; S21,0.500000,0.750000,Q -> S1 -> S4 -> S8 -> S17 -> S21 -> O,Q -> S1 -> S4 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Also, they might be struggling with self-acceptance.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: I should avoid giving medical advice and focus on emotional support.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M60,R82,M86,R108,0.965307,0.0022208086,0.0015332946,S2->S3; S3->S5,S2; S3; S5,0.428571,0.600000,Q -> S2 -> S3 -> S5 -> S14 -> S19 -> O,Q -> S2 -> S3 -> S5 -> S6 -> S23 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: Check for any harmful thoughts and ensure the advice is safe."
+,M60,R82,M113,R135,0.940383,0.0022208086,0.0011038210,S2->S3,S2; S3; S5,0.375000,0.600000,Q -> S2 -> S3 -> S5 -> S14 -> S19 -> O,Q -> S2 -> S3 -> S4 -> S5 -> S13 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M60,R82,M126,R148,0.972892,0.0022208086,0.0009365535,S2->S3; S3->S5,S2; S3; S5,0.500000,0.750000,Q -> S2 -> S3 -> S5 -> S14 -> S19 -> O,Q -> S2 -> S3 -> S5 -> S23 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Check for any harmful thoughts and ensure the advice is safe."
+,M60,R82,M229,R251,0.956663,0.0022208086,0.0000033911,S2->S3; S3->S5; S5->S14,S2; S3; S5; S14; S19,0.714286,1.000000,Q -> S2 -> S3 -> S5 -> S14 -> S19 -> O,Q -> S2 -> S3 -> S5 -> S14 -> S16 -> S19 -> S23 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 7: Check for any harmful thoughts and ensure the advice is safe."
+,M63,R85,M91,R113,0.950460,0.0020286694,0.0014955291,S1->S3; S3->S4,S1; S3; S4,0.375000,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S9 -> S17 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Then, address the body image issue.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M122,R144,0.913363,0.0020286694,0.0009625660,S1->S3,S1; S3; S21,0.333333,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S19 -> S20 -> S21 -> S22 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Check for any harmful thoughts and ensure the advice is safe."
+,M63,R85,M125,R147,0.953179,0.0020286694,0.0009386239,S1->S3; S3->S4,S1; S3; S4; S21,0.500000,0.800000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S18 -> S21 -> S22 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Check for any harmful thoughts and ensure the advice is safe."
+,M63,R85,M153,R175,0.903981,0.0020286694,0.0005957506,S3->S4,S3; S4; S13,0.375000,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S3 -> S4 -> S5 -> S10 -> S13 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M154,R176,0.912689,0.0020286694,0.0005707561,S1->S3,S1; S3; S21,0.333333,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S7 -> S9 -> S20 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.
+Step 5: They need to know it's okay to seek help and that they deserve support.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M171,R193,0.956634,0.0020286694,0.0002672895,S1->S3; S3->S4,S1; S3; S4,0.375000,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S17 -> S18 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Also, they might be struggling with self-acceptance.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M186,R208,0.911622,0.0020286694,0.0001215882,S1->S3; S3->S4,S1; S3; S4; S13,0.571429,0.800000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S10 -> S11 -> S13 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 6: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support."
+,M63,R85,M207,R229,0.916850,0.0020286694,0.0000266846,S1->S3; S3->S4,S1; S3; S4,0.375000,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S11 -> S12 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 5: Next, the bullying.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M220,R242,0.927494,0.0020286694,0.0000082677,S1->S3; S3->S4,S1; S3; S4,0.375000,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S9 -> S10 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Then, address the body image issue.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M245,R267,0.938516,0.0020286694,0.0000004939,S1->S3; S3->S4,S1; S3; S4,0.300000,0.600000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S6 -> S9 -> S17 -> S20 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: First, I need to validate their feelings.
+Step 5: Then, address the body image issue.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: They need to know it's okay to seek help and that they deserve support.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M263,R285,0.933824,0.0020286694,0.0000000157,S1->S3; S3->S4,S1; S3; S4; S21,0.363636,0.800000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S9 -> S17 -> S18 -> S20 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Then, address the body image issue.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: Encouraging self-compassion and challenging negative thoughts could help.
+Step 7: They need to know it's okay to seek help and that they deserve support.
+Step 8: I should avoid giving medical advice and focus on emotional support.
+Step 9: Check for any harmful thoughts and ensure the advice is safe.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M267,R289,0.964697,0.0020286694,0.0000000032,S1->S3; S3->S4,S1; S3; S4; S21,0.444444,0.800000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S9 -> S17 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Then, address the body image issue.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M63,R85,M270,R292,0.925468,0.0020286694,0.0000000010,S1->S3; S3->S4,S1; S3; S4; S13; S21,0.500000,1.000000,Q -> S1 -> S3 -> S4 -> S13 -> S21 -> O,Q -> S1 -> S3 -> S4 -> S6 -> S13 -> S14 -> S17 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: First, I need to validate their feelings.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: I should avoid giving medical advice and focus on emotional support.
+Step 9: Check for any harmful thoughts and ensure the advice is safe.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M68,R90,M71,R93,0.940594,0.0018017443,0.0017601435,S18->S19,S2; S18; S19,0.500000,0.750000,Q -> S2 -> S13 -> S14 -> S18 -> S19 -> O,Q -> S2 -> S6 -> S18 -> S19 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: First, I need to validate their feelings.
+Step 3: Encouraging self-compassion and challenging negative thoughts could help.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports."
+,M70,R92,M121,R143,0.906351,0.0017949050,0.0009626665,S5->S8,S5; S8; S19,0.500000,0.750000,Q -> S1 -> S5 -> S8 -> S18 -> S19 -> O,Q -> S5 -> S8 -> S19 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 4: Check for any harmful thoughts and ensure the advice is safe."
+,M70,R92,M192,R214,0.923309,0.0017949050,0.0000807522,S1->S5; S5->S8,S1; S5; S8,0.333333,0.600000,Q -> S1 -> S5 -> S8 -> S18 -> S19 -> O,Q -> S1 -> S5 -> S8 -> S13 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M70,R92,M217,R239,0.900791,0.0017949050,0.0000118410,S1->S5; S5->S8,S1; S5; S8; S18,0.333333,0.800000,Q -> S1 -> S5 -> S8 -> S18 -> S19 -> O,Q -> S1 -> S5 -> S8 -> S10 -> S15 -> S17 -> S18 -> S20 -> S22 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Check for any harmful thoughts and ensure the advice is safe.
+Step 11: Finally, offer to help them find resources or support if they're open to it."
+,M72,R94,M97,R119,0.981429,0.0017194309,0.0013820372,S3->S6,S3; S6; S20,0.750000,1.000000,Q -> S3 -> S6 -> S8 -> S20 -> O,Q -> S3 -> S6 -> S20 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: First, I need to validate their feelings.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: They need to know it's okay to seek help and that they deserve support.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: First, I need to validate their feelings.
+Step 3: They need to know it's okay to seek help and that they deserve support."
+,M72,R94,M188,R210,0.966460,0.0017194309,0.0001010047,S3->S6,S3; S6,0.285714,0.500000,Q -> S3 -> S6 -> S8 -> S20 -> O,Q -> S3 -> S6 -> S13 -> S22 -> S24 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: First, I need to validate their feelings.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: They need to know it's okay to seek help and that they deserve support.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: First, I need to validate their feelings.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M75,R97,M100,R122,0.942427,0.0016757996,0.0012971509,S1->S2; S2->S7,S1; S2; S7,0.428571,0.600000,Q -> S1 -> S2 -> S7 -> S18 -> S19 -> O,Q -> S1 -> S2 -> S7 -> S20 -> S22 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical."
+,M75,R97,M130,R152,0.941788,0.0016757996,0.0008521819,S1->S2,S1; S2; S7,0.428571,0.600000,Q -> S1 -> S2 -> S7 -> S18 -> S19 -> O,Q -> S1 -> S2 -> S6 -> S7 -> S23 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: Check for any harmful thoughts and ensure the advice is safe."
+,M75,R97,M145,R167,0.931462,0.0016757996,0.0007169460,S1->S2; S2->S7,S1; S2; S7,0.375000,0.600000,Q -> S1 -> S2 -> S7 -> S18 -> S19 -> O,Q -> S1 -> S2 -> S7 -> S9 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M129,R151,0.939015,0.0016397467,0.0008896070,S1->S2,S1; S2; S24,0.500000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S12 -> S20 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Next, the bullying.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M134,R156,0.925208,0.0016397467,0.0007900144,S1->S2,S1; S2; S24,0.500000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S9 -> S19 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Then, address the body image issue.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M136,R158,0.914356,0.0016397467,0.0007582458,S1->S2,S1; S2; S24,0.500000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S4 -> S20 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M140,R162,0.965314,0.0016397467,0.0007431791,S1->S2,S1; S2; S24,0.600000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S20 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: They need to know it's okay to seek help and that they deserve support.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M146,R168,0.950783,0.0016397467,0.0007025860,S1->S2,S1; S2; S24,0.600000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S19 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M155,R177,0.901271,0.0016397467,0.0005681059,S1->S2,S1; S2; S24,0.428571,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S18 -> S19 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Encouraging self-compassion and challenging negative thoughts could help.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M156,R178,0.919247,0.0016397467,0.0005518045,S1->S2,S1; S2; S24,0.600000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S4 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M160,R182,0.972039,0.0016397467,0.0004966549,S1->S2,S1; S2; S24,0.600000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Make sure the response is empathetic, non-judgmental, and practical.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M166,R188,0.907995,0.0016397467,0.0003619175,S1->S2,S1; S2; S24,0.428571,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S17 -> S18 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Also, they might be struggling with self-acceptance.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M196,R218,0.930088,0.0016397467,0.0000669838,S1->S2,S1; S2; S24,0.500000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S18 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Encouraging self-compassion and challenging negative thoughts could help.
+Step 4: Check for any harmful thoughts and ensure the advice is safe.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M226,R248,0.917590,0.0016397467,0.0000049546,S1->S2,S1; S2; S24,0.428571,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S9 -> S10 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Then, address the body image issue.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M231,R253,0.946329,0.0016397467,0.0000026275,S1->S2,S1; S2; S24,0.500000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S9 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Then, address the body image issue.
+Step 4: Check for any harmful thoughts and ensure the advice is safe.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M78,R100,M242,R264,0.926982,0.0016397467,0.0000006302,S1->S2,S1; S2; S24,0.375000,0.750000,Q -> S1 -> S2 -> S6 -> S24 -> O,Q -> S1 -> S2 -> S9 -> S17 -> S20 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Then, address the body image issue.
+Step 4: Also, they might be struggling with self-acceptance.
+Step 5: They need to know it's okay to seek help and that they deserve support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M83,R105,M189,R211,0.932925,0.0015832842,0.0000933979,S1->S2,S1; S2; S16,0.272727,0.500000,Q -> S1 -> S2 -> S4 -> S16 -> S18 -> S20 -> O,Q -> S1 -> S2 -> S9 -> S14 -> S16 -> S22 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help.
+Step 6: They need to know it's okay to seek help and that they deserve support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Then, address the body image issue.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M83,R105,M214,R236,0.954809,0.0015832842,0.0000145508,S1->S2,S1; S2; S16; S18,0.500000,0.666667,Q -> S1 -> S2 -> S4 -> S16 -> S18 -> S20 -> O,Q -> S1 -> S2 -> S14 -> S16 -> S17 -> S18 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: Encouraging self-compassion and challenging negative thoughts could help.
+Step 6: They need to know it's okay to seek help and that they deserve support.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: Encouraging self-compassion and challenging negative thoughts could help."
+,M84,R106,M169,R191,0.956927,0.0015711586,0.0003198227,S7->S17,S7; S17; S22,0.600000,1.000000,Q -> S7 -> S17 -> S22 -> O,Q -> S7 -> S17 -> S18 -> S22 -> S24 -> O,"Step 1: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 2: Also, they might be struggling with self-acceptance.
+Step 3: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 2: Also, they might be struggling with self-acceptance.
+Step 3: Encouraging self-compassion and challenging negative thoughts could help.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M88,R110,M194,R216,0.956521,0.0015130296,0.0000697430,S1->S4; S4->S7,S1; S4; S7,0.428571,0.750000,Q -> S1 -> S4 -> S7 -> S22 -> O,Q -> S1 -> S4 -> S7 -> S9 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: Then, address the body image issue.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M89,R111,M149,R171,0.913428,0.0015097684,0.0006535479,S1->S8,S1; S8,0.400000,0.666667,Q -> S1 -> S8 -> S22 -> O,Q -> S1 -> S8 -> S12 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: Next, the bullying.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M90,R112,M127,R149,0.901022,0.0014962679,0.0009358776,S1->S7,S1; S7,0.285714,0.666667,Q -> S1 -> S7 -> S10 -> S18 -> S21 -> S22 -> O,Q -> S1 -> S7 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: Finally, offer to help them find resources or support if they're open to it."
+,M90,R112,M187,R209,0.920378,0.0014962679,0.0001152874,S1->S7; S21->S22,S1; S7; S21; S22,0.444444,0.666667,Q -> S1 -> S7 -> S10 -> S18 -> S21 -> S22 -> O,Q -> S1 -> S7 -> S9 -> S13 -> S21 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: Then, address the body image issue.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M90,R112,M218,R240,0.946739,0.0014962679,0.0000106486,S1->S7; S21->S22,S1; S7; S18; S21; S22,0.500000,0.833333,Q -> S1 -> S7 -> S10 -> S18 -> S21 -> S22 -> O,Q -> S1 -> S7 -> S12 -> S14 -> S17 -> S18 -> S20 -> S21 -> S22 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: Next, the bullying.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: Encouraging self-compassion and challenging negative thoughts could help.
+Step 7: They need to know it's okay to seek help and that they deserve support.
+Step 8: I should avoid giving medical advice and focus on emotional support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical."
+,M90,R112,M260,R282,0.928901,0.0014962679,0.0000000276,S1->S7; S7->S10,S1; S7; S10,0.428571,0.750000,Q -> S1 -> S7 -> S10 -> S18 -> S21 -> S22 -> O,Q -> S1 -> S7 -> S10 -> S12 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Next, the bullying."
+,M106,R128,M259,R281,0.959678,0.0012008980,0.0000000290,S1->S5,S1; S5; S9; S21,0.444444,0.800000,Q -> S1 -> S5 -> S9 -> S21 -> S22 -> O,Q -> S1 -> S5 -> S6 -> S9 -> S17 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: Then, address the body image issue.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 3: First, I need to validate their feelings.
+Step 4: Then, address the body image issue.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M108,R130,M198,R220,0.918666,0.0011895633,0.0000573551,S10->S15,S1; S10; S15,0.333333,0.600000,Q -> S1 -> S10 -> S15 -> S21 -> S23 -> O,Q -> S1 -> S4 -> S5 -> S9 -> S10 -> S15 -> S22 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 3: The parents' resistance to therapy is a barrier.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Then, address the body image issue.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: The parents' resistance to therapy is a barrier.
+Step 7: Make sure the response is empathetic, non-judgmental, and practical."
+,M110,R132,M241,R263,0.924615,0.0011786850,0.0000007136,S1->S2; S2->S4,S1; S2; S4,0.272727,0.428571,Q -> S1 -> S2 -> S4 -> S10 -> S19 -> S21 -> S23 -> O,Q -> S1 -> S2 -> S4 -> S6 -> S13 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: First, I need to validate their feelings.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M114,R136,M230,R252,0.920352,0.0011018215,0.0000033432,S21->S23,S3; S21; S23,0.300000,0.600000,Q -> S3 -> S12 -> S19 -> S21 -> S23 -> O,Q -> S3 -> S8 -> S13 -> S14 -> S17 -> S21 -> S23 -> S24 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Next, the bullying.
+Step 3: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: Also, they might be struggling with self-acceptance.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M115,R137,M224,R246,0.909169,0.0010605738,0.0000057887,S20->S21,S15; S20; S21,0.333333,0.600000,Q -> S7 -> S9 -> S15 -> S19 -> S20 -> S21 -> S23 -> O,Q -> S3 -> S15 -> S20 -> S21 -> S24 -> O,"Step 1: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 2: Then, address the body image issue.
+Step 3: The parents' resistance to therapy is a barrier.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: They need to know it's okay to seek help and that they deserve support.
+Step 6: I should avoid giving medical advice and focus on emotional support.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: The parents' resistance to therapy is a barrier.
+Step 3: They need to know it's okay to seek help and that they deserve support.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M117,R139,M162,R184,0.936741,0.0010364862,0.0004535849,S1->S4,S1; S4; S23,0.428571,0.750000,Q -> S1 -> S4 -> S6 -> S19 -> S22 -> S23 -> O,Q -> S1 -> S4 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Check for any harmful thoughts and ensure the advice is safe.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M123,R145,M128,R150,0.984713,0.0009623107,0.0008942126,S21->S22; S22->S23,S3; S21; S22; S23,0.800000,1.000000,Q -> S3 -> S20 -> S21 -> S22 -> S23 -> O,Q -> S3 -> S21 -> S22 -> S23 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: They need to know it's okay to seek help and that they deserve support.
+Step 3: I should avoid giving medical advice and focus on emotional support.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: I should avoid giving medical advice and focus on emotional support.
+Step 3: Make sure the response is empathetic, non-judgmental, and practical.
+Step 4: Check for any harmful thoughts and ensure the advice is safe."
+,M123,R145,M138,R160,0.900807,0.0009623107,0.0007497472,S22->S23,S3; S22; S23,0.600000,1.000000,Q -> S3 -> S20 -> S21 -> S22 -> S23 -> O,Q -> S3 -> S22 -> S23 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: They need to know it's okay to seek help and that they deserve support.
+Step 3: I should avoid giving medical advice and focus on emotional support.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Make sure the response is empathetic, non-judgmental, and practical.
+Step 3: Check for any harmful thoughts and ensure the advice is safe."
+,M123,R145,M164,R186,0.965545,0.0009623107,0.0004032468,S20->S21,S3; S20; S21,0.428571,0.600000,Q -> S3 -> S20 -> S21 -> S22 -> S23 -> O,Q -> S3 -> S17 -> S20 -> S21 -> S24 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: They need to know it's okay to seek help and that they deserve support.
+Step 3: I should avoid giving medical advice and focus on emotional support.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Also, they might be struggling with self-acceptance.
+Step 3: They need to know it's okay to seek help and that they deserve support.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M123,R145,M200,R222,0.919315,0.0009623107,0.0000473622,S21->S22; S22->S23,S3; S21; S22; S23,0.500000,0.800000,Q -> S3 -> S20 -> S21 -> S22 -> S23 -> O,Q -> S3 -> S4 -> S19 -> S21 -> S22 -> S23 -> S24 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: They need to know it's okay to seek help and that they deserve support.
+Step 3: I should avoid giving medical advice and focus on emotional support.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M124,R146,M167,R189,0.970262,0.0009466944,0.0003354745,S2->S16,S2; S16; S21,0.375000,0.600000,Q -> S2 -> S16 -> S20 -> S21 -> S22 -> S23 -> O,Q -> S2 -> S16 -> S19 -> S21 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 3: They need to know it's okay to seek help and that they deserve support.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 3: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M132,R154,M143,R165,0.955177,0.0008369473,0.0007241382,S2->S3,S2; S3; S10; S24,0.571429,1.000000,Q -> S2 -> S3 -> S9 -> S10 -> S12 -> S22 -> S24 -> O,Q -> S2 -> S3 -> S10 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Then, address the body image issue.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Next, the bullying.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M132,R154,M158,R180,0.948623,0.0008369473,0.0005111013,S2->S3,S2; S3; S24,0.375000,0.750000,Q -> S2 -> S3 -> S9 -> S10 -> S12 -> S22 -> S24 -> O,Q -> S2 -> S3 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Then, address the body image issue.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Next, the bullying.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Check for any harmful thoughts and ensure the advice is safe.
+Step 4: Finally, offer to help them find resources or support if they're open to it."
+,M132,R154,M165,R187,0.943315,0.0008369473,0.0003939654,S2->S3; S3->S9,S2; S3; S9; S24,0.500000,0.800000,Q -> S2 -> S3 -> S9 -> S10 -> S12 -> S22 -> S24 -> O,Q -> S2 -> S3 -> S9 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Then, address the body image issue.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Next, the bullying.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Then, address the body image issue.
+Step 4: Check for any harmful thoughts and ensure the advice is safe.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M133,R155,M211,R233,0.913324,0.0008364037,0.0000211581,S1->S4; S14->S16,S1; S4; S14; S16,0.400000,1.000000,Q -> S1 -> S4 -> S14 -> S16 -> O,Q -> S1 -> S4 -> S8 -> S12 -> S14 -> S16 -> S19 -> S20 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: I should avoid giving medical advice and focus on emotional support.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M133,R155,M228,R250,0.980474,0.0008364037,0.0000042574,S1->S4; S14->S16,S1; S4; S14; S16,0.666667,1.000000,Q -> S1 -> S4 -> S14 -> S16 -> O,Q -> S1 -> S4 -> S9 -> S14 -> S16 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Then, address the body image issue.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M133,R155,M258,R280,0.971445,0.0008364037,0.0000000387,S1->S4; S14->S16,S1; S4; S14; S16,0.571429,1.000000,Q -> S1 -> S4 -> S14 -> S16 -> O,Q -> S1 -> S4 -> S9 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Then, address the body image issue.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M133,R155,M265,R287,0.931992,0.0008364037,0.0000000058,S1->S4; S14->S16,S1; S4; S14; S16,0.500000,1.000000,Q -> S1 -> S4 -> S14 -> S16 -> O,Q -> S1 -> S4 -> S6 -> S13 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M150,R172,M163,R185,0.953544,0.0006434632,0.0004163480,S23->S24,S2; S23; S24,0.750000,1.000000,Q -> S2 -> S14 -> S23 -> S24 -> O,Q -> S2 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Maybe suggest talking to a trusted teacher or counselor.
+Step 3: Check for any harmful thoughts and ensure the advice is safe.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Check for any harmful thoughts and ensure the advice is safe.
+Step 3: Finally, offer to help them find resources or support if they're open to it."
+,M150,R172,M208,R230,0.930603,0.0006434632,0.0000256555,S2->S14,S2; S14,0.500000,1.000000,Q -> S2 -> S14 -> S23 -> S24 -> O,Q -> S2 -> S14 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Maybe suggest talking to a trusted teacher or counselor.
+Step 3: Check for any harmful thoughts and ensure the advice is safe.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Maybe suggest talking to a trusted teacher or counselor."
+,M176,R198,M179,R201,0.912093,0.0002277571,0.0001887399,S15->S23; S23->S24,S4; S15; S23; S24,0.571429,0.800000,Q -> S2 -> S4 -> S9 -> S15 -> S23 -> S24 -> O,Q -> S4 -> S8 -> S15 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Then, address the body image issue.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it.","Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: The parents' resistance to therapy is a barrier.
+Step 4: Check for any harmful thoughts and ensure the advice is safe.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M176,R198,M182,R204,0.918321,0.0002277571,0.0001659110,S2->S4,S2; S4; S24,0.300000,0.500000,Q -> S2 -> S4 -> S9 -> S15 -> S23 -> S24 -> O,Q -> S2 -> S4 -> S14 -> S16 -> S19 -> S20 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Then, address the body image issue.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Maybe suggest talking to a trusted teacher or counselor.
+Step 4: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 5: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 6: They need to know it's okay to seek help and that they deserve support.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M176,R198,M193,R215,0.911053,0.0002277571,0.0000764123,S15->S23; S23->S24,S2; S15; S23; S24,0.500000,0.666667,Q -> S2 -> S4 -> S9 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S2 -> S6 -> S15 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Then, address the body image issue.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: First, I need to validate their feelings.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M176,R198,M197,R219,0.918777,0.0002277571,0.0000592990,S2->S4,S2; S4; S23,0.300000,0.500000,Q -> S2 -> S4 -> S9 -> S15 -> S23 -> S24 -> O,Q -> S2 -> S4 -> S6 -> S14 -> S16 -> S19 -> S23 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: Then, address the body image issue.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 7: Check for any harmful thoughts and ensure the advice is safe."
+,M177,R199,M225,R247,0.918111,0.0002123400,0.0000051771,S5->S8,S5; S8,0.400000,0.666667,Q -> S5 -> S8 -> S10 -> S14 -> O,Q -> S5 -> S8 -> S13 -> O,"Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: They might feel isolated, so emphasizing that they're not alone is key.
+Step 3: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support."
+,M190,R212,M205,R227,0.956698,0.0000924419,0.0000325949,S7->S17; S23->S24,S7; S17; S23; S24,0.444444,0.666667,Q -> S6 -> S7 -> S17 -> S21 -> S23 -> S24 -> O,Q -> S7 -> S17 -> S18 -> S20 -> S22 -> S23 -> S24 -> O,"Step 1: First, I need to validate their feelings.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: Also, they might be struggling with self-acceptance.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it.","Step 1: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 2: Also, they might be struggling with self-acceptance.
+Step 3: Encouraging self-compassion and challenging negative thoughts could help.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M191,R213,M209,R231,0.902483,0.0000826843,0.0000245991,S3->S4; S12->S14,S3; S4; S12; S14; S24,0.333333,0.500000,Q -> S2 -> S3 -> S4 -> S12 -> S14 -> S15 -> S17 -> S20 -> S22 -> S24 -> O,Q -> S3 -> S4 -> S5 -> S6 -> S8 -> S12 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: The parents' resistance to therapy is a barrier.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Finally, offer to help them find resources or support if they're open to it.","Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: They might feel isolated, so emphasizing that they're not alone is key.
+Step 6: Next, the bullying.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 9: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M191,R213,M219,R241,0.946854,0.0000826843,0.0000106030,S2->S3,S2; S3; S15; S22; S24,0.384615,0.625000,Q -> S2 -> S3 -> S4 -> S12 -> S14 -> S15 -> S17 -> S20 -> S22 -> S24 -> O,Q -> S2 -> S3 -> S8 -> S10 -> S15 -> S22 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: The parents' resistance to therapy is a barrier.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Make sure the response is empathetic, non-judgmental, and practical.
+Step 7: Check for any harmful thoughts and ensure the advice is safe.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M191,R213,M238,R260,0.923421,0.0000826843,0.0000013781,S2->S3; S12->S14; S22->S24,S2; S3; S12; S14; S22; S24,0.428571,0.600000,Q -> S2 -> S3 -> S4 -> S12 -> S14 -> S15 -> S17 -> S20 -> S22 -> S24 -> O,Q -> S2 -> S3 -> S8 -> S10 -> S12 -> S14 -> S16 -> S19 -> S22 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: The parents' resistance to therapy is a barrier.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: They might feel isolated, so emphasizing that they're not alone is key.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: Next, the bullying.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 8: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M191,R213,M244,R266,0.910676,0.0000826843,0.0000005706,S12->S14,S4; S12; S14; S24,0.285714,0.500000,Q -> S2 -> S3 -> S4 -> S12 -> S14 -> S15 -> S17 -> S20 -> S22 -> S24 -> O,Q -> S4 -> S11 -> S12 -> S14 -> S16 -> S19 -> S21 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: The parents' resistance to therapy is a barrier.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: They need to know it's okay to seek help and that they deserve support.
+Step 9: Make sure the response is empathetic, non-judgmental, and practical.
+Step 10: Finally, offer to help them find resources or support if they're open to it.","Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: It's crucial to mention that weight loss isn't the solution and that self-worth isn't tied to appearance.
+Step 3: Next, the bullying.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 7: I should avoid giving medical advice and focus on emotional support.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M206,R228,M246,R268,0.948577,0.0000303289,0.0000004473,S2->S4; S4->S5,S2; S4; S5; S24,0.363636,0.571429,Q -> S2 -> S4 -> S5 -> S6 -> S15 -> S17 -> S18 -> S24 -> O,Q -> S2 -> S4 -> S5 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help.
+Step 8: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: Maybe suggest talking to a trusted teacher or counselor.
+Step 5: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 6: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 7: Finally, offer to help them find resources or support if they're open to it."
+,M206,R228,M261,R283,0.937216,0.0000303289,0.0000000234,S2->S4; S4->S5; S5->S6,S2; S4; S5; S6; S17; S24,0.500000,0.750000,Q -> S2 -> S4 -> S5 -> S6 -> S15 -> S17 -> S18 -> S24 -> O,Q -> S2 -> S4 -> S5 -> S6 -> S9 -> S17 -> S20 -> S21 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help.
+Step 8: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: Then, address the body image issue.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: They need to know it's okay to seek help and that they deserve support.
+Step 8: I should avoid giving medical advice and focus on emotional support.
+Step 9: Check for any harmful thoughts and ensure the advice is safe.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M206,R228,M273,R295,0.924977,0.0000303289,0.0000000001,S2->S4; S4->S5; S5->S6,S2; S4; S5; S6; S24,0.416667,0.625000,Q -> S2 -> S4 -> S5 -> S6 -> S15 -> S17 -> S18 -> S24 -> O,Q -> S2 -> S4 -> S5 -> S6 -> S13 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Also, they might be struggling with self-acceptance.
+Step 7: Encouraging self-compassion and challenging negative thoughts could help.
+Step 8: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 8: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M210,R232,M251,R273,0.928455,0.0000234695,0.0000001762,S4->S9; S9->S17,S4; S9; S17; S24,0.500000,0.666667,Q -> S4 -> S9 -> S17 -> S18 -> S23 -> S24 -> O,Q -> S4 -> S9 -> S17 -> S20 -> S21 -> S24 -> O,"Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: Then, address the body image issue.
+Step 3: Also, they might be struggling with self-acceptance.
+Step 4: Encouraging self-compassion and challenging negative thoughts could help.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it.","Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: Then, address the body image issue.
+Step 3: Also, they might be struggling with self-acceptance.
+Step 4: They need to know it's okay to seek help and that they deserve support.
+Step 5: I should avoid giving medical advice and focus on emotional support.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M215,R237,M234,R256,0.987555,0.0000136234,0.0000020997,S2->S17; S17->S20; S20->S21,S2; S17; S20; S21,0.666667,1.000000,Q -> S2 -> S17 -> S20 -> S21 -> O,Q -> S2 -> S17 -> S20 -> S21 -> S23 -> S24 -> O,"Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Also, they might be struggling with self-acceptance.
+Step 3: They need to know it's okay to seek help and that they deserve support.
+Step 4: I should avoid giving medical advice and focus on emotional support.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Also, they might be struggling with self-acceptance.
+Step 3: They need to know it's okay to seek help and that they deserve support.
+Step 4: I should avoid giving medical advice and focus on emotional support.
+Step 5: Check for any harmful thoughts and ensure the advice is safe.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M223,R245,M240,R262,0.927830,0.0000060589,0.0000008708,S9->S10,S4; S9; S10; S23,0.363636,0.666667,Q -> S4 -> S9 -> S10 -> S13 -> S14 -> S16 -> S19 -> S23 -> S24 -> O,Q -> S4 -> S6 -> S9 -> S10 -> S15 -> S23 -> O,"Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: Then, address the body image issue.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 8: Check for any harmful thoughts and ensure the advice is safe.
+Step 9: Finally, offer to help them find resources or support if they're open to it.","Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: First, I need to validate their feelings.
+Step 3: Then, address the body image issue.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe."
+,M223,R245,M271,R293,0.945710,0.0000060589,0.0000000004,S13->S14; S14->S16; S16->S19,S4; S13; S14; S16; S19; S24,0.545455,0.750000,Q -> S4 -> S9 -> S10 -> S13 -> S14 -> S16 -> S19 -> S23 -> S24 -> O,Q -> S2 -> S4 -> S6 -> S13 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 2: Then, address the body image issue.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 8: Check for any harmful thoughts and ensure the advice is safe.
+Step 9: Finally, offer to help them find resources or support if they're open to it.","Step 1: They've tried dieting three times and now want to continue without stopping.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 8: Finally, offer to help them find resources or support if they're open to it."
+,M232,R254,M239,R261,0.971914,0.0000025880,0.0000011099,S1->S4; S15->S23; S23->S24,S1; S4; S7; S15; S23; S24,0.600000,0.857143,Q -> S1 -> S4 -> S7 -> S10 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S4 -> S6 -> S7 -> S12 -> S14 -> S15 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: First, I need to validate their feelings.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: Next, the bullying.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: The parents' resistance to therapy is a barrier.
+Step 8: Check for any harmful thoughts and ensure the advice is safe.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M232,R254,M243,R265,0.944071,0.0000025880,0.0000006077,S1->S4; S7->S10; S23->S24,S1; S4; S7; S10; S23; S24,0.500000,0.857143,Q -> S1 -> S4 -> S7 -> S10 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S4 -> S5 -> S7 -> S10 -> S12 -> S14 -> S16 -> S19 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 5: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 6: Next, the bullying.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 9: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 10: Check for any harmful thoughts and ensure the advice is safe.
+Step 11: Finally, offer to help them find resources or support if they're open to it."
+,M232,R254,M252,R274,0.968366,0.0000025880,0.0000001658,S7->S10; S10->S15,S1; S7; S10; S15; S24,0.625000,0.833333,Q -> S1 -> S4 -> S7 -> S10 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S7 -> S10 -> S15 -> S22 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: The parents' resistance to therapy is a barrier.
+Step 5: Make sure the response is empathetic, non-judgmental, and practical.
+Step 6: Finally, offer to help them find resources or support if they're open to it."
+,M232,R254,M253,R275,0.915097,0.0000025880,0.0000001229,S7->S10,S7; S10; S24,0.230769,0.428571,Q -> S1 -> S4 -> S7 -> S10 -> S15 -> S23 -> S24 -> O,Q -> S5 -> S7 -> S10 -> S12 -> S14 -> S16 -> S17 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 2: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 3: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 4: Next, the bullying.
+Step 5: Maybe suggest talking to a trusted teacher or counselor.
+Step 6: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 7: Also, they might be struggling with self-acceptance.
+Step 8: I should avoid giving medical advice and focus on emotional support.
+Step 9: Finally, offer to help them find resources or support if they're open to it."
+,M232,R254,M266,R288,0.914924,0.0000025880,0.0000000035,S23->S24,S1; S4; S23; S24,0.285714,0.571429,Q -> S1 -> S4 -> S7 -> S10 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S2 -> S4 -> S5 -> S8 -> S12 -> S14 -> S17 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: They might feel isolated, so emphasizing that they're not alone is key.
+Step 6: Next, the bullying.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: Also, they might be struggling with self-acceptance.
+Step 9: I should avoid giving medical advice and focus on emotional support.
+Step 10: Check for any harmful thoughts and ensure the advice is safe.
+Step 11: Finally, offer to help them find resources or support if they're open to it."
+,M232,R254,M274,R296,0.928089,0.0000025880,0.0000000000,S7->S10; S23->S24,S1; S4; S7; S10; S23; S24,0.400000,0.857143,Q -> S1 -> S4 -> S7 -> S10 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S2 -> S4 -> S5 -> S6 -> S7 -> S10 -> S12 -> S14 -> S17 -> S20 -> S21 -> S23 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 4: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 5: The parents' resistance to therapy is a barrier.
+Step 6: Check for any harmful thoughts and ensure the advice is safe.
+Step 7: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: First, I need to validate their feelings.
+Step 6: It's important to acknowledge the pain of bullying and the impact on self-esteem.
+Step 7: They've tried dieting, which might have led to cycles of restriction and bingeing.
+Step 8: Next, the bullying.
+Step 9: Maybe suggest talking to a trusted teacher or counselor.
+Step 10: Also, they might be struggling with self-acceptance.
+Step 11: They need to know it's okay to seek help and that they deserve support.
+Step 12: I should avoid giving medical advice and focus on emotional support.
+Step 13: Check for any harmful thoughts and ensure the advice is safe.
+Step 14: Finally, offer to help them find resources or support if they're open to it."
+,M247,R269,M264,R286,0.930764,0.0000002960,0.0000000155,S3->S15,S3; S15; S24,0.500000,0.750000,Q -> S3 -> S15 -> S23 -> S24 -> O,Q -> S1 -> S3 -> S15 -> S22 -> S24 -> O,"Step 1: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 2: The parents' resistance to therapy is a barrier.
+Step 3: Check for any harmful thoughts and ensure the advice is safe.
+Step 4: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: The parents' resistance to therapy is a barrier.
+Step 4: Make sure the response is empathetic, non-judgmental, and practical.
+Step 5: Finally, offer to help them find resources or support if they're open to it."
+,M250,R272,M254,R276,0.972440,0.0000001874,0.0000001012,S5->S6; S6->S13; S13->S14; S14->S16; S16->S17,S1; S5; S6; S13; S14; S16; S17; S21,0.571429,0.800000,Q -> S1 -> S2 -> S5 -> S6 -> S13 -> S14 -> S16 -> S17 -> S21 -> S23 -> O,Q -> S1 -> S4 -> S5 -> S6 -> S13 -> S14 -> S16 -> S17 -> S18 -> S20 -> S21 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 8: Also, they might be struggling with self-acceptance.
+Step 9: I should avoid giving medical advice and focus on emotional support.
+Step 10: Check for any harmful thoughts and ensure the advice is safe.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 8: Also, they might be struggling with self-acceptance.
+Step 9: Encouraging self-compassion and challenging negative thoughts could help.
+Step 10: They need to know it's okay to seek help and that they deserve support.
+Step 11: I should avoid giving medical advice and focus on emotional support.
+Step 12: Finally, offer to help them find resources or support if they're open to it."
+,M250,R272,M278,R300,0.965121,0.0000001874,0.0000000000,S1->S2; S5->S6; S6->S13; S13->S14; S14->S16,S1; S2; S5; S6; S13; S14; S16,0.538462,0.700000,Q -> S1 -> S2 -> S5 -> S6 -> S13 -> S14 -> S16 -> S17 -> S21 -> S23 -> O,Q -> S1 -> S2 -> S4 -> S5 -> S6 -> S13 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 4: First, I need to validate their feelings.
+Step 5: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 6: Maybe suggest talking to a trusted teacher or counselor.
+Step 7: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 8: Also, they might be struggling with self-acceptance.
+Step 9: I should avoid giving medical advice and focus on emotional support.
+Step 10: Check for any harmful thoughts and ensure the advice is safe.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They've tried dieting three times and now want to continue without stopping.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: First, I need to validate their feelings.
+Step 6: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 9: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
+,M275,R297,M277,R299,0.945321,0.0000000000,0.0000000000,S1->S3; S3->S4; S4->S5; S5->S6; S6->S13; S13->S14,S1; S3; S4; S5; S6; S13; S14; S24,0.571429,0.800000,Q -> S1 -> S3 -> S4 -> S5 -> S6 -> S13 -> S14 -> S17 -> S20 -> S21 -> S23 -> S24 -> O,Q -> S1 -> S3 -> S4 -> S5 -> S6 -> S13 -> S14 -> S16 -> S19 -> S24 -> O,"Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: First, I need to validate their feelings.
+Step 6: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: Also, they might be struggling with self-acceptance.
+Step 9: They need to know it's okay to seek help and that they deserve support.
+Step 10: I should avoid giving medical advice and focus on emotional support.
+Step 11: Check for any harmful thoughts and ensure the advice is safe.
+Step 12: Finally, offer to help them find resources or support if they're open to it.","Step 1: Okay, the user is dealing with body image issues, bullying, and family dynamics.
+Step 2: They feel bullied at school and believe the bullies, which is affecting their self-esteem.
+Step 3: Their parents are conflicted—saying they don't weigh much but also think they're fat.
+Step 4: The user wants to stop negative thoughts and not let them affect them, but their parents don't want to seek therapy.
+Step 5: First, I need to validate their feelings.
+Step 6: They need strategies to cope, like focusing on positive aspects, setting boundaries, and seeking support.
+Step 7: Maybe suggest talking to a trusted teacher or counselor.
+Step 8: It's important to explain that therapy isn't just for ""problems"" but for building resilience and coping skills.
+Step 9: Maybe suggest activities that build confidence, like hobbies or sports.
+Step 10: Finally, offer to help them find resources or support if they're open to it."
