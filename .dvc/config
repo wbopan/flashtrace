@@ -1,0 +1,6 @@
+[core]
+    remote = r2
+['remote "r2"']
+    url = s3://flashtrace-dvc/cache
+    endpointurl = https://007c76aa04aec58ad7849da2db034f64.r2.cloudflarestorage.com
+    region = auto

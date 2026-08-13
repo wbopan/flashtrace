@@ -10,7 +10,12 @@ wheels/
 .venv
 
 # Local data
-data/
+data/*
+!data/wiki_visa/
+data/wiki_visa/*
+!data/wiki_visa/test_parquet/
+data/wiki_visa/test_parquet/*
+!data/wiki_visa/test_parquet/*.dvc
 
 # dev
 AGENTS.md
