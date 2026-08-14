@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "release": {
+    "repository": "wbopan/flashtrace",
+    "tag": "multimodal-strict-attribution-v1",
+    "url": "https://github.com/wbopan/flashtrace/releases/tag/multimodal-strict-attribution-v1"
+  },
+  "archives": [
+    {
+      "group": "formal",
+      "asset": "flashtrace-strict-formal-attribution-v1.tar.gz",
+      "url": "https://github.com/wbopan/flashtrace/releases/download/multimodal-strict-attribution-v1/flashtrace-strict-formal-attribution-v1.tar.gz",
+      "size": 454724831,
+      "sha256": "db4d7890e8263af636084a5f042f638e813fe1ad5d324468bc88e2ad95f55972",
+      "files": [
+        {
+          "path": "evaluations/multimodal/results/strict/formal/vizwiz_lf_n100_methods/attribution_records.jsonl",
+          "size": 869263363,
+          "sha256": "68e84d7392b19c2a5816265d0919212833e22dd1e6c4a4ffad9d5b19e9486233"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/formal/wiki_visa_n120_methods/attribution_records.jsonl",
+          "size": 1241882112,
+          "sha256": "806d5d0bc52430a6d98244b169a59ed41c24609055fe0f98ebd2e9b19a47b1eb"
+        }
+      ]
+    },
+    {
+      "group": "preview-final",
+      "asset": "flashtrace-strict-preview-final-attribution-v1.tar.gz",
+      "url": "https://github.com/wbopan/flashtrace/releases/download/multimodal-strict-attribution-v1/flashtrace-strict-preview-final-attribution-v1.tar.gz",
+      "size": 151037703,
+      "sha256": "897cf4a5259f63b5ce63f9f17ebefeb596cf92c4ce6270c729f2cc44df9faf67",
+      "files": [
+        {
+          "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_n20_methods/attribution_records.jsonl",
+          "size": 54172455,
+          "sha256": "2a4f7c181c688964870249e3f9bb962d88383f8bd6e95896f0622b3aa87da641"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/final/clevr_xai_complex_strict_n20_methods_v2/attribution_records.jsonl",
+          "size": 67860805,
+          "sha256": "ce2a9c614a59f82beb616f55c7ea8ac4425acffdff3b9534da35fc7458c7f926"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/final/wiki_visa_n18_2mp_methods_v2/attribution_records.jsonl",
+          "size": 185366470,
+          "sha256": "80a18509b13ea93252e87fe2b58cf400157abed82222ce042b18330780ac4902"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/formal_preview_n20/vizwiz_lf_n20_methods/attribution_records.jsonl",
+          "size": 165348347,
+          "sha256": "93e44f3807ed3b255b7aa8e9bfbc1e9712ceca434f0c59086fc825071a2986b8"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/formal_preview_n20/wiki_visa_n20_methods/attribution_records.jsonl",
+          "size": 203837222,
+          "sha256": "bd5cacd5c87ea8b17863bca71e844d6bec32af60197d8dbca0ada542dd463aa0"
+        }
+      ]
+    },
+    {
+      "group": "pilot-smoke",
+      "asset": "flashtrace-strict-pilot-smoke-attribution-v1.tar.gz",
+      "url": "https://github.com/wbopan/flashtrace/releases/download/multimodal-strict-attribution-v1/flashtrace-strict-pilot-smoke-attribution-v1.tar.gz",
+      "size": 18815159,
+      "sha256": "7380ed3d8ec7a9a5f7089426f046b78bd843f7cd274f9026d9b700450102c0dc",
+      "files": [
+        {
+          "path": "evaluations/multimodal/results/strict/native_pilot/vistaqa_n10_attribution/attribution_records.jsonl",
+          "size": 7454422,
+          "sha256": "5208c76e2debf7d58c246e3dd44479d4220c166b210385eaf9884ef67de37ab6"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/native_pilot/vizwiz_lf_n10_attribution/attribution_records.jsonl",
+          "size": 21719674,
+          "sha256": "773ff58969cff0cf943d4279628b7ccab193c927f3e584a0dd8c0557e640d126"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/native_pilot/wiki_visa_n10_attribution/attribution_records.jsonl",
+          "size": 33803905,
+          "sha256": "001d6a4418229c078c30f47652572a3d2fbcd350486cff876d4010ae3809d6ac"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/clevr_xai_complex_n1_methods_core/attribution_records.jsonl",
+          "size": 2019785,
+          "sha256": "f4f1d612e584d6add5b4c4cd6a5017df61fbc55b98a1d2a8c6d8d0fe0f756ab3"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_0157_2mp_grad_checkpoint/attribution_records.jsonl",
+          "size": 46548,
+          "sha256": "d49b685ac06b3debbc845aba6203e775580efaae4f983a27cba8ce5073aa2646"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1_2mp_grad_decoder/attribution_records.jsonl",
+          "size": 46672,
+          "sha256": "dae18c2a0905c2c8fa8ab9e96cd61ced420df588aa15cd660d4a306c1fde6038"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1_2mp_grad_hook/attribution_records.jsonl",
+          "size": 8004,
+          "sha256": "cf6d729e314d068319a42830e4fc517c752c06001ffd02e4f593b0d33945489a"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1_2mp_grad_only/attribution_records.jsonl",
+          "size": 8005,
+          "sha256": "94386f98ed4cea1fa30a5c35d84c1077038f6d574608fb18573f10b12154f8d5"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1_2mp_ig_checkpoint2/attribution_records.jsonl",
+          "size": 47111,
+          "sha256": "bd7bdfe26f0b32d827bac28d38259c3c9919164e31c59996e24411f0f062fce0"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1_2mp_methods_v2/attribution_records.jsonl",
+          "size": 10361561,
+          "sha256": "e1347da1cc7b5bf5a4d01c6dd67e46907c9393ebef9abe067281d07ba9f49478"
+        },
+        {
+          "path": "evaluations/multimodal/results/strict/smoke/wiki_visa_n1_methods/attribution_records.jsonl",
+          "size": 4620761,
+          "sha256": "8f1ec8ebab6bc9a7c2790dab3ce407c9233336bb1df4ec232a5a609395ae0929"
+        }
+      ]
+    }
+  ]
+}

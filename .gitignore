@@ -39,3 +39,6 @@ paper/
 
 # Multimodal evaluation runtime locks
 evaluations/multimodal/results/strict/formal/*.lock
+
+# Large generated attribution rows are distributed as GitHub Release assets.
+evaluations/multimodal/results/**/attribution_records.jsonl
