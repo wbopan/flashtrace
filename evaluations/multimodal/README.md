@@ -67,6 +67,18 @@ The later native-dataset fit check for Wiki-VISA, VISTAQA, and VizWiz-LF is in
 It uses whole-patch tie-aware metrics and the same cumulative
 direct-plus-weighted-hops FlashTrace definition as the paper.
 
+The large `attribution_records.jsonl` row-level artifacts are intentionally not
+stored in Git or Git LFS. They are checksum-pinned GitHub Release assets and can
+be restored to their original paths without changing any analysis command:
+
+```bash
+python evaluations/multimodal/download_strict_artifacts.py
+```
+
+Use `--group formal`, `--group preview-final`, or `--group pilot-smoke` to
+download only one bundle. See [`artifacts/README.md`](artifacts/README.md) for
+the immutable manifest, verification behavior, and release link.
+
 ## Formal v2 main-experiment workflow
 
 The frozen formal plan is [`EVAL_PLAN.md`](EVAL_PLAN.md), and the
