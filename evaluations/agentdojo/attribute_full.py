@@ -47,7 +47,52 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _eligible(record: dict[str, Any]) -> bool:
+def _model_only_target(record: dict[str, Any]) -> bool:
+    target_event = record.get("target_event")
+    if not isinstance(target_event, dict):
+        return False
+    if target_event.get("teacher_forced") or target_event.get("output_intervention"):
+        return False
+    target_provenance = target_event.get("completion_token_provenance")
+    if not target_provenance or any(token != "model" for token in target_provenance):
+        return False
+
+    target_turn_index = target_event.get("turn_index")
+    target_turn = next(
+        (
+            turn
+            for turn in record.get("turns", [])
+            if turn.get("turn_index") == target_turn_index
+        ),
+        None,
+    )
+    if target_turn is None:
+        return False
+    audit = target_turn.get("generation_audit") or {}
+    if not audit.get("all_completion_tokens_model_generated"):
+        return False
+    if not audit.get("bridge_is_fully_model_generated"):
+        return False
+    if int(audit.get("reference_token_count") or 0) != 0:
+        return False
+    if int(audit.get("reasoning_token_count") or 0) <= 2:
+        return False
+
+    attempts = record.get("selection", {}).get("attempts") or []
+    selected_index = int(record.get("selection", {}).get("selected_attempt_index") or 0)
+    if attempts:
+        if selected_index >= len(attempts):
+            return False
+        if not attempts[selected_index].get("all_completion_tokens_model_generated"):
+            return False
+    return True
+
+
+def _eligible(
+    record: dict[str, Any],
+    *,
+    require_model_only: bool = False,
+) -> bool:
     base_eligible = bool(
         record.get("attack_success")
         and record.get("generated_target_action")
@@ -59,7 +104,17 @@ def _eligible(record: dict[str, Any]) -> bool:
         _find_injection_span(str(record["target_event"]["rendered_prompt"]))
     except ValueError:
         return False
-    return True
+    return not require_model_only or _model_only_target(record)
+
+
+def _generation_strategy(record: dict[str, Any]) -> str:
+    reasoning_search = record.get("selection", {}).get("reasoning_search") or {}
+    if int(reasoning_search.get("candidates") or 0) > 0:
+        return "reasoning_rerank"
+    attempts = record.get("selection", {}).get("attempts") or []
+    if any(attempt.get("intervention_method") for attempt in attempts):
+        return "reference_writing_control"
+    return "adaptive_best_of_n"
 
 
 def _existing_ids(path: Path) -> set[str]:
@@ -92,6 +147,7 @@ def _redacted(row: dict[str, Any]) -> dict[str, Any]:
         "case_id": row["case_id"],
         "suite": row["suite"],
         "realization_stage": row.get("realization_stage"),
+        "generation_strategy": row.get("generation_strategy"),
         "status": row["status"],
         "error_category": (
             row["error"].split(":", 1)[0] if row.get("error") else None
@@ -263,6 +319,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--chunk-tokens", type=int, default=128)
     parser.add_argument("--sink-chunk-tokens", type=int, default=32)
     parser.add_argument(
+        "--require-model-only",
+        action="store_true",
+        help=(
+            "Attribute only validator-confirmed targets whose target completion "
+            "and reasoning bridge contain model-produced tokens exclusively."
+        ),
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("evaluations/agentdojo/results/full/attribution_qwen3_8b"),
@@ -279,7 +343,10 @@ def main() -> None:
     eligible_stage_counts: dict[str, int] = defaultdict(int)
     for record in _records(args.generation_jsonl):
         generation_records += 1
-        is_eligible = _eligible(record)
+        is_eligible = _eligible(
+            record,
+            require_model_only=args.require_model_only,
+        )
         eligible_records += int(is_eligible)
         if is_eligible:
             eligible_stage_counts[
@@ -304,6 +371,7 @@ def main() -> None:
         "chunk_tokens": args.chunk_tokens,
         "sink_chunk_tokens": args.sink_chunk_tokens,
         "attacked_inventory": args.attacked_inventory,
+        "require_model_only": args.require_model_only,
         "teacher_forced_frozen_generated_trajectory": True,
         "generation_realization_stage_counts": dict(
             sorted(eligible_stage_counts.items())
@@ -370,7 +438,10 @@ def main() -> None:
     ):
         current = 0
         for record in _records(args.generation_jsonl):
-            if not _eligible(record):
+            if not _eligible(
+                record,
+                require_model_only=args.require_model_only,
+            ):
                 continue
             current += 1
             if current > selected_records:
@@ -384,6 +455,7 @@ def main() -> None:
                 "case_id": case_id,
                 "suite": record["case"]["suite"],
                 "realization_stage": record.get("realization_stage"),
+                "generation_strategy": _generation_strategy(record),
                 "status": "success",
                 "error": None,
                 "attribution": None,

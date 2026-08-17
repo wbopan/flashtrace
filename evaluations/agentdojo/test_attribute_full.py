@@ -2,6 +2,7 @@ import json
 
 from evaluations.agentdojo.attribute_full import (
     _eligible,
+    _generation_strategy,
     _redacted,
     _summary,
     _synchronize_redacted,
@@ -29,6 +30,53 @@ def test_eligibility_requires_validator_and_exact_generated_target():
                 "rendered_prompt": "injection is absent",
             },
         }
+    )
+
+
+def test_model_only_eligibility_rejects_reference_writes_and_short_bridges():
+    base = {
+        "attack_success": True,
+        "generated_target_action": True,
+        "target_event": {
+            "call": {},
+            "rendered_prompt": "<INFORMATION>injection</INFORMATION>",
+            "turn_index": 2,
+            "teacher_forced": False,
+            "output_intervention": None,
+            "completion_token_provenance": ["model", "model"],
+        },
+        "turns": [
+            {
+                "turn_index": 2,
+                "generation_audit": {
+                    "all_completion_tokens_model_generated": True,
+                    "bridge_is_fully_model_generated": True,
+                    "reference_token_count": 0,
+                    "reasoning_token_count": 12,
+                },
+            }
+        ],
+        "selection": {
+            "selected_attempt_index": 0,
+            "attempts": [{"all_completion_tokens_model_generated": True}],
+        },
+    }
+
+    assert _eligible(base, require_model_only=True)
+    forced = json.loads(json.dumps(base))
+    forced["turns"][0]["generation_audit"]["reference_token_count"] = 1
+    assert not _eligible(forced, require_model_only=True)
+    short = json.loads(json.dumps(base))
+    short["turns"][0]["generation_audit"]["reasoning_token_count"] = 2
+    assert not _eligible(short, require_model_only=True)
+
+
+def test_generation_strategy_distinguishes_reasoning_rerank():
+    assert _generation_strategy(
+        {"selection": {"reasoning_search": {"candidates": 4}}}
+    ) == "reasoning_rerank"
+    assert _generation_strategy({"selection": {"attempts": []}}) == (
+        "adaptive_best_of_n"
     )
 
 
