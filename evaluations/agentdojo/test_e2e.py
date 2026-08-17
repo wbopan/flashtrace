@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
 from evaluations.agentdojo.e2e import (
+    _align_completion_token_provenance,
     _call_matches_expected,
     parse_qwen_tool_calls,
 )
@@ -59,3 +62,14 @@ def test_target_matching_normalizes_url_protocol_only():
         {"function": "get_webpage", "args": {"url": "www.informations.com"}},
         expected,
     )
+
+
+def test_model_only_provenance_aligns_across_tokenizers():
+    assert _align_completion_token_provenance(["model"] * 3, 5) == [
+        "model"
+    ] * 5
+
+
+def test_mixed_provenance_requires_exact_alignment():
+    with pytest.raises(ValueError, match="Mixed completion token provenance"):
+        _align_completion_token_provenance(["model", "reference"], 3)

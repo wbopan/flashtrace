@@ -340,6 +340,29 @@ def _canonical_scalar(value: Any) -> Any:
     return normalized
 
 
+def _align_completion_token_provenance(
+    provenance: Sequence[str],
+    target_token_count: int,
+) -> list[str]:
+    """Align model-only provenance across generation/attribution tokenizers.
+
+    The generation model and attribution model may tokenize the same decoded
+    completion differently. A uniformly model-generated completion remains
+    uniformly model-generated under retokenization. Mixed provenance cannot be
+    projected without character spans, so retain the strict failure there.
+    """
+
+    values = list(provenance)
+    if len(values) == target_token_count:
+        return values
+    if values and set(values) == {"model"}:
+        return ["model"] * target_token_count
+    raise ValueError(
+        "Mixed completion token provenance does not align with the attribution "
+        "tokenizer."
+    )
+
+
 def _call_matches_expected(call: dict[str, Any], expected: dict[str, Any]) -> bool:
     if call["function"] != expected["function"]:
         return False
@@ -632,8 +655,10 @@ def _attribute_generated_target(
     thinking_span = target_payload["thinking_bridge_token_span_inclusive"]
     token_provenance = event.get("completion_token_provenance")
     if token_provenance is not None:
-        if len(token_provenance) != target_payload["token_count"]:
-            raise ValueError("Completion token provenance does not align with target.")
+        token_provenance = _align_completion_token_provenance(
+            token_provenance,
+            target_payload["token_count"],
+        )
         for token, provenance in zip(
             target_payload["tokens"], token_provenance, strict=True
         ):
