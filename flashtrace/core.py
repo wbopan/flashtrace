@@ -212,6 +212,12 @@ def build_weight_pack(metadata: ModelMetadata, model_dtype: torch.dtype) -> List
             pack["q_bias"] = q_bias.detach().to(dtype=model_dtype)
         if k_bias is not None:
             pack["k_bias"] = k_bias.detach().to(dtype=model_dtype)
+        q_norm = getattr(attn, "q_norm", None)
+        k_norm = getattr(attn, "k_norm", None)
+        if q_norm is not None:
+            pack["q_norm"] = q_norm
+        if k_norm is not None:
+            pack["k_norm"] = k_norm
         weight_pack.append(pack)
     return weight_pack
 
@@ -219,6 +225,9 @@ def build_weight_pack(metadata: ModelMetadata, model_dtype: torch.dtype) -> List
 # ---------------------------------------------------------------------------
 # Attention recomputation utilities
 # ---------------------------------------------------------------------------
+
+_MAX_AGGREGATE_ATTENTION_BYTES = 4 * 1024**3
+
 
 def _rotate_half(x: torch.Tensor) -> torch.Tensor:
     """Rotate the last dimension by half — standard RoPE helper."""
@@ -246,17 +255,14 @@ def _apply_rotary_pos_emb(
 
 
 @torch.no_grad()
-def recompute_layer_attention(
+def _prepare_layer_qk(
     x_prev: torch.Tensor,
     layer_weights: Dict[str, torch.Tensor | nn.Module],
     rotary_emb: nn.Module,
     params: IFRParameters,
-) -> torch.Tensor:
-    """Recompute attention weights for a single layer from cached activations.
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Project and rotate Q/K once for memory-bounded attention recomputation."""
 
-    Returns attention weights of shape ``[n_heads_q, S, S]`` (post-softmax, causal masked).
-    This avoids the need to store all layers' attention maps simultaneously.
-    """
     device = x_prev.device
     model_dtype = params.model_dtype
     S = x_prev.shape[0]
@@ -283,6 +289,18 @@ def recompute_layer_attention(
     if k_bias is not None:
         K = K + k_bias.to(device, non_blocking=True)
 
+    # Qwen3 applies per-head RMSNorm after Q/K projection and before RoPE.
+    q_norm = layer_weights.get("q_norm")
+    k_norm = layer_weights.get("k_norm")
+    if q_norm is not None:
+        Q = q_norm(Q.view(S, n_heads_q, head_dim)).reshape(
+            S, n_heads_q * head_dim
+        )
+    if k_norm is not None:
+        K = k_norm(K.view(S, n_kv_heads, head_dim)).reshape(
+            S, n_kv_heads * head_dim
+        )
+
     # Reshape to [1, n_heads, S, head_dim]
     Q = Q.view(S, n_heads_q, head_dim).transpose(0, 1).unsqueeze(0)
     K = K.view(S, n_kv_heads, head_dim).transpose(0, 1).unsqueeze(0)
@@ -294,22 +312,142 @@ def recompute_layer_attention(
 
     # GQA: repeat K for grouped-query attention
     K = K.repeat_interleave(group_size, dim=1)  # [1, n_heads_q, S, head_dim]
+    return Q[0], K[0]
+
+
+def _attention_from_prepared_qk(
+    Q: torch.Tensor,
+    K: torch.Tensor,
+    *,
+    query_start: int,
+    query_end: int,
+    model_dtype: torch.dtype,
+) -> torch.Tensor:
+    """Return a causal attention slice from preprojected, RoPE-applied Q/K."""
+
+    S = int(Q.shape[1])
+    if not (0 <= query_start <= query_end < S):
+        raise ValueError(
+            f"Invalid query_range ({query_start}, {query_end}) for length {S}."
+        )
+    Q_slice = Q[:, query_start : query_end + 1, :]
 
     # Compute attention scores
-    attn_weights = torch.matmul(Q, K.transpose(2, 3)) / math.sqrt(head_dim)
+    attn_weights = torch.matmul(Q_slice, K.transpose(1, 2)) / math.sqrt(
+        int(Q.shape[-1])
+    )
 
     # Apply causal mask
-    causal_mask = torch.triu(
-        torch.full((S, S), float("-inf"), device=device, dtype=attn_weights.dtype),
-        diagonal=1,
-    )
-    attn_weights = attn_weights + causal_mask.unsqueeze(0).unsqueeze(0)
+    query_positions = torch.arange(
+        query_start,
+        query_end + 1,
+        device=Q.device,
+    ).view(-1, 1)
+    key_positions = torch.arange(S, device=Q.device).view(1, -1)
+    causal_mask = torch.zeros(
+        (query_end - query_start + 1, S),
+        device=Q.device,
+        dtype=attn_weights.dtype,
+    ).masked_fill(key_positions > query_positions, float("-inf"))
+    attn_weights = attn_weights + causal_mask.unsqueeze(0)
 
     # Softmax
     attn_weights = torch.nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32)
     attn_weights = attn_weights.to(model_dtype)
+    return attn_weights
 
-    return attn_weights[0]  # [n_heads_q, S, S]
+
+@torch.no_grad()
+def recompute_layer_attention(
+    x_prev: torch.Tensor,
+    layer_weights: Dict[str, torch.Tensor | nn.Module],
+    rotary_emb: nn.Module,
+    params: IFRParameters,
+    query_range: Optional[Tuple[int, int]] = None,
+) -> torch.Tensor:
+    """Recompute attention weights for a single layer from cached activations.
+
+    Returns post-softmax causal attention for all keys and either all queries
+    or the inclusive ``query_range``. Restricting queries avoids materializing
+    unused ``S x S`` rows for span attribution.
+    """
+
+    S = int(x_prev.shape[0])
+    if query_range is None:
+        query_start, query_end = 0, S - 1
+    else:
+        query_start, query_end = map(int, query_range)
+    Q, K = _prepare_layer_qk(x_prev, layer_weights, rotary_emb, params)
+    return _attention_from_prepared_qk(
+        Q,
+        K,
+        query_start=query_start,
+        query_end=query_end,
+        model_dtype=params.model_dtype,
+    )
+
+
+@torch.no_grad()
+def recompute_layer_attention_sum(
+    x_prev: torch.Tensor,
+    layer_weights: Dict[str, torch.Tensor | nn.Module],
+    rotary_emb: nn.Module,
+    params: IFRParameters,
+    *,
+    query_range: Tuple[int, int],
+    query_weights: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """Sum causal attention rows without materializing the full query span."""
+
+    query_start, query_end = map(int, query_range)
+    query_count = query_end - query_start + 1
+    if query_count < 1:
+        raise ValueError("query_range must contain at least one position.")
+    Q, K = _prepare_layer_qk(x_prev, layer_weights, rotary_emb, params)
+    key_end = query_end + 1
+    total = torch.zeros(
+        (params.n_heads_q, key_end),
+        device=x_prev.device,
+        dtype=params.model_dtype,
+    )
+    normalized_weights: Optional[torch.Tensor] = None
+    if query_weights is not None:
+        if int(query_weights.numel()) != query_count:
+            raise ValueError(
+                "query_weights length must equal number of query positions."
+            )
+        normalized_weights = query_weights.to(
+            device=x_prev.device,
+            dtype=params.model_dtype,
+        )
+        normalized_weights = normalized_weights / (
+            normalized_weights.sum() + 1e-12
+        )
+
+    for chunk_start in range(
+        query_start,
+        query_end + 1,
+        params.sink_chunk_tokens,
+    ):
+        chunk_end = min(
+            query_end,
+            chunk_start + params.sink_chunk_tokens - 1,
+        )
+        attention = _attention_from_prepared_qk(
+            Q,
+            K,
+            query_start=chunk_start,
+            query_end=chunk_end,
+            model_dtype=params.model_dtype,
+        )[:, :, :key_end]
+        if normalized_weights is not None:
+            weight_start = chunk_start - query_start
+            weight_end = chunk_end - query_start + 1
+            attention = attention * normalized_weights[
+                weight_start:weight_end
+            ].view(1, -1, 1)
+        total += attention.sum(dim=1)
+    return total
 
 
 @dataclass
@@ -474,6 +612,57 @@ class LayerAttnInput:
     O_blocks: torch.Tensor  # [n_heads, head_dim, d_model]
 
 
+def _resolve_layer_vo(
+    li: int,
+    *,
+    cache: Dict[str, List[Optional[torch.Tensor]]],
+    weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
+    params: "IFRParameters",
+    layer_inputs: Optional[Sequence["LayerAttnInput"]],
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """Return per-token value vectors and output-projection head blocks."""
+
+    x_prev = cache["pre_attn_resid"][li][0]
+    device = x_prev.device
+    model_dtype = params.model_dtype
+    if layer_inputs is not None:
+        inp = layer_inputs[li]
+        V_q = inp.V_q.to(
+            device=device,
+            dtype=model_dtype,
+            non_blocking=True,
+        )
+        O_blocks = inp.O_blocks.to(
+            device=device,
+            dtype=model_dtype,
+            non_blocking=True,
+        )
+        return V_q, O_blocks
+
+    v_w = weight_pack[li]["v_w"].to(device, non_blocking=True)
+    o_w = weight_pack[li]["o_w"].to(device, non_blocking=True)
+    in_ln_mod = weight_pack[li]["in_ln"]
+    s_prev = linearize_norm(in_ln_mod, x_prev.unsqueeze(0)).squeeze(0)
+    x_prev_lin = x_prev.float() * s_prev
+    V_all = torch.matmul(x_prev_lin.to(model_dtype), v_w.T)
+    V_kv = V_all.view(
+        params.sequence_length,
+        params.n_kv_heads,
+        params.head_dim,
+    ).contiguous()
+    V_q = V_kv.repeat_interleave(params.group_size, dim=1)
+    O_blocks = (
+        o_w.view(
+            params.d_model,
+            params.n_heads_q,
+            params.head_dim,
+        )
+        .permute(1, 2, 0)
+        .contiguous()
+    )
+    return V_q, O_blocks
+
+
 def _resolve_layer_attn_vo(
     li: int,
     *,
@@ -483,6 +672,7 @@ def _resolve_layer_attn_vo(
     params: "IFRParameters",
     rotary_emb: Optional[nn.Module],
     layer_inputs: Optional[Sequence["LayerAttnInput"]],
+    query_range: Optional[Tuple[int, int]] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Return ``(attn, V_q, O_blocks)`` for layer ``li`` on the layer's device.
 
@@ -498,29 +688,41 @@ def _resolve_layer_attn_vo(
     if layer_inputs is not None:
         inp = layer_inputs[li]
         attn_li = inp.attn.to(device=device, dtype=model_dtype, non_blocking=True)
-        V_q = inp.V_q.to(device=device, dtype=model_dtype, non_blocking=True)
-        O_blocks = inp.O_blocks.to(device=device, dtype=model_dtype, non_blocking=True)
+        if query_range is not None:
+            query_start, query_end = query_range
+            attn_li = attn_li[:, query_start : query_end + 1, :]
+        V_q, O_blocks = _resolve_layer_vo(
+            li,
+            cache=cache,
+            weight_pack=weight_pack,
+            params=params,
+            layer_inputs=layer_inputs,
+        )
         return attn_li, V_q, O_blocks
 
     if attentions is not None:
         attn_li = attentions[li][0]
+        if query_range is not None:
+            query_start, query_end = query_range
+            attn_li = attn_li[:, query_start : query_end + 1, :]
         if attn_li.device != device or attn_li.dtype != model_dtype:
             attn_li = attn_li.to(device=device, dtype=model_dtype, non_blocking=True)
     else:
         assert rotary_emb is not None, "rotary_emb is required when attentions is None"
-        attn_li = recompute_layer_attention(x_prev, weight_pack[li], rotary_emb, params)
+        attn_li = recompute_layer_attention(
+            x_prev,
+            weight_pack[li],
+            rotary_emb,
+            params,
+            query_range=query_range,
+        )
 
-    v_w = weight_pack[li]["v_w"].to(device, non_blocking=True)
-    o_w = weight_pack[li]["o_w"].to(device, non_blocking=True)
-    in_ln_mod = weight_pack[li]["in_ln"]
-
-    s_prev = linearize_norm(in_ln_mod, x_prev.unsqueeze(0)).squeeze(0)
-    x_prev_lin = x_prev.float() * s_prev
-    V_all = torch.matmul(x_prev_lin.to(model_dtype), v_w.T)
-    V_kv = V_all.view(params.sequence_length, params.n_kv_heads, params.head_dim).contiguous()
-    V_q = V_kv.repeat_interleave(params.group_size, dim=1)
-    O_blocks = (
-        o_w.view(params.d_model, params.n_heads_q, params.head_dim).permute(1, 2, 0).contiguous()
+    V_q, O_blocks = _resolve_layer_vo(
+        li,
+        cache=cache,
+        weight_pack=weight_pack,
+        params=params,
+        layer_inputs=layer_inputs,
     )
     return attn_li, V_q, O_blocks
 
@@ -629,15 +831,43 @@ def compute_ifr_sentence_aggregate(
         if mlp_out.device != layer_device:
             mlp_out = mlp_out.to(layer_device, non_blocking=True)
 
-        attn_li, V_q, O_blocks = _resolve_layer_attn_vo(
-            li,
-            cache=cache,
-            attentions=attentions,
-            weight_pack=weight_pack,
-            params=params,
-            rotary_emb=rotary_emb,
-            layer_inputs=layer_inputs,
+        query_count = sink_end_exclusive - sink_start
+        # The dense path briefly holds scores plus float32 softmax workspace.
+        estimated_attention_bytes = (
+            query_count
+            * T
+            * params.n_heads_q
+            * (
+                torch.empty((), dtype=params.model_dtype).element_size()
+                + torch.empty((), dtype=torch.float32).element_size()
+            )
         )
+        recompute_chunked = (
+            attentions is None
+            and layer_inputs is None
+            and estimated_attention_bytes
+            > _MAX_AGGREGATE_ATTENTION_BYTES
+        )
+        if recompute_chunked:
+            V_q, O_blocks = _resolve_layer_vo(
+                li,
+                cache=cache,
+                weight_pack=weight_pack,
+                params=params,
+                layer_inputs=layer_inputs,
+            )
+            attn_li = None
+        else:
+            attn_li, V_q, O_blocks = _resolve_layer_attn_vo(
+                li,
+                cache=cache,
+                attentions=attentions,
+                weight_pack=weight_pack,
+                params=params,
+                rotary_emb=rotary_emb,
+                layer_inputs=layer_inputs,
+                query_range=(sink_start, sink_end),
+            )
         n_heads_q = int(V_q.shape[1])
 
         if sink_weights is not None:
@@ -664,18 +894,42 @@ def compute_ifr_sentence_aggregate(
         xS_l1 = xS.abs().sum()
         resid_attn_prox_S = torch.clamp(xS_l1 - (y_resid_S - xS).abs().sum(), min=0.0)
 
-        P = sink_end_exclusive - sink_start
-        alpha_slice = attn_li[:, sink_start:sink_end_exclusive, :J_max]
-        i_abs = torch.arange(sink_start, sink_end_exclusive, device=layer_device).view(P, 1)
-        j_abs = torch.arange(0, J_max, device=layer_device).view(1, J_max)
-        mask = (j_abs <= i_abs).to(alpha_slice.dtype)
-        if sink_weights is not None:
-            w = sink_weights.to(layer_device).to(alpha_slice.dtype)
-            w = w / (w.sum() + 1e-12)
-            alpha_weight = alpha_slice * w.view(1, -1, 1)
-            alpha_sum = (alpha_weight * mask.unsqueeze(0)).sum(dim=1).contiguous()
+        if recompute_chunked:
+            assert rotary_emb is not None
+            alpha_sum = recompute_layer_attention_sum(
+                x_prev,
+                weight_pack[li],
+                rotary_emb,
+                params,
+                query_range=(sink_start, sink_end),
+                query_weights=sink_weights,
+            )
         else:
-            alpha_sum = (alpha_slice * mask.unsqueeze(0)).sum(dim=1).contiguous()
+            assert attn_li is not None
+            P = sink_end_exclusive - sink_start
+            alpha_slice = attn_li[:, :, :J_max]
+            i_abs = torch.arange(
+                sink_start,
+                sink_end_exclusive,
+                device=layer_device,
+            ).view(P, 1)
+            j_abs = torch.arange(
+                0,
+                J_max,
+                device=layer_device,
+            ).view(1, J_max)
+            mask = (j_abs <= i_abs).to(alpha_slice.dtype)
+            if sink_weights is not None:
+                w = sink_weights.to(layer_device).to(alpha_slice.dtype)
+                w = w / (w.sum() + 1e-12)
+                alpha_weight = alpha_slice * w.view(1, -1, 1)
+                alpha_sum = (
+                    alpha_weight * mask.unsqueeze(0)
+                ).sum(dim=1).contiguous()
+            else:
+                alpha_sum = (
+                    alpha_slice * mask.unsqueeze(0)
+                ).sum(dim=1).contiguous()
 
         numer_tok_sum = torch.zeros((J_max,), device=layer_device, dtype=model_dtype)
         numer_head_sum = torch.zeros((n_heads_q,), device=layer_device, dtype=model_dtype)
@@ -900,6 +1154,7 @@ def compute_ifr_for_all_positions(
             params=params,
             rotary_emb=rotary_emb,
             layer_inputs=layer_inputs,
+            query_range=(attn_start, attn_end),
         )
         n_heads_q = int(V_q.shape[1])
 
@@ -917,7 +1172,13 @@ def compute_ifr_for_all_positions(
             for j0 in range(0, i1, chunk_tokens):
                 j1 = min(i1, j0 + chunk_tokens)
                 V_chunk = V_q[j0:j1]
-                alpha_block = attn_li[:, i0:i1, j0:j1].permute(1, 2, 0).contiguous()
+                query_i0 = i0 - attn_start
+                query_i1 = i1 - attn_start
+                alpha_block = (
+                    attn_li[:, query_i0:query_i1, j0:j1]
+                    .permute(1, 2, 0)
+                    .contiguous()
+                )
 
                 i_abs = torch.arange(i0, i1, device=layer_device).view(P, 1, 1)
                 j_abs = torch.arange(j0, j1, device=layer_device).view(1, j1 - j0, 1)
@@ -990,6 +1251,7 @@ __all__ = [
     "extract_model_metadata",
     "build_weight_pack",
     "recompute_layer_attention",
+    "recompute_layer_attention_sum",
     "IFRParameters",
     "IFRLayerResult",
     "IFRAggregate",

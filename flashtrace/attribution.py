@@ -1,3 +1,5 @@
+import inspect
+
 import matplotlib
 import matplotlib.cm as mpl_cm
 from matplotlib import pyplot as plt
@@ -2521,10 +2523,24 @@ class LLMLRPAttribution(LLMAttribution):
             input_embeds = embedding_layer(input_ids).float()
             input_embeds = input_embeds.detach().clone().requires_grad_(True)
 
-            output_logits = self.model(
-                inputs_embeds=input_embeds.to(model_dtype),
-                use_cache=False,
-            ).logits  # [1, total_len, vocab]
+            pos_start = prompt_len + sink_start - 1
+            pos_end = prompt_len + sink_end - 1
+            positions = torch.arange(
+                pos_start,
+                pos_end + 1,
+                device=input_embeds.device,
+            )
+            forward_kwargs: Dict[str, Any] = {
+                "inputs_embeds": input_embeds.to(model_dtype),
+                "use_cache": False,
+            }
+            forward_parameters = inspect.signature(
+                self.model.forward
+            ).parameters
+            response_logits_only = "logits_to_keep" in forward_parameters
+            if response_logits_only:
+                forward_kwargs["logits_to_keep"] = positions
+            output_logits = self.model(**forward_kwargs).logits
 
             device = output_logits.device
             logits_dtype = output_logits.dtype
@@ -2532,9 +2548,10 @@ class LLMLRPAttribution(LLMAttribution):
             # Positions in logits corresponding to generation indices g:
             # g=0 -> pos = prompt_len - 1  (logits at position i predict token i+1)
             # g=k -> pos = prompt_len + k - 1
-            pos_start = prompt_len + sink_start - 1
-            pos_end = prompt_len + sink_end - 1
-            positions = torch.arange(pos_start, pos_end + 1, device=device)
+            if response_logits_only:
+                positions = torch.arange(span_len, device=device)
+            else:
+                positions = positions.to(device)
 
             # Build weights tensor
             if sink_weights is None:

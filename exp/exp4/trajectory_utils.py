@@ -37,6 +37,8 @@ class AiderExample:
     metadata: Dict[str, Any]
     messages: Tuple[Dict[str, str], ...] = ()
     segments: Tuple[TrajectorySegment, ...] = ()
+    sink_span: Optional[Tuple[int, int]] = None
+    thinking_span: Optional[Tuple[int, int]] = None
 
     @property
     def is_multiturn(self) -> bool:
@@ -60,7 +62,11 @@ def _read_jsonl(path: Path) -> List[Dict[str, Any]]:
     return rows
 
 
-def normalize_messages(raw_messages: Any) -> List[Dict[str, str]]:
+def normalize_messages(
+    raw_messages: Any,
+    *,
+    allow_empty_content: bool = False,
+) -> List[Dict[str, str]]:
     """Validate and normalize a stored trajectory message list."""
 
     if not isinstance(raw_messages, list) or not raw_messages:
@@ -74,7 +80,7 @@ def normalize_messages(raw_messages: Any) -> List[Dict[str, str]]:
         if role not in ALLOWED_ROLES:
             raise ValueError(f"messages[{idx}].role must be one of {sorted(ALLOWED_ROLES)}; got {role!r}.")
         content = str(raw.get("content") or "")
-        if not content.strip():
+        if not content.strip() and not allow_empty_content:
             raise ValueError(f"messages[{idx}].content must be non-empty.")
         kind = str(raw.get("kind") or ("task" if role == "user" else "response"))
         messages.append({"role": role, "content": content, "kind": kind})
@@ -126,6 +132,8 @@ def _render_plain(messages: Sequence[Dict[str, str]]) -> str:
 def _locate_message_segments(
     rendered_prompt: str,
     messages: Sequence[Dict[str, str]],
+    *,
+    allow_missing_assistant: bool = False,
 ) -> Tuple[TrajectorySegment, ...]:
     """Locate message contents sequentially in a rendered chat prompt.
 
@@ -141,11 +149,14 @@ def _locate_message_segments(
         content = message["content"]
         start = rendered_prompt.find(content, cursor)
         if start < 0:
-            raise ValueError(
-                "Could not locate a trajectory message verbatim in the target tokenizer's "
-                f"rendered chat prompt (message_index={message_index}, role={message['role']})."
-            )
-        end = start + len(content)
+            if not (allow_missing_assistant and message["role"] == "assistant"):
+                raise ValueError(
+                    "Could not locate a trajectory message verbatim in the target tokenizer's "
+                    f"rendered chat prompt (message_index={message_index}, role={message['role']})."
+                )
+            start, end = -1, -1
+        else:
+            end = start + len(content)
         role = message["role"]
         role_turns[role] += 1
         segments.append(
@@ -157,8 +168,34 @@ def _locate_message_segments(
                 char_span=(start, end),
             )
         )
-        cursor = end
+        if end >= 0:
+            cursor = end
     return tuple(segments)
+
+
+def _char_span_to_token_span(
+    tokenizer: Any,
+    text: str,
+    span: Sequence[int] | None,
+) -> Optional[Tuple[int, int]]:
+    if tokenizer is None or span is None or len(span) != 2:
+        return None
+    start_char, end_char = int(span[0]), int(span[1])
+    if end_char <= start_char:
+        return None
+    encoded = tokenizer(
+        text,
+        add_special_tokens=False,
+        return_offsets_mapping=True,
+    )
+    indices = [
+        index
+        for index, (start, end) in enumerate(encoded["offset_mapping"])
+        if int(start) < end_char and int(end) > start_char
+    ]
+    if not indices:
+        return None
+    return min(indices), max(indices)
 
 
 def render_trajectory(
@@ -192,6 +229,79 @@ def load_aider(path: Path, *, tokenizer: Optional[Any] = None) -> List[AiderExam
 
     examples: List[AiderExample] = []
     for row_index, row in enumerate(_read_jsonl(path)):
+        if (
+            row.get("benchmark") == "aider_polyglot"
+            and int(row.get("schema_version") or 0) >= 3
+            and row.get("turns")
+        ):
+            if not row.get("valid_final_action"):
+                continue
+            final = row["turns"][-1]
+            prompt = str(final.get("rendered_prompt") or "")
+            target = str(final.get("completion") or "")
+            if not prompt or not target:
+                raise ValueError(
+                    f"Polyglot row {row_index} has an empty final prompt or target."
+                )
+            history = normalize_messages(
+                list(row.get("messages") or [])
+                + [
+                    {
+                        "role": "assistant",
+                        "content": target,
+                        "kind": final.get("kind", "final_edit"),
+                    }
+                ],
+                allow_empty_content=True,
+            )
+            segments = _locate_message_segments(
+                prompt,
+                history[:-1],
+                allow_missing_assistant=True,
+            )
+            sink_span = _char_span_to_token_span(
+                tokenizer,
+                target,
+                final.get("action_char_span_half_open"),
+            )
+            thinking_span = _char_span_to_token_span(
+                tokenizer,
+                target,
+                final.get("reasoning_char_span_half_open"),
+            )
+            metadata = {
+                "example_id": row["task"]["task_id"],
+                "schema_version": int(row["schema_version"]),
+                "benchmark": row["benchmark"],
+                "language": row["task"]["language"],
+                "exercise": row["task"]["exercise"],
+                "draft_passed": bool(row["draft_passed"]),
+                "final_passed": bool(row["final_passed"]),
+                "repair_attempted": bool(row["repair_attempted"]),
+                "repair_improved": bool(row["repair_improved"]),
+                "valid_final_boundary": bool(row["valid_final_boundary"]),
+                "valid_final_action": bool(row["valid_final_action"]),
+                "render_format": "frozen_generation_prompt",
+                "action_char_span_half_open": final.get(
+                    "action_char_span_half_open"
+                ),
+                "reasoning_char_span_half_open": final.get(
+                    "reasoning_char_span_half_open"
+                ),
+            }
+            examples.append(
+                AiderExample(
+                    prompt=prompt,
+                    target=target,
+                    metadata=metadata,
+                    messages=tuple(history),
+                    segments=segments,
+                    sink_span=sink_span,
+                    thinking_span=thinking_span,
+                )
+            )
+            continue
+
         metadata = dict(row.get("metadata") or {})
         metadata.setdefault("example_id", row.get("id", row_index))
         if row.get("length") is not None:

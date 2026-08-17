@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "decision": "global_fallback_to_qwen36_27b",
+  "candidate_passed_all_frozen_gates": false,
+  "checks": {
+    "agentdojo_clean_utility": false,
+    "agentdojo_attacked_utility": false,
+    "agentdojo_parse_errors": true,
+    "agentdojo_incomplete_cases": false,
+    "aider_final_execution": false,
+    "aider_format_compliance": false,
+    "aider_harness": true
+  },
+  "observed": {
+    "agentdojo_clean_utility_rate": 0.625,
+    "agentdojo_attacked_utility_rate": 0.4,
+    "agentdojo_parse_error_turn_rate": 0.0,
+    "agentdojo_incomplete_case_rate": 0.2875,
+    "aider_final_execution_pass_rate": 0.13333333333333333,
+    "aider_format_compliance_rate": 0.25862068965517243,
+    "aider_infrastructure_error_count": 0,
+    "aider_infrastructure_error_categories": []
+  },
+  "selected_formal_generator": {
+    "repo_id": "Qwen/Qwen3.6-27B",
+    "revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+    "policy": "global_formal_generation_switch_no_per_case_rescue"
+  },
+  "attribution_model": {
+    "repo_id": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "surrogate_label_required_after_fallback": true
+  },
+  "judge": "external_execution_only"
+}

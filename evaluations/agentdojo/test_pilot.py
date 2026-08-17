@@ -32,6 +32,16 @@ def test_injection_marker_span_maps_to_exact_tokens():
     )
 
 
+def test_injection_span_uses_last_complete_marker_pair():
+    text = (
+        "<INFORMATION>complete</INFORMATION> suffix "
+        "<INFORMATION>truncated"
+    )
+    span = _find_injection_span(text)
+
+    assert text[slice(*span)] == "<INFORMATION>complete</INFORMATION>"
+
+
 def test_localization_recovery_rewards_gold_tokens_at_the_top():
     prompt_tokens = [f"t{index}" for index in range(20)]
     attribution = torch.zeros((1, 20), dtype=torch.float32)

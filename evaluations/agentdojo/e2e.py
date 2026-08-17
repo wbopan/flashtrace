@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import html
 import json
 import re
 import time
@@ -48,7 +49,15 @@ from evaluations.agentdojo.pilot import (
 
 
 TOOL_CALL_PATTERN = re.compile(
-    r"<tool_call>\s*(\{.*?\})\s*</tool_call>",
+    r"<tool_call>\s*(.*?)\s*</tool_call>",
+    flags=re.DOTALL,
+)
+XML_FUNCTION_PATTERN = re.compile(
+    r"<function=([^>\s]+)>\s*(.*?)\s*</function>",
+    flags=re.DOTALL,
+)
+XML_PARAMETER_PATTERN = re.compile(
+    r"<parameter=([^>\s]+)>\s*(.*?)\s*</parameter>",
     flags=re.DOTALL,
 )
 
@@ -70,18 +79,57 @@ def parse_qwen_tool_calls(completion: str) -> tuple[list[ParsedToolCall], list[s
     calls = []
     errors = []
     for match in TOOL_CALL_PATTERN.finditer(completion):
-        raw_json = match.group(1)
-        try:
-            payload = json.loads(raw_json)
-        except json.JSONDecodeError as exc:
-            errors.append(
-                f"invalid JSON at chars [{match.start()},{match.end()}): {exc}"
-            )
-            continue
-        function = payload.get("name")
-        args = payload.get("arguments", {})
+        raw_payload = match.group(1).strip()
+        function: Any
+        args: Any
+        if raw_payload.startswith("{"):
+            try:
+                payload = json.loads(raw_payload)
+            except json.JSONDecodeError as exc:
+                errors.append(
+                    f"invalid JSON at chars [{match.start()},{match.end()}): {exc}"
+                )
+                continue
+            function = payload.get("name")
+            args = payload.get("arguments", {})
+        else:
+            function_match = XML_FUNCTION_PATTERN.fullmatch(raw_payload)
+            if function_match is None:
+                errors.append(
+                    "invalid function-tag tool call at chars "
+                    f"[{match.start()},{match.end()})"
+                )
+                continue
+            function = html.unescape(function_match.group(1).strip())
+            parameter_payload = function_match.group(2)
+            args = {}
+            consumed = []
+            duplicate = False
+            for parameter_match in XML_PARAMETER_PATTERN.finditer(
+                parameter_payload
+            ):
+                name = html.unescape(parameter_match.group(1).strip())
+                if name in args:
+                    errors.append(f"duplicate parameter {name} for {function}")
+                    duplicate = True
+                    break
+                raw_value = html.unescape(parameter_match.group(2).strip())
+                try:
+                    value = json.loads(raw_value)
+                except json.JSONDecodeError:
+                    value = raw_value
+                args[name] = value
+                consumed.append(parameter_match.span())
+            if duplicate:
+                continue
+            remainder = parameter_payload
+            for start, end in reversed(consumed):
+                remainder = remainder[:start] + remainder[end:]
+            if remainder.strip():
+                errors.append(f"invalid parameter block for {function}")
+                continue
         if not isinstance(function, str) or not function:
-            errors.append(f"missing function name in {raw_json}")
+            errors.append(f"missing function name in {raw_payload}")
             continue
         if isinstance(args, str):
             try:
@@ -98,7 +146,7 @@ def parse_qwen_tool_calls(completion: str) -> tuple[list[ParsedToolCall], list[s
                 args=args,
                 char_start=match.start(),
                 char_end=match.end(),
-                raw_json=raw_json,
+                raw_json=raw_payload,
             )
         )
     if "<tool_call>" in completion and not calls and not errors:
@@ -169,6 +217,7 @@ def _render_prompt(
         tokenize=False,
         add_generation_prompt=True,
         enable_thinking=True,
+        preserve_thinking=True,
     )
     if not isinstance(prompt, str) or not prompt:
         raise ValueError("Qwen chat template returned an empty prompt.")
@@ -181,20 +230,36 @@ def _generate_turn(
     tokenizer: Any,
     prompt: str,
     max_new_tokens: int,
+    *,
+    temperature: float = 0.0,
+    top_p: float = 1.0,
+    top_k: int = 0,
+    seed: int | None = None,
 ) -> dict[str, Any]:
     encoded = tokenizer(prompt, return_tensors="pt", add_special_tokens=False)
     input_ids = encoded.input_ids.to(model.device)
     attention_mask = encoded.attention_mask.to(model.device)
     started = time.perf_counter()
-    output_ids = model.generate(
-        input_ids=input_ids,
-        attention_mask=attention_mask,
-        max_new_tokens=max_new_tokens,
-        do_sample=False,
-        use_cache=True,
-        pad_token_id=tokenizer.eos_token_id,
-        eos_token_id=tokenizer.eos_token_id,
-    )
+    generation_kwargs: dict[str, Any] = {
+        "input_ids": input_ids,
+        "attention_mask": attention_mask,
+        "max_new_tokens": max_new_tokens,
+        "do_sample": temperature > 0,
+        "use_cache": True,
+        "pad_token_id": tokenizer.eos_token_id,
+        "eos_token_id": tokenizer.eos_token_id,
+    }
+    if temperature > 0:
+        generation_kwargs.update(
+            temperature=float(temperature),
+            top_p=float(top_p),
+            top_k=int(top_k),
+        )
+    fork_devices = [input_ids.device] if input_ids.is_cuda else []
+    with torch.random.fork_rng(devices=fork_devices):
+        if seed is not None:
+            torch.manual_seed(int(seed))
+        output_ids = model.generate(**generation_kwargs)
     runtime = time.perf_counter() - started
     generated_ids = output_ids[0, input_ids.shape[1] :].detach().cpu().tolist()
     raw_with_eos = tokenizer.decode(
@@ -203,6 +268,11 @@ def _generate_turn(
         clean_up_tokenization_spaces=False,
     )
     completion = _strip_trailing_eos(raw_with_eos, tokenizer.eos_token)
+    stopped_on_eos = bool(
+        generated_ids
+        and tokenizer.eos_token_id is not None
+        and generated_ids[-1] == tokenizer.eos_token_id
+    )
     return {
         "rendered_prompt": prompt,
         "prompt_token_ids": input_ids[0].detach().cpu().tolist(),
@@ -211,12 +281,15 @@ def _generate_turn(
         "generated_token_count_with_eos_if_emitted": len(generated_ids),
         "raw_completion_with_eos": raw_with_eos,
         "completion": completion,
-        "stopped_on_eos": bool(
-            generated_ids
-            and tokenizer.eos_token_id is not None
-            and generated_ids[-1] == tokenizer.eos_token_id
-        ),
+        "stopped_on_eos": stopped_on_eos,
+        "finish_reason": "eos" if stopped_on_eos else "max_new_tokens",
         "generation_seconds": runtime,
+        "sampling_params": {
+            "temperature": float(temperature),
+            "top_p": float(top_p),
+            "top_k": int(top_k),
+            "seed": seed,
+        },
     }
 
 
@@ -557,6 +630,28 @@ def _attribute_generated_target(
     sink_span = target_payload["target_call_token_span_inclusive"]
     last_span = [sink_span[1], sink_span[1]]
     thinking_span = target_payload["thinking_bridge_token_span_inclusive"]
+    token_provenance = event.get("completion_token_provenance")
+    if token_provenance is not None:
+        if len(token_provenance) != target_payload["token_count"]:
+            raise ValueError("Completion token provenance does not align with target.")
+        for token, provenance in zip(
+            target_payload["tokens"], token_provenance, strict=True
+        ):
+            token["provenance"] = provenance
+        target_payload["token_provenance_counts"] = {
+            "model": token_provenance.count("model"),
+            "reference_prefix": token_provenance.count("reference"),
+            "reference_correction": token_provenance.count(
+                "reference_correction"
+            ),
+        }
+        if thinking_span is not None and any(
+            provenance != "model"
+            for provenance in token_provenance[
+                thinking_span[0] : thinking_span[1] + 1
+            ]
+        ):
+            raise ValueError("FlashTrace bridge contains a non-model token.")
 
     started = time.perf_counter()
     last_result = ifr.calculate_ifr_for_all_positions_output_only(
@@ -646,8 +741,12 @@ def _attribute_generated_target(
         methods[method] = payload
 
     return {
-        "provenance": "actual_autonomous_qwen_generation",
-        "teacher_forced": False,
+        "provenance": event.get(
+            "output_provenance",
+            "actual_autonomous_qwen_generation",
+        ),
+        "teacher_forced": bool(event.get("teacher_forced", False)),
+        "output_intervention": event.get("output_intervention"),
         "turn_index": event["turn_index"],
         "prompt": prompt,
         "prompt_tokens": prompt_tokens,
@@ -662,7 +761,8 @@ def _attribute_generated_target(
         "methods": methods,
         "n_hops": n_hops,
         "thinking_bridge_definition": (
-            "all actually generated tokens before the malicious tool-call block"
+            "all completion tokens before the target tool-call block; "
+            "teacher-forcing records require every bridge token to be model-produced"
         ),
     }
 

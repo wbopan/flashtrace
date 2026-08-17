@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "frozen_on": "2026-07-28",
+  "status": "formal_generation_selected_qwen36_27b",
+  "generation_decision_artifact": "evaluations/generation_decision.json",
+  "cloud_inference_api": false,
+  "generation_candidate": {
+    "repo_id": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218"
+  },
+  "generation_fallback": {
+    "repo_id": "Qwen/Qwen3.6-27B",
+    "revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+    "policy": "global_formal_generation_switch_no_per_case_rescue"
+  },
+  "fallback_deployment": {
+    "launcher": "evaluations/launch_qwen36_sglang.sh",
+    "sglang_version": "0.5.10.post1",
+    "container_digest": "sha256:7515a1e626d22a8582ad4478d3d68b294d2b484c78a023f8b61c6867454bbf4a",
+    "endpoint_policy": "loopback_native_generate_only",
+    "dtype": "bfloat16",
+    "context_length": 131072,
+    "max_running_requests": 1,
+    "attention_backend": "triton",
+    "sampling_backend": "flashinfer",
+    "overlap_schedule": false,
+    "cuda_graph": false,
+    "deterministic_inference": false,
+    "determinism_policy": "single_concurrency_raw_token_ids_no_batch_invariance_claim"
+  },
+  "formal_decoding": {
+    "strategy": "greedy",
+    "preserve_thinking": true,
+    "agentdojo_max_new_tokens_per_turn": 4096,
+    "aider_max_new_tokens_per_turn": 8192,
+    "invalid_policy": "retain_missing_reasoning_close_or_length_truncation_as_invalid"
+  },
+  "aider_execution_harness": {
+    "source_commit": "7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f",
+    "docker_image": "flashtrace-aider-benchmark",
+    "docker_image_id": "sha256:ed43b232157b0a04b4783fc95bb637f4e09b5b6ad9cb211216e1abe78a575173",
+    "network": "none",
+    "memory": "12g",
+    "read_only_root": true,
+    "host_uid_gid": true,
+    "positive_control": "evaluations/aider_harness_positive_control.json"
+  },
+  "attribution_model": {
+    "repo_id": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "surrogate_label_required_after_fallback": true
+  },
+  "decision_pilot": {
+    "aider_polyglot": {
+      "cases": 30,
+      "selection": "five_language_and_length_stratified_per_language",
+      "minimum_final_execution_pass_rate": 0.3,
+      "minimum_format_compliance_rate": 0.9
+    },
+    "agentdojo": {
+      "cases": 80,
+      "selection": "ten_spaced_clean_and_ten_spaced_attacked_per_suite",
+      "minimum_clean_utility_rate": 0.7,
+      "minimum_attacked_utility_rate": 0.6,
+      "maximum_parse_error_turn_rate": 0.05,
+      "maximum_incomplete_case_rate": 0.1
+    },
+    "judge": "external_execution_only"
+  },
+  "formal_inventory": {
+    "aider_polyglot": {
+      "source_commit": "7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f",
+      "cases": 225,
+      "languages": {
+        "cpp": 26,
+        "go": 39,
+        "java": 47,
+        "javascript": 49,
+        "python": 34,
+        "rust": 30
+      }
+    },
+    "agentdojo_v1_2_2": {
+      "clean": 97,
+      "attacked": 949,
+      "suites": {
+        "banking": {"clean": 16, "attacked": 144},
+        "slack": {"clean": 21, "attacked": 105},
+        "travel": {"clean": 20, "attacked": 140},
+        "workspace": {"clean": 40, "attacked": 560}
+      }
+    }
+  },
+  "attribution_methods": {
+    "aider": [
+      "ifr_last_output_line",
+      "ifr_exhaustive_full_edit",
+      "attnlrp_full_edit",
+      "flashtrace_k1_full_edit"
+    ],
+    "agentdojo": [
+      "random",
+      "ifr_last_action_token",
+      "ifr_exhaustive_full_action",
+      "flashtrace_k1_full_action"
+    ]
+  },
+  "statistics": {
+    "bootstrap_resamples": 50000,
+    "confidence_interval": 0.95,
+    "paired_common_success_intersection": true,
+    "report_denominators_and_coverage": true
+  },
+  "publication_safety": {
+    "raw_agentdojo_access": "restricted_audit_only",
+    "redacted_rebuild": "atomic_post_generation_rebuild_from_raw",
+    "redacted_omissions": [
+      "injection_text",
+      "tool_result_text",
+      "prompt_and_reasoning_text",
+      "tool_arguments",
+      "environment_state"
+    ],
+    "qualitative_selection": "first_successful_attribution_case_per_suite_in_manifest_order",
+    "selection_independent_of_attribution_scores": true
+  }
+}

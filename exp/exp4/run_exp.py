@@ -172,6 +172,7 @@ def _faithfulness_test_with_user_prompt_indices(
     *,
     user_prompt_indices: List[int],
     keep_prompt_token_indices: Optional[Sequence[int]] = None,
+    score_generation_span: Optional[Sequence[int]] = None,
     k: int = 20,
 ) -> Tuple[float, float, float]:
     def auc(arr: np.ndarray) -> float:
@@ -192,6 +193,23 @@ def _faithfulness_test_with_user_prompt_indices(
         return_tensors="pt",
         add_special_tokens=False,
     ).input_ids.to(llm_evaluator.device)
+
+    def score_current_prompt() -> float:
+        token_scores = llm_evaluator.compute_logprob_response_given_prompt(
+            prompt_ids_perturbed,
+            generation_ids,
+        )
+        if score_generation_span is None:
+            selected = token_scores
+        else:
+            start, end = map(int, score_generation_span)
+            if start < 0 or end < start or end >= token_scores.shape[1]:
+                raise ValueError(
+                    f"Invalid generation score span [{start}, {end}] for "
+                    f"{token_scores.shape[1]} response tokens."
+                )
+            selected = token_scores[:, start : end + 1]
+        return selected.sum().cpu().detach().item()
     eos_token_id = getattr(llm_evaluator.tokenizer, "eos_token_id", None)
     if eos_token_id is not None:
         eos_id = torch.tensor(
@@ -227,13 +245,7 @@ def _faithfulness_test_with_user_prompt_indices(
         )
     K = len(keep)
     if K == 0:
-        score = (
-            llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids)
-            .sum()
-            .cpu()
-            .detach()
-            .item()
-        )
+        score = score_current_prompt()
         singleton = np.asarray([score], dtype=np.float64)
         return auc(singleton), auc(singleton), auc(singleton)
 
@@ -251,9 +263,7 @@ def _faithfulness_test_with_user_prompt_indices(
     scores = np.zeros(steps + 1, dtype=np.float64)
     density = np.zeros(steps + 1, dtype=np.float64)
 
-    scores[0] = (
-        llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
-    )
+    scores[0] = score_current_prompt()
     density[0] = 1.0
 
     if attr_sum <= 0:
@@ -271,9 +281,7 @@ def _faithfulness_test_with_user_prompt_indices(
             j = int(idx.item())
             abs_pos = int(user_prompt_indices[j])
             prompt_ids_perturbed[0, abs_pos] = pad_token_id
-        scores[step + 1] = (
-            llm_evaluator.compute_logprob_response_given_prompt(prompt_ids_perturbed, generation_ids).sum().cpu().detach().item()
-        )
+        scores[step + 1] = score_current_prompt()
         if attr_sum > 0:
             dec = float(w.index_select(0, group).sum().item()) / attr_sum
             density[step + 1] = density[step] - dec
@@ -305,6 +313,7 @@ def _row_faithfulness_scores(
     generation: str,
     user_prompt_indices: Optional[List[int]],
     keep_prompt_token_indices: Optional[Sequence[int]] = None,
+    score_generation_span: Optional[Sequence[int]] = None,
     k: int = 20,
 ) -> Tuple[float, float]:
     if user_prompt_indices is not None:
@@ -315,6 +324,7 @@ def _row_faithfulness_scores(
             generation,
             user_prompt_indices=user_prompt_indices,
             keep_prompt_token_indices=keep_prompt_token_indices,
+            score_generation_span=score_generation_span,
             k=int(k),
         )
         return float(rise), float(mas)

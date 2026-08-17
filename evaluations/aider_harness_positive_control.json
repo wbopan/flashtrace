@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "run_on": "2026-07-28",
+  "source_commit": "7e0611e77b54e2dea774cdc0aa00cf9f7ed6144f",
+  "docker_image": "flashtrace-aider-benchmark",
+  "docker_image_id": "sha256:ed43b232157b0a04b4783fc95bb637f4e09b5b6ad9cb211216e1abe78a575173",
+  "control": "official_reference_implementation",
+  "results": [
+    {
+      "language": "cpp",
+      "task_id": "polyglot-cpp-all-your-base",
+      "passed": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "infrastructure_error": null
+    },
+    {
+      "language": "go",
+      "task_id": "polyglot-go-kindergarten-garden",
+      "passed": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "infrastructure_error": null
+    },
+    {
+      "language": "java",
+      "task_id": "polyglot-java-affine-cipher",
+      "passed": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "infrastructure_error": null
+    },
+    {
+      "language": "javascript",
+      "task_id": "polyglot-javascript-house",
+      "passed": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "infrastructure_error": null
+    },
+    {
+      "language": "python",
+      "task_id": "polyglot-python-affine-cipher",
+      "passed": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "infrastructure_error": null
+    },
+    {
+      "language": "rust",
+      "task_id": "polyglot-rust-accumulate",
+      "passed": true,
+      "exit_code": 0,
+      "timed_out": false,
+      "infrastructure_error": null
+    }
+  ],
+  "passed": 6,
+  "attempted": 6
+}

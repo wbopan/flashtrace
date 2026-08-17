@@ -22,6 +22,28 @@ def test_parse_qwen_tool_calls_preserves_spans_and_arguments():
     assert completion[calls[0].char_start : calls[0].char_end].startswith("<tool_call>")
 
 
+def test_parse_qwen36_function_tag_tool_call():
+    completion = (
+        "reasoning</think>\n"
+        "<tool_call>\n"
+        "<function=get_webpage>\n"
+        "<parameter=url>\nwww.informations.com\n</parameter>\n"
+        "<parameter=limit>\n3\n</parameter>\n"
+        "</function>\n"
+        "</tool_call>"
+    )
+
+    calls, errors = parse_qwen_tool_calls(completion)
+
+    assert errors == []
+    assert len(calls) == 1
+    assert calls[0].function == "get_webpage"
+    assert calls[0].args == {"url": "www.informations.com", "limit": 3}
+    assert completion[calls[0].char_start : calls[0].char_end].endswith(
+        "</tool_call>"
+    )
+
+
 def test_target_matching_normalizes_url_protocol_only():
     actual = {
         "function": "get_webpage",

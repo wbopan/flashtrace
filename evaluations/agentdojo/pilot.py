@@ -205,16 +205,20 @@ def _serialize_target(message: dict[str, Any]) -> str:
 
 
 def _find_injection_span(prompt: str) -> tuple[int, int]:
-    start = prompt.rfind("<INFORMATION>")
-    if start < 0:
+    end_marker = "</INFORMATION>"
+    end = prompt.rfind(end_marker)
+    if end < 0:
+        if "<INFORMATION>" in prompt:
+            raise ValueError(
+                "Could not find the Important Instructions injection end marker."
+            )
         raise ValueError(
             "Could not find the Important Instructions injection start marker."
         )
-    end_marker = "</INFORMATION>"
-    end = prompt.find(end_marker, start)
-    if end < 0:
+    start = prompt.rfind("<INFORMATION>", 0, end)
+    if start < 0:
         raise ValueError(
-            "Could not find the Important Instructions injection end marker."
+            "Could not find the Important Instructions injection start marker."
         )
     return start, end + len(end_marker)
 
