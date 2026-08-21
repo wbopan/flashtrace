@@ -1,0 +1,66 @@
+{
+  "figure_asset": "Figures/cost_comparison.pdf",
+  "lengths": [10, 100, 500, 1000, 2000, 5000],
+  "series": {
+    "time_input_seconds": {
+      "IG": [8.2897, 14.8042, 47.0109, 106.5550, "oom", "oom"],
+      "IG-Attn": [8.0698, 16.1021, 48.8749, 112.2121, "oom", "oom"],
+      "Perturbation": [1.1323, 6.2547, 36.9772, 113.4542, 533.1257, 5880.4082],
+      "REAGENT": [1.5427, 9.8422, 47.4965, 189.7082, 700.1463, 6653.1271],
+      "IFR": [0.6062, 0.5861, 1.4687, 2.7487, 5.9679, 20.2472],
+      "AttnLRP": [2.4192, 2.5335, 2.3257, 3.8243, 6.8835, 28.0376],
+      "CLP": [1.0555, 6.5346, 25.7947, 115.1433, 536.1932, 5901.3236],
+      "FlashTrace": [0.2807, 0.4097, 0.5562, 1.2729, 3.3863, 16.7862]
+    },
+    "time_generation_seconds": {
+      "IG": [7.7784, 107.8081, 1154.0503, 4334.2024, "oom", "oom"],
+      "IG-Attn": [8.5585, 118.4573, 1213.1850, 4510.5291, "oom", "oom"],
+      "Perturbation": [1.2854, 20.1775, 344.1593, 1507.4076, 12187.5624, null],
+      "REAGENT": [1.5782, 25.6059, 465.3288, 2173.4404, 16030.9560, null],
+      "IFR": [0.6074, 3.8386, 34.9071, 111.1836, 391.5628, 2294.8041],
+      "AttnLRP": [2.5338, 18.8755, 95.6291, 292.3284, 1152.6436, 9832.7801],
+      "CLP": [1.1641, 15.1551, 284.7837, 1411.3074, 12165.3336, null],
+      "FlashTrace": [0.2852, 0.3793, 0.5551, 1.2422, 3.5458, 17.3079]
+    },
+    "memory_input_gb": {
+      "IG": [39.5082, 60.3791, 183.9999, 410.1253, "oom", "oom"],
+      "IG-Attn": [39.4999, 60.2533, 188.1166, 430.7236, "oom", "oom"],
+      "Perturbation": [33.8732, 34.5904, 45.1034, 72.0057, 178.9982, 440.9786],
+      "REAGENT": [33.8942, 35.0707, 45.5501, 78.1483, 221.3502, 446.0768],
+      "IFR": [34.6995, 37.3775, 45.5501, 77.9365, 97.1904, 369.0002],
+      "AttnLRP": [35.0958, 37.0231, 46.1898, 79.3499, 96.7269, 357.4700],
+      "CLP": [34.7897, 37.3775, 46.8336, 77.9365, 97.1904, 446.3872],
+      "FlashTrace": [33.4999, 35.7103, 44.9378, 75.2227, 84.9032, 221.8766]
+    },
+    "memory_generation_gb": {
+      "IG": [39.5642, 61.0488, 183.8447, 401.6088, "oom", "oom"],
+      "IG-Attn": [39.5390, 60.9055, 251.9497, 429.3845, "oom", "oom"],
+      "Perturbation": [33.2336, 34.6701, 60.1568, 82.5565, 429.0899, null],
+      "REAGENT": [33.2860, 34.5904, 61.0607, 117.9061, 429.0857, null],
+      "IFR": [34.1263, 51.4403, 61.0607, 72.82, 96.33, 166.8683],
+      "AttnLRP": [34.4709, 35.2615, 49.8682, 83.65, 151.21, 353.8671],
+      "CLP": [33.8103, 41.5026, 74.1658, 153.2431, 428.9179, null],
+      "FlashTrace": [32.9484, 34.3304, 48.6225, 62.12, 89.11, 170.0874]
+    }
+  },
+  "memory_generation_status": {
+    "IFR": ["measured", "measured", "measured", "interpolated", "interpolated", "measured"],
+    "AttnLRP": ["measured", "measured", "measured", "interpolated", "interpolated", "measured"],
+    "FlashTrace": ["measured", "measured", "measured", "interpolated", "interpolated", "measured"]
+  },
+  "pareto_legacy": {
+    "IG": {"speed_normalized": 0.08, "faithfulness": 0.15, "status": "placeholder"},
+    "IG-Attn": {"speed_normalized": 0.10, "faithfulness": 0.18, "status": "placeholder"},
+    "Perturbation": {"speed_normalized": 0.35, "faithfulness": 0.63, "status": "hand_normalized"},
+    "REAGENT": {"speed_normalized": 0.55, "faithfulness": 0.60, "status": "hand_normalized"},
+    "IFR": {"speed_normalized": 0.06, "faithfulness": 0.83, "status": "hand_normalized"},
+    "AttnLRP": {"speed_normalized": 0.85, "faithfulness": 0.64, "status": "hand_normalized"},
+    "CLP": {"speed_normalized": 0.32, "faithfulness": 0.65, "status": "hand_normalized"},
+    "FlashTrace": {"speed_normalized": 0.95, "faithfulness": 0.84, "status": "hand_normalized"}
+  },
+  "source": "icml-flashtrace/Plots/exp_result.md and legacy cost_comparison_plot.py",
+  "warnings": [
+    "The 1000 and 2000 generation-length memory values for IFR, AttnLRP, and FlashTrace were interpolated in the legacy plot after broken measurements.",
+    "The legacy Pareto panel used hand-normalized speed values; IG and IG-Attn faithfulness values were placeholders."
+  ]
+}
