@@ -353,6 +353,28 @@ class IFRAggregate:
 
 
 @dataclass
+class IFRSpanLayerResult:
+    """JY: Layer-level contributions from source spans to one target span."""
+
+    e_attn_spans: torch.Tensor
+    e_resid_attn: float
+    head_importance: torch.Tensor
+    e_ffn: float
+    e_resid_ffn: float
+
+
+@dataclass
+class IFRSpanAggregate:
+    """JY: Aggregate IFR statistics for source-span -> target-span attribution."""
+
+    per_layer: List[IFRSpanLayerResult]
+    span_importance_total: torch.Tensor
+    head_importance_total: torch.Tensor
+    ffn_importance_per_layer: torch.Tensor
+    resid_ffn_importance_per_layer: torch.Tensor
+
+
+@dataclass
 class IFRAllPositions:
     """Batch of IFR outputs across a contiguous range of sink positions."""
 
@@ -734,6 +756,259 @@ def compute_ifr_sentence_aggregate(
         ffn_importance_per_layer=ffn_per_layer,
         resid_ffn_importance_per_layer=resid_ffn_per_layer,
     )
+
+
+# JY for span-to-span
+@torch.no_grad()
+def compute_ifr_span_to_span_aggregate(
+    sink_start: int,
+    sink_end: int,
+
+    source_spans : list, # JY: [(start,end), ...], inclusive 
+
+    cache: Dict[str, List[Optional[torch.Tensor]]],
+    attentions: Optional[Sequence[torch.Tensor]],
+    weight_pack: Sequence[Dict[str, torch.Tensor | nn.Module]],
+    params: IFRParameters,
+    renorm_threshold: float = 0.0,
+    sink_weights: Optional[torch.Tensor] = None,
+    rotary_emb: Optional[nn.Module] = None,
+) -> IFRSpanAggregate:
+    """Aggregate IFR contributions over an inclusive sink span [sink_start, sink_end]."""
+
+    assert all(p_end < sink_start for p_start, p_end in source_spans) # JY : require every source span to precede the target
+
+    assert 0 <= sink_start <= sink_end < params.sequence_length, "Invalid sink span."
+    sink_end_exclusive = sink_end + 1
+
+    layer_inputs = params.layer_inputs
+    n_layers = params.n_layers
+    T = params.sequence_length
+    model_dtype = params.model_dtype
+
+    # per_layer: List[IFRLayerResult] = []
+    # token_total_cpu = torch.zeros(T, dtype=torch.float32)
+    
+    # JY
+    per_layer: List[IFRSpanLayerResult] = []
+    span_total_cpu = torch.zeros(len(source_spans), dtype=torch.float32)
+
+    head_total_cpu = torch.zeros(_max_layer_heads(params, layer_inputs), dtype=torch.float32)
+    ffn_per_layer = torch.zeros(n_layers, dtype=torch.float32)
+    resid_ffn_per_layer = torch.zeros(n_layers, dtype=torch.float32)
+
+    J_max = sink_end_exclusive
+
+    for li in range(n_layers):
+        x_prev_full = cache["pre_attn_resid"][li]
+        x_mid_full = cache["mid_resid"][li]
+        x_out_full = cache["post_resid"][li]
+        mlp_out_full = cache["mlp_out"][li]
+
+        assert x_prev_full is not None
+        assert x_mid_full is not None
+        assert x_out_full is not None
+        assert mlp_out_full is not None
+
+        x_prev = x_prev_full[0]
+        x_mid = x_mid_full[0]
+        x_out = x_out_full[0]
+        mlp_out = mlp_out_full[0]
+        layer_device = x_prev.device
+
+        if x_mid.device != layer_device:
+            x_mid = x_mid.to(layer_device, non_blocking=True)
+        if x_out.device != layer_device:
+            x_out = x_out.to(layer_device, non_blocking=True)
+        if mlp_out.device != layer_device:
+            mlp_out = mlp_out.to(layer_device, non_blocking=True)
+
+        attn_li, V_q, O_blocks = _resolve_layer_attn_vo(
+            li,
+            cache=cache,
+            attentions=attentions,
+            weight_pack=weight_pack,
+            params=params,
+            rotary_emb=rotary_emb,
+            layer_inputs=layer_inputs,
+        )
+        n_heads_q = int(V_q.shape[1])
+
+        if sink_weights is not None:
+            w = sink_weights.to(layer_device).to(model_dtype)
+            if w.numel() != (sink_end_exclusive - sink_start):
+                raise ValueError("sink_weights length must equal number of sink positions.")
+            w = w / (w.sum() + 1e-12)
+            w_f32 = w.to(torch.float32)
+            xS = (
+                x_mid[sink_start:sink_end_exclusive]
+                .to(torch.float32)
+                .mul(w_f32.view(-1, 1))
+                .sum(dim=0)
+            )
+            y_resid_S = (
+                x_prev[sink_start:sink_end_exclusive]
+                .to(torch.float32)
+                .mul(w_f32.view(-1, 1))
+                .sum(dim=0)
+            )
+        else:
+            xS = x_mid[sink_start:sink_end_exclusive].to(torch.float32).sum(dim=0)
+            y_resid_S = x_prev[sink_start:sink_end_exclusive].to(torch.float32).sum(dim=0)
+        xS_l1 = xS.abs().sum()
+        resid_attn_prox_S = torch.clamp(xS_l1 - (y_resid_S - xS).abs().sum(), min=0.0)
+
+        P = sink_end_exclusive - sink_start
+        alpha_slice = attn_li[:, sink_start:sink_end_exclusive, :J_max]
+        i_abs = torch.arange(sink_start, sink_end_exclusive, device=layer_device).view(P, 1)
+        j_abs = torch.arange(0, J_max, device=layer_device).view(1, J_max)
+        mask = (j_abs <= i_abs).to(alpha_slice.dtype)
+        if sink_weights is not None:
+            w = sink_weights.to(layer_device).to(alpha_slice.dtype)
+            w = w / (w.sum() + 1e-12)
+            alpha_weight = alpha_slice * w.view(1, -1, 1)
+            alpha_sum = (alpha_weight * mask.unsqueeze(0)).sum(dim=1).contiguous()
+        else:
+            alpha_sum = (alpha_slice * mask.unsqueeze(0)).sum(dim=1).contiguous()
+
+        # JY :  
+        #   OLD:  numer_tok_sum[j]          # one slot per source TOKEN
+        #   NEW:  span_contrib[p, h, :]     # one contribution vector per source SPAN
+        # 
+        # numer_tok_sum = torch.zeros((J_max,), device=layer_device, dtype=model_dtype)        
+        num_spans = len( source_spans )
+        span_contrib = torch.zeros(
+                                    (num_spans, n_heads_q, xS.numel()),
+                                    device=layer_device,
+                                    dtype=model_dtype,
+                                   )
+
+        numer_head_sum = torch.zeros((n_heads_q,), device=layer_device, dtype=model_dtype)
+
+        for j0 in range(0, J_max, params.chunk_tokens):
+            j1 = min(J_max, j0 + params.chunk_tokens)
+            V_chunk = V_q[j0:j1]
+            F_chunk = torch.einsum("jhd,hdk->jhk", V_chunk, O_blocks)
+            A_chunk = alpha_sum[:, j0:j1].permute(1, 0).unsqueeze(-1)
+            W_chunk = F_chunk * A_chunk
+
+            # dist = (W_chunk.float() - xS).abs().sum(dim=-1)
+            # prox = torch.clamp(xS_l1 - dist, min=0.0)
+
+            # if renorm_threshold > 0.0:
+            #     prox = prox * (prox >= renorm_threshold)
+            # numer_tok_sum[j0:j1] += prox.sum(dim=1).to(model_dtype)
+            # numer_head_sum += prox.sum(dim=0).to(model_dtype)
+
+            # JY: Aggregate all source-token contribution vectors within each source span before computing proximity.
+            for p, (p_start, p_end) in enumerate(source_spans):
+
+                overlap_start = max(p_start, j0)
+                overlap_end = min(p_end + 1, j1)
+
+                if overlap_start < overlap_end:
+
+                    local_start = overlap_start - j0
+                    local_end = overlap_end - j0
+                    # Convert global token indices into indices relative to W_chunk.
+
+                    span_contrib[p] += W_chunk[local_start:local_end].sum(dim=0)
+                    # JY: Sum the contribution vectors of all source tokens in this span
+                    #     that appear in the current chunk.
+                    #
+                    #     After all chunks are processed, span_contrib[p] becomes the
+                    #     total contribution vector from source span p to the target span.
+
+
+        # JY: Compute one proximity score for each aggregated source span.
+        dist_span = (
+            span_contrib.float()
+            - xS.view(1, 1, -1)
+        ).abs().sum(dim=-1)
+
+        prox_span = torch.clamp(
+            xS_l1 - dist_span,
+            min=0.0,
+        )
+
+        if renorm_threshold > 0.0:
+            prox_span = prox_span * (prox_span >= renorm_threshold)
+
+        numer_span_sum = prox_span.sum(dim=1)
+        numer_head_sum = prox_span.sum(dim=0)
+
+
+        # denom_S = numer_tok_sum.float().sum() + resid_attn_prox_S + 1e-12
+        # e_attn_tokens_full = torch.zeros((T,), dtype=torch.float32)
+        # e_attn_tokens_full[:J_max] = (numer_tok_sum.float() / denom_S).to(torch.float32).cpu()
+
+        # JY: Normalize the source-span attribution scores.
+        denom_S = numer_span_sum.float().sum() + resid_attn_prox_S + 1e-12
+        e_attn_spans = (numer_span_sum.float() / denom_S).to(torch.float32).cpu()
+
+
+        e_resid_attn_S = float((resid_attn_prox_S / denom_S).item())
+        head_importance_S = (numer_head_sum.float() / denom_S).to(torch.float32).cpu()
+
+        x_out_sum = x_out[sink_start:sink_end_exclusive].to(torch.float32).sum(dim=0)
+        y_ffn_sum = mlp_out[sink_start:sink_end_exclusive].to(torch.float32).sum(dim=0)
+        x_mid_sum = x_mid[sink_start:sink_end_exclusive].to(torch.float32).sum(dim=0)
+        prox_ffn_S = proximity(y_ffn_sum, x_out_sum)
+        prox_resid_ffn_S = proximity(x_mid_sum, x_out_sum)
+        if renorm_threshold > 0.0:
+            if prox_ffn_S < renorm_threshold:
+                prox_ffn_S = torch.zeros((), dtype=torch.float32, device=layer_device)
+            if prox_resid_ffn_S < renorm_threshold:
+                prox_resid_ffn_S = torch.zeros((), dtype=torch.float32, device=layer_device)
+        denom_ffn_S = prox_ffn_S + prox_resid_ffn_S + 1e-12
+        e_ffn_S = float((prox_ffn_S / denom_ffn_S).item())
+        e_resid_ffn_S = float((prox_resid_ffn_S / denom_ffn_S).item())
+
+        # per_layer.append(
+        #     IFRLayerResult(
+        #         e_attn_tokens=e_attn_tokens_full,
+        #         e_resid_attn=e_resid_attn_S,
+        #         head_importance=head_importance_S,
+        #         e_ffn=e_ffn_S,
+        #         e_resid_ffn=e_resid_ffn_S,
+        #     )
+        # )
+        # token_total_cpu += e_attn_tokens_full
+
+        # JY
+        per_layer.append(
+            IFRSpanLayerResult(
+                e_attn_spans=e_attn_spans,
+                e_resid_attn=e_resid_attn_S,
+                head_importance=head_importance_S,
+                e_ffn=e_ffn_S,
+                e_resid_ffn=e_resid_ffn_S,
+            )
+        )
+        span_total_cpu += e_attn_spans
+
+        head_total_cpu[:n_heads_q] += head_importance_S
+        ffn_per_layer[li] = e_ffn_S
+        resid_ffn_per_layer[li] = e_resid_ffn_S
+
+    # return IFRAggregate(
+    #     per_layer=per_layer,
+    #     token_importance_total=token_total_cpu,
+    #     head_importance_total=head_total_cpu,
+    #     ffn_importance_per_layer=ffn_per_layer,
+    #     resid_ffn_importance_per_layer=resid_ffn_per_layer,
+    # )
+    
+    # JY
+    return IFRSpanAggregate(
+        per_layer=per_layer,
+        span_importance_total=span_total_cpu,
+        head_importance_total=head_total_cpu,
+        ffn_importance_per_layer=ffn_per_layer,
+        resid_ffn_importance_per_layer=resid_ffn_per_layer,
+    )
+
+
 
 
 @torch.no_grad()
