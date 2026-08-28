@@ -4,7 +4,7 @@
 \small
 \caption{\textbf{Formal visual gate funnels.} Every filter precedes attribution; prior pilot samples are excluded before freezing IDs.}
 \label{tab:visual_gate_funnels}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llrrr}
 \toprule
 \rowcolor{gray!7}
@@ -44,27 +44,27 @@ VizWiz-LF & unique\_image\_and\_fixed\_seed\_freeze & 100 & 44 & 0 \\
 \small
 \caption{\textbf{Paired Wiki-VISA primary-endpoint contrasts.} Deltas are oriented so positive values favor \flashtrace{}; W/T/L counts are paired at the frozen-sample level.}
 \label{tab:visual_wiki_primary_deltas}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llcc}
 \toprule
 \rowcolor{gray!7}
-\textbf{Endpoint} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\
+\textbf{Endpoint} & \textbf{Baseline} & \textbf{Favorable $\Delta$} & \textbf{W/T/L} \\
 \midrule
-Energy & Random & \shortstack{0.166\\{\scriptsize[0.147,0.186]}} & 117/0/3 \\
-Energy & Center prior & \shortstack{0.172\\{\scriptsize[0.152,0.192]}} & 119/0/1 \\
-Energy & Visual LOO & \shortstack{0.086\\{\scriptsize[0.064,0.107]}} & 97/0/23 \\
-Energy & Visual IG & \shortstack{0.159\\{\scriptsize[0.139,0.179]}} & 116/0/4 \\
-Energy & AttnLRP & \shortstack{-0.080\\{\scriptsize[-0.095,-0.065]}} & 22/0/98 \\
-Energy & \textit{IFR-span ($K{=}0$)} & \shortstack{0.033\\{\scriptsize[0.027,0.039]}} & 105/0/15 \\
-Energy & \textit{\flashtrace{} all-generation} & \shortstack{0.010\\{\scriptsize[0.007,0.012]}} & 103/0/17 \\
+Energy & Random & 0.166 & 117/0/3 \\
+Energy & Center prior & 0.172 & 119/0/1 \\
+Energy & Visual LOO & 0.086 & 97/0/23 \\
+Energy & Visual IG & 0.159 & 116/0/4 \\
+Energy & AttnLRP & -0.080 & 22/0/98 \\
+Energy & \textit{IFR-span ($K{=}0$)} & 0.033 & 105/0/15 \\
+Energy & \textit{\flashtrace{} all-generation} & 0.010 & 103/0/17 \\
 \midrule
-R@5 & Random & \shortstack{0.259\\{\scriptsize[0.224,0.296]}} & 118/1/1 \\
-R@5 & Center prior & \shortstack{0.262\\{\scriptsize[0.222,0.303]}} & 109/0/11 \\
-R@5 & Visual LOO & \shortstack{0.087\\{\scriptsize[0.045,0.130]}} & 78/0/42 \\
-R@5 & Visual IG & \shortstack{0.224\\{\scriptsize[0.190,0.258]}} & 110/4/6 \\
-R@5 & AttnLRP & \shortstack{0.011\\{\scriptsize[-0.008,0.031]}} & 61/4/55 \\
-R@5 & \textit{IFR-span ($K{=}0$)} & \shortstack{0.091\\{\scriptsize[0.075,0.108]}} & 106/10/4 \\
-R@5 & \textit{\flashtrace{} all-generation} & \shortstack{0.029\\{\scriptsize[0.023,0.035]}} & 84/27/9 \\
+R@5 & Random & 0.259 & 118/1/1 \\
+R@5 & Center prior & 0.262 & 109/0/11 \\
+R@5 & Visual LOO & 0.087 & 78/0/42 \\
+R@5 & Visual IG & 0.224 & 110/4/6 \\
+R@5 & AttnLRP & 0.011 & 61/4/55 \\
+R@5 & \textit{IFR-span ($K{=}0$)} & 0.091 & 106/10/4 \\
+R@5 & \textit{\flashtrace{} all-generation} & 0.029 & 84/27/9 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -74,20 +74,20 @@ R@5 & \textit{\flashtrace{} all-generation} & \shortstack{0.029\\{\scriptsize[0.
 \small
 \caption{\textbf{Supplemental Wiki-VISA localization endpoints.} Pointing Game, top-area IoU, R@1, and R@10 use the same whole-patch tie-aware protocol and paired $n=120$ intersection as the preregistered endpoints, but are reported only as supplemental diagnostics.}
 \label{tab:visual_wiki_localization_supplemental}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{lcccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Method} & \textbf{Pointing Game} $\uparrow$ & \textbf{Top-area IoU} $\uparrow$ & \textbf{R@1} $\uparrow$ & \textbf{R@10} $\uparrow$ \\
 \midrule
-Random & \shortstack{0.058\\{\scriptsize[0.017,0.100]}} & \shortstack{0.020\\{\scriptsize[0.017,0.024]}} & \shortstack{0.012\\{\scriptsize[0.009,0.015]}} & \shortstack{0.103\\{\scriptsize[0.095,0.112]}} \\
-Center prior & \shortstack{0.062\\{\scriptsize[0.029,0.104]}} & \shortstack{0.017\\{\scriptsize[0.010,0.026]}} & \shortstack{0.010\\{\scriptsize[0.005,0.016]}} & \shortstack{0.088\\{\scriptsize[0.061,0.117]}} \\
-Visual LOO & \shortstack{0.700\\{\scriptsize[0.617,0.783]}} & \shortstack{0.104\\{\scriptsize[0.084,0.127]}} & \shortstack{0.224\\{\scriptsize[0.192,0.256]}} & \shortstack{0.425\\{\scriptsize[0.373,0.477]}} \\
-Visual IG & \shortstack{0.033\\{\scriptsize[0.008,0.067]}} & \shortstack{0.027\\{\scriptsize[0.023,0.032]}} & \shortstack{0.019\\{\scriptsize[0.012,0.027]}} & \shortstack{0.166\\{\scriptsize[0.148,0.186]}} \\
-AttnLRP & \shortstack{0.583\\{\scriptsize[0.492,0.667]}} & \shortstack{0.132\\{\scriptsize[0.118,0.148]}} & \shortstack{0.132\\{\scriptsize[0.110,0.156]}} & \shortstack{0.404\\{\scriptsize[0.370,0.439]}} \\
-\textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.633\\{\scriptsize[0.542,0.717]}} & \shortstack{0.128\\{\scriptsize[0.115,0.142]}} & \shortstack{0.124\\{\scriptsize[0.105,0.145]}} & \shortstack{0.444\\{\scriptsize[0.404,0.485]}} \\
-\textit{IFR-span ($K{=}0$)} & \shortstack{0.592\\{\scriptsize[0.500,0.675]}} & \shortstack{0.091\\{\scriptsize[0.081,0.103]}} & \shortstack{0.095\\{\scriptsize[0.078,0.114]}} & \shortstack{0.340\\{\scriptsize[0.303,0.378]}} \\
-\textit{\flashtrace{} all-generation} & \shortstack{0.625\\{\scriptsize[0.533,0.708]}} & \shortstack{0.115\\{\scriptsize[0.103,0.127]}} & \shortstack{0.114\\{\scriptsize[0.095,0.134]}} & \shortstack{0.408\\{\scriptsize[0.370,0.447]}} \\
+Random & 0.058 & 0.020 & 0.012 & 0.103 \\
+Center prior & 0.062 & 0.017 & 0.010 & 0.088 \\
+Visual LOO & 0.700 & 0.104 & 0.224 & 0.425 \\
+Visual IG & 0.033 & 0.027 & 0.019 & 0.166 \\
+AttnLRP & 0.583 & 0.132 & 0.132 & 0.404 \\
+\textbf{\flashtrace{} (exact, $K{=}1$)} & 0.633 & 0.128 & 0.124 & 0.444 \\
+\textit{IFR-span ($K{=}0$)} & 0.592 & 0.091 & 0.095 & 0.340 \\
+\textit{\flashtrace{} all-generation} & 0.625 & 0.115 & 0.114 & 0.408 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -97,27 +97,27 @@ AttnLRP & \shortstack{0.583\\{\scriptsize[0.492,0.667]}} & \shortstack{0.132\\{\
 \small
 \caption{\textbf{Paired frozen-response deletion contrasts.} Deletion AUC is the preregistered faithfulness endpoint; positive deltas favor \flashtrace{}. W/T/L counts use the complete paired intersection for each dataset.}
 \label{tab:visual_faithfulness_deltas}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llcc}
 \toprule
 \rowcolor{gray!7}
-\textbf{Dataset} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\
+\textbf{Dataset} & \textbf{Baseline} & \textbf{Favorable $\Delta$} & \textbf{W/T/L} \\
 \midrule
-VizWiz-LF & Random & \shortstack{0.041\\{\scriptsize[0.019,0.065]}} & 64/3/33 \\
-VizWiz-LF & Center prior & \shortstack{0.042\\{\scriptsize[0.011,0.072]}} & 60/2/38 \\
-VizWiz-LF & Visual LOO & \shortstack{-0.024\\{\scriptsize[-0.048,0.000]}} & 38/4/58 \\
-VizWiz-LF & Visual IG & \shortstack{0.052\\{\scriptsize[0.027,0.077]}} & 61/2/37 \\
-VizWiz-LF & AttnLRP & \shortstack{0.006\\{\scriptsize[-0.012,0.026]}} & 42/6/52 \\
-VizWiz-LF & \textit{IFR-span ($K{=}0$)} & \shortstack{0.000\\{\scriptsize[-0.006,0.005]}} & 44/15/41 \\
-VizWiz-LF & \textit{\flashtrace{} all-generation} & \shortstack{0.002\\{\scriptsize[-0.003,0.006]}} & 39/22/39 \\
+VizWiz-LF & Random & 0.041 & 64/3/33 \\
+VizWiz-LF & Center prior & 0.042 & 60/2/38 \\
+VizWiz-LF & Visual LOO & -0.024 & 38/4/58 \\
+VizWiz-LF & Visual IG & 0.052 & 61/2/37 \\
+VizWiz-LF & AttnLRP & 0.006 & 42/6/52 \\
+VizWiz-LF & \textit{IFR-span ($K{=}0$)} & 0.000 & 44/15/41 \\
+VizWiz-LF & \textit{\flashtrace{} all-generation} & 0.002 & 39/22/39 \\
 \midrule
-Wiki-VISA & Random & \shortstack{0.111\\{\scriptsize[0.070,0.152]}} & 77/9/34 \\
-Wiki-VISA & Center prior & \shortstack{0.185\\{\scriptsize[0.136,0.234]}} & 82/8/30 \\
-Wiki-VISA & Visual LOO & \shortstack{-0.104\\{\scriptsize[-0.136,-0.072]}} & 25/26/69 \\
-Wiki-VISA & Visual IG & \shortstack{0.110\\{\scriptsize[0.075,0.146]}} & 82/11/27 \\
-Wiki-VISA & AttnLRP & \shortstack{0.062\\{\scriptsize[0.030,0.096]}} & 56/21/43 \\
-Wiki-VISA & \textit{IFR-span ($K{=}0$)} & \shortstack{0.016\\{\scriptsize[0.004,0.028]}} & 55/34/31 \\
-Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.005\\{\scriptsize[-0.004,0.014]}} & 40/44/36 \\
+Wiki-VISA & Random & 0.111 & 77/9/34 \\
+Wiki-VISA & Center prior & 0.185 & 82/8/30 \\
+Wiki-VISA & Visual LOO & -0.104 & 25/26/69 \\
+Wiki-VISA & Visual IG & 0.110 & 82/11/27 \\
+Wiki-VISA & AttnLRP & 0.062 & 56/21/43 \\
+Wiki-VISA & \textit{IFR-span ($K{=}0$)} & 0.016 & 55/34/31 \\
+Wiki-VISA & \textit{\flashtrace{} all-generation} & 0.005 & 40/44/36 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -127,8 +127,7 @@ Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.005\\{\scripts
 \small
 \caption{\textbf{Native attribution and common perturbation resolutions.} Shapes are reported as rows$\times$columns with the number of frozen samples using each shape. Learned visual-token methods share a native grid within each image; Visual LOO is the registered coarse $4{\times}4$ perturbation reference.}
 \label{tab:visual_spatial_resolution}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llll}
+\begin{tabular}{ll>{\raggedright\arraybackslash}p{0.315\textwidth}>{\raggedright\arraybackslash}p{0.255\textwidth}}
 \toprule
 \rowcolor{gray!7}
 \textbf{Dataset} & \textbf{Method} & \textbf{Native attribution grids} & \textbf{Faithfulness layouts} \\
@@ -151,46 +150,46 @@ VizWiz-LF & \textbf{\flashtrace{} (exact, $K{=}1$)} & 14x14 (n=1), 17x13 (n=10),
 VizWiz-LF & \textit{IFR-span ($K{=}0$)} & 14x14 (n=1), 17x13 (n=10), 20x15 (n=1), 22x30 (n=4), 26x19 (n=2), 32x24 (n=3), 38x51 (n=3), 40x30 (n=33), 51x38 (n=43) & 7x9 (n=7), 8x8 (n=1), 9x7 (n=92) \\
 VizWiz-LF & \textit{\flashtrace{} all-generation} & 14x14 (n=1), 17x13 (n=10), 20x15 (n=1), 22x30 (n=4), 26x19 (n=2), 32x24 (n=3), 38x51 (n=3), 40x30 (n=33), 51x38 (n=43) & 7x9 (n=7), 8x8 (n=1), 9x7 (n=92) \\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 \end{table*}
 
 \begin{table*}[t]
 \centering
 \small
-\caption{\textbf{Wiki-VISA localization by frozen stratum.} Values are paired means with 95\% bootstrap intervals; Energy and R@5 are the primary endpoints.}
+\caption{\textbf{Wiki-VISA localization by frozen stratum.} Values are paired means; Energy and R@5 are the primary endpoints.}
 \label{tab:visual_wiki_strata}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llcc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Stratum} & \textbf{Method} & \textbf{Energy} $\uparrow$ & \textbf{R@5} $\uparrow$ \\
 \midrule
-first\_page\_passage & Random & \shortstack{0.032\\{\scriptsize[0.027,0.037]}} & \shortstack{0.055\\{\scriptsize[0.044,0.067]}} \\
-first\_page\_passage & Center prior & \shortstack{0.009\\{\scriptsize[0.006,0.014]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-first\_page\_passage & Visual LOO & \shortstack{0.094\\{\scriptsize[0.076,0.114]}} & \shortstack{0.242\\{\scriptsize[0.186,0.296]}} \\
-first\_page\_passage & Visual IG & \shortstack{0.041\\{\scriptsize[0.034,0.048]}} & \shortstack{0.087\\{\scriptsize[0.070,0.103]}} \\
-first\_page\_passage & AttnLRP & \shortstack{0.255\\{\scriptsize[0.202,0.310]}} & \shortstack{0.331\\{\scriptsize[0.268,0.396]}} \\
-first\_page\_passage & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.172\\{\scriptsize[0.143,0.202]}} & \shortstack{0.286\\{\scriptsize[0.230,0.346]}} \\
-first\_page\_passage & \textit{IFR-span ($K{=}0$)} & \shortstack{0.155\\{\scriptsize[0.128,0.183]}} & \shortstack{0.218\\{\scriptsize[0.174,0.267]}} \\
-first\_page\_passage & \textit{\flashtrace{} all-generation} & \shortstack{0.165\\{\scriptsize[0.136,0.195]}} & \shortstack{0.261\\{\scriptsize[0.210,0.316]}} \\
+first\_page\_passage & Random & 0.032 & 0.055 \\
+first\_page\_passage & Center prior & 0.009 & 0.000 \\
+first\_page\_passage & Visual LOO & 0.094 & 0.242 \\
+first\_page\_passage & Visual IG & 0.041 & 0.087 \\
+first\_page\_passage & AttnLRP & 0.255 & 0.331 \\
+first\_page\_passage & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.172 & 0.286 \\
+first\_page\_passage & \textit{IFR-span ($K{=}0$)} & 0.155 & 0.218 \\
+first\_page\_passage & \textit{\flashtrace{} all-generation} & 0.165 & 0.261 \\
 \midrule
-later\_page\_passage & Random & \shortstack{0.036\\{\scriptsize[0.030,0.043]}} & \shortstack{0.051\\{\scriptsize[0.041,0.062]}} \\
-later\_page\_passage & Center prior & \shortstack{0.052\\{\scriptsize[0.040,0.063]}} & \shortstack{0.081\\{\scriptsize[0.048,0.117]}} \\
-later\_page\_passage & Visual LOO & \shortstack{0.083\\{\scriptsize[0.064,0.103]}} & \shortstack{0.165\\{\scriptsize[0.123,0.207]}} \\
-later\_page\_passage & Visual IG & \shortstack{0.043\\{\scriptsize[0.035,0.052]}} & \shortstack{0.079\\{\scriptsize[0.064,0.094]}} \\
-later\_page\_passage & AttnLRP & \shortstack{0.292\\{\scriptsize[0.243,0.344]}} & \shortstack{0.282\\{\scriptsize[0.228,0.337]}} \\
-later\_page\_passage & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.211\\{\scriptsize[0.175,0.248]}} & \shortstack{0.333\\{\scriptsize[0.270,0.400]}} \\
-later\_page\_passage & \textit{IFR-span ($K{=}0$)} & \shortstack{0.159\\{\scriptsize[0.127,0.194]}} & \shortstack{0.212\\{\scriptsize[0.157,0.275]}} \\
-later\_page\_passage & \textit{\flashtrace{} all-generation} & \shortstack{0.196\\{\scriptsize[0.161,0.234]}} & \shortstack{0.293\\{\scriptsize[0.233,0.357]}} \\
+later\_page\_passage & Random & 0.036 & 0.051 \\
+later\_page\_passage & Center prior & 0.052 & 0.081 \\
+later\_page\_passage & Visual LOO & 0.083 & 0.165 \\
+later\_page\_passage & Visual IG & 0.043 & 0.079 \\
+later\_page\_passage & AttnLRP & 0.292 & 0.282 \\
+later\_page\_passage & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.211 & 0.333 \\
+later\_page\_passage & \textit{IFR-span ($K{=}0$)} & 0.159 & 0.212 \\
+later\_page\_passage & \textit{\flashtrace{} all-generation} & 0.196 & 0.293 \\
 \midrule
-non\_passage & Random & \shortstack{0.047\\{\scriptsize[0.036,0.060]}} & \shortstack{0.050\\{\scriptsize[0.039,0.061]}} \\
-non\_passage & Center prior & \shortstack{0.038\\{\scriptsize[0.022,0.057]}} & \shortstack{0.067\\{\scriptsize[0.034,0.104]}} \\
-non\_passage & Visual LOO & \shortstack{0.181\\{\scriptsize[0.126,0.239]}} & \shortstack{0.265\\{\scriptsize[0.203,0.328]}} \\
-non\_passage & Visual IG & \shortstack{0.054\\{\scriptsize[0.040,0.071]}} & \shortstack{0.098\\{\scriptsize[0.062,0.146]}} \\
-non\_passage & AttnLRP & \shortstack{0.305\\{\scriptsize[0.255,0.356]}} & \shortstack{0.289\\{\scriptsize[0.235,0.349]}} \\
-non\_passage & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.232\\{\scriptsize[0.195,0.270]}} & \shortstack{0.315\\{\scriptsize[0.253,0.382]}} \\
-non\_passage & \textit{IFR-span ($K{=}0$)} & \shortstack{0.201\\{\scriptsize[0.167,0.237]}} & \shortstack{0.232\\{\scriptsize[0.181,0.289]}} \\
-non\_passage & \textit{\flashtrace{} all-generation} & \shortstack{0.225\\{\scriptsize[0.189,0.263]}} & \shortstack{0.294\\{\scriptsize[0.236,0.356]}} \\
+non\_passage & Random & 0.047 & 0.050 \\
+non\_passage & Center prior & 0.038 & 0.067 \\
+non\_passage & Visual LOO & 0.181 & 0.265 \\
+non\_passage & Visual IG & 0.054 & 0.098 \\
+non\_passage & AttnLRP & 0.305 & 0.289 \\
+non\_passage & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.232 & 0.315 \\
+non\_passage & \textit{IFR-span ($K{=}0$)} & 0.201 & 0.232 \\
+non\_passage & \textit{\flashtrace{} all-generation} & 0.225 & 0.294 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -200,29 +199,29 @@ non\_passage & \textit{\flashtrace{} all-generation} & \shortstack{0.225\\{\scri
 \small
 \caption{\textbf{Complete frozen-response faithfulness panel and sign sensitivity.} Signed-score ordering is the registered analysis; positive-only deletion ordering is a sensitivity check.}
 \label{tab:visual_faithfulness_full}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llcccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Dataset} & \textbf{Method} & \textbf{Deletion signed} $\downarrow$ & \textbf{Deletion positive-only} $\downarrow$ & \textbf{Insertion} $\uparrow$ & \textbf{Visual-MAS} $\downarrow$ \\
 \midrule
-VizWiz-LF & Random & \shortstack{0.401\\{\scriptsize[0.360,0.442]}} & \shortstack{0.401\\{\scriptsize[0.360,0.442]}} & \shortstack{0.455\\{\scriptsize[0.416,0.494]}} & \shortstack{0.540\\{\scriptsize[0.498,0.585]}} \\
-VizWiz-LF & Center prior & \shortstack{0.401\\{\scriptsize[0.360,0.444]}} & \shortstack{0.401\\{\scriptsize[0.360,0.444]}} & \shortstack{0.630\\{\scriptsize[0.592,0.666]}} & \shortstack{0.547\\{\scriptsize[0.491,0.603]}} \\
-VizWiz-LF & Visual LOO & \shortstack{0.336\\{\scriptsize[0.294,0.379]}} & \shortstack{0.328\\{\scriptsize[0.287,0.370]}} & \shortstack{0.671\\{\scriptsize[0.636,0.704]}} & \shortstack{0.476\\{\scriptsize[0.423,0.529]}} \\
-VizWiz-LF & Visual IG & \shortstack{0.412\\{\scriptsize[0.372,0.451]}} & \shortstack{0.417\\{\scriptsize[0.377,0.458]}} & \shortstack{0.443\\{\scriptsize[0.401,0.485]}} & \shortstack{0.555\\{\scriptsize[0.502,0.607]}} \\
-VizWiz-LF & AttnLRP & \shortstack{0.366\\{\scriptsize[0.323,0.410]}} & \shortstack{0.362\\{\scriptsize[0.319,0.404]}} & \shortstack{0.531\\{\scriptsize[0.489,0.571]}} & \shortstack{0.512\\{\scriptsize[0.453,0.572]}} \\
-VizWiz-LF & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.360\\{\scriptsize[0.321,0.399]}} & \shortstack{0.360\\{\scriptsize[0.321,0.399]}} & \shortstack{0.532\\{\scriptsize[0.493,0.571]}} & \shortstack{0.494\\{\scriptsize[0.443,0.545]}} \\
-VizWiz-LF & \textit{IFR-span ($K{=}0$)} & \shortstack{0.360\\{\scriptsize[0.321,0.399]}} & \shortstack{0.360\\{\scriptsize[0.321,0.400]}} & \shortstack{0.533\\{\scriptsize[0.493,0.573]}} & \shortstack{0.494\\{\scriptsize[0.443,0.544]}} \\
-VizWiz-LF & \textit{\flashtrace{} all-generation} & \shortstack{0.361\\{\scriptsize[0.322,0.401]}} & \shortstack{0.361\\{\scriptsize[0.322,0.401]}} & \shortstack{0.531\\{\scriptsize[0.492,0.570]}} & \shortstack{0.496\\{\scriptsize[0.447,0.547]}} \\
+VizWiz-LF & Random & 0.401 & 0.401 & 0.455 & 0.540 \\
+VizWiz-LF & Center prior & 0.401 & 0.401 & 0.630 & 0.547 \\
+VizWiz-LF & Visual LOO & 0.336 & 0.328 & 0.671 & 0.476 \\
+VizWiz-LF & Visual IG & 0.412 & 0.417 & 0.443 & 0.555 \\
+VizWiz-LF & AttnLRP & 0.366 & 0.362 & 0.531 & 0.512 \\
+VizWiz-LF & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.360 & 0.360 & 0.532 & 0.494 \\
+VizWiz-LF & \textit{IFR-span ($K{=}0$)} & 0.360 & 0.360 & 0.533 & 0.494 \\
+VizWiz-LF & \textit{\flashtrace{} all-generation} & 0.361 & 0.361 & 0.531 & 0.496 \\
 \midrule
-Wiki-VISA & Random & \shortstack{0.441\\{\scriptsize[0.397,0.486]}} & \shortstack{0.441\\{\scriptsize[0.397,0.486]}} & \shortstack{0.542\\{\scriptsize[0.494,0.590]}} & \shortstack{0.568\\{\scriptsize[0.527,0.610]}} \\
-Wiki-VISA & Center prior & \shortstack{0.515\\{\scriptsize[0.468,0.561]}} & \shortstack{0.515\\{\scriptsize[0.468,0.562]}} & \shortstack{0.440\\{\scriptsize[0.391,0.490]}} & \shortstack{0.604\\{\scriptsize[0.556,0.651]}} \\
-Wiki-VISA & Visual LOO & \shortstack{0.227\\{\scriptsize[0.187,0.268]}} & \shortstack{0.234\\{\scriptsize[0.193,0.278]}} & \shortstack{0.795\\{\scriptsize[0.765,0.824]}} & \shortstack{0.324\\{\scriptsize[0.273,0.376]}} \\
-Wiki-VISA & Visual IG & \shortstack{0.440\\{\scriptsize[0.394,0.486]}} & \shortstack{0.477\\{\scriptsize[0.426,0.528]}} & \shortstack{0.545\\{\scriptsize[0.501,0.589]}} & \shortstack{0.531\\{\scriptsize[0.478,0.584]}} \\
-Wiki-VISA & AttnLRP & \shortstack{0.393\\{\scriptsize[0.338,0.447]}} & \shortstack{0.393\\{\scriptsize[0.340,0.448]}} & \shortstack{0.644\\{\scriptsize[0.591,0.695]}} & \shortstack{0.496\\{\scriptsize[0.431,0.562]}} \\
-Wiki-VISA & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.330\\{\scriptsize[0.285,0.377]}} & \shortstack{0.330\\{\scriptsize[0.285,0.377]}} & \shortstack{0.695\\{\scriptsize[0.654,0.735]}} & \shortstack{0.433\\{\scriptsize[0.381,0.485]}} \\
-Wiki-VISA & \textit{IFR-span ($K{=}0$)} & \shortstack{0.346\\{\scriptsize[0.300,0.393]}} & \shortstack{0.346\\{\scriptsize[0.300,0.393]}} & \shortstack{0.679\\{\scriptsize[0.637,0.720]}} & \shortstack{0.452\\{\scriptsize[0.398,0.506]}} \\
-Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.335\\{\scriptsize[0.289,0.383]}} & \shortstack{0.335\\{\scriptsize[0.289,0.383]}} & \shortstack{0.693\\{\scriptsize[0.651,0.734]}} & \shortstack{0.439\\{\scriptsize[0.385,0.494]}} \\
+Wiki-VISA & Random & 0.441 & 0.441 & 0.542 & 0.568 \\
+Wiki-VISA & Center prior & 0.515 & 0.515 & 0.440 & 0.604 \\
+Wiki-VISA & Visual LOO & 0.227 & 0.234 & 0.795 & 0.324 \\
+Wiki-VISA & Visual IG & 0.440 & 0.477 & 0.545 & 0.531 \\
+Wiki-VISA & AttnLRP & 0.393 & 0.393 & 0.644 & 0.496 \\
+Wiki-VISA & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.330 & 0.330 & 0.695 & 0.433 \\
+Wiki-VISA & \textit{IFR-span ($K{=}0$)} & 0.346 & 0.346 & 0.679 & 0.452 \\
+Wiki-VISA & \textit{\flashtrace{} all-generation} & 0.335 & 0.335 & 0.693 & 0.439 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -232,20 +231,20 @@ Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.335\\{\scripts
 \small
 \caption{\textbf{VizWiz-LF fully-correct sensitivity} ($n=58$ of 100; semantic labels: 58 fully correct, 22 partial, 20 wrong). The subset is not used to select the frozen faithfulness panel.}
 \label{tab:visual_vizwiz_fully_correct}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{lccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Method} & \textbf{Deletion AUC} $\downarrow$ & \textbf{Insertion AUC} $\uparrow$ & \textbf{Visual-MAS} $\downarrow$ \\
 \midrule
-Random & \shortstack{0.381\\{\scriptsize[0.328,0.432]}} & \shortstack{0.429\\{\scriptsize[0.378,0.480]}} & \shortstack{0.527\\{\scriptsize[0.473,0.582]}} \\
-Center prior & \shortstack{0.386\\{\scriptsize[0.333,0.441]}} & \shortstack{0.624\\{\scriptsize[0.577,0.669]}} & \shortstack{0.529\\{\scriptsize[0.455,0.602]}} \\
-Visual LOO & \shortstack{0.328\\{\scriptsize[0.274,0.384]}} & \shortstack{0.655\\{\scriptsize[0.607,0.700]}} & \shortstack{0.459\\{\scriptsize[0.392,0.528]}} \\
-Visual IG & \shortstack{0.380\\{\scriptsize[0.327,0.433]}} & \shortstack{0.433\\{\scriptsize[0.376,0.490]}} & \shortstack{0.509\\{\scriptsize[0.438,0.580]}} \\
-AttnLRP & \shortstack{0.331\\{\scriptsize[0.276,0.387]}} & \shortstack{0.517\\{\scriptsize[0.464,0.567]}} & \shortstack{0.462\\{\scriptsize[0.386,0.540]}} \\
-\textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.332\\{\scriptsize[0.283,0.383]}} & \shortstack{0.518\\{\scriptsize[0.465,0.569]}} & \shortstack{0.460\\{\scriptsize[0.397,0.526]}} \\
-\textit{IFR-span ($K{=}0$)} & \shortstack{0.334\\{\scriptsize[0.285,0.385]}} & \shortstack{0.513\\{\scriptsize[0.460,0.565]}} & \shortstack{0.461\\{\scriptsize[0.399,0.527]}} \\
-\textit{\flashtrace{} all-generation} & \shortstack{0.338\\{\scriptsize[0.288,0.388]}} & \shortstack{0.515\\{\scriptsize[0.461,0.567]}} & \shortstack{0.468\\{\scriptsize[0.404,0.535]}} \\
+Random & 0.381 & 0.429 & 0.527 \\
+Center prior & 0.386 & 0.624 & 0.529 \\
+Visual LOO & 0.328 & 0.655 & 0.459 \\
+Visual IG & 0.380 & 0.433 & 0.509 \\
+AttnLRP & 0.331 & 0.517 & 0.462 \\
+\textbf{\flashtrace{} (exact, $K{=}1$)} & 0.332 & 0.518 & 0.460 \\
+\textit{IFR-span ($K{=}0$)} & 0.334 & 0.513 & 0.461 \\
+\textit{\flashtrace{} all-generation} & 0.338 & 0.515 & 0.468 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -255,68 +254,68 @@ AttnLRP & \shortstack{0.331\\{\scriptsize[0.276,0.387]}} & \shortstack{0.517\\{\
 \small
 \caption{\textbf{VizWiz-LF fully-correct paired deletion contrasts} ($n=58$). Positive deltas favor \flashtrace{}; this post-hoc sensitivity subset does not alter the frozen primary panel.}
 \label{tab:visual_vizwiz_fully_correct_deltas}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{lcc}
 \toprule
 \rowcolor{gray!7}
-\textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\
+\textbf{Baseline} & \textbf{Favorable $\Delta$} & \textbf{W/T/L} \\
 \midrule
-Random & \shortstack{0.048\\{\scriptsize[0.023,0.076]}} & 40/2/16 \\
-Center prior & \shortstack{0.054\\{\scriptsize[0.016,0.091]}} & 35/2/21 \\
-Visual LOO & \shortstack{-0.004\\{\scriptsize[-0.035,0.028]}} & 25/3/30 \\
-Visual IG & \shortstack{0.048\\{\scriptsize[0.016,0.079]}} & 36/2/20 \\
-AttnLRP & \shortstack{-0.002\\{\scriptsize[-0.023,0.020]}} & 23/5/30 \\
-\textit{IFR-span ($K{=}0$)} & \shortstack{0.002\\{\scriptsize[-0.005,0.009]}} & 24/10/24 \\
-\textit{\flashtrace{} all-generation} & \shortstack{0.006\\{\scriptsize[-0.000,0.012]}} & 23/16/19 \\
+Random & 0.048 & 40/2/16 \\
+Center prior & 0.054 & 35/2/21 \\
+Visual LOO & -0.004 & 25/3/30 \\
+Visual IG & 0.048 & 36/2/20 \\
+AttnLRP & -0.002 & 23/5/30 \\
+\textit{IFR-span ($K{=}0$)} & 0.002 & 24/10/24 \\
+\textit{\flashtrace{} all-generation} & 0.006 & 23/16/19 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \small
 \caption{\textbf{Single-hop recursion and geometry diagnostics.} Cosine compares exact-reasoning and all-generation maps; recursive mass is the positive visual mass contributed by the one-hop term.}
 \label{tab:visual_recursion_geometry}
-\resizebox{\linewidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{lccccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Dataset} & \textbf{Exact/all-gen cosine} & \textbf{Direct positive mass} & \textbf{Recursive positive mass} & \textbf{Recursive absolute mass} & \textbf{FlashTrace border mass} \\
 \midrule
-Wiki-VISA & \shortstack{0.992\\{\scriptsize[0.991,0.993]}} & \shortstack{0.550\\{\scriptsize[0.541,0.559]}} & \shortstack{0.450\\{\scriptsize[0.441,0.459]}} & \shortstack{0.450\\{\scriptsize[0.441,0.459]}} & \shortstack{0.111\\{\scriptsize[0.104,0.119]}} \\
-VizWiz-LF & \shortstack{0.996\\{\scriptsize[0.995,0.996]}} & \shortstack{0.676\\{\scriptsize[0.664,0.687]}} & \shortstack{0.324\\{\scriptsize[0.312,0.336]}} & \shortstack{0.324\\{\scriptsize[0.312,0.336]}} & \shortstack{0.145\\{\scriptsize[0.133,0.158]}} \\
+Wiki-VISA & 0.992 & 0.550 & 0.450 & 0.450 & 0.111 \\
+VizWiz-LF & 0.996 & 0.676 & 0.324 & 0.324 & 0.145 \\
 \bottomrule
 \end{tabular}}
-\end{table}
+\end{table*}
 
 \begin{table*}[t]
 \centering
 \small
 \caption{\textbf{Formal visual geometry and sign diagnostics.} Geometry uses positive visual mass; negative-cell fraction is reported from each signed attribution map before positive-mass normalization.}
 \label{tab:visual_geometry_bias}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llcccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Dataset} & \textbf{Method} & \textbf{Border mass} & \textbf{Top-row mass} & \textbf{Centroid distance} & \textbf{Negative cells} \\
 \midrule
-Wiki-VISA & Random & \shortstack{0.121\\{\scriptsize[0.120,0.122]}} & \shortstack{0.031\\{\scriptsize[0.031,0.032]}} & \shortstack{0.006\\{\scriptsize[0.006,0.007]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-Wiki-VISA & Center prior & \shortstack{0.005\\{\scriptsize[0.005,0.005]}} & \shortstack{0.001\\{\scriptsize[0.001,0.001]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-Wiki-VISA & Visual LOO & \shortstack{0.827\\{\scriptsize[0.794,0.858]}} & \shortstack{0.442\\{\scriptsize[0.378,0.506]}} & \shortstack{0.357\\{\scriptsize[0.327,0.388]}} & \shortstack{0.354\\{\scriptsize[0.315,0.394]}} \\
-Wiki-VISA & Visual IG & \shortstack{0.115\\{\scriptsize[0.108,0.122]}} & \shortstack{0.021\\{\scriptsize[0.019,0.024]}} & \shortstack{0.072\\{\scriptsize[0.065,0.079]}} & \shortstack{0.498\\{\scriptsize[0.494,0.503]}} \\
-Wiki-VISA & AttnLRP & \shortstack{0.133\\{\scriptsize[0.124,0.142]}} & \shortstack{0.063\\{\scriptsize[0.056,0.070]}} & \shortstack{0.252\\{\scriptsize[0.234,0.269]}} & \shortstack{0.442\\{\scriptsize[0.433,0.451]}} \\
-Wiki-VISA & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.111\\{\scriptsize[0.104,0.119]}} & \shortstack{0.035\\{\scriptsize[0.032,0.039]}} & \shortstack{0.160\\{\scriptsize[0.147,0.172]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-Wiki-VISA & \textit{IFR-span ($K{=}0$)} & \shortstack{0.127\\{\scriptsize[0.118,0.137]}} & \shortstack{0.045\\{\scriptsize[0.041,0.050]}} & \shortstack{0.163\\{\scriptsize[0.150,0.175]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-Wiki-VISA & \textit{\flashtrace{} all-generation} & \shortstack{0.119\\{\scriptsize[0.111,0.127]}} & \shortstack{0.040\\{\scriptsize[0.036,0.044]}} & \shortstack{0.161\\{\scriptsize[0.149,0.174]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
+Wiki-VISA & Random & 0.121 & 0.031 & 0.006 & 0.000 \\
+Wiki-VISA & Center prior & 0.005 & 0.001 & 0.000 & 0.000 \\
+Wiki-VISA & Visual LOO & 0.827 & 0.442 & 0.357 & 0.354 \\
+Wiki-VISA & Visual IG & 0.115 & 0.021 & 0.072 & 0.498 \\
+Wiki-VISA & AttnLRP & 0.133 & 0.063 & 0.252 & 0.442 \\
+Wiki-VISA & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.111 & 0.035 & 0.160 & 0.000 \\
+Wiki-VISA & \textit{IFR-span ($K{=}0$)} & 0.127 & 0.045 & 0.163 & 0.000 \\
+Wiki-VISA & \textit{\flashtrace{} all-generation} & 0.119 & 0.040 & 0.161 & 0.000 \\
 \midrule
-VizWiz-LF & Random & \shortstack{0.121\\{\scriptsize[0.120,0.122]}} & \shortstack{0.031\\{\scriptsize[0.031,0.032]}} & \shortstack{0.007\\{\scriptsize[0.006,0.008]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-VizWiz-LF & Center prior & \shortstack{0.005\\{\scriptsize[0.005,0.005]}} & \shortstack{0.001\\{\scriptsize[0.001,0.001]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-VizWiz-LF & Visual LOO & \shortstack{0.624\\{\scriptsize[0.576,0.672]}} & \shortstack{0.186\\{\scriptsize[0.151,0.223]}} & \shortstack{0.203\\{\scriptsize[0.176,0.232]}} & \shortstack{0.251\\{\scriptsize[0.204,0.302]}} \\
-VizWiz-LF & Visual IG & \shortstack{0.093\\{\scriptsize[0.083,0.104]}} & \shortstack{0.023\\{\scriptsize[0.020,0.026]}} & \shortstack{0.094\\{\scriptsize[0.082,0.106]}} & \shortstack{0.495\\{\scriptsize[0.490,0.499]}} \\
-VizWiz-LF & AttnLRP & \shortstack{0.168\\{\scriptsize[0.152,0.185]}} & \shortstack{0.112\\{\scriptsize[0.100,0.125]}} & \shortstack{0.151\\{\scriptsize[0.137,0.165]}} & \shortstack{0.242\\{\scriptsize[0.231,0.254]}} \\
-VizWiz-LF & \textbf{\flashtrace{} (exact, $K{=}1$)} & \shortstack{0.145\\{\scriptsize[0.133,0.158]}} & \shortstack{0.081\\{\scriptsize[0.074,0.088]}} & \shortstack{0.108\\{\scriptsize[0.098,0.118]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-VizWiz-LF & \textit{IFR-span ($K{=}0$)} & \shortstack{0.149\\{\scriptsize[0.137,0.163]}} & \shortstack{0.087\\{\scriptsize[0.079,0.094]}} & \shortstack{0.110\\{\scriptsize[0.100,0.119]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
-VizWiz-LF & \textit{\flashtrace{} all-generation} & \shortstack{0.148\\{\scriptsize[0.136,0.161]}} & \shortstack{0.087\\{\scriptsize[0.079,0.094]}} & \shortstack{0.109\\{\scriptsize[0.099,0.119]}} & \shortstack{0.000\\{\scriptsize[0.000,0.000]}} \\
+VizWiz-LF & Random & 0.121 & 0.031 & 0.007 & 0.000 \\
+VizWiz-LF & Center prior & 0.005 & 0.001 & 0.000 & 0.000 \\
+VizWiz-LF & Visual LOO & 0.624 & 0.186 & 0.203 & 0.251 \\
+VizWiz-LF & Visual IG & 0.093 & 0.023 & 0.094 & 0.495 \\
+VizWiz-LF & AttnLRP & 0.168 & 0.112 & 0.151 & 0.242 \\
+VizWiz-LF & \textbf{\flashtrace{} (exact, $K{=}1$)} & 0.145 & 0.081 & 0.108 & 0.000 \\
+VizWiz-LF & \textit{IFR-span ($K{=}0$)} & 0.149 & 0.087 & 0.110 & 0.000 \\
+VizWiz-LF & \textit{\flashtrace{} all-generation} & 0.148 & 0.087 & 0.109 & 0.000 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -331,9 +330,9 @@ VizWiz-LF & \textit{\flashtrace{} all-generation} & \shortstack{0.148\\{\scripts
 \rowcolor{gray!7}
 \textbf{Stratum} & \textbf{Centroid distance} \\
 \midrule
-first\_page\_passage & \shortstack{0.421\\{\scriptsize[0.405,0.436]}} \\
-later\_page\_passage & \shortstack{0.202\\{\scriptsize[0.169,0.236]}} \\
-non\_passage & \shortstack{0.308\\{\scriptsize[0.255,0.359]}} \\
+first\_page\_passage & 0.421 \\
+later\_page\_passage & 0.202 \\
+non\_passage & 0.308 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -343,19 +342,19 @@ non\_passage & \shortstack{0.308\\{\scriptsize[0.255,0.359]}} \\
 \small
 \caption{\textbf{Effect of one-hop recursion by reasoning length.} Localization deltas are $K{=}1-K{=}0$; deletion delta is oriented so positive favors $K{=}1$. VizWiz-LF has no localization ground truth.}
 \label{tab:visual_recursion_buckets}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llccc}
 \toprule
 \rowcolor{gray!7}
 \textbf{Dataset} & \textbf{THINKING bucket} & \textbf{$\Delta$ Energy} & \textbf{$\Delta$ R@5} & \textbf{Favorable $\Delta$ deletion AUC} \\
 \midrule
-Wiki-VISA & short & \shortstack{0.034\\{\scriptsize[0.026,0.041]}} & \shortstack{0.068\\{\scriptsize[0.048,0.088]}} & \shortstack{0.005\\{\scriptsize[-0.020,0.029]}} \\
-Wiki-VISA & medium & \shortstack{0.032\\{\scriptsize[0.022,0.043]}} & \shortstack{0.092\\{\scriptsize[0.065,0.121]}} & \shortstack{0.018\\{\scriptsize[0.004,0.035]}} \\
-Wiki-VISA & long & \shortstack{0.034\\{\scriptsize[0.023,0.045]}} & \shortstack{0.112\\{\scriptsize[0.081,0.148]}} & \shortstack{0.025\\{\scriptsize[0.003,0.047]}} \\
+Wiki-VISA & short & 0.034 & 0.068 & 0.005 \\
+Wiki-VISA & medium & 0.032 & 0.092 & 0.018 \\
+Wiki-VISA & long & 0.034 & 0.112 & 0.025 \\
 \midrule
-VizWiz-LF & short & -- & -- & \shortstack{0.004\\{\scriptsize[-0.004,0.014]}} \\
-VizWiz-LF & medium & -- & -- & \shortstack{-0.002\\{\scriptsize[-0.010,0.006]}} \\
-VizWiz-LF & long & -- & -- & \shortstack{-0.003\\{\scriptsize[-0.015,0.007]}} \\
+VizWiz-LF & short & -- & -- & 0.004 \\
+VizWiz-LF & medium & -- & -- & -0.002 \\
+VizWiz-LF & long & -- & -- & -0.003 \\
 \bottomrule
 \end{tabular}}
 \end{table*}
@@ -365,7 +364,7 @@ VizWiz-LF & long & -- & -- & \shortstack{-0.003\\{\scriptsize[-0.015,0.007]}} \\
 \small
 \caption{\textbf{Observed formal visual compute.} Values are means per successful sample-method. VRAM is incremental peak allocation during attribution; faithfulness uses the common 64-region/10-step budget.}
 \label{tab:visual_observed_compute}
-\resizebox{\textwidth}{!}{%
+\adjustbox{max width=\textwidth}{%
 \begin{tabular}{llrrr}
 \toprule
 \rowcolor{gray!7}

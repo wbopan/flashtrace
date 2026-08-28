@@ -56,14 +56,9 @@ def _estimate_cell(estimate: Mapping[str, Any]) -> str:
 
 
 def _latex_cell(estimate: Mapping[str, Any]) -> str:
-    return (
-        r"\shortstack{"
-        f"{float(estimate['mean']):.3f}"
-        r"\\{\scriptsize["
-        f"{float(estimate['ci95_low']):.3f},"
-        f"{float(estimate['ci95_high']):.3f}"
-        r"]}}"
-    )
+    # Tables report the point estimate only; the bootstrap intervals behind it
+    # are still computed and are quoted in the prose that discusses them.
+    return f"{float(estimate['mean']):.3f}"
 
 
 def _latex_inline_estimate(estimate: Mapping[str, Any]) -> str:
@@ -588,7 +583,7 @@ def _appendix_tex(
         r"\small",
         r"\caption{\textbf{Formal visual gate funnels.} Every filter precedes attribution; prior pilot samples are excluded before freezing IDs.}",
         r"\label{tab:visual_gate_funnels}",
-        r"\resizebox{\textwidth}{!}{%",
+        r"\adjustbox{max width=\textwidth}{%",
         r"\begin{tabular}{llrrr}",
         r"\toprule",
         r"\rowcolor{gray!7}",
@@ -618,11 +613,11 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Paired Wiki-VISA primary-endpoint contrasts.} Deltas are oriented so positive values favor \flashtrace{}; W/T/L counts are paired at the frozen-sample level.}",
             r"\label{tab:visual_wiki_primary_deltas}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llcc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
-            r"\textbf{Endpoint} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\",
+            r"\textbf{Endpoint} & \textbf{Baseline} & \textbf{Favorable $\Delta$} & \textbf{W/T/L} \\",
             r"\midrule",
         ]
     )
@@ -651,7 +646,7 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Supplemental Wiki-VISA localization endpoints.} Pointing Game, top-area IoU, R@1, and R@10 use the same whole-patch tie-aware protocol and paired $n=120$ intersection as the preregistered endpoints, but are reported only as supplemental diagnostics.}",
             r"\label{tab:visual_wiki_localization_supplemental}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{lcccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -678,11 +673,11 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Paired frozen-response deletion contrasts.} Deletion AUC is the preregistered faithfulness endpoint; positive deltas favor \flashtrace{}. W/T/L counts use the complete paired intersection for each dataset.}",
             r"\label{tab:visual_faithfulness_deltas}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llcc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
-            r"\textbf{Dataset} & \textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\",
+            r"\textbf{Dataset} & \textbf{Baseline} & \textbf{Favorable $\Delta$} & \textbf{W/T/L} \\",
             r"\midrule",
         ]
     )
@@ -713,8 +708,8 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Native attribution and common perturbation resolutions.} Shapes are reported as rows$\times$columns with the number of frozen samples using each shape. Learned visual-token methods share a native grid within each image; Visual LOO is the registered coarse $4{\times}4$ perturbation reference.}",
             r"\label{tab:visual_spatial_resolution}",
-            r"\resizebox{\textwidth}{!}{%",
-            r"\begin{tabular}{llll}",
+            r"\begin{tabular}{ll>{\raggedright\arraybackslash}p{0.315\textwidth}"
+            r">{\raggedright\arraybackslash}p{0.255\textwidth}}",
             r"\toprule",
             r"\rowcolor{gray!7}",
             r"\textbf{Dataset} & \textbf{Method} & \textbf{Native attribution grids} & \textbf{Faithfulness layouts} \\",
@@ -763,15 +758,15 @@ def _appendix_tex(
     lines.extend(
         [
             r"\bottomrule",
-            r"\end{tabular}}",
+            r"\end{tabular}",
             r"\end{table*}",
             "",
             r"\begin{table*}[t]",
             r"\centering",
             r"\small",
-            r"\caption{\textbf{Wiki-VISA localization by frozen stratum.} Values are paired means with 95\% bootstrap intervals; Energy and R@5 are the primary endpoints.}",
+            r"\caption{\textbf{Wiki-VISA localization by frozen stratum.} Values are paired means; Energy and R@5 are the primary endpoints.}",
             r"\label{tab:visual_wiki_strata}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llcc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -801,7 +796,7 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Complete frozen-response faithfulness panel and sign sensitivity.} Signed-score ordering is the registered analysis; positive-only deletion ordering is a sensitivity check.}",
             r"\label{tab:visual_faithfulness_full}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llcccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -835,7 +830,7 @@ def _appendix_tex(
             r"\small",
             rf"\caption{{\textbf{{VizWiz-LF fully-correct sensitivity}} ($n={viz_faith['fully_correct_subset']['samples']}$ of 100; semantic labels: {semantic['label_counts']['fully']} fully correct, {semantic['label_counts']['partial']} partial, {semantic['label_counts']['wrong']} wrong). The subset is not used to select the frozen faithfulness panel.}}",
             r"\label{tab:visual_vizwiz_fully_correct}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{lccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -862,11 +857,11 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{VizWiz-LF fully-correct paired deletion contrasts} ($n=58$). Positive deltas favor \flashtrace{}; this post-hoc sensitivity subset does not alter the frozen primary panel.}",
             r"\label{tab:visual_vizwiz_fully_correct_deltas}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{lcc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
-            r"\textbf{Baseline} & \textbf{Favorable $\Delta$ [95\% CI]} & \textbf{W/T/L} \\",
+            r"\textbf{Baseline} & \textbf{Favorable $\Delta$} & \textbf{W/T/L} \\",
             r"\midrule",
         ]
     )
@@ -886,12 +881,12 @@ def _appendix_tex(
             r"\end{tabular}}",
             r"\end{table*}",
             "",
-            r"\begin{table}[t]",
+            r"\begin{table*}[t]",
             r"\centering",
             r"\small",
             r"\caption{\textbf{Single-hop recursion and geometry diagnostics.} Cosine compares exact-reasoning and all-generation maps; recursive mass is the positive visual mass contributed by the one-hop term.}",
             r"\label{tab:visual_recursion_geometry}",
-            r"\resizebox{\linewidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{lccccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -914,14 +909,14 @@ def _appendix_tex(
         [
             r"\bottomrule",
             r"\end{tabular}}",
-            r"\end{table}",
+            r"\end{table*}",
             "",
             r"\begin{table*}[t]",
             r"\centering",
             r"\small",
             r"\caption{\textbf{Formal visual geometry and sign diagnostics.} Geometry uses positive visual mass; negative-cell fraction is reported from each signed attribution map before positive-mass normalization.}",
             r"\label{tab:visual_geometry_bias}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llcccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -976,7 +971,7 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Effect of one-hop recursion by reasoning length.} Localization deltas are $K{=}1-K{=}0$; deletion delta is oriented so positive favors $K{=}1$. VizWiz-LF has no localization ground truth.}",
             r"\label{tab:visual_recursion_buckets}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llccc}",
             r"\toprule",
             r"\rowcolor{gray!7}",
@@ -1023,7 +1018,7 @@ def _appendix_tex(
             r"\small",
             r"\caption{\textbf{Observed formal visual compute.} Values are means per successful sample-method. VRAM is incremental peak allocation during attribution; faithfulness uses the common 64-region/10-step budget.}",
             r"\label{tab:visual_observed_compute}",
-            r"\resizebox{\textwidth}{!}{%",
+            r"\adjustbox{max width=\textwidth}{%",
             r"\begin{tabular}{llrrr}",
             r"\toprule",
             r"\rowcolor{gray!7}",

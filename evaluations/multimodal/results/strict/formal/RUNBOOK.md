@@ -374,6 +374,14 @@ Then render the formal report and the two paper table bodies:
   --discussion-tex paper/generated/visual_results_discussion.tex
 ```
 
+> **Note.** `visual_appendix_results.tex` is hand-pruned in the paper repo: the
+> submitted appendix keeps only the additional-localization, complete-faithfulness,
+> and compute tables, with rewritten captions and zebra striping. The renderer
+> still emits the full set, so writing it straight into `paper/generated/` wipes
+> that pruning. Render the appendix fragment to a scratch path and re-apply the
+> pruning by hand, or diff it against the paper copy before overwriting. The
+> other three fragments are safe to write directly.
+
 The complete CPU-only post-review sequence above is also encoded as one
 resume-safe command. It validates all four E3--E5 paired matrices, rejects
 blank human reviews, adjudicates the semantic labels, regenerates every 50k

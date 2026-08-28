@@ -122,12 +122,16 @@ done
   --output-json "$FLASH_FINAL_DIR/A6_LEGACY_DIAGNOSTICS.json" \
   --output-markdown "$FLASH_FINAL_DIR/A6_LEGACY_DIAGNOSTICS.md"
 
+# The appendix fragment lands in the results tree, not in paper/generated/:
+# the submitted appendix keeps a hand-pruned subset of these tables, so
+# overwriting the paper copy from here would silently discard that pruning.
+# Diff the two and re-apply the pruning by hand when the numbers change.
 .venv/bin/python -m evaluations.multimodal.render_formal_results \
   --formal-dir "$FLASH_FINAL_DIR" \
   --output-markdown "$FLASH_FINAL_DIR/RESULTS.md" \
   --localization-tex paper/generated/visual_localization_rows.tex \
   --faithfulness-tex paper/generated/visual_faithfulness_rows.tex \
-  --appendix-tex paper/generated/visual_appendix_results.tex \
+  --appendix-tex "$FLASH_FINAL_DIR/generated/visual_appendix_results.tex" \
   --discussion-tex paper/generated/visual_results_discussion.tex
 
 .venv/bin/python -m evaluations.multimodal.audit_formal_results \
