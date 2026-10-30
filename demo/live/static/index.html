@@ -4,7 +4,142 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#e8f1f3">
-  <title>FlashTrace Live Demo</title>
+  <title>FlashTrace Live Demo · Multi-Token Attribution for Reasoning LLMs (ICML 2026 Oral)</title>
+  <meta name="description" content="FlashTrace live demo: efficient, faithful multi-token attribution for reasoning LLMs. Select any answer span and trace which prompt and reasoning tokens drove it. ICML 2026 Oral.">
+  <link rel="canonical" href="https://flashtrace.wenbo.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FlashTrace">
+  <meta property="og:title" content="FlashTrace: Efficient and Faithful Multi-Token Attribution for Reasoning LLMs">
+  <meta property="og:description" content="FlashTrace live demo: efficient, faithful multi-token attribution for reasoning LLMs. Select any answer span and trace which prompt and reasoning tokens drove it. ICML 2026 Oral.">
+  <meta property="og:url" content="https://flashtrace.wenbo.io/">
+  <meta property="og:image" content="https://flashtrace.wenbo.io/static/flashtrace-logo.png">
+  <meta property="og:image:alt" content="FlashTrace logo">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="FlashTrace Live Demo (ICML 2026 Oral)">
+  <meta name="twitter:description" content="FlashTrace live demo: efficient, faithful multi-token attribution for reasoning LLMs. Select any answer span and trace which prompt and reasoning tokens drove it. ICML 2026 Oral.">
+  <meta name="twitter:image" content="https://flashtrace.wenbo.io/static/flashtrace-logo.png">
+
+  <meta name="citation_title" content="Towards Long-Horizon Interpretability: Efficient and Faithful Multi-Token Attribution for Reasoning LLMs">
+  <meta name="citation_author" content="Pan, Wenbo">
+  <meta name="citation_author" content="Liu, Zhichao">
+  <meta name="citation_author" content="Wang, Xianlong">
+  <meta name="citation_author" content="Yu, Haining">
+  <meta name="citation_author" content="Jia, Xiaohua">
+  <meta name="citation_publication_date" content="2026/09/29">
+  <meta name="citation_online_date" content="2026/02/02">
+  <meta name="citation_conference_title" content="Proceedings of the 43rd International Conference on Machine Learning">
+  <meta name="citation_volume" content="306">
+  <meta name="citation_firstpage" content="95794">
+  <meta name="citation_lastpage" content="95819">
+  <meta name="citation_publisher" content="PMLR">
+  <meta name="citation_issn" content="2640-3498">
+  <meta name="citation_arxiv_id" content="2602.01914">
+  <meta name="citation_pdf_url" content="https://raw.githubusercontent.com/mlresearch/v306/main/assets/pan26g/pan26g.pdf">
+  <meta name="citation_abstract_html_url" content="https://proceedings.mlr.press/v306/pan26g.html">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ScholarlyArticle",
+        "@id": "https://flashtrace.wenbo.io/#article",
+        "headline": "Towards Long-Horizon Interpretability: Efficient and Faithful Multi-Token Attribution for Reasoning LLMs",
+        "name": "Towards Long-Horizon Interpretability: Efficient and Faithful Multi-Token Attribution for Reasoning LLMs",
+        "alternateName": "FlashTrace",
+        "abstract": "Token attribution methods provide intuitive explanations for language model outputs by identifying causally important input tokens. However, as modern LLMs increasingly rely on extended reasoning chains, existing schemes face two critical challenges: (1) efficiency bottleneck, where attributing a target span of M tokens within a context of length N requires O(M*N) operations, making long-context attribution prohibitively slow; and (2) faithfulness drop, where intermediate reasoning tokens absorb attribution mass, preventing importance from propagating back to the original input. To address these, we introduce FlashTrace, an efficient multi-token attribution method that employs span-wise aggregation to compute attribution over multi-token targets in a single pass, while maintaining faithfulness. Moreover, we design a recursive attribution mechanism that traces importance through intermediate reasoning chains back to source inputs. Extensive experiments on long-context retrieval (RULER) and multi-step reasoning (MATH, MorehopQA) tasks demonstrate that FlashTrace achieves over 130x speedup over existing baselines while maintaining superior faithfulness. We further analyze the dynamics of recursive attribution, showing that even a single recursive hop improves faithfulness by tracing importance through the reasoning chain.",
+        "author": [
+          {
+            "@type": "Person",
+            "name": "Wenbo Pan",
+            "affiliation": {
+              "@type": "CollegeOrUniversity",
+              "name": "City University of Hong Kong"
+            },
+            "@id": "https://www.wenbo.io/#person",
+            "url": "https://www.wenbo.io/"
+          },
+          {
+            "@type": "Person",
+            "name": "Zhichao Liu",
+            "affiliation": {
+              "@type": "CollegeOrUniversity",
+              "name": "Harbin Institute of Technology"
+            }
+          },
+          {
+            "@type": "Person",
+            "name": "Xianlong Wang",
+            "affiliation": {
+              "@type": "CollegeOrUniversity",
+              "name": "City University of Hong Kong"
+            }
+          },
+          {
+            "@type": "Person",
+            "name": "Haining Yu",
+            "affiliation": {
+              "@type": "CollegeOrUniversity",
+              "name": "Harbin Institute of Technology"
+            }
+          },
+          {
+            "@type": "Person",
+            "name": "Xiaohua Jia",
+            "affiliation": {
+              "@type": "CollegeOrUniversity",
+              "name": "City University of Hong Kong"
+            }
+          }
+        ],
+        "datePublished": "2026-09-29",
+        "isPartOf": {
+          "@type": "PublicationVolume",
+          "volumeNumber": "306",
+          "name": "Proceedings of the 43rd International Conference on Machine Learning",
+          "isPartOf": {
+            "@type": "Periodical",
+            "name": "Proceedings of Machine Learning Research",
+            "issn": "2640-3498"
+          }
+        },
+        "pagination": "95794-95819",
+        "publisher": {
+          "@type": "Organization",
+          "name": "PMLR"
+        },
+        "url": "https://proceedings.mlr.press/v306/pan26g.html",
+        "sameAs": [
+          "https://arxiv.org/abs/2602.01914",
+          "https://doi.org/10.48550/arXiv.2602.01914",
+          "https://github.com/wbopan/flashtrace"
+        ],
+        "keywords": [
+          "LLM interpretability",
+          "token attribution",
+          "reasoning LLMs",
+          "long-context attribution"
+        ]
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://flashtrace.wenbo.io/#app",
+        "name": "FlashTrace Live Demo",
+        "url": "https://flashtrace.wenbo.io/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Web browser",
+        "description": "FlashTrace live demo: efficient, faithful multi-token attribution for reasoning LLMs. Select any answer span and trace which prompt and reasoning tokens drove it. ICML 2026 Oral.",
+        "image": "https://flashtrace.wenbo.io/static/flashtrace-logo.png",
+        "about": {
+          "@id": "https://flashtrace.wenbo.io/#article"
+        },
+        "author": {
+          "@id": "https://www.wenbo.io/#person"
+        }
+      }
+    ]
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -37,6 +172,7 @@
         </p>
         <p class="brand-links" style="margin-top:.5rem;font-size:.85rem">
           <a href="https://arxiv.org/abs/2602.01914">Paper (ICML 2026 Oral)</a> &middot;
+          <a href="https://proceedings.mlr.press/v306/pan26g.html">PMLR</a> &middot;
           <a href="https://github.com/wbopan/flashtrace">GitHub</a> &middot;
           <a href="https://www.wenbo.io">Wenbo Pan</a>
         </p>
