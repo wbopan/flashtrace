@@ -1,0 +1,83 @@
+{
+  "manuscript": "/Users/wenbopan/Repos/flashtrace/icml-flashtrace-tpami/main.tex",
+  "figures": [
+    {
+      "label": "fig:pilot",
+      "assets": ["Figures/comparison.pdf", "Figures/time_plot.pdf"],
+      "kind": "mixed_schematic_and_quantitative",
+      "reproduction": "partial_complete",
+      "data": ["data/pilot.json", "data/pilot_traces/"],
+      "scripts": ["scripts/plot_pilot.py"],
+      "notes": "The bars are measured from two AttnLRP traces. The right scaling panel is synthetic legacy data. comparison.pdf is a schematic."
+    },
+    {
+      "label": "fig:flashtrace_overview",
+      "assets": ["Figures/overview.drawio.pdf"],
+      "kind": "schematic",
+      "reproduction": "out_of_scope_for_data_figures"
+    },
+    {
+      "label": "fig:recursive_example",
+      "assets": ["Figures/vis.png"],
+      "kind": "qualitative_data_figure",
+      "reproduction": "complete_as_html",
+      "data": ["data/math_ifr_multi_hop_both/ex_000040.npz"],
+      "scripts": ["scripts/render_heatmaps.py", "scripts/legacy_visualize_heatmap.py"]
+    },
+    {
+      "label": "fig:efficiency_results",
+      "assets": ["Figures/cost_comparison.pdf"],
+      "kind": "quantitative",
+      "reproduction": "complete_legacy",
+      "data": ["data/efficiency.json"],
+      "scripts": ["scripts/plot_efficiency.py"],
+      "notes": "Legacy reproduction includes explicitly marked interpolation, placeholder, and hand-normalized values."
+    },
+    {
+      "label": "fig:reasoning_length_analysis",
+      "assets": ["Figures/cot_faithfulness.pdf"],
+      "kind": "quantitative",
+      "reproduction": "complete_recovered_git_archive",
+      "data": [
+        "data/recovered_proc_1/morehopqa/qwen-8B/",
+        "data/recovered_proc_1/vt_h2_c3/qwen-8B/",
+        "data/recovered_proc_1/vt_h4_c1/qwen-8B/",
+        "data/recovered_proc_1/vt_h10_c1.jsonl/qwen-8B/"
+      ],
+      "scripts": ["scripts/plot_reasoning_length.py"],
+      "notes": "Recovered from exp/proc_1/output/data.zip in Git commit 075e7e4; archive SHA-256 44666abac156848c095fe141d913afc96370fd090ed0c2994df6dfa912c826ba."
+    },
+    {
+      "label": "fig:visual_examples",
+      "assets": ["Figures/visual_examples.png"],
+      "kind": "qualitative_data_figure",
+      "reproduction": "current_raw_results_found_renderer_mapping_needs_confirmation",
+      "data": ["remote flashtrace/evaluations/multimodal/results/strict/formal/"],
+      "candidate_scripts": [
+        "remote evaluations/multimodal/render_strict_examples.py",
+        "remote evaluations/multimodal/render_strict_method_comparisons.py"
+      ]
+    },
+    {
+      "label": "fig:math_vis",
+      "assets": ["Figures/vismath.png"],
+      "kind": "qualitative_data_figure",
+      "reproduction": "complete_as_html",
+      "data": [
+        "data/math_ifr_multi_hop_both/ex_000017.npz",
+        "data/math_ifr_multi_hop_both/ex_000054.npz",
+        "data/math_ifr_multi_hop_both/ex_000000.npz"
+      ],
+      "scripts": ["scripts/render_heatmaps.py", "scripts/legacy_visualize_heatmap.py"]
+    },
+    {
+      "label": "fig:mass_shift",
+      "assets": ["Figures/dist_fig.pdf"],
+      "kind": "quantitative",
+      "reproduction": "complete_recovered_git_archive",
+      "data": ["data/recovered_proc_1/morehopqa/qwen-8B/ifr_multi_hop_both_n3/*.npz"],
+      "scripts": ["scripts/plot_mass_shift.py"],
+      "notes": "All 95 n3 records recovered from the Git archive in commit 075e7e4."
+    }
+  ]
+}

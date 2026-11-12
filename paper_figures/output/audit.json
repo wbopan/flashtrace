@@ -1,0 +1,87 @@
+{
+  "math_heatmap_npz": {
+    "path": "/Users/wenbopan/Repos/flashtrace/paper_figures/data/math_ifr_multi_hop_both",
+    "count": 100,
+    "complete_expected_100": true
+  },
+  "recovered_proc_1": {
+    "path": "/Users/wenbopan/Repos/flashtrace/paper_figures/data/recovered_proc_1",
+    "source_commit": "075e7e4",
+    "source_archive": "exp/proc_1/output/data.zip",
+    "source_archive_sha256": "44666abac156848c095fe141d913afc96370fd090ed0c2994df6dfa912c826ba",
+    "required_counts": {
+      "morehopqa/ifr_multi_hop_both_n1": 95,
+      "morehopqa/ifr_multi_hop_both_n3": 95,
+      "morehopqa/attnlrp": 95,
+      "morehopqa/perturbation_all": 95,
+      "morehopqa/perturbation_CLP": 95,
+      "morehopqa/perturbation_REAGENT": 95,
+      "vt_h2_c3/ifr_multi_hop_both_n1": 100,
+      "vt_h2_c3/attnlrp": 100,
+      "vt_h2_c3/perturbation_all_fast": 100,
+      "vt_h2_c3/perturbation_CLP_fast": 100,
+      "vt_h2_c3/perturbation_REAGENT_fast": 100,
+      "vt_h4_c1/ifr_multi_hop_both_n1": 100,
+      "vt_h4_c1/attnlrp": 100,
+      "vt_h4_c1/perturbation_all_fast": 100,
+      "vt_h4_c1/perturbation_CLP_fast": 100,
+      "vt_h4_c1/perturbation_REAGENT_fast": 100,
+      "vt_h10_c1.jsonl/ifr_multi_hop_both_n1": 100,
+      "vt_h10_c1.jsonl/attnlrp": 100,
+      "vt_h10_c1.jsonl/perturbation_all_fast": 100,
+      "vt_h10_c1.jsonl/perturbation_CLP_fast": 100,
+      "vt_h10_c1.jsonl/perturbation_REAGENT_fast": 100
+    },
+    "complete": true
+  },
+  "published_assets": {
+    "time_plot.pdf": {
+      "exists": true,
+      "sha256": "ffe9a08a7b1ccd474b2700034b8373b7639ffed67dcb11f191031241dd9c05db"
+    },
+    "cost_comparison.pdf": {
+      "exists": true,
+      "sha256": "21a48c3349e57cc0c3a1ec403c98e4f49f4cf0550e53aa1ab2bdeabcbbdfcc10"
+    },
+    "cot_faithfulness.pdf": {
+      "exists": true,
+      "sha256": "220bcf6b460086f2464821b2955ced850555456cc28d25785fa841177a30f9b7"
+    },
+    "dist_fig.pdf": {
+      "exists": true,
+      "sha256": "4e31335bee39d72990531382af7cb06f7e6fa5c7d6819b694b036bded09aa239"
+    },
+    "vis.png": {
+      "exists": true,
+      "sha256": "0503082de482725a1a55372e10ae389640bd06d3cd830fef905cd3523a62ffe3"
+    },
+    "vismath.png": {
+      "exists": true,
+      "sha256": "f62740d193c67600bb2d1398acb230cfd743e75ee4ae8440e8cb53556c86e586"
+    },
+    "visual_examples.png": {
+      "exists": true,
+      "sha256": "08bb692886732127ccf5919d8e6acfed68f984ec152e5e0af54c04a250aa090a"
+    }
+  },
+  "pilot_validation": {
+    "Direct": {
+      "recovered": {
+        "input_mass": 15.355868620827096,
+        "cot_mass": 12.735085767693818,
+        "output_mass": 6.909047296270728,
+        "recovery_at_10pct": 0.2619047619047619
+      },
+      "matches_pilot_json": true
+    },
+    "CoT": {
+      "recovered": {
+        "input_mass": 4.755772971024271,
+        "cot_mass": 30.580467197261896,
+        "output_mass": 2.6637582584517077,
+        "recovery_at_10pct": 0.09523809523809523
+      },
+      "matches_pilot_json": true
+    }
+  }
+}

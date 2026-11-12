@@ -42,3 +42,7 @@ evaluations/multimodal/results/strict/formal/*.lock
 
 # Large generated attribution rows are distributed as GitHub Release assets.
 evaluations/multimodal/results/**/attribution_records.jsonl
+
+# Paper manuscripts live here as independent git repositories
+icml-flashtrace/
+icml-flashtrace-tpami/
