@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "definition": {
+    "realized": "official-validator-confirmed target action",
+    "short_bridge": "recorded reasoning token count at most two",
+    "contains_sample_text": false
+  },
+  "overall": {
+    "case_count": 4,
+    "action_target_count": 4,
+    "realized_count": 0,
+    "realized_rate_over_action_targets": 0.0,
+    "teacher_forcing_case_count": 0,
+    "mean_forced_token_count": null,
+    "mean_forced_token_fraction": null,
+    "minimum_reasoning_token_count": null,
+    "short_bridge_count": 0,
+    "non_model_bridge_count": 0
+  },
+  "selected_stage_counts": {
+    "natural_greedy": 4
+  },
+  "attempted_stage_counts": {
+    "natural_greedy": 4,
+    "teacher_forcing_1": 4,
+    "teacher_forcing_full": 4
+  },
+  "stages": {
+    "natural_greedy": {
+      "case_count": 4,
+      "action_target_count": 4,
+      "realized_count": 0,
+      "realized_rate_over_action_targets": 0.0,
+      "teacher_forcing_case_count": 0,
+      "mean_forced_token_count": null,
+      "mean_forced_token_fraction": null,
+      "minimum_reasoning_token_count": null,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0
+    }
+  }
+}

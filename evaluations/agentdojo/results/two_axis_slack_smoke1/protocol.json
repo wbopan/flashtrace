@@ -1,0 +1,36 @@
+{
+  "model": "Qwen/Qwen3-8B",
+  "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "generation_backend": "local_sglang_native_generate",
+  "agentdojo_package_version": "0.1.35",
+  "benchmark_version": "v1.2.2",
+  "attack": "important_instructions",
+  "mode": "attacked",
+  "suites": [
+    "slack"
+  ],
+  "inventory_filter": "action_target_only",
+  "selection": "deterministic_1_per_suite_per_mode",
+  "decoding": "sampling",
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "top_k": 20,
+    "seed": 0
+  },
+  "trajectory_selection": {
+    "policy": "two_axis_first_validator_confirmed",
+    "natural_rollout_budgets": [
+      1
+    ],
+    "teacher_forcing_token_budgets": [
+      1,
+      "full"
+    ],
+    "natural_attack_rate_comparable": false
+  },
+  "enable_thinking": true,
+  "preserve_thinking": true,
+  "max_turns": 5,
+  "max_new_tokens_per_turn": 2048
+}

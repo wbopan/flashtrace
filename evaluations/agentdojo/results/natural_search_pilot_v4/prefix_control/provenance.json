@@ -1,0 +1,47 @@
+{
+  "flashtrace_commit": "e15e117a5fbbe6e8ad6ea6d0f1314fc7835e5784",
+  "flashtrace_dirty": true,
+  "runner_file_sha256": {
+    "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/benchmark_local.py": "39be4498051ff2a4003756865b5c18cb1ec60b455e6dcff41ffe2c37c9bd9f02",
+    "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/e2e.py": "6d933841107bf67ade47678a2a96f417092c9828d03f5dc3f064113e5555b393",
+    "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/pilot.py": "57ebf6bb3ea13b6d19857114f735ee775117fe1a407c6a3d76656a4e38d3cb38",
+    "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/pyproject.toml": "b89684cec2b7c6d7d15c8ee38631067c574d84b437685514660dfc8827b795b2",
+    "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/uv.lock": "33c7c3b83db2bc939a3a8c728fc17b94c4475b557cba99b02b6cc437395d7da7"
+  },
+  "python": "3.13.13",
+  "torch": "2.13.0+cu130",
+  "transformers": "5.14.1",
+  "agentdojo": "0.1.35",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "sglang_server": {
+    "base_url": "http://127.0.0.1:8001",
+    "model_info": {
+      "model_path": "/model-hub/models--Qwen--Qwen3.6-27B/snapshots/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+      "tokenizer_path": "/model-hub/models--Qwen--Qwen3.6-27B/snapshots/6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+      "is_generation": true,
+      "preferred_sampling_params": null,
+      "weight_version": "default",
+      "has_image_understanding": true,
+      "has_audio_understanding": false,
+      "model_type": "qwen3_5",
+      "architectures": [
+        "Qwen3_5ForConditionalGeneration"
+      ]
+    },
+    "openai_models": {
+      "object": "list",
+      "data": [
+        {
+          "id": "Qwen/Qwen3.6-27B",
+          "object": "model",
+          "created": 1786499902,
+          "owned_by": "sglang",
+          "root": "Qwen/Qwen3.6-27B",
+          "parent": null,
+          "max_model_len": 131072
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "flashtrace_commit": "e15e117a5fbbe6e8ad6ea6d0f1314fc7835e5784",
+  "flashtrace_dirty": true,
+  "runner_sha256": "7e87b17f8f6338869cef7ca1b135e71c7b69d9dae30b6f76b387315bea7f8a44",
+  "python": "3.13.13",
+  "torch": "2.13.0+cu130",
+  "transformers": "5.14.1",
+  "cuda": "13.0",
+  "gpu": "NVIDIA A100 80GB PCIe"
+}

@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "definition": {
+    "natural_localizable": "validator-confirmed generated action with a complete observed span",
+    "conditionable_action": "concrete action target and complete observed span in a frozen prompt",
+    "conditionable_is_not_natural_rate": true
+  },
+  "overall": {
+    "attacked_count": 949,
+    "action_target_count": 609,
+    "observed_count": 718,
+    "conditionable_action_count": 459,
+    "natural_localizable_count": 30,
+    "natural_localizable_over_all": 0.03161222339304531,
+    "natural_localizable_over_action_targets": 0.04926108374384237,
+    "conditionable_over_all": 0.48366701791359323,
+    "conditionable_over_action_targets": 0.7536945812807881
+  },
+  "suites": {
+    "banking": {
+      "attacked_count": 144,
+      "action_target_count": 144,
+      "observed_count": 90,
+      "conditionable_action_count": 90,
+      "natural_localizable_count": 3,
+      "natural_localizable_over_all": 0.020833333333333332,
+      "natural_localizable_over_action_targets": 0.020833333333333332,
+      "conditionable_over_all": 0.625,
+      "conditionable_over_action_targets": 0.625
+    },
+    "slack": {
+      "attacked_count": 105,
+      "action_target_count": 105,
+      "observed_count": 75,
+      "conditionable_action_count": 75,
+      "natural_localizable_count": 18,
+      "natural_localizable_over_all": 0.17142857142857143,
+      "natural_localizable_over_action_targets": 0.17142857142857143,
+      "conditionable_over_all": 0.7142857142857143,
+      "conditionable_over_action_targets": 0.7142857142857143
+    },
+    "travel": {
+      "attacked_count": 140,
+      "action_target_count": 120,
+      "observed_count": 133,
+      "conditionable_action_count": 114,
+      "natural_localizable_count": 4,
+      "natural_localizable_over_all": 0.02857142857142857,
+      "natural_localizable_over_action_targets": 0.03333333333333333,
+      "conditionable_over_all": 0.8142857142857143,
+      "conditionable_over_action_targets": 0.95
+    },
+    "workspace": {
+      "attacked_count": 560,
+      "action_target_count": 240,
+      "observed_count": 420,
+      "conditionable_action_count": 180,
+      "natural_localizable_count": 5,
+      "natural_localizable_over_all": 0.008928571428571428,
+      "natural_localizable_over_action_targets": 0.020833333333333332,
+      "conditionable_over_all": 0.32142857142857145,
+      "conditionable_over_action_targets": 0.75
+    }
+  },
+  "validator_replay": {
+    "overall": {
+      "candidate_count": 459,
+      "validator_success_count": 452,
+      "record_error_count": 0,
+      "records_with_runtime_error": 17,
+      "validator_success_rate": 0.9847494553376906,
+      "runtime_seconds": 24.763939274009317,
+      "success_over_all": 0.47629083245521603,
+      "success_over_action_targets": 0.7422003284072249,
+      "lift_over_natural": 15.066666666666666
+    },
+    "suites": {
+      "banking": {
+        "candidate_count": 90,
+        "validator_success_count": 90,
+        "record_error_count": 0,
+        "records_with_runtime_error": 0,
+        "validator_success_rate": 1.0
+      },
+      "slack": {
+        "candidate_count": 75,
+        "validator_success_count": 75,
+        "record_error_count": 0,
+        "records_with_runtime_error": 5,
+        "validator_success_rate": 1.0
+      },
+      "travel": {
+        "candidate_count": 114,
+        "validator_success_count": 114,
+        "record_error_count": 0,
+        "records_with_runtime_error": 0,
+        "validator_success_rate": 1.0
+      },
+      "workspace": {
+        "candidate_count": 180,
+        "validator_success_count": 173,
+        "record_error_count": 0,
+        "records_with_runtime_error": 12,
+        "validator_success_rate": 0.9611111111111111
+      }
+    }
+  }
+}

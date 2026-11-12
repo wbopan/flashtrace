@@ -1,0 +1,158 @@
+{
+  "protocol": {
+    "generation_jsonl": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/conditioned_validation_20260817/subset16/trajectories.jsonl",
+    "generation_jsonl_sha256": "f57078faba5ef5030af55719f59f33d3d66f8cc34ae388649e4acfed5e570f45",
+    "attribution_model": "Qwen/Qwen3-8B",
+    "attribution_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "n_hops": 1,
+    "chunk_tokens": 128,
+    "sink_chunk_tokens": 32,
+    "attacked_inventory": 16,
+    "require_model_only": false,
+    "teacher_forced_frozen_generated_trajectory": true,
+    "generation_realization_stage_counts": {
+      "unrecorded": 16
+    },
+    "eligibility": "official_attack_validator_success_exact_generated_target_action_and_complete_injection_span",
+    "recompute_attention": true,
+    "recompute_query_rows_only": true,
+    "selection": "first_16_eligible_in_manifest_order"
+  },
+  "generation_record_count": 16,
+  "eligible_localization_count": 16,
+  "attacked_inventory": 16,
+  "eligible_coverage_over_attacked_inventory": 1.0,
+  "attempted_attribution_count": 16,
+  "successful_attribution_count": 16,
+  "failed_attribution_count": 0,
+  "methods": {
+    "flashtrace_generated_action_via_reasoning": {
+      "count": 16,
+      "recovery_at_5pct_mean": 0.4101261218591755,
+      "recovery_at_5pct_std": 0.10792623802218455,
+      "recovery_at_10pct_mean": 0.5614775386814862,
+      "recovery_at_10pct_std": 0.1224692940486893,
+      "recovery_at_20pct_mean": 0.8013351589024854,
+      "recovery_at_20pct_std": 0.134748100775676,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.22528341879216132,
+      "injection_mass_fraction_std": 0.05892864584711727,
+      "runtime_seconds_mean": 2.8917679724290792,
+      "runtime_seconds_std": 1.2476901784648506
+    },
+    "ifr_full_generated_action": {
+      "count": 16,
+      "recovery_at_5pct_mean": 0.36056224323957153,
+      "recovery_at_5pct_std": 0.11009391771117563,
+      "recovery_at_10pct_mean": 0.5283607747609506,
+      "recovery_at_10pct_std": 0.1398821929520135,
+      "recovery_at_20pct_mean": 0.7590739222631298,
+      "recovery_at_20pct_std": 0.15261951062986429,
+      "pointing_game_mean": 0.1875,
+      "pointing_game_std": 0.3903123748998999,
+      "injection_mass_fraction_mean": 0.24680520163224295,
+      "injection_mass_fraction_std": 0.07437564587990553,
+      "runtime_seconds_mean": 21.99651278413512,
+      "runtime_seconds_std": 8.538045934946377
+    },
+    "ifr_last_generated_action_token": {
+      "count": 16,
+      "recovery_at_5pct_mean": 0.048755249636557,
+      "recovery_at_5pct_std": 0.037943982167595654,
+      "recovery_at_10pct_mean": 0.17469398754534818,
+      "recovery_at_10pct_std": 0.09831895935745288,
+      "recovery_at_20pct_mean": 0.4248768363625243,
+      "recovery_at_20pct_std": 0.16526504655393517,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.015916510304847416,
+      "injection_mass_fraction_std": 0.009021798600503457,
+      "runtime_seconds_mean": 2.0613344180674176,
+      "runtime_seconds_std": 0.9345280000105847
+    },
+    "random_expected": {
+      "count": 16,
+      "recovery_at_5pct_mean": 0.05016614478725955,
+      "recovery_at_5pct_std": 0.00011107805673281953,
+      "recovery_at_10pct_mean": 0.1001864733281562,
+      "recovery_at_10pct_std": 0.00011959680867582849,
+      "recovery_at_20pct_mean": 0.2001083993122708,
+      "recovery_at_20pct_std": 0.00011181951767481103,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.03508477898278235,
+      "injection_mass_fraction_std": 0.014357008526601026,
+      "runtime_seconds_mean": 0.0,
+      "runtime_seconds_std": 0.0
+    }
+  },
+  "stages": {
+    "unrecorded": {
+      "attempted_attribution_count": 16,
+      "successful_attribution_count": 16,
+      "methods": {
+        "flashtrace_generated_action_via_reasoning": {
+          "count": 16,
+          "recovery_at_5pct_mean": 0.4101261218591755,
+          "recovery_at_5pct_std": 0.10792623802218455,
+          "recovery_at_10pct_mean": 0.5614775386814862,
+          "recovery_at_10pct_std": 0.1224692940486893,
+          "recovery_at_20pct_mean": 0.8013351589024854,
+          "recovery_at_20pct_std": 0.134748100775676,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.22528341879216132,
+          "injection_mass_fraction_std": 0.05892864584711727,
+          "runtime_seconds_mean": 2.8917679724290792,
+          "runtime_seconds_std": 1.2476901784648506
+        },
+        "ifr_full_generated_action": {
+          "count": 16,
+          "recovery_at_5pct_mean": 0.36056224323957153,
+          "recovery_at_5pct_std": 0.11009391771117563,
+          "recovery_at_10pct_mean": 0.5283607747609506,
+          "recovery_at_10pct_std": 0.1398821929520135,
+          "recovery_at_20pct_mean": 0.7590739222631298,
+          "recovery_at_20pct_std": 0.15261951062986429,
+          "pointing_game_mean": 0.1875,
+          "pointing_game_std": 0.3903123748998999,
+          "injection_mass_fraction_mean": 0.24680520163224295,
+          "injection_mass_fraction_std": 0.07437564587990553,
+          "runtime_seconds_mean": 21.99651278413512,
+          "runtime_seconds_std": 8.538045934946377
+        },
+        "ifr_last_generated_action_token": {
+          "count": 16,
+          "recovery_at_5pct_mean": 0.048755249636557,
+          "recovery_at_5pct_std": 0.037943982167595654,
+          "recovery_at_10pct_mean": 0.17469398754534818,
+          "recovery_at_10pct_std": 0.09831895935745288,
+          "recovery_at_20pct_mean": 0.4248768363625243,
+          "recovery_at_20pct_std": 0.16526504655393517,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.015916510304847416,
+          "injection_mass_fraction_std": 0.009021798600503457,
+          "runtime_seconds_mean": 2.0613344180674176,
+          "runtime_seconds_std": 0.9345280000105847
+        },
+        "random_expected": {
+          "count": 16,
+          "recovery_at_5pct_mean": 0.05016614478725955,
+          "recovery_at_5pct_std": 0.00011107805673281953,
+          "recovery_at_10pct_mean": 0.1001864733281562,
+          "recovery_at_10pct_std": 0.00011959680867582849,
+          "recovery_at_20pct_mean": 0.2001083993122708,
+          "recovery_at_20pct_std": 0.00011181951767481103,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.03508477898278235,
+          "injection_mass_fraction_std": 0.014357008526601026,
+          "runtime_seconds_mean": 0.0,
+          "runtime_seconds_std": 0.0
+        }
+      }
+    }
+  }
+}

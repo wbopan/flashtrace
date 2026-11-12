@@ -1,0 +1,776 @@
+{
+  "schema_version": 1,
+  "bootstrap_draws": 50000,
+  "generator_label": "Qwen3.6-27B",
+  "inputs": {
+    "aider_generation": {
+      "path": "/home/v-wenbopan/Repos/flashtrace/exp/exp4/output/local_generation/qwen36_27b_formal225/trajectories.jsonl",
+      "sha256": "aef970b33152198636e5fee755e65001bdfccccddbb0b046b5e58b3c2c19af01",
+      "records": 225
+    },
+    "aider_attribution": {
+      "path": "/home/v-wenbopan/Repos/flashtrace/exp/exp4/output/local_attribution/qwen36_27b_generation_qwen3_8b/metrics.complete.jsonl",
+      "sha256": "c683a9375dbad8f89ceef4d47568e3f04d3c554c7732426846d3bcc9507aafcd",
+      "records": 696
+    },
+    "agentdojo_generation": {
+      "path": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/full/qwen36_27b_formal1046/trajectories.jsonl",
+      "sha256": "c49e498a52fac0b1cb64dcf7ccc8ca6df5ae2c386db73825da6edc0910cfcb1b",
+      "records": 1046
+    },
+    "agentdojo_attribution": {
+      "path": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/full/qwen36_27b_attribution_qwen3_8b/attribution.redacted.jsonl",
+      "sha256": "e8291d949df126a75d3c63aba033f516c8da8685f8097b82b23ea63a90d7777d",
+      "records": 30
+    }
+  },
+  "aider": {
+    "generation_audit": {
+      "attempted": 225,
+      "valid": 174,
+      "valid_rate": 0.7733333333333333,
+      "format_compliance_rate": 0.498812351543943,
+      "draft_pass_rate": 0.1288888888888889,
+      "final_pass_rate": 0.3422222222222222,
+      "repair_attempts": 196,
+      "revised_pass_rate_among_repairs": 0.24489795918367346,
+      "repair_improvement_rate": 0.24489795918367346,
+      "regressed": 0,
+      "self_judge_used": false
+    },
+    "attribution": {
+      "bootstrap_draws": 50000,
+      "common_success_count": 174,
+      "subsets": {
+        "all_valid": {
+          "count": 174,
+          "methods": {
+            "ifr_last_output_line": {
+              "rise": {
+                "count": 174,
+                "mean": 0.18625166469445995,
+                "ci95_low": 0.15284383958722556,
+                "ci95_high": 0.2214237804082974
+              },
+              "mas": {
+                "count": 174,
+                "mean": 0.2791308398970402,
+                "ci95_low": 0.23718393909973728,
+                "ci95_high": 0.3228786066996242
+              },
+              "attribution_seconds": {
+                "count": 174,
+                "mean": 4.0901513527476645,
+                "ci95_low": 3.6626611525434387,
+                "ci95_high": 4.548437262775514
+              },
+              "repair_feedback_count": 148,
+              "repair_feedback_fraction": {
+                "count": 148,
+                "mean": 0.13911365025929653,
+                "ci95_low": 0.12907366767266423,
+                "ci95_high": 0.1495267474450481
+              }
+            },
+            "ifr_exhaustive_full_action": {
+              "rise": {
+                "count": 174,
+                "mean": 0.11487264183917932,
+                "ci95_low": 0.09490349156317981,
+                "ci95_high": 0.136520325895984
+              },
+              "mas": {
+                "count": 174,
+                "mean": 0.23456909640088336,
+                "ci95_low": 0.2173170327587112,
+                "ci95_high": 0.2531682874270164
+              },
+              "attribution_seconds": {
+                "count": 174,
+                "mean": 368.65207675875877,
+                "ci95_low": 326.20407975221565,
+                "ci95_high": 414.3260198120925
+              },
+              "repair_feedback_count": 148,
+              "repair_feedback_fraction": {
+                "count": 148,
+                "mean": 0.09281620071208815,
+                "ci95_low": 0.08369279308476374,
+                "ci95_high": 0.10229814703436209
+              }
+            },
+            "attnlrp_full_action": {
+              "rise": {
+                "count": 174,
+                "mean": 0.20633547376610661,
+                "ci95_low": 0.17008261773942465,
+                "ci95_high": 0.24475943751860413
+              },
+              "mas": {
+                "count": 174,
+                "mean": 0.33315591916700454,
+                "ci95_low": 0.2915766947224354,
+                "ci95_high": 0.3767502392206693
+              },
+              "attribution_seconds": {
+                "count": 174,
+                "mean": 3.72292266083057,
+                "ci95_low": 3.4939874653038085,
+                "ci95_high": 3.952912964136708
+              },
+              "repair_feedback_count": 148,
+              "repair_feedback_fraction": {
+                "count": 148,
+                "mean": 0.06327222726582632,
+                "ci95_low": 0.053138050078416744,
+                "ci95_high": 0.07421902648970638
+              }
+            },
+            "flashtrace_k1_full_action": {
+              "rise": {
+                "count": 174,
+                "mean": 0.12061063904332799,
+                "ci95_low": 0.10030161696718391,
+                "ci95_high": 0.1417410991152233
+              },
+              "mas": {
+                "count": 174,
+                "mean": 0.2559655120042381,
+                "ci95_low": 0.23843909554528936,
+                "ci95_high": 0.2745597638439313
+              },
+              "attribution_seconds": {
+                "count": 174,
+                "mean": 6.252364895315894,
+                "ci95_low": 5.804444589633755,
+                "ci95_high": 6.732283587391347
+              },
+              "repair_feedback_count": 148,
+              "repair_feedback_fraction": {
+                "count": 148,
+                "mean": 0.11498746495635638,
+                "ci95_low": 0.10351320816800416,
+                "ci95_high": 0.12699761899626755
+              }
+            }
+          },
+          "flashtrace_favorable_difference": {
+            "ifr_last_output_line": {
+              "rise": {
+                "count": 174,
+                "mean": 0.06564102565113196,
+                "ci95_low": 0.04306830292120645,
+                "ci95_high": 0.08905271202469393,
+                "wins": 87,
+                "ties": 52,
+                "losses": 35
+              },
+              "mas": {
+                "count": 174,
+                "mean": 0.02316532789280206,
+                "ci95_low": -0.009507136224636122,
+                "ci95_high": 0.056663020803777824,
+                "wins": 61,
+                "ties": 0,
+                "losses": 113
+              }
+            },
+            "ifr_exhaustive_full_action": {
+              "rise": {
+                "count": 174,
+                "mean": -0.0057379972041486545,
+                "ci95_low": -0.01687651976446809,
+                "ci95_high": 0.005928984601668105,
+                "wins": 46,
+                "ties": 59,
+                "losses": 69
+              },
+              "mas": {
+                "count": 174,
+                "mean": -0.02139641560335481,
+                "ci95_low": -0.029711641196912594,
+                "ci95_high": -0.014136449337042558,
+                "wins": 29,
+                "ties": 0,
+                "losses": 145
+              }
+            },
+            "attnlrp_full_action": {
+              "rise": {
+                "count": 174,
+                "mean": 0.08572483472277867,
+                "ci95_low": 0.05889945583937252,
+                "ci95_high": 0.11413580156114013,
+                "wins": 88,
+                "ties": 52,
+                "losses": 34
+              },
+              "mas": {
+                "count": 174,
+                "mean": 0.07719040716276637,
+                "ci95_low": 0.04447407626902727,
+                "ci95_high": 0.11141364723967352,
+                "wins": 71,
+                "ties": 0,
+                "losses": 103
+              }
+            }
+          }
+        },
+        "execution_success": {
+          "count": 69,
+          "methods": {
+            "ifr_last_output_line": {
+              "rise": {
+                "count": 69,
+                "mean": 0.1016318923861353,
+                "ci95_low": 0.06376479563498852,
+                "ci95_high": 0.14569774305567082
+              },
+              "mas": {
+                "count": 69,
+                "mean": 0.17189695527141868,
+                "ci95_low": 0.12452921139864674,
+                "ci95_high": 0.22646804709039184
+              },
+              "attribution_seconds": {
+                "count": 69,
+                "mean": 4.122579237908476,
+                "ci95_low": 3.4551982399369794,
+                "ci95_high": 4.898242339691185
+              },
+              "repair_feedback_count": 43,
+              "repair_feedback_fraction": {
+                "count": 43,
+                "mean": 0.13443575313702721,
+                "ci95_low": 0.119071317362146,
+                "ci95_high": 0.1494434731399601
+              }
+            },
+            "ifr_exhaustive_full_action": {
+              "rise": {
+                "count": 69,
+                "mean": 0.059992834866855915,
+                "ci95_low": 0.042907936124611884,
+                "ci95_high": 0.07895387802986474
+              },
+              "mas": {
+                "count": 69,
+                "mean": 0.18347903353336675,
+                "ci95_low": 0.16941142431583464,
+                "ci95_high": 0.19977191963371546
+              },
+              "attribution_seconds": {
+                "count": 69,
+                "mean": 288.74258499104275,
+                "ci95_low": 241.16633904828234,
+                "ci95_high": 341.072150645068
+              },
+              "repair_feedback_count": 43,
+              "repair_feedback_fraction": {
+                "count": 43,
+                "mean": 0.10865240070031587,
+                "ci95_low": 0.09092747084773972,
+                "ci95_high": 0.12684892760376706
+              }
+            },
+            "attnlrp_full_action": {
+              "rise": {
+                "count": 69,
+                "mean": 0.14085360899847318,
+                "ci95_low": 0.08713234703833836,
+                "ci95_high": 0.20241796625292996
+              },
+              "mas": {
+                "count": 69,
+                "mean": 0.25194346253528177,
+                "ci95_low": 0.1972168560621598,
+                "ci95_high": 0.3132585163105228
+              },
+              "attribution_seconds": {
+                "count": 69,
+                "mean": 3.5430041605714653,
+                "ci95_low": 3.261685640512176,
+                "ci95_high": 3.8391728113086527
+              },
+              "repair_feedback_count": 43,
+              "repair_feedback_fraction": {
+                "count": 43,
+                "mean": 0.07557069959984414,
+                "ci95_low": 0.05494291815629873,
+                "ci95_high": 0.09909540420199694
+              }
+            },
+            "flashtrace_k1_full_action": {
+              "rise": {
+                "count": 69,
+                "mean": 0.06733697679840091,
+                "ci95_low": 0.04739358339168066,
+                "ci95_high": 0.08950128574597899
+              },
+              "mas": {
+                "count": 69,
+                "mean": 0.2053722638547544,
+                "ci95_low": 0.18918367318165388,
+                "ci95_high": 0.22350852998792342
+              },
+              "attribution_seconds": {
+                "count": 69,
+                "mean": 6.047386094647716,
+                "ci95_low": 5.635650295395475,
+                "ci95_high": 6.451456245880041
+              },
+              "repair_feedback_count": 43,
+              "repair_feedback_fraction": {
+                "count": 43,
+                "mean": 0.13358838055815989,
+                "ci95_low": 0.11104463738466207,
+                "ci95_high": 0.15648934634126324
+              }
+            }
+          },
+          "flashtrace_favorable_difference": {
+            "ifr_last_output_line": {
+              "rise": {
+                "count": 69,
+                "mean": 0.034294915587734384,
+                "ci95_low": 0.00714640354919586,
+                "ci95_high": 0.06860319140200646,
+                "wins": 24,
+                "ties": 28,
+                "losses": 17
+              },
+              "mas": {
+                "count": 69,
+                "mean": -0.033475308583335715,
+                "ci95_low": -0.07246170083775647,
+                "ci95_high": 0.011589519481420991,
+                "wins": 13,
+                "ties": 0,
+                "losses": 56
+              }
+            },
+            "ifr_exhaustive_full_action": {
+              "rise": {
+                "count": 69,
+                "mean": -0.007344141931545012,
+                "ci95_low": -0.014404160937390748,
+                "ci95_high": -0.0013172551786795035,
+                "wins": 11,
+                "ties": 33,
+                "losses": 25
+              },
+              "mas": {
+                "count": 69,
+                "mean": -0.021893230321387642,
+                "ci95_low": -0.03193821169962742,
+                "ci95_high": -0.013465848879869034,
+                "wins": 9,
+                "ties": 0,
+                "losses": 60
+              }
+            },
+            "attnlrp_full_action": {
+              "rise": {
+                "count": 69,
+                "mean": 0.07351663220007226,
+                "ci95_low": 0.030132784876212453,
+                "ci95_high": 0.12399876212075256,
+                "wins": 24,
+                "ties": 28,
+                "losses": 17
+              },
+              "mas": {
+                "count": 69,
+                "mean": 0.04657119868052732,
+                "ci95_low": -0.0006474392754001293,
+                "ci95_high": 0.10005805561781828,
+                "wins": 21,
+                "ties": 0,
+                "losses": 48
+              }
+            }
+          }
+        }
+      },
+      "attempted_by_method": {
+        "ifr_last_output_line": 174,
+        "ifr_exhaustive_full_action": 174,
+        "attnlrp_full_action": 174,
+        "flashtrace_k1_full_action": 174
+      },
+      "failed_by_method": {
+        "ifr_last_output_line": 0,
+        "ifr_exhaustive_full_action": 0,
+        "attnlrp_full_action": 0,
+        "flashtrace_k1_full_action": 0
+      }
+    }
+  },
+  "agentdojo": {
+    "outcomes": {
+      "overall": {
+        "clean_count": 97,
+        "attacked_count": 949,
+        "clean_utility_rate": 0.6701030927835051,
+        "attacked_utility_rate": 0.6417281348788199,
+        "attack_success_rate": 0.05374077976817703,
+        "joint_utility_and_attack_rate": 0.032665964172813484,
+        "generated_target_coverage": 0.03161222339304531,
+        "localizable_cases": 30
+      },
+      "suites": {
+        "banking": {
+          "clean_count": 16,
+          "attacked_count": 144,
+          "clean_utility_rate": 0.5625,
+          "attacked_utility_rate": 0.625,
+          "attack_success_rate": 0.041666666666666664,
+          "joint_utility_and_attack_rate": 0.027777777777777776,
+          "generated_target_coverage": 0.020833333333333332,
+          "localizable_cases": 3
+        },
+        "slack": {
+          "clean_count": 21,
+          "attacked_count": 105,
+          "clean_utility_rate": 0.7142857142857143,
+          "attacked_utility_rate": 0.5523809523809524,
+          "attack_success_rate": 0.18095238095238095,
+          "joint_utility_and_attack_rate": 0.18095238095238095,
+          "generated_target_coverage": 0.17142857142857143,
+          "localizable_cases": 18
+        },
+        "travel": {
+          "clean_count": 20,
+          "attacked_count": 140,
+          "clean_utility_rate": 0.8,
+          "attacked_utility_rate": 0.6642857142857143,
+          "attack_success_rate": 0.12142857142857143,
+          "joint_utility_and_attack_rate": 0.04285714285714286,
+          "generated_target_coverage": 0.02857142857142857,
+          "localizable_cases": 4
+        },
+        "workspace": {
+          "clean_count": 40,
+          "attacked_count": 560,
+          "clean_utility_rate": 0.625,
+          "attacked_utility_rate": 0.6571428571428571,
+          "attack_success_rate": 0.01607142857142857,
+          "joint_utility_and_attack_rate": 0.0035714285714285713,
+          "generated_target_coverage": 0.008928571428571428,
+          "localizable_cases": 5
+        }
+      }
+    },
+    "localization": {
+      "eligible_count": 30,
+      "attacked_inventory": 949,
+      "eligible_coverage_over_attacked_inventory": 0.03161222339304531,
+      "attempted": 30,
+      "common_success_count": 30,
+      "failed": 0,
+      "bootstrap_draws": 50000,
+      "methods": {
+        "random_expected": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.05021640113531568,
+            "ci95_low": 0.05016266327313648,
+            "ci95_high": 0.05027262630954055
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 0.10021499997556109,
+            "ci95_low": 0.10016278753350835,
+            "ci95_high": 0.10026847300777597
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.2001844798655856,
+            "ci95_low": 0.20013368636182685,
+            "ci95_high": 0.20023697088284073
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.03432245483370055,
+            "ci95_low": 0.02977677837259917,
+            "ci95_high": 0.03859938737844541
+          },
+          "runtime_seconds": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          }
+        },
+        "ifr_last_generated_action_token": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.05098388765445203,
+            "ci95_low": 0.037762407630779524,
+            "ci95_high": 0.064701717551756
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 0.17331973956469268,
+            "ci95_low": 0.13732995434524314,
+            "ci95_high": 0.20890904307790373
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.39730361109978884,
+            "ci95_low": 0.33967037511785947,
+            "ci95_high": 0.4543197692518251
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.0171066032083905,
+            "ci95_low": 0.013145796831221813,
+            "ci95_high": 0.02132143028355345
+          },
+          "runtime_seconds": {
+            "count": 30,
+            "mean": 1.6780565618537366,
+            "ci95_low": 1.291129142420638,
+            "ci95_high": 2.105444768103577
+          }
+        },
+        "ifr_full_generated_action": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.14080281255162086,
+            "ci95_low": 0.1030992797516672,
+            "ci95_high": 0.18303093196439382
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 0.3245568852175447,
+            "ci95_low": 0.26826480034244404,
+            "ci95_high": 0.3830736995864445
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.5971753834756517,
+            "ci95_low": 0.53191328850194,
+            "ci95_high": 0.6637296017073312
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.08210084128776327,
+            "ci95_low": 0.06480766046160824,
+            "ci95_high": 0.10123963643303222
+          },
+          "runtime_seconds": {
+            "count": 30,
+            "mean": 18.003340341864774,
+            "ci95_low": 11.944957539424069,
+            "ci95_high": 24.537182427999607
+          }
+        },
+        "flashtrace_generated_action_via_reasoning": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.15085598189022495,
+            "ci95_low": 0.10892677743330462,
+            "ci95_high": 0.19612744662254805
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 0.3246548082440547,
+            "ci95_low": 0.2658748092288528,
+            "ci95_high": 0.38349849309723394
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.631640966575794,
+            "ci95_low": 0.5542426915692851,
+            "ci95_high": 0.7071519235396291
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.08320867332547478,
+            "ci95_low": 0.0662962499068261,
+            "ci95_high": 0.10127504049405779
+          },
+          "runtime_seconds": {
+            "count": 30,
+            "mean": 2.354227289239255,
+            "ci95_low": 1.858948382236801,
+            "ci95_high": 2.897808681521953
+          }
+        }
+      },
+      "flashtrace_favorable_difference": {
+        "random_expected": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.10063958075490922,
+            "ci95_low": 0.05855342250093017,
+            "ci95_high": 0.1461813858412467,
+            "wins": 22,
+            "ties": 0,
+            "losses": 8
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 0.22443980826849372,
+            "ci95_low": 0.16520037689243847,
+            "ci95_high": 0.2832367624679744,
+            "wins": 27,
+            "ties": 0,
+            "losses": 3
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.4314564867102085,
+            "ci95_low": 0.3540386652001421,
+            "ci95_high": 0.5067303095633983,
+            "wins": 30,
+            "ties": 0,
+            "losses": 0
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 30,
+            "losses": 0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.04888621849177424,
+            "ci95_low": 0.033140606013483974,
+            "ci95_high": 0.06580896412101112,
+            "wins": 27,
+            "ties": 0,
+            "losses": 3
+          }
+        },
+        "ifr_last_generated_action_token": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.09987209423577288,
+            "ci95_low": 0.06340288566921945,
+            "ci95_high": 0.14089184628711976,
+            "wins": 24,
+            "ties": 6,
+            "losses": 0
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 0.15133506867936214,
+            "ci95_low": 0.11032011517227196,
+            "ci95_high": 0.19478227676647222,
+            "wins": 27,
+            "ties": 1,
+            "losses": 2
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.23433735547600526,
+            "ci95_low": 0.1777373722438863,
+            "ci95_high": 0.2955656953118873,
+            "wins": 29,
+            "ties": 0,
+            "losses": 1
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 30,
+            "losses": 0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.0661020701170843,
+            "ci95_low": 0.05150607843558545,
+            "ci95_high": 0.08209852126716395,
+            "wins": 30,
+            "ties": 0,
+            "losses": 0
+          }
+        },
+        "ifr_full_generated_action": {
+          "recovery_at_5pct": {
+            "count": 30,
+            "mean": 0.010053169338604074,
+            "ci95_low": 0.0004817151504297192,
+            "ci95_high": 0.01943236385795138,
+            "wins": 16,
+            "ties": 4,
+            "losses": 10
+          },
+          "recovery_at_10pct": {
+            "count": 30,
+            "mean": 9.792302651008509e-05,
+            "ci95_low": -0.016010079778330442,
+            "ci95_high": 0.01631168924661817,
+            "wins": 14,
+            "ties": 5,
+            "losses": 11
+          },
+          "recovery_at_20pct": {
+            "count": 30,
+            "mean": 0.034465583100142215,
+            "ci95_low": 0.005419225515780512,
+            "ci95_high": 0.06886677799772663,
+            "wins": 17,
+            "ties": 2,
+            "losses": 11
+          },
+          "pointing_game": {
+            "count": 30,
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "wins": 0,
+            "ties": 30,
+            "losses": 0
+          },
+          "injection_mass_fraction": {
+            "count": 30,
+            "mean": 0.0011078320377115119,
+            "ci95_low": -0.003310763568878259,
+            "ci95_high": 0.005215808329536386,
+            "wins": 17,
+            "ties": 0,
+            "losses": 13
+          }
+        }
+      }
+    },
+    "localization_generation_pool": {
+      "path": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/full/qwen36_27b_formal1046/trajectories.jsonl",
+      "record_count": 1046
+    }
+  }
+}

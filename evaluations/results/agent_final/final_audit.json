@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-07-31T18:41:16.556152+00:00",
+  "all_passed": true,
+  "checks": [
+    {
+      "name": "Aider generation inventory",
+      "passed": true,
+      "detail": {
+        "records": 225
+      }
+    },
+    {
+      "name": "Aider valid inventory",
+      "passed": true,
+      "detail": {
+        "valid": 174,
+        "languages": {
+          "cpp": 21,
+          "go": 30,
+          "java": 37,
+          "javascript": 40,
+          "python": 24,
+          "rust": 22
+        }
+      }
+    },
+    {
+      "name": "Aider complete method matrix",
+      "passed": true,
+      "detail": {
+        "rows": 696,
+        "unique_pairs": 696,
+        "methods": {
+          "ifr_last_output_line": 174,
+          "ifr_exhaustive_full_action": 174,
+          "attnlrp_full_action": 174,
+          "flashtrace_k1_full_action": 174
+        },
+        "errors": 0
+      }
+    },
+    {
+      "name": "Aider metrics finite",
+      "passed": true,
+      "detail": {
+        "checked_values": 4176
+      }
+    },
+    {
+      "name": "Aider source mass conservation",
+      "passed": true,
+      "detail": {
+        "max_abs_error": 1.9957510266621625e-07
+      }
+    },
+    {
+      "name": "AgentDojo generation inventory",
+      "passed": true,
+      "detail": {
+        "records": 1046,
+        "clean": 97,
+        "attacked": 949
+      }
+    },
+    {
+      "name": "AgentDojo localization matrix",
+      "passed": true,
+      "detail": {
+        "rows": 30,
+        "unique_cases": 30
+      }
+    },
+    {
+      "name": "Analysis input provenance",
+      "passed": true,
+      "detail": {
+        "aider_generation": {
+          "actual_sha256": "aef970b33152198636e5fee755e65001bdfccccddbb0b046b5e58b3c2c19af01",
+          "recorded_sha256": "aef970b33152198636e5fee755e65001bdfccccddbb0b046b5e58b3c2c19af01",
+          "records": 225,
+          "recorded_records": 225
+        },
+        "aider_attribution": {
+          "actual_sha256": "c683a9375dbad8f89ceef4d47568e3f04d3c554c7732426846d3bcc9507aafcd",
+          "recorded_sha256": "c683a9375dbad8f89ceef4d47568e3f04d3c554c7732426846d3bcc9507aafcd",
+          "records": 696,
+          "recorded_records": 696
+        },
+        "agentdojo_generation": {
+          "actual_sha256": "c49e498a52fac0b1cb64dcf7ccc8ca6df5ae2c386db73825da6edc0910cfcb1b",
+          "recorded_sha256": "c49e498a52fac0b1cb64dcf7ccc8ca6df5ae2c386db73825da6edc0910cfcb1b",
+          "records": 1046,
+          "recorded_records": 1046
+        },
+        "agentdojo_attribution": {
+          "actual_sha256": "e8291d949df126a75d3c63aba033f516c8da8685f8097b82b23ea63a90d7777d",
+          "recorded_sha256": "e8291d949df126a75d3c63aba033f516c8da8685f8097b82b23ea63a90d7777d",
+          "records": 30,
+          "recorded_records": 30
+        }
+      }
+    },
+    {
+      "name": "Formal bootstrap and intersections",
+      "passed": true,
+      "detail": {
+        "bootstrap_draws": 50000,
+        "aider_common": 174,
+        "dojo_common": 30
+      }
+    },
+    {
+      "name": "OOM repair provenance and reproducibility",
+      "passed": true,
+      "detail": {
+        "failed_pair": {
+          "example_id": "polyglot-python-tree-building",
+          "method": "flashtrace_k1_full_action"
+        },
+        "complete_metrics_sha256": "c683a9375dbad8f89ceef4d47568e3f04d3c554c7732426846d3bcc9507aafcd",
+        "comparison": {
+          "example_id": "polyglot-cpp-all-your-base",
+          "rise_abs_diff": 0.0,
+          "mas_abs_diff": 0.0,
+          "unassigned_source_fraction_abs_diff": 0.0,
+          "max_source_segment_fraction_abs_diff": 0.0
+        },
+        "repeat_abs_diff": {
+          "rise": 0.0,
+          "mas": 0.0,
+          "unassigned_source_fraction": 0.0
+        }
+      }
+    },
+    {
+      "name": "Paper generated artifacts",
+      "passed": true,
+      "detail": {
+        "aider_audit_rows.tex": {
+          "bytes": 72,
+          "sha256": "5bccac08a2296a49e629682f062d497aaa1726f2e495cec8be45f4f1e7d454f1"
+        },
+        "aider_multiturn_rows.tex": {
+          "bytes": 1164,
+          "sha256": "2de9014a7fca33db9d4bed01b1b7d070b7917f884b52e092e46a5ebdf0faaff1"
+        },
+        "agentdojo_outcome_rows.tex": {
+          "bytes": 405,
+          "sha256": "25e11ffd5a9e37ec85183d4c113eddcc6320d8bb1eb787315b0923ab38b2bc94"
+        },
+        "agentdojo_localization_rows.tex": {
+          "bytes": 1324,
+          "sha256": "9a98cfe32db2318673e9fd542d9eb54d049d06e9c363adde54c549342fbbc5a0"
+        },
+        "agent_qualitative_rows.tex": {
+          "bytes": 1138,
+          "sha256": "223af7b800752d033da3d09fe7b887585d95705a7708730eb8a09a2f8eaa8d00"
+        }
+      }
+    },
+    {
+      "name": "Agent prose placeholders resolved",
+      "passed": true,
+      "detail": {
+        "remaining_in_agent_results": 0
+      }
+    },
+    {
+      "name": "LaTeX brace balance",
+      "passed": true,
+      "detail": {
+        "main_open": 1092,
+        "main_close": 1092,
+        "appendix_open": 1056,
+        "appendix_close": 1056
+      }
+    }
+  ],
+  "note": "LaTeX engine unavailable in the local environment; structural checks only."
+}

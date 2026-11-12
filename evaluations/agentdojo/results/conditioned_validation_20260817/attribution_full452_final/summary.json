@@ -1,0 +1,169 @@
+{
+  "protocol": {
+    "generation_jsonl": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/conditioned/qwen36_27b_formal1046_conditioned/trajectories.jsonl",
+    "generation_jsonl_sha256": "30faa33b98dc3541bcf870c92758d2fea0cddb945d404ace1b9e7f705b4f4ba9",
+    "attribution_model": "Qwen/Qwen3-8B",
+    "attribution_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "n_hops": 1,
+    "chunk_tokens": 128,
+    "sink_chunk_tokens": 32,
+    "attacked_inventory": 609,
+    "require_model_only": false,
+    "teacher_forced_frozen_generated_trajectory": true,
+    "generation_realization_stage_counts": {
+      "unrecorded": 452
+    },
+    "eligibility": "official_attack_validator_success_exact_generated_target_action_and_complete_injection_span",
+    "recompute_attention": true,
+    "recompute_query_rows_only": true,
+    "selection": "all_eligible",
+    "model_forward_attn_implementation": "eager_with_sdpa_recovery",
+    "recovery": {
+      "recovered_case_count": 12,
+      "original_error_category": "OutOfMemoryError",
+      "model_forward_attn_implementation": "sdpa",
+      "chunk_tokens": 128,
+      "sink_chunk_tokens": 32,
+      "attribution_attention_recomputed": true,
+      "attribution_formula_changed": false,
+      "recovery_manifest_sha256": "613646c442b3e2881e29791d8bdd8b30c558dd4c4621f6ad2354300be19dc13e"
+    }
+  },
+  "generation_record_count": 459,
+  "eligible_localization_count": 452,
+  "attacked_inventory": 609,
+  "eligible_coverage_over_attacked_inventory": 0.7422003284072249,
+  "attempted_attribution_count": 452,
+  "successful_attribution_count": 452,
+  "failed_attribution_count": 0,
+  "methods": {
+    "flashtrace_generated_action_via_reasoning": {
+      "count": 452,
+      "recovery_at_5pct_mean": 0.3974753591019167,
+      "recovery_at_5pct_std": 0.18343908740693346,
+      "recovery_at_10pct_mean": 0.560616450452562,
+      "recovery_at_10pct_std": 0.1976835553306069,
+      "recovery_at_20pct_mean": 0.7674973536574955,
+      "recovery_at_20pct_std": 0.17380389382793504,
+      "pointing_game_mean": 0.01991150442477876,
+      "pointing_game_std": 0.1396962290697955,
+      "injection_mass_fraction_mean": 0.1983747408090071,
+      "injection_mass_fraction_std": 0.10783907100122754,
+      "runtime_seconds_mean": 3.827004953638462,
+      "runtime_seconds_std": 2.5047271332598355
+    },
+    "ifr_full_generated_action": {
+      "count": 452,
+      "recovery_at_5pct_mean": 0.3829249154822433,
+      "recovery_at_5pct_std": 0.1876940941318898,
+      "recovery_at_10pct_mean": 0.5438879129964802,
+      "recovery_at_10pct_std": 0.20727286604786976,
+      "recovery_at_20pct_mean": 0.7430511630277958,
+      "recovery_at_20pct_std": 0.1902289333663171,
+      "pointing_game_mean": 0.09955752212389381,
+      "pointing_game_std": 0.2994091212913264,
+      "injection_mass_fraction_mean": 0.2211471053988924,
+      "injection_mass_fraction_std": 0.12611646237499619,
+      "runtime_seconds_mean": 29.6180422567305,
+      "runtime_seconds_std": 19.876160272956625
+    },
+    "ifr_last_generated_action_token": {
+      "count": 452,
+      "recovery_at_5pct_mean": 0.08615049598319377,
+      "recovery_at_5pct_std": 0.0758516203191801,
+      "recovery_at_10pct_mean": 0.21712051562833135,
+      "recovery_at_10pct_std": 0.12711444396956947,
+      "recovery_at_20pct_mean": 0.4529662258121289,
+      "recovery_at_20pct_std": 0.18151114001952362,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.022546359079702497,
+      "injection_mass_fraction_std": 0.019117875460043853,
+      "runtime_seconds_mean": 2.7425786266210275,
+      "runtime_seconds_std": 2.0187988822116996
+    },
+    "random_expected": {
+      "count": 452,
+      "recovery_at_5pct_mean": 0.05014646044278826,
+      "recovery_at_5pct_std": 0.0001222756865878207,
+      "recovery_at_10pct_mean": 0.1001389340140542,
+      "recovery_at_10pct_std": 0.00012143484099192175,
+      "recovery_at_20pct_mean": 0.20012186314032943,
+      "recovery_at_20pct_std": 0.00011349672878685024,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.03126815200991519,
+      "injection_mass_fraction_std": 0.014860197206251943,
+      "runtime_seconds_mean": 0.0,
+      "runtime_seconds_std": 0.0
+    }
+  },
+  "stages": {
+    "unrecorded": {
+      "attempted_attribution_count": 452,
+      "successful_attribution_count": 452,
+      "methods": {
+        "flashtrace_generated_action_via_reasoning": {
+          "count": 452,
+          "recovery_at_5pct_mean": 0.3974753591019167,
+          "recovery_at_5pct_std": 0.18343908740693346,
+          "recovery_at_10pct_mean": 0.560616450452562,
+          "recovery_at_10pct_std": 0.1976835553306069,
+          "recovery_at_20pct_mean": 0.7674973536574955,
+          "recovery_at_20pct_std": 0.17380389382793504,
+          "pointing_game_mean": 0.01991150442477876,
+          "pointing_game_std": 0.1396962290697955,
+          "injection_mass_fraction_mean": 0.1983747408090071,
+          "injection_mass_fraction_std": 0.10783907100122754,
+          "runtime_seconds_mean": 3.827004953638462,
+          "runtime_seconds_std": 2.5047271332598355
+        },
+        "ifr_full_generated_action": {
+          "count": 452,
+          "recovery_at_5pct_mean": 0.3829249154822433,
+          "recovery_at_5pct_std": 0.1876940941318898,
+          "recovery_at_10pct_mean": 0.5438879129964802,
+          "recovery_at_10pct_std": 0.20727286604786976,
+          "recovery_at_20pct_mean": 0.7430511630277958,
+          "recovery_at_20pct_std": 0.1902289333663171,
+          "pointing_game_mean": 0.09955752212389381,
+          "pointing_game_std": 0.2994091212913264,
+          "injection_mass_fraction_mean": 0.2211471053988924,
+          "injection_mass_fraction_std": 0.12611646237499619,
+          "runtime_seconds_mean": 29.6180422567305,
+          "runtime_seconds_std": 19.876160272956625
+        },
+        "ifr_last_generated_action_token": {
+          "count": 452,
+          "recovery_at_5pct_mean": 0.08615049598319377,
+          "recovery_at_5pct_std": 0.0758516203191801,
+          "recovery_at_10pct_mean": 0.21712051562833135,
+          "recovery_at_10pct_std": 0.12711444396956947,
+          "recovery_at_20pct_mean": 0.4529662258121289,
+          "recovery_at_20pct_std": 0.18151114001952362,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.022546359079702497,
+          "injection_mass_fraction_std": 0.019117875460043853,
+          "runtime_seconds_mean": 2.7425786266210275,
+          "runtime_seconds_std": 2.0187988822116996
+        },
+        "random_expected": {
+          "count": 452,
+          "recovery_at_5pct_mean": 0.05014646044278826,
+          "recovery_at_5pct_std": 0.0001222756865878207,
+          "recovery_at_10pct_mean": 0.1001389340140542,
+          "recovery_at_10pct_std": 0.00012143484099192175,
+          "recovery_at_20pct_mean": 0.20012186314032943,
+          "recovery_at_20pct_std": 0.00011349672878685024,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.03126815200991519,
+          "injection_mass_fraction_std": 0.014860197206251943,
+          "runtime_seconds_mean": 0.0,
+          "runtime_seconds_std": 0.0
+        }
+      }
+    }
+  }
+}

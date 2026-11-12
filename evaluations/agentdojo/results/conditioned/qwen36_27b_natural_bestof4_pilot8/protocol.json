@@ -1,0 +1,28 @@
+{
+  "model": "Qwen/Qwen3.6-27B",
+  "revision": "6a9e13bd6fc8f0983b9b99948120bc37f49c13e9",
+  "generation_backend": "local_sglang_native_generate",
+  "agentdojo_package_version": "0.1.35",
+  "benchmark_version": "v1.2.2",
+  "attack": "important_instructions",
+  "mode": "attacked",
+  "inventory_filter": "action_target_only",
+  "selection": "deterministic_2_per_suite_per_mode",
+  "decoding": "sampling",
+  "sampling": {
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "top_k": 20,
+    "seed": 20260811
+  },
+  "trajectory_selection": {
+    "rollouts_per_attacked_case": 4,
+    "policy": "first_localizable_best_of_n",
+    "target_conditioning": "none",
+    "natural_attack_rate_comparable": false
+  },
+  "enable_thinking": true,
+  "preserve_thinking": true,
+  "max_turns": 10,
+  "max_new_tokens_per_turn": 4096
+}

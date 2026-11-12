@@ -1,0 +1,19 @@
+{
+  "generation_jsonl": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/natural_search_validation_20260817/greedy_known_success8/trajectories.jsonl",
+  "generation_jsonl_sha256": "3cc39f116d252b255a2fdea7bf513f930ecbb063dfe6b04205f4a90dbcefaff3",
+  "attribution_model": "Qwen/Qwen3-8B",
+  "attribution_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "n_hops": 1,
+  "chunk_tokens": 128,
+  "sink_chunk_tokens": 32,
+  "attacked_inventory": 8,
+  "require_model_only": true,
+  "teacher_forced_frozen_generated_trajectory": true,
+  "generation_realization_stage_counts": {
+    "natural_greedy": 5
+  },
+  "eligibility": "official_attack_validator_success_exact_generated_target_action_and_complete_injection_span",
+  "recompute_attention": true,
+  "recompute_query_rows_only": true,
+  "selection": "all_eligible"
+}

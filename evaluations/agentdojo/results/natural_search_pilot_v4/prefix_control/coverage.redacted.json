@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "definition": {
+    "realized": "official-validator-confirmed target action",
+    "short_bridge": "recorded reasoning token count at most two",
+    "contains_sample_text": false
+  },
+  "overall": {
+    "case_count": 4,
+    "action_target_count": 4,
+    "realized_count": 3,
+    "realized_rate_over_action_targets": 0.75,
+    "intervention_case_count": 3,
+    "intervention_method_counts": {
+      "teacher_forcing_prefix": 3
+    },
+    "mean_reference_token_count": 48.666666666666664,
+    "mean_reference_token_fraction": 1.0,
+    "mean_decode_request_count": 1.0,
+    "minimum_reasoning_token_count": 83,
+    "short_bridge_count": 0,
+    "non_model_bridge_count": 0,
+    "all_model_generated_case_count": 1,
+    "model_generated_token_fraction": 0.9138134592680047,
+    "minimum_model_reasoning_token_count": 68,
+    "non_model_natural_bridge_count": 1,
+    "mean_generation_requests_per_case": 4.0,
+    "mean_sampled_tokens_per_case": 864.0,
+    "mean_scored_tokens_per_case": 0.0,
+    "mean_generation_seconds_per_case": 44.74542919709347,
+    "mean_requests_per_successful_case": 5.0,
+    "mean_sampled_tokens_per_successful_case": 1127.0,
+    "reasoning_search_case_count": 0,
+    "reasoning_rerank_nonfirst_selection_rate": null,
+    "mean_rerank_exact_score_gain": null,
+    "mean_rerank_conditional_logprob_gain": null,
+    "mean_executed_attempts": 1.75,
+    "trajectory_nonfirst_selection_rate": 0.75,
+    "mean_selected_attempt_index": 0.75
+  },
+  "selected_stage_counts": {
+    "natural_greedy": 1,
+    "prefix_forcing_full": 3
+  },
+  "attempted_stage_counts": {
+    "natural_greedy": 4,
+    "prefix_forcing_full": 4
+  },
+  "attempted_stages": {
+    "natural_greedy": {
+      "case_count": 4,
+      "validator_pass_count": 0,
+      "skip_count": 0,
+      "mean_generation_seconds": 23.78889575076755,
+      "mean_generation_request_count": 2.25,
+      "mean_reference_token_count": null,
+      "mean_reference_token_fraction": null,
+      "minimum_reasoning_token_count": null,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0
+    },
+    "prefix_forcing_full": {
+      "case_count": 4,
+      "validator_pass_count": 3,
+      "skip_count": 1,
+      "mean_generation_seconds": 27.942044595101226,
+      "mean_generation_request_count": 2.3333333333333335,
+      "mean_reference_token_count": 48.666666666666664,
+      "mean_reference_token_fraction": 1.0,
+      "minimum_reasoning_token_count": 83,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0
+    }
+  },
+  "stages": {
+    "natural_greedy": {
+      "case_count": 1,
+      "action_target_count": 1,
+      "realized_count": 0,
+      "realized_rate_over_action_targets": 0.0,
+      "intervention_case_count": 0,
+      "intervention_method_counts": {},
+      "mean_reference_token_count": null,
+      "mean_reference_token_fraction": null,
+      "mean_decode_request_count": null,
+      "minimum_reasoning_token_count": null,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0,
+      "all_model_generated_case_count": 1,
+      "model_generated_token_fraction": 1.0,
+      "minimum_model_reasoning_token_count": null,
+      "non_model_natural_bridge_count": 1,
+      "mean_generation_requests_per_case": 1.0,
+      "mean_sampled_tokens_per_case": 75.0,
+      "mean_scored_tokens_per_case": 0.0,
+      "mean_generation_seconds_per_case": 4.208729227073491,
+      "mean_requests_per_successful_case": null,
+      "mean_sampled_tokens_per_successful_case": null,
+      "reasoning_search_case_count": 0,
+      "reasoning_rerank_nonfirst_selection_rate": null,
+      "mean_rerank_exact_score_gain": null,
+      "mean_rerank_conditional_logprob_gain": null,
+      "mean_executed_attempts": 1.0,
+      "trajectory_nonfirst_selection_rate": 0.0,
+      "mean_selected_attempt_index": 0.0
+    },
+    "prefix_forcing_full": {
+      "case_count": 3,
+      "action_target_count": 3,
+      "realized_count": 3,
+      "realized_rate_over_action_targets": 1.0,
+      "intervention_case_count": 3,
+      "intervention_method_counts": {
+        "teacher_forcing_prefix": 3
+      },
+      "mean_reference_token_count": 48.666666666666664,
+      "mean_reference_token_fraction": 1.0,
+      "mean_decode_request_count": 1.0,
+      "minimum_reasoning_token_count": 83,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0,
+      "all_model_generated_case_count": 0,
+      "model_generated_token_fraction": 0.9098765432098765,
+      "minimum_model_reasoning_token_count": 68,
+      "non_model_natural_bridge_count": 0,
+      "mean_generation_requests_per_case": 5.0,
+      "mean_sampled_tokens_per_case": 1127.0,
+      "mean_scored_tokens_per_case": 0.0,
+      "mean_generation_seconds_per_case": 58.25766252043346,
+      "mean_requests_per_successful_case": 5.0,
+      "mean_sampled_tokens_per_successful_case": 1127.0,
+      "reasoning_search_case_count": 0,
+      "reasoning_rerank_nonfirst_selection_rate": null,
+      "mean_rerank_exact_score_gain": null,
+      "mean_rerank_conditional_logprob_gain": null,
+      "mean_executed_attempts": 2.0,
+      "trajectory_nonfirst_selection_rate": 1.0,
+      "mean_selected_attempt_index": 1.0
+    }
+  }
+}

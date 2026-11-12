@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "definition": {
+    "realized": "official-validator-confirmed target action",
+    "short_bridge": "recorded reasoning token count at most two",
+    "contains_sample_text": false
+  },
+  "overall": {
+    "case_count": 1,
+    "action_target_count": 1,
+    "realized_count": 1,
+    "realized_rate_over_action_targets": 1.0,
+    "teacher_forcing_case_count": 1,
+    "mean_forced_token_count": 89.0,
+    "mean_forced_token_fraction": 1.0,
+    "minimum_reasoning_token_count": 352,
+    "short_bridge_count": 0,
+    "non_model_bridge_count": 0
+  },
+  "selected_stage_counts": {
+    "teacher_forcing_full": 1
+  },
+  "attempted_stage_counts": {
+    "natural_greedy": 1,
+    "teacher_forcing_1": 1,
+    "teacher_forcing_full": 1
+  },
+  "attempted_stages": {
+    "natural_greedy": {
+      "case_count": 1,
+      "validator_pass_count": 0,
+      "skip_count": 0
+    },
+    "teacher_forcing_1": {
+      "case_count": 1,
+      "validator_pass_count": 0,
+      "skip_count": 0
+    },
+    "teacher_forcing_full": {
+      "case_count": 1,
+      "validator_pass_count": 1,
+      "skip_count": 0
+    }
+  },
+  "stages": {
+    "teacher_forcing_full": {
+      "case_count": 1,
+      "action_target_count": 1,
+      "realized_count": 1,
+      "realized_rate_over_action_targets": 1.0,
+      "teacher_forcing_case_count": 1,
+      "mean_forced_token_count": 89.0,
+      "mean_forced_token_fraction": 1.0,
+      "minimum_reasoning_token_count": 352,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0
+    }
+  }
+}

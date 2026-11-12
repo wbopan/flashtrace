@@ -1,0 +1,159 @@
+{
+  "protocol": {
+    "generation_jsonl": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/conditioned_validation_20260817/attribution_full452_recovery_sink8/failed_manifest.jsonl",
+    "generation_jsonl_sha256": "613646c442b3e2881e29791d8bdd8b30c558dd4c4621f6ad2354300be19dc13e",
+    "attribution_model": "Qwen/Qwen3-8B",
+    "attribution_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "model_forward_attn_implementation": "sdpa",
+    "n_hops": 1,
+    "chunk_tokens": 128,
+    "sink_chunk_tokens": 32,
+    "attacked_inventory": 609,
+    "require_model_only": false,
+    "teacher_forced_frozen_generated_trajectory": true,
+    "generation_realization_stage_counts": {
+      "unrecorded": 12
+    },
+    "eligibility": "official_attack_validator_success_exact_generated_target_action_and_complete_injection_span",
+    "recompute_attention": true,
+    "recompute_query_rows_only": true,
+    "selection": "first_1_eligible_in_manifest_order"
+  },
+  "generation_record_count": 12,
+  "eligible_localization_count": 12,
+  "attacked_inventory": 609,
+  "eligible_coverage_over_attacked_inventory": 0.019704433497536946,
+  "attempted_attribution_count": 1,
+  "successful_attribution_count": 1,
+  "failed_attribution_count": 0,
+  "methods": {
+    "flashtrace_generated_action_via_reasoning": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.5603448275862069,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.6724137931034483,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.7931034482758621,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.21098072497875658,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 7.868654705001973,
+      "runtime_seconds_std": 0.0
+    },
+    "ifr_full_generated_action": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.5344827586206896,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.646551724137931,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.7844827586206896,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.28634230934288846,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 97.3961352329934,
+      "runtime_seconds_std": 0.0
+    },
+    "ifr_last_generated_action_token": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.05172413793103448,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.15517241379310345,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.31896551724137934,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.0035923642246664562,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 5.1755034329835325,
+      "runtime_seconds_std": 0.0
+    },
+    "random_expected": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.05001368987861641,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.10002737975723282,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.20005475951446564,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.010586839463356758,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 0.0,
+      "runtime_seconds_std": 0.0
+    }
+  },
+  "stages": {
+    "unrecorded": {
+      "attempted_attribution_count": 1,
+      "successful_attribution_count": 1,
+      "methods": {
+        "flashtrace_generated_action_via_reasoning": {
+          "count": 1,
+          "recovery_at_5pct_mean": 0.5603448275862069,
+          "recovery_at_5pct_std": 0.0,
+          "recovery_at_10pct_mean": 0.6724137931034483,
+          "recovery_at_10pct_std": 0.0,
+          "recovery_at_20pct_mean": 0.7931034482758621,
+          "recovery_at_20pct_std": 0.0,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.21098072497875658,
+          "injection_mass_fraction_std": 0.0,
+          "runtime_seconds_mean": 7.868654705001973,
+          "runtime_seconds_std": 0.0
+        },
+        "ifr_full_generated_action": {
+          "count": 1,
+          "recovery_at_5pct_mean": 0.5344827586206896,
+          "recovery_at_5pct_std": 0.0,
+          "recovery_at_10pct_mean": 0.646551724137931,
+          "recovery_at_10pct_std": 0.0,
+          "recovery_at_20pct_mean": 0.7844827586206896,
+          "recovery_at_20pct_std": 0.0,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.28634230934288846,
+          "injection_mass_fraction_std": 0.0,
+          "runtime_seconds_mean": 97.3961352329934,
+          "runtime_seconds_std": 0.0
+        },
+        "ifr_last_generated_action_token": {
+          "count": 1,
+          "recovery_at_5pct_mean": 0.05172413793103448,
+          "recovery_at_5pct_std": 0.0,
+          "recovery_at_10pct_mean": 0.15517241379310345,
+          "recovery_at_10pct_std": 0.0,
+          "recovery_at_20pct_mean": 0.31896551724137934,
+          "recovery_at_20pct_std": 0.0,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.0035923642246664562,
+          "injection_mass_fraction_std": 0.0,
+          "runtime_seconds_mean": 5.1755034329835325,
+          "runtime_seconds_std": 0.0
+        },
+        "random_expected": {
+          "count": 1,
+          "recovery_at_5pct_mean": 0.05001368987861641,
+          "recovery_at_5pct_std": 0.0,
+          "recovery_at_10pct_mean": 0.10002737975723282,
+          "recovery_at_10pct_std": 0.0,
+          "recovery_at_20pct_mean": 0.20005475951446564,
+          "recovery_at_20pct_std": 0.0,
+          "pointing_game_mean": 0.0,
+          "pointing_game_std": 0.0,
+          "injection_mass_fraction_mean": 0.010586839463356758,
+          "injection_mass_fraction_std": 0.0,
+          "runtime_seconds_mean": 0.0,
+          "runtime_seconds_std": 0.0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "protocol": {
+    "generation_jsonl": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/conditioned/qwen36_27b_formal1046_conditioned/trajectories.jsonl",
+    "generation_jsonl_sha256": "30faa33b98dc3541bcf870c92758d2fea0cddb945d404ace1b9e7f705b4f4ba9",
+    "attribution_model": "Qwen/Qwen3-8B",
+    "attribution_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "n_hops": 1,
+    "chunk_tokens": 128,
+    "sink_chunk_tokens": 32,
+    "attacked_inventory": 609,
+    "teacher_forced_frozen_generated_trajectory": true,
+    "generation_target_conditioning": {
+      "conditioned_eligible_records": 452,
+      "autonomous_eligible_records": 0
+    },
+    "eligibility": "official_attack_validator_success_exact_generated_target_action_and_complete_injection_span",
+    "recompute_attention": true,
+    "recompute_query_rows_only": true,
+    "selection": "first_1_eligible_in_manifest_order"
+  },
+  "generation_record_count": 459,
+  "eligible_localization_count": 452,
+  "attacked_inventory": 609,
+  "eligible_coverage_over_attacked_inventory": 0.7422003284072249,
+  "attempted_attribution_count": 1,
+  "successful_attribution_count": 1,
+  "failed_attribution_count": 0,
+  "methods": {
+    "flashtrace_generated_action_via_reasoning": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.3798449612403101,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.43410852713178294,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.6201550387596899,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.24234994618052588,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 2.0479333610273898,
+      "runtime_seconds_std": 0.0
+    },
+    "ifr_full_generated_action": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.32558139534883723,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.4108527131782946,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.5658914728682171,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.26267094902260923,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 21.926976299844682,
+      "runtime_seconds_std": 0.0
+    },
+    "ifr_last_generated_action_token": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.007751937984496124,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.046511627906976744,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.24806201550387597,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.013302531078879975,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 2.0003126598894596,
+      "runtime_seconds_std": 0.0
+    },
+    "random_expected": {
+      "count": 1,
+      "recovery_at_5pct_mean": 0.05016722408026756,
+      "recovery_at_5pct_std": 0.0,
+      "recovery_at_10pct_mean": 0.10033444816053512,
+      "recovery_at_10pct_std": 0.0,
+      "recovery_at_20pct_mean": 0.20025083612040134,
+      "recovery_at_20pct_std": 0.0,
+      "pointing_game_mean": 0.0,
+      "pointing_game_std": 0.0,
+      "injection_mass_fraction_mean": 0.053929765886287624,
+      "injection_mass_fraction_std": 0.0,
+      "runtime_seconds_mean": 0.0,
+      "runtime_seconds_std": 0.0
+    }
+  }
+}

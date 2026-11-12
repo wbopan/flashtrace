@@ -293,6 +293,7 @@ def _load_model(
     model_id: str,
     revision: str,
     device: str,
+    attn_implementation: str,
 ) -> tuple[Any, Any]:
     tokenizer = AutoTokenizer.from_pretrained(model_id, revision=revision)
     index = int(device.split(":")[-1])
@@ -301,7 +302,7 @@ def _load_model(
         revision=revision,
         dtype=torch.bfloat16,
         device_map={"": index},
-        attn_implementation="eager",
+        attn_implementation=attn_implementation,
     )
     model.eval()
     return model, tokenizer
@@ -313,6 +314,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--revision", default=DEFAULT_REVISION)
     parser.add_argument("--device", default="cuda:0")
+    parser.add_argument(
+        "--attn-implementation",
+        choices=("eager", "sdpa"),
+        default="eager",
+        help=(
+            "Transformers attention backend for the model forward pass. "
+            "Attribution attention is still recomputed when enabled."
+        ),
+    )
     parser.add_argument("--n-hops", type=int, default=1)
     parser.add_argument("--num-examples", type=int, default=None)
     parser.add_argument("--attacked-inventory", type=int, default=949)
@@ -367,6 +377,7 @@ def main() -> None:
         "generation_jsonl_sha256": _sha256_file(args.generation_jsonl),
         "attribution_model": args.model,
         "attribution_revision": args.revision,
+        "model_forward_attn_implementation": args.attn_implementation,
         "n_hops": args.n_hops,
         "chunk_tokens": args.chunk_tokens,
         "sink_chunk_tokens": args.sink_chunk_tokens,
@@ -410,7 +421,12 @@ def main() -> None:
         encoding="utf-8",
     )
 
-    model, tokenizer = _load_model(args.model, args.revision, args.device)
+    model, tokenizer = _load_model(
+        args.model,
+        args.revision,
+        args.device,
+        args.attn_implementation,
+    )
     ifr = LLMIFRAttribution(
         model,
         tokenizer,

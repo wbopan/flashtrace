@@ -1,0 +1,19 @@
+{
+  "generation_jsonl": "/home/v-wenbopan/Repos/flashtrace/evaluations/agentdojo/results/conditioned_validation_20260817/subset16/trajectories.jsonl",
+  "generation_jsonl_sha256": "f57078faba5ef5030af55719f59f33d3d66f8cc34ae388649e4acfed5e570f45",
+  "attribution_model": "Qwen/Qwen3-8B",
+  "attribution_revision": "b968826d9c46dd6066d109eabc6255188de91218",
+  "n_hops": 1,
+  "chunk_tokens": 128,
+  "sink_chunk_tokens": 32,
+  "attacked_inventory": 16,
+  "require_model_only": false,
+  "teacher_forced_frozen_generated_trajectory": true,
+  "generation_realization_stage_counts": {
+    "unrecorded": 16
+  },
+  "eligibility": "official_attack_validator_success_exact_generated_target_action_and_complete_injection_span",
+  "recompute_attention": true,
+  "recompute_query_rows_only": true,
+  "selection": "first_16_eligible_in_manifest_order"
+}

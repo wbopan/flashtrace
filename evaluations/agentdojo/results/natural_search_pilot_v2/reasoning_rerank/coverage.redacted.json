@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "definition": {
+    "realized": "official-validator-confirmed target action",
+    "short_bridge": "recorded reasoning token count at most two",
+    "contains_sample_text": false
+  },
+  "overall": {
+    "case_count": 4,
+    "action_target_count": 4,
+    "realized_count": 0,
+    "realized_rate_over_action_targets": 0.0,
+    "intervention_case_count": 0,
+    "intervention_method_counts": {},
+    "mean_reference_token_count": null,
+    "mean_reference_token_fraction": null,
+    "mean_decode_request_count": null,
+    "minimum_reasoning_token_count": null,
+    "short_bridge_count": 0,
+    "non_model_bridge_count": 0,
+    "all_model_generated_case_count": 4,
+    "model_generated_token_fraction": 1.0,
+    "minimum_model_reasoning_token_count": 34,
+    "non_model_natural_bridge_count": 1,
+    "mean_generation_requests_per_case": 10.25,
+    "mean_sampled_tokens_per_case": 1019.5,
+    "mean_scored_tokens_per_case": 203.0,
+    "mean_generation_seconds_per_case": 54.58889890590217,
+    "mean_requests_per_successful_case": null,
+    "mean_sampled_tokens_per_successful_case": null,
+    "reasoning_search_case_count": 3,
+    "reasoning_rerank_nonfirst_selection_rate": 0.0,
+    "mean_rerank_exact_score_gain": 0.0,
+    "mean_rerank_conditional_logprob_gain": 0.0,
+    "mean_executed_attempts": 1.0,
+    "trajectory_nonfirst_selection_rate": 0.0,
+    "mean_selected_attempt_index": 0.0
+  },
+  "selected_stage_counts": {
+    "natural_greedy": 4
+  },
+  "attempted_stage_counts": {
+    "natural_greedy": 4
+  },
+  "attempted_stages": {
+    "natural_greedy": {
+      "case_count": 4,
+      "validator_pass_count": 0,
+      "skip_count": 0,
+      "mean_generation_seconds": 54.58889890590217,
+      "mean_generation_request_count": 10.25,
+      "mean_reference_token_count": null,
+      "mean_reference_token_fraction": null,
+      "minimum_reasoning_token_count": null,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0
+    }
+  },
+  "stages": {
+    "natural_greedy": {
+      "case_count": 4,
+      "action_target_count": 4,
+      "realized_count": 0,
+      "realized_rate_over_action_targets": 0.0,
+      "intervention_case_count": 0,
+      "intervention_method_counts": {},
+      "mean_reference_token_count": null,
+      "mean_reference_token_fraction": null,
+      "mean_decode_request_count": null,
+      "minimum_reasoning_token_count": null,
+      "short_bridge_count": 0,
+      "non_model_bridge_count": 0,
+      "all_model_generated_case_count": 4,
+      "model_generated_token_fraction": 1.0,
+      "minimum_model_reasoning_token_count": 34,
+      "non_model_natural_bridge_count": 1,
+      "mean_generation_requests_per_case": 10.25,
+      "mean_sampled_tokens_per_case": 1019.5,
+      "mean_scored_tokens_per_case": 203.0,
+      "mean_generation_seconds_per_case": 54.58889890590217,
+      "mean_requests_per_successful_case": null,
+      "mean_sampled_tokens_per_successful_case": null,
+      "reasoning_search_case_count": 3,
+      "reasoning_rerank_nonfirst_selection_rate": 0.0,
+      "mean_rerank_exact_score_gain": 0.0,
+      "mean_rerank_conditional_logprob_gain": 0.0,
+      "mean_executed_attempts": 1.0,
+      "trajectory_nonfirst_selection_rate": 0.0,
+      "mean_selected_attempt_index": 0.0
+    }
+  }
+}
